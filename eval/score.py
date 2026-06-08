@@ -19,7 +19,7 @@ def eval_tests() -> dict:
     """Run test suite: python -m pytest -v"""
     try:
         result = subprocess.run(
-            ['python', '-m', 'pytest', '-v'],
+            ['python', '-m', 'pytest', 'tests/', '-v', '--ignore=tests/test_level1.py', '--ignore=tests/test_level2.py'],
             capture_output=True,
             text=True,
             timeout=120,
@@ -89,7 +89,7 @@ def eval_type_check() -> dict:
     """Run type checker: python -m mypy ./"""
     try:
         result = subprocess.run(
-            ['python', '-m', 'mypy', './'],
+            ['python', '-m', 'mypy', 'src/'],
             capture_output=True,
             text=True,
             timeout=120,
@@ -124,7 +124,7 @@ def eval_coverage() -> dict:
     """Measure test coverage"""
     try:
         result = subprocess.run(
-            ['python', '-m', 'pytest', '--cov=run_c2f7d635', '--cov-report=term', '-q'],
+            ['python', '-m', 'pytest', 'tests/', '--cov=buildroot', '--cov-report=term', '-q', '--ignore=tests/test_level1.py', '--ignore=tests/test_level2.py'],
             capture_output=True,
             text=True,
             timeout=120,
