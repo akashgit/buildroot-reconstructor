@@ -51,7 +51,7 @@ class TestJdkBaseTemplate:
         content = cf_path.read_text()
         assert "FROM eclipse-temurin:17-jdk" in content
         assert "WORKDIR /build" in content
-        assert "COPY . ." in content
+        assert "git clone" in content
         assert "mvn clean install" in content
 
     def test_uses_jdk_base_template(self, tmp_path: Path):

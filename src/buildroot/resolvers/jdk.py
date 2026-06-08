@@ -12,6 +12,7 @@ from buildroot.pipeline.models import (
     PomData,
     Source,
 )
+from buildroot.utils.maven_central import fetch_jar_manifest_jdk
 
 logger = logging.getLogger(__name__)
 
@@ -41,25 +42,46 @@ class JdkResolver:
         pom_data: PomData,
         ci_data: CIData | None,
         resolved_properties: dict[str, str],
+        *,
+        group_id: str = "",
+        artifact_id: str = "",
+        version: str = "",
     ) -> JdkSpec:
         spec = JdkSpec()
         all_signals: list[dict[str, str]] = []
+
+        # Priority 0: Build-Jdk-Spec from published JAR manifest
+        if group_id and artifact_id and version:
+            manifest_jdk = fetch_jar_manifest_jdk(group_id, artifact_id, version)
+            if manifest_jdk:
+                spec.version = manifest_jdk
+                spec.confidence = Confidence(
+                    level=Source.OBSERVED,
+                    reason="JDK version from Build-Jdk-Spec in published JAR manifest",
+                )
+                spec.source_description = "JAR manifest Build-Jdk-Spec"
+                all_signals.append({
+                    "source": "JAR manifest Build-Jdk-Spec",
+                    "version": manifest_jdk,
+                    "priority": "0",
+                })
 
         # Priority 1: CI setup-java java-version + distribution
         if ci_data and ci_data.java_version:
             version = str(ci_data.java_version.value)
             if version:
-                spec.version = version
-                spec.confidence = Confidence(
-                    level=Source.OBSERVED,
-                    reason="JDK version from CI setup-java action",
-                )
-                spec.source_description = ci_data.java_version.description
                 all_signals.append({
                     "source": "CI setup-java",
                     "version": version,
                     "priority": "1",
                 })
+                if not spec.version:
+                    spec.version = version
+                    spec.confidence = Confidence(
+                        level=Source.OBSERVED,
+                        reason="JDK version from CI setup-java action",
+                    )
+                    spec.source_description = ci_data.java_version.description
 
         if ci_data and ci_data.distribution:
             dist = str(ci_data.distribution.value).lower()

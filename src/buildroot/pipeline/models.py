@@ -47,6 +47,8 @@ class PomData:
     profiles: list[dict[str, Any]] = field(default_factory=list)
     modules: list[str] = field(default_factory=list)
     dependency_management: list[dict[str, str]] = field(default_factory=list)
+    scm: dict[str, str] = field(default_factory=dict)
+    url: str = ""
 
 
 @dataclass
