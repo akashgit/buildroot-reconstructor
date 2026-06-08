@@ -18,43 +18,43 @@ TEST_PACKAGES = [
     pytest.param(
         "org.springframework.boot", "spring-boot", "2.7.18",
         {"17", "8", "11"},
-        True,
+        False,  # Gradle-published flat POM on Maven Central, no parent
         id="spring-boot-2.7.18",
     ),
     pytest.param(
         "org.springframework.boot", "spring-boot-starter-web", "2.7.18",
         {"17", "8", "11"},
-        True,
+        False,  # Gradle-published flat POM
         id="spring-boot-starter-web-2.7.18",
     ),
     pytest.param(
         "org.springframework", "spring-core", "5.3.31",
         {"17", "8", "11"},
-        True,
+        False,  # Gradle-published flat POM
         id="spring-core-5.3.31",
     ),
     pytest.param(
         "org.springframework", "spring-context", "5.3.31",
         {"17", "8", "11"},
-        True,
+        False,  # Gradle-published flat POM
         id="spring-context-5.3.31",
     ),
     pytest.param(
         "org.springframework.cloud", "spring-cloud-config-server", "3.1.8",
         {"17", "8", "11"},
-        True,
+        True,  # Maven-built, has parent chain
         id="spring-cloud-config-server-3.1.8",
     ),
     pytest.param(
         "org.springframework.security", "spring-security-core", "5.8.9",
         {"17", "8", "11"},
-        True,
+        False,  # Gradle-published flat POM
         id="spring-security-core-5.8.9",
     ),
     pytest.param(
         "org.springframework.data", "spring-data-jpa", "2.7.18",
         {"17", "8", "11"},
-        True,
+        True,  # Maven-built, has parent chain
         id="spring-data-jpa-2.7.18",
     ),
     pytest.param(
@@ -66,13 +66,13 @@ TEST_PACKAGES = [
     pytest.param(
         "io.micrometer", "micrometer-core", "1.10.13",
         {"8", "11", "17"},
-        True,
+        False,  # Gradle-published flat POM
         id="micrometer-core-1.10.13",
     ),
     pytest.param(
         "org.apache.commons", "commons-lang3", "3.14.0",
         {"8", "11", "17", "21"},
-        False,
+        True,  # Maven-built, has parent chain
         id="commons-lang3-3.14.0",
     ),
 ]

@@ -103,21 +103,30 @@ def _strip_containerfile_to_setup(content: str) -> str:
     """
     lines = content.splitlines()
     result = []
-    skip_next_continuation = False
+    in_build_run = False
 
     for line in lines:
         stripped = line.strip()
 
-        if skip_next_continuation:
+        if in_build_run:
             if stripped.endswith("\\"):
                 continue
-            skip_next_continuation = False
+            in_build_run = False
             continue
 
         lower = stripped.lower()
-        if any(cmd in lower for cmd in ["mvn ", "maven ", "./mvnw", "gradle"]):
+
+        is_build_command = (
+            lower.startswith("run mvn ")
+            or lower.startswith("run ./mvnw")
+            or lower.startswith("run gradle ")
+            or lower.startswith("run ./gradlew")
+            or (lower.startswith("# build command:") and False)
+        )
+
+        if is_build_command:
             if stripped.endswith("\\"):
-                skip_next_continuation = True
+                in_build_run = True
             continue
 
         if lower.startswith("cmd ") or lower.startswith("entrypoint "):

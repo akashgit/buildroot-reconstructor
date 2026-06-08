@@ -273,7 +273,15 @@ class JdkResolver:
     def _map_distribution_to_image(self, distribution: str, version: str) -> str:
         dist_lower = distribution.lower()
         image_base = DISTRIBUTION_IMAGE_MAP.get(dist_lower, DEFAULT_IMAGE_BASE)
-        return f"{image_base}:{version}"
+        tag_version = self._normalize_version_for_tag(version)
+        return f"{image_base}:{tag_version}"
+
+    @staticmethod
+    def _normalize_version_for_tag(version: str) -> str:
+        """Normalize JDK version for Docker image tags (1.8 -> 8, 1.7 -> 7)."""
+        if version.startswith("1.") and len(version) >= 3:
+            return version[2:]
+        return version
 
     def _detect_conflicts(self, signals: list[dict[str, str]]) -> list[dict[str, str]]:
         versions = {}

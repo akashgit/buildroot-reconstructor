@@ -150,7 +150,7 @@ class ContainerfileGenerator:
             "source_repo": spec.source_repo,
             "git_tag": spec.git_tag,
             "timestamp": timestamp,
-            "jdk_version": jdk.version,
+            "jdk_version": self._normalize_jdk_version(jdk.version),
             "jdk_distribution": jdk.distribution,
             "jdk_source": jdk.source_description or jdk_source_str,
             "jdk_confidence": jdk_confidence_str,
@@ -213,6 +213,12 @@ class ContainerfileGenerator:
                 "scope": child.scope,
             })
         return deps
+
+    @staticmethod
+    def _normalize_jdk_version(version: str) -> str:
+        if version.startswith('1.') and len(version) >= 3:
+            return version[2:]
+        return version
 
     @staticmethod
     def map_runner_to_ubuntu(runner_os: str) -> str:
