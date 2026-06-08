@@ -72,7 +72,7 @@ ENV {{ key }}={{ value }}
 RUN apt-get update && \
     apt-get install -y --no-install-recommends git ca-certificates && \
     rm -rf /var/lib/apt/lists/*
-RUN git clone --depth 1 --branch {{ git_tag }} {{ source_repo }} /build
+RUN git clone --depth 1 --branch '{{ git_tag }}' '{{ source_repo }}' /build
 WORKDIR /build
 {% else %}
 WORKDIR /build

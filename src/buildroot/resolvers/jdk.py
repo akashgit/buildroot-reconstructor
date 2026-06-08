@@ -68,15 +68,15 @@ class JdkResolver:
 
         # Priority 1: CI setup-java java-version + distribution
         if ci_data and ci_data.java_version:
-            version = str(ci_data.java_version.value)
-            if version:
+            ci_jdk_version = str(ci_data.java_version.value)
+            if ci_jdk_version:
                 all_signals.append({
                     "source": "CI setup-java",
-                    "version": version,
+                    "version": ci_jdk_version,
                     "priority": "1",
                 })
                 if not spec.version:
-                    spec.version = version
+                    spec.version = ci_jdk_version
                     spec.confidence = Confidence(
                         level=Source.OBSERVED,
                         reason="JDK version from CI setup-java action",
