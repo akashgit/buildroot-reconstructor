@@ -33,4 +33,7 @@ where = ["src"]
 testpaths = ["tests"]
 markers = [
     "integration: tests that hit external services (Maven Central, etc.)",
+    "level1: Level 1 inference correctness verification",
+    "level2: Level 2 Podman build verification",
+    "slow: tests that take a long time to run (container builds, etc.)",
 ]
