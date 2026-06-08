@@ -224,8 +224,8 @@ class TestTemplateSrcAcquisition:
             content = (Path(tmpdir) / "Containerfile").read_text()
 
         assert "git clone" in content
-        assert "--branch v1.0.0" in content
-        assert "https://github.com/example/repo" in content
+        assert "--branch 'v1.0.0'" in content
+        assert "'https://github.com/example/repo'" in content
         assert "COPY . ." not in content
 
     def test_containerfile_has_copy_fallback_when_no_source(self):

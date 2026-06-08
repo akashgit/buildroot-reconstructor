@@ -30,6 +30,21 @@ from buildroot.utils.maven_central import MAVEN_CENTRAL_BASE, fetch_pom
 
 logger = logging.getLogger(__name__)
 
+_SHELL_UNSAFE_RE = re.compile(r"['\"`$\\;|&<>(){}!\n\r]")
+
+
+def _sanitize_shell_value(s: str) -> str:
+    return _SHELL_UNSAFE_RE.sub("", s)
+
+
+def _has_flag(cmd: str, flag: str) -> bool:
+    tokens = cmd.split()
+    if flag.startswith("-D") or flag.startswith("-P"):
+        prefix = flag.split("=")[0]
+        return any(t == flag or t.startswith(prefix + "=") or t == prefix for t in tokens)
+    return flag in tokens
+
+
 _MAVEN_DIST_VERSION_RE = re.compile(
     r"apache-maven-(\d+\.\d+\.\d+)"
 )
@@ -186,8 +201,8 @@ class BuildrootOrchestrator:
             ci_data=ci_data,
             jdk_spec=jdk_spec,
             dependency_tree=dep_tree,
-            source_repo=source_repo,
-            git_tag=git_tag,
+            source_repo=_sanitize_shell_value(source_repo),
+            git_tag=_sanitize_shell_value(git_tag),
             maven_version=maven_version,
         )
 
@@ -405,13 +420,13 @@ class BuildrootOrchestrator:
             for cmd in spec.build_commands:
                 if has_wrapper and cmd.startswith("mvn "):
                     cmd = "./mvnw " + cmd[4:]
-                if "-DskipTests" not in cmd and "skipTests" not in cmd:
+                if not _has_flag(cmd, "-DskipTests"):
                     cmd += " -DskipTests"
-                if has_gpg and "-Dgpg.skip" not in cmd:
+                if has_gpg and not _has_flag(cmd, "-Dgpg.skip"):
                     cmd += " -Dgpg.skip=true"
-                if has_rat and "-Drat.skip" not in cmd:
+                if has_rat and not _has_flag(cmd, "-Drat.skip"):
                     cmd += " -Drat.skip=true"
-                if is_apache and "-Papache-release" not in cmd:
+                if is_apache and not _has_flag(cmd, "-Papache-release"):
                     cmd += " -Papache-release"
                 enriched.append(cmd)
             spec.build_commands = enriched

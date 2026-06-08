@@ -182,6 +182,8 @@ def discover_git_tag(
         return f"v{version}"
 
     tags = resp.json()
+    if not isinstance(tags, list):
+        return f"v{version}"
     all_pages_tags: list[str] = [t.get("name", "") for t in tags]
 
     # If version not likely in first page, try a few more pages
@@ -194,7 +196,7 @@ def discover_git_tag(
             if next_resp is None:
                 break
             next_tags = next_resp.json()
-            if not next_tags:
+            if not isinstance(next_tags, list) or not next_tags:
                 break
             all_pages_tags.extend(t.get("name", "") for t in next_tags)
             if any(version in t for t in [t.get("name", "") for t in next_tags]):
