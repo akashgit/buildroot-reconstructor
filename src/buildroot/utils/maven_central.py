@@ -17,6 +17,7 @@ MAVEN_CENTRAL_BASE = "https://repo1.maven.org/maven2"
 DEFAULT_CACHE_DIR = Path.home() / ".cache" / "buildroot" / "poms"
 MAX_RETRIES = 3
 BACKOFF_BASE = 1.0
+_MAX_JAR_BYTES = 50 * 1024 * 1024  # 50 MB
 
 
 def _cache_key(group_id: str, artifact_id: str, version: str) -> str:
@@ -87,14 +88,29 @@ def fetch_jar_manifest_jdk(
         f"/{version}/{artifact_id}-{version}.jar"
     )
     try:
-        resp = requests.get(jar_url, timeout=30)
+        resp = requests.get(jar_url, timeout=30, stream=True)
         resp.raise_for_status()
+        content_length = resp.headers.get("Content-Length")
+        if content_length and int(content_length) > _MAX_JAR_BYTES:
+            logger.warning("JAR too large (%s bytes), skipping %s", content_length, jar_url)
+            resp.close()
+            return ""
+        chunks = []
+        downloaded = 0
+        for chunk in resp.iter_content(chunk_size=8192):
+            downloaded += len(chunk)
+            if downloaded > _MAX_JAR_BYTES:
+                logger.warning("JAR exceeded %d bytes during download, skipping %s", _MAX_JAR_BYTES, jar_url)
+                resp.close()
+                return ""
+            chunks.append(chunk)
+        resp.close()
     except requests.RequestException:
         logger.warning("Could not fetch JAR from %s", jar_url)
         return ""
 
     try:
-        jar_bytes = io.BytesIO(resp.content)
+        jar_bytes = io.BytesIO(b"".join(chunks))
         with zipfile.ZipFile(jar_bytes) as zf:
             manifest_path = "META-INF/MANIFEST.MF"
             if manifest_path not in zf.namelist():
