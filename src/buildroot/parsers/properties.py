@@ -1,0 +1,1 @@
+"""Maven property placeholder resolution."""
