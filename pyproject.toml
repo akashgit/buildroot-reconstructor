@@ -1,0 +1,39 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "buildroot"
+version = "0.1.0"
+description = "Reconstruct Maven artifact build environments as Containerfiles"
+requires-python = ">=3.11"
+dependencies = [
+    "lxml>=5.0",
+    "defusedxml>=0.7",
+    "ruamel.yaml>=0.18",
+    "jinja2>=3.1",
+    "dockerfile-parse>=2.0",
+    "requests>=2.31",
+    "click>=8.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+]
+
+[project.scripts]
+buildroot = "buildroot.cli.main:cli"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+markers = [
+    "integration: tests that hit external services (Maven Central, etc.)",
+    "level1: Level 1 inference correctness verification",
+    "level2: Level 2 Podman build verification",
+    "slow: tests that take a long time to run (container builds, etc.)",
+]
