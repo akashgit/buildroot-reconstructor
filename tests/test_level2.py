@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import shutil
 import subprocess
 import tempfile
 from pathlib import Path
@@ -153,7 +152,7 @@ class TestLevel2PodmanBuild:
     ):
         try:
             orchestrator = BuildrootOrchestrator(skip_deps=True)
-            spec = orchestrator.reconstruct(
+            orchestrator.reconstruct(
                 group_id,
                 artifact_id,
                 version,

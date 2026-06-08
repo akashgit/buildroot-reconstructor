@@ -7,7 +7,6 @@ from pathlib import Path
 
 from buildroot.generators.containerfile import ContainerfileGenerator, RUNNER_IMAGE_MAP
 from buildroot.pipeline.models import (
-    Annotated,
     BuildrootSpec,
     CIData,
     Confidence,

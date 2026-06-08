@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from buildroot.pipeline.models import Annotated, CIData, Confidence, PomData, Source
+from buildroot.pipeline.models import Annotated, CIData, PomData, Source
 from buildroot.resolvers.jdk import JdkResolver
 
 

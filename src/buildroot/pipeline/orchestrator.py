@@ -6,8 +6,6 @@ import io
 import json
 import logging
 import subprocess
-import sys
-import tempfile
 import zipfile
 from pathlib import Path
 
@@ -18,7 +16,7 @@ from buildroot.parsers.ci import CIParser
 from buildroot.parsers.pom import PomParser
 from buildroot.parsers.properties import PropertyResolver
 from buildroot.pipeline.gap_detector import GapDetector
-from buildroot.pipeline.models import BuildrootSpec, CIData, JdkSpec
+from buildroot.pipeline.models import BuildrootSpec, CIData
 from buildroot.resolvers.container_image import ContainerImageResolver
 from buildroot.resolvers.dependencies import DependencyResolver
 from buildroot.resolvers.jdk import JdkResolver

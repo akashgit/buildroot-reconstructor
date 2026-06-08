@@ -1,6 +1,5 @@
 """Reconstruct command — full pipeline from Maven coordinate to Containerfile."""
 
-import sys
 
 import click
 

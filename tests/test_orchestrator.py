@@ -5,21 +5,10 @@ from __future__ import annotations
 import json
 import tempfile
 from pathlib import Path
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
-from buildroot.pipeline.models import (
-    Annotated,
-    BuildrootSpec,
-    CIData,
-    Confidence,
-    DependencyNode,
-    GapReport,
-    JdkSpec,
-    PomData,
-    Source,
-)
 from buildroot.pipeline.orchestrator import BuildrootOrchestrator, parse_gav
 
 
