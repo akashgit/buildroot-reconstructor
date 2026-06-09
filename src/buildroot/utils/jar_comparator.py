@@ -372,16 +372,16 @@ def _layer3_bytecode(original: Path, rebuilt: Path) -> BytecodeResult:
                 if cfr_path:
                     orig_out = tmp / "cfr_orig"
                     rebu_out = tmp / "cfr_rebu"
-                    orig_out.mkdir(exist_ok=True)
-                    rebu_out.mkdir(exist_ok=True)
+                    shutil.rmtree(orig_out, ignore_errors=True)
+                    shutil.rmtree(rebu_out, ignore_errors=True)
+                    orig_out.mkdir()
+                    rebu_out.mkdir()
                     orig_src = _decompile_class_cfr(cfr_path, orig_file, orig_out)
                     rebu_src = _decompile_class_cfr(cfr_path, rebu_file, rebu_out)
                     if orig_src is not None and rebu_src is not None:
                         if orig_src == rebu_src:
                             result.classes_identical += 1
                             continue
-                    shutil.rmtree(orig_out, ignore_errors=True)
-                    shutil.rmtree(rebu_out, ignore_errors=True)
                 else:
                     orig_src = _decompile_class_javap(orig_file)
                     rebu_src = _decompile_class_javap(rebu_file)

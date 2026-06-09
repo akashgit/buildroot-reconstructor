@@ -11,6 +11,7 @@ from buildroot.utils.jar_comparator import (
     Verdict,
     _layer1_structural,
     _layer2_metadata,
+    _layer3_bytecode,
     _parse_manifest,
     _strip_properties_timestamps,
     compare_jars,
@@ -140,6 +141,63 @@ class TestLayer2Metadata:
         result = _layer2_metadata(orig, rebu)
         assert result.match
         assert result.resource_matches == 1
+
+
+class TestLayer3Bytecode:
+    def test_identical_class_bytes(self, tmp_path):
+        """Identical .class bytes should be counted as identical without decompilation."""
+        class_bytes = b"\xca\xfe\xba\xbe\x00\x00\x00\x34\x00\x0a" + b"\x00" * 50
+        orig = _create_jar(tmp_path / "orig.jar", {
+            "META-INF/MANIFEST.MF": b"Manifest-Version: 1.0\n",
+            "com/example/Foo.class": class_bytes,
+        })
+        rebu = _create_jar(tmp_path / "rebu.jar", {
+            "META-INF/MANIFEST.MF": b"Manifest-Version: 1.0\n",
+            "com/example/Foo.class": class_bytes,
+        })
+        result = _layer3_bytecode(orig, rebu)
+        assert result.match
+        assert result.classes_compared == 1
+        assert result.classes_identical == 1
+        assert result.classes_divergent == []
+
+    def test_divergent_class_bytes(self, tmp_path):
+        """Different .class bytes with no decompiler should be marked divergent."""
+        orig_bytes = b"\xca\xfe\xba\xbe\x00\x00\x00\x34\x00\x0a" + b"\x01" * 50
+        rebu_bytes = b"\xca\xfe\xba\xbe\x00\x00\x00\x34\x00\x0a" + b"\x02" * 50
+        orig = _create_jar(tmp_path / "orig.jar", {
+            "META-INF/MANIFEST.MF": b"Manifest-Version: 1.0\n",
+            "com/example/Bar.class": orig_bytes,
+        })
+        rebu = _create_jar(tmp_path / "rebu.jar", {
+            "META-INF/MANIFEST.MF": b"Manifest-Version: 1.0\n",
+            "com/example/Bar.class": rebu_bytes,
+        })
+        result = _layer3_bytecode(orig, rebu)
+        assert not result.match
+        assert result.classes_compared == 1
+        assert "com/example/Bar.class" in result.classes_divergent
+
+    def test_multiple_classes_mixed(self, tmp_path):
+        """Mix of identical and divergent .class files."""
+        same_bytes = b"\xca\xfe\xba\xbe\x00\x00\x00\x34" + b"\xaa" * 40
+        diff_a = b"\xca\xfe\xba\xbe\x00\x00\x00\x34" + b"\xbb" * 40
+        diff_b = b"\xca\xfe\xba\xbe\x00\x00\x00\x34" + b"\xcc" * 40
+        orig = _create_jar(tmp_path / "orig.jar", {
+            "META-INF/MANIFEST.MF": b"Manifest-Version: 1.0\n",
+            "com/Same.class": same_bytes,
+            "com/Diff.class": diff_a,
+        })
+        rebu = _create_jar(tmp_path / "rebu.jar", {
+            "META-INF/MANIFEST.MF": b"Manifest-Version: 1.0\n",
+            "com/Same.class": same_bytes,
+            "com/Diff.class": diff_b,
+        })
+        result = _layer3_bytecode(orig, rebu)
+        assert not result.match
+        assert result.classes_compared == 2
+        assert result.classes_identical == 1
+        assert "com/Diff.class" in result.classes_divergent
 
 
 class TestCompareJars:
