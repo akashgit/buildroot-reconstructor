@@ -338,12 +338,7 @@ def _decompile_class_javap(class_file: Path) -> str | None:
 def _layer3_bytecode(original: Path, rebuilt: Path) -> BytecodeResult:
     result = BytecodeResult()
     cfr_path = _find_cfr()
-    if cfr_path:
-        result.tool_used = "cfr"
-    elif shutil.which("javap"):
-        result.tool_used = "javap"
-    else:
-        result.tool_used = "none"
+    result.tool_used = 'cfr' if cfr_path else ('javap' if shutil.which('javap') else 'none')
 
     with zipfile.ZipFile(original) as zf_orig, zipfile.ZipFile(rebuilt) as zf_rebu:
         orig_classes = {n for n in zf_orig.namelist() if n.endswith(".class")}
@@ -365,9 +360,9 @@ def _layer3_bytecode(original: Path, rebuilt: Path) -> BytecodeResult:
                 orig_file = orig_dir / name
                 rebu_file = rebu_dir / name
 
-                if not orig_file.resolve().is_relative_to(orig_dir.resolve()):
-                    continue
-                if not rebu_file.resolve().is_relative_to(rebu_dir.resolve()):
+                resolved_orig = orig_file.resolve()
+                resolved_rebu = rebu_file.resolve()
+                if not resolved_orig.is_relative_to(orig_dir.resolve()) or not resolved_rebu.is_relative_to(rebu_dir.resolve()):
                     continue
 
                 orig_file.parent.mkdir(parents=True, exist_ok=True)
