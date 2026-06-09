@@ -17,6 +17,7 @@ Reconstruct build environments (buildroots) for Maven Central artifacts as Conta
 - src/**/*.py
 - src/**/*.j2
 - tests/**/*.py
+- results/**
 
 ### Read-only
 <!-- Files the factory may read but must never modify. -->
