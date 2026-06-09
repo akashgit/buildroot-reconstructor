@@ -5,6 +5,7 @@ from __future__ import annotations
 import io
 import json
 import logging
+import re
 import subprocess
 import zipfile
 from pathlib import Path
@@ -16,14 +17,47 @@ from buildroot.parsers.ci import CIParser
 from buildroot.parsers.pom import PomParser
 from buildroot.parsers.properties import PropertyResolver
 from buildroot.pipeline.gap_detector import GapDetector
-from buildroot.pipeline.models import BuildrootSpec, CIData
+from buildroot.pipeline.models import BuildrootSpec, CIData, PomData
 from buildroot.resolvers.container_image import ContainerImageResolver
 from buildroot.resolvers.dependencies import DependencyResolver
 from buildroot.resolvers.jdk import JdkResolver
-from buildroot.utils.github_api import discover_repo_from_pom
+from buildroot.utils.github_api import (
+    discover_git_tag,
+    discover_repo_from_pom,
+    fetch_maven_wrapper_properties,
+)
 from buildroot.utils.maven_central import MAVEN_CENTRAL_BASE, fetch_pom
 
 logger = logging.getLogger(__name__)
+
+_SHELL_UNSAFE_RE = re.compile(r"['\"`$\\;|&<>(){}!\n\r]")
+
+
+def _sanitize_shell_value(s: str) -> str:
+    return _SHELL_UNSAFE_RE.sub("", s)
+
+
+def _has_flag(cmd: str, flag: str) -> bool:
+    tokens = cmd.split()
+    if flag.startswith("-D") or flag.startswith("-P"):
+        prefix = flag.split("=")[0]
+        return any(t == flag or t.startswith(prefix + "=") or t == prefix for t in tokens)
+    return flag in tokens
+
+
+_MAVEN_DIST_VERSION_RE = re.compile(
+    r"apache-maven-(\d+\.\d+\.\d+)"
+)
+
+
+def _parse_maven_wrapper_version(content: str) -> str:
+    for line in content.splitlines():
+        line = line.strip()
+        if line.startswith("distributionUrl") or line.startswith("wrapperUrl"):
+            m = _MAVEN_DIST_VERSION_RE.search(line)
+            if m:
+                return m.group(1)
+    return ""
 
 
 def parse_gav(coordinate: str) -> tuple[str, str, str]:
@@ -116,7 +150,10 @@ class BuildrootOrchestrator:
 
         # 8. Resolve JDK
         jdk_resolver = JdkResolver()
-        jdk_spec = jdk_resolver.resolve(merged, ci_data, resolved_props)
+        jdk_spec = jdk_resolver.resolve(
+            merged, ci_data, resolved_props,
+            group_id=group_id, artifact_id=artifact_id, version=version,
+        )
 
         # 9. Resolve container images if CI references one
         container_result = None
@@ -143,19 +180,37 @@ class BuildrootOrchestrator:
                     children=dep_nodes,
                 )
 
-        # 11. Build BuildrootSpec
+        # 11. Discover git tag
+        if repo_owner and repo_name:
+            git_tag = discover_git_tag(
+                repo_owner, repo_name, artifact_id, version
+            )
+        else:
+            git_tag = f"v{version}"
+
+        # 12. Detect Maven wrapper version
+        maven_version = ""
+        if repo_owner and repo_name:
+            maven_version = self._detect_maven_wrapper_version(
+                repo_owner, repo_name
+            )
+
+        # 13. Build BuildrootSpec
         spec = BuildrootSpec(
             pom_data=merged,
             ci_data=ci_data,
             jdk_spec=jdk_spec,
             dependency_tree=dep_tree,
-            source_repo=source_repo,
-            git_tag=f"v{version}",
+            source_repo=_sanitize_shell_value(source_repo),
+            git_tag=_sanitize_shell_value(git_tag),
+            maven_version=maven_version,
         )
 
         if ci_data:
             spec.build_commands = list(ci_data.build_commands)
             spec.system_packages = list(ci_data.system_packages)
+
+        self._enrich_build_commands(spec, merged)
 
         if container_result:
             spec.base_image = container_result.get("base_image", "")
@@ -276,7 +331,10 @@ class BuildrootOrchestrator:
 
         # 5. Resolve JDK
         jdk_resolver = JdkResolver()
-        jdk_spec = jdk_resolver.resolve(merged, ci_data, resolved_props)
+        jdk_spec = jdk_resolver.resolve(
+            merged, ci_data, resolved_props,
+            group_id=group_id, artifact_id=artifact_id, version=version,
+        )
 
         parent_chain_info = []
         for p in chain:
@@ -330,6 +388,56 @@ class BuildrootOrchestrator:
     ) -> list[str]:
         _, yaml_texts = ci_parser.discover_ci_type(repo_owner, repo_name)
         return yaml_texts
+
+    def _enrich_build_commands(
+        self, spec: BuildrootSpec, pom_data: PomData
+    ) -> None:
+        plugin_artifact_ids = {
+            p.get("artifactId", "") for p in pom_data.build_plugins
+        }
+
+        has_gpg = "maven-gpg-plugin" in plugin_artifact_ids
+        has_rat = "apache-rat-plugin" in plugin_artifact_ids or any(
+            "rat" in p.get("artifactId", "").lower() for p in pom_data.build_plugins
+        )
+        is_apache = pom_data.group_id.startswith("org.apache")
+        has_wrapper = spec.maven_version != "" or any(
+            "./mvnw" in cmd for cmd in spec.build_commands
+        )
+
+        if not spec.build_commands:
+            base = "./mvnw" if has_wrapper else "mvn"
+            cmd = f"{base} clean install -B -DskipTests"
+            if has_gpg:
+                cmd += " -Dgpg.skip=true"
+            if has_rat:
+                cmd += " -Drat.skip=true"
+            if is_apache:
+                cmd += " -Papache-release"
+            spec.build_commands = [cmd]
+        else:
+            enriched = []
+            for cmd in spec.build_commands:
+                if has_wrapper and cmd.startswith("mvn "):
+                    cmd = "./mvnw " + cmd[4:]
+                if not _has_flag(cmd, "-DskipTests"):
+                    cmd += " -DskipTests"
+                if has_gpg and not _has_flag(cmd, "-Dgpg.skip"):
+                    cmd += " -Dgpg.skip=true"
+                if has_rat and not _has_flag(cmd, "-Drat.skip"):
+                    cmd += " -Drat.skip=true"
+                if is_apache and not _has_flag(cmd, "-Papache-release"):
+                    cmd += " -Papache-release"
+                enriched.append(cmd)
+            spec.build_commands = enriched
+
+    def _detect_maven_wrapper_version(
+        self, repo_owner: str, repo_name: str
+    ) -> str:
+        content = fetch_maven_wrapper_properties(repo_owner, repo_name)
+        if not content:
+            return ""
+        return _parse_maven_wrapper_version(content)
 
     def _merge_ci_data(self, target: CIData, source: CIData) -> None:
         if source.java_version and not target.java_version:

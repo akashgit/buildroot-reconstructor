@@ -81,6 +81,24 @@ _GITHUB_URL_PATTERNS = [
     re.compile(r"github\.com[:/]([^/]+)/([^/.]+?)(?:\.git)?(?:/|$)"),
 ]
 
+_GITBOX_RE = re.compile(
+    r"gitbox\.apache\.org/repos/asf/([^/.]+?)(?:\.git)?(?:/|$)"
+)
+
+
+def _normalize_scm_url(raw: str) -> str:
+    url = raw.strip()
+    for prefix in ("scm:git:", "scm:svn:", "scm:"):
+        if url.lower().startswith(prefix):
+            url = url[len(prefix):]
+            break
+    if url.startswith("git://"):
+        url = "https://" + url[6:]
+    if url.startswith("git@"):
+        url = url[4:]
+        url = "https://" + url.replace(":", "/", 1)
+    return url
+
 
 def discover_repo_from_pom(pom_data) -> tuple[str, str] | None:
     """Try to discover a GitHub repo owner/name from POM SCM or groupId."""
@@ -90,10 +108,12 @@ def discover_repo_from_pom(pom_data) -> tuple[str, str] | None:
         return None
 
     scm_urls: list[str] = []
-    for prop_key in ("scm.url", "scm.connection", "scm.developerConnection"):
-        parts = prop_key.split(".")
-        if len(parts) == 2 and parts[0] == "scm":
-            pass
+
+    for key in ("connection", "developerConnection", "url"):
+        val = pom_data.scm.get(key, "")
+        if val:
+            scm_urls.append(val)
+
     for plugin in pom_data.build_plugins:
         if plugin.get("artifactId") == "maven-scm-plugin":
             config = plugin.get("configuration", {})
@@ -104,10 +124,25 @@ def discover_repo_from_pom(pom_data) -> tuple[str, str] | None:
     if url_prop:
         scm_urls.append(url_prop)
 
-    for url in scm_urls:
-        match = _parse_github_url(url)
+    if pom_data.url:
+        scm_urls.append(pom_data.url)
+
+    for raw_url in scm_urls:
+        normalized = _normalize_scm_url(raw_url)
+
+        match = _parse_github_url(normalized)
         if match:
             return match
+
+        m = _GITBOX_RE.search(normalized)
+        if m:
+            repo_name = m.group(1)
+            return ("apache", repo_name)
+
+        m = _GITBOX_RE.search(raw_url)
+        if m:
+            repo_name = m.group(1)
+            return ("apache", repo_name)
 
     group_id = pom_data.group_id
     if group_id.startswith("org.springframework"):
@@ -121,6 +156,76 @@ def discover_repo_from_pom(pom_data) -> tuple[str, str] | None:
         return ("spring-projects", "spring-framework")
 
     return None
+
+
+def discover_git_tag(
+    repo_owner: str,
+    repo_name: str,
+    artifact_id: str,
+    version: str,
+) -> str:
+    """Discover the correct git tag for a version by querying GitHub API.
+
+    Tries patterns: v{version}, {artifactId}-{version},
+    rel/{artifactId}-{version}, bare {version}. Falls back to v{version}.
+    """
+    candidates = [
+        f"v{version}",
+        f"{artifact_id}-{version}",
+        f"rel/{artifact_id}-{version}",
+        version,
+    ]
+
+    url = f"{GITHUB_API}/repos/{repo_owner}/{repo_name}/tags?per_page=100"
+    resp = _get(url)
+    if resp is None:
+        return f"v{version}"
+
+    tags = resp.json()
+    if not isinstance(tags, list):
+        return f"v{version}"
+    all_pages_tags: list[str] = [t.get("name", "") for t in tags]
+
+    # If version not likely in first page, try a few more pages
+    if all_pages_tags and not any(version in t for t in all_pages_tags):
+        link_header = resp.headers.get("Link", "")
+        page = 2
+        while "next" in link_header and page <= 5:
+            next_url = f"{GITHUB_API}/repos/{repo_owner}/{repo_name}/tags?per_page=100&page={page}"
+            next_resp = _get(next_url)
+            if next_resp is None:
+                break
+            next_tags = next_resp.json()
+            if not isinstance(next_tags, list) or not next_tags:
+                break
+            all_pages_tags.extend(t.get("name", "") for t in next_tags)
+            if any(version in t for t in [t.get("name", "") for t in next_tags]):
+                break
+            link_header = next_resp.headers.get("Link", "")
+            page += 1
+
+    tag_set = set(all_pages_tags)
+
+    for candidate in candidates:
+        if candidate in tag_set:
+            logger.info("Matched git tag: %s", candidate)
+            return candidate
+
+    for tag_name in all_pages_tags:
+        if tag_name.endswith(version):
+            logger.info("Fuzzy-matched git tag: %s", tag_name)
+            return tag_name
+
+    return f"v{version}"
+
+
+def fetch_maven_wrapper_properties(
+    repo_owner: str, repo_name: str
+) -> str | None:
+    """Fetch .mvn/wrapper/maven-wrapper.properties from a GitHub repo."""
+    return fetch_file_content(
+        repo_owner, repo_name, ".mvn/wrapper/maven-wrapper.properties"
+    )
 
 
 def _parse_github_url(url: str) -> tuple[str, str] | None:

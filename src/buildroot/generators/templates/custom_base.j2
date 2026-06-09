@@ -30,9 +30,16 @@ ENV {{ key }}={{ value }}
 {% endfor %}
 {% endif %}
 
+{% if source_repo and git_tag %}
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends git ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+RUN git clone --depth 1 --branch '{{ git_tag }}' '{{ source_repo }}' /build
 WORKDIR /build
-
+{% else %}
+WORKDIR /build
 COPY . .
+{% endif %}
 
 # Build command: {{ build_command }} (source: {{ build_source }}, confidence: {{ build_confidence }})
 RUN {{ build_command }}

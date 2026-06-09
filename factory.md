@@ -15,6 +15,7 @@ Reconstruct build environments (buildroots) for Maven Central artifacts as Conta
 <!-- One path per line. Glob patterns are supported. -->
 
 - src/**/*.py
+- src/**/*.j2
 - tests/**/*.py
 
 ### Read-only

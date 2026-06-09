@@ -202,6 +202,17 @@ class PomParser:
                 if mod.text:
                     pom.modules.append(mod.text.strip())
 
+        scm_el = _find(root, "scm")
+        if scm_el is not None:
+            for key in ("url", "connection", "developerConnection", "tag"):
+                val = _text(scm_el, key)
+                if val:
+                    pom.scm[key] = val
+
+        url_val = _text(root, "url")
+        if url_val:
+            pom.url = url_val
+
         return pom
 
     def resolve_parent_chain(self, pom_data: PomData) -> list[PomData]:
@@ -297,6 +308,11 @@ class PomParser:
 
             if pom.profiles:
                 merged.profiles = pom.profiles
+
+            if pom.scm:
+                merged.scm.update(pom.scm)
+            if pom.url:
+                merged.url = pom.url
 
         full_chain_refs = []
         for p in chain:
