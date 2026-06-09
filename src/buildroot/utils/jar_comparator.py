@@ -294,7 +294,7 @@ def _find_cfr() -> str | None:
     cfr = shutil.which("cfr")
     if cfr:
         return cfr
-    for candidate in ["cfr.jar", "/usr/local/lib/cfr.jar", "/opt/cfr/cfr.jar"]:
+    for candidate in ["/usr/local/lib/cfr.jar", "/opt/cfr/cfr.jar"]:
         if Path(candidate).exists():
             return candidate
     return None
@@ -369,6 +369,9 @@ def _layer3_bytecode(original: Path, rebuilt: Path) -> BytecodeResult:
                     result.classes_identical += 1
                     continue
 
+                orig_src = None
+                rebu_src = None
+
                 if cfr_path:
                     orig_out = tmp / "cfr_orig"
                     rebu_out = tmp / "cfr_rebu"
@@ -382,7 +385,8 @@ def _layer3_bytecode(original: Path, rebuilt: Path) -> BytecodeResult:
                         if orig_src == rebu_src:
                             result.classes_identical += 1
                             continue
-                else:
+
+                if orig_src is None or rebu_src is None:
                     orig_src = _decompile_class_javap(orig_file)
                     rebu_src = _decompile_class_javap(rebu_file)
                     if orig_src is not None and rebu_src is not None:

@@ -154,22 +154,21 @@ def download_jar(
     dest_path.parent.mkdir(parents=True, exist_ok=True)
 
     logger.info("Downloading JAR from %s", url)
-    resp = requests.get(url, timeout=120, stream=True)
-    resp.raise_for_status()
+    with requests.get(url, timeout=120, stream=True) as resp:
+        resp.raise_for_status()
 
-    sha1 = hashlib.sha1()  # noqa: S324
-    downloaded = 0
-    with open(dest_path, "wb") as f:
-        for chunk in resp.iter_content(chunk_size=8192):
-            downloaded += len(chunk)
-            if downloaded > _MAX_JAR_BYTES:
-                dest_path.unlink(missing_ok=True)
-                raise ValueError(
-                    f"JAR exceeds size limit of {_MAX_JAR_BYTES} bytes: {url}"
-                )
-            f.write(chunk)
-            sha1.update(chunk)
-    resp.close()
+        sha1 = hashlib.sha1()  # noqa: S324
+        downloaded = 0
+        with open(dest_path, "wb") as f:
+            for chunk in resp.iter_content(chunk_size=8192):
+                downloaded += len(chunk)
+                if downloaded > _MAX_JAR_BYTES:
+                    dest_path.unlink(missing_ok=True)
+                    raise ValueError(
+                        f"JAR exceeds size limit of {_MAX_JAR_BYTES} bytes: {url}"
+                    )
+                f.write(chunk)
+                sha1.update(chunk)
 
     if verify_checksum:
         sha1_url = url + ".sha1"
