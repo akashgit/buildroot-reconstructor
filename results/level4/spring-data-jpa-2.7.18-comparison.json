@@ -1,0 +1,30 @@
+{
+  "coordinate": "org.springframework.data:spring-data-jpa:2.7.18",
+  "verdict": "FAILED",
+  "sha256_original": "a16bbbf5721d9c35cbb21ef3f079ae2c28fd9cb8d9d6451cacc0fa917e44620d",
+  "sha256_rebuilt": "",
+  "structural": {
+    "original_count": 0,
+    "rebuilt_count": 0,
+    "missing_entries": [],
+    "extra_entries": [],
+    "size_mismatches": [],
+    "crc_mismatches": [],
+    "match": false
+  },
+  "metadata": {
+    "manifest_match": false,
+    "manifest_diff_keys": [],
+    "resource_matches": 0,
+    "resource_mismatches": [],
+    "match": false
+  },
+  "bytecode": {
+    "tool_used": "",
+    "classes_compared": 0,
+    "classes_identical": 0,
+    "classes_divergent": [],
+    "match": false
+  },
+  "error": "Build failed on rh-h100-02: Podman short-name resolution enforced (eclipse-temurin:8-jdk)"
+}

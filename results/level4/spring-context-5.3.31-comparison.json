@@ -1,0 +1,30 @@
+{
+  "coordinate": "org.springframework:spring-context:5.3.31",
+  "verdict": "FAILED",
+  "sha256_original": "38def055d1e22b5514b1cb19cef4474e5c1b0d2127c483e7d014bde87c4a4cf3",
+  "sha256_rebuilt": "",
+  "structural": {
+    "original_count": 0,
+    "rebuilt_count": 0,
+    "missing_entries": [],
+    "extra_entries": [],
+    "size_mismatches": [],
+    "crc_mismatches": [],
+    "match": false
+  },
+  "metadata": {
+    "manifest_match": false,
+    "manifest_diff_keys": [],
+    "resource_matches": 0,
+    "resource_mismatches": [],
+    "match": false
+  },
+  "bytecode": {
+    "tool_used": "",
+    "classes_compared": 0,
+    "classes_identical": 0,
+    "classes_divergent": [],
+    "match": false
+  },
+  "error": "Build failed on rh-h100-03: Containerfile parse error: toJSON(github.event)"
+}

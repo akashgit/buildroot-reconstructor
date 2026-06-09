@@ -1,0 +1,30 @@
+{
+  "coordinate": "org.thymeleaf:thymeleaf-spring5:3.0.15.RELEASE",
+  "verdict": "FAILED",
+  "sha256_original": "d254da927435a517cfa1a5aed5b27b74818418981ef3b816e8da89e4390b52d5",
+  "sha256_rebuilt": "",
+  "structural": {
+    "original_count": 0,
+    "rebuilt_count": 0,
+    "missing_entries": [],
+    "extra_entries": [],
+    "size_mismatches": [],
+    "crc_mismatches": [],
+    "match": false
+  },
+  "metadata": {
+    "manifest_match": false,
+    "manifest_diff_keys": [],
+    "resource_matches": 0,
+    "resource_mismatches": [],
+    "match": false
+  },
+  "bytecode": {
+    "tool_used": "",
+    "classes_compared": 0,
+    "classes_identical": 0,
+    "classes_divergent": [],
+    "match": false
+  },
+  "error": "Build failed on rh-h100-01: Maven build failed: MissingProjectException (multi-module)"
+}

@@ -1,0 +1,30 @@
+{
+  "coordinate": "org.springframework:spring-core:5.3.31",
+  "verdict": "FAILED",
+  "sha256_original": "7013ed3da15a8d4be797f5c310f9aa1b196b97f2313bc41e60ef3f5627224fe9",
+  "sha256_rebuilt": "",
+  "structural": {
+    "original_count": 0,
+    "rebuilt_count": 0,
+    "missing_entries": [],
+    "extra_entries": [],
+    "size_mismatches": [],
+    "crc_mismatches": [],
+    "match": false
+  },
+  "metadata": {
+    "manifest_match": false,
+    "manifest_diff_keys": [],
+    "resource_matches": 0,
+    "resource_mismatches": [],
+    "match": false
+  },
+  "bytecode": {
+    "tool_used": "",
+    "classes_compared": 0,
+    "classes_identical": 0,
+    "classes_divergent": [],
+    "match": false
+  },
+  "error": "Build failed on rh-h100-03: Maven build failed: MissingProjectException (multi-module)"
+}

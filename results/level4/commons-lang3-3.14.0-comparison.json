@@ -1,0 +1,30 @@
+{
+  "coordinate": "org.apache.commons:commons-lang3:3.14.0",
+  "verdict": "FAILED",
+  "sha256_original": "7b96bf3ee68949abb5bc465559ac270e0551596fa34523fddf890ec418dde13c",
+  "sha256_rebuilt": "",
+  "structural": {
+    "original_count": 0,
+    "rebuilt_count": 0,
+    "missing_entries": [],
+    "extra_entries": [],
+    "size_mismatches": [],
+    "crc_mismatches": [],
+    "match": false
+  },
+  "metadata": {
+    "manifest_match": false,
+    "manifest_diff_keys": [],
+    "resource_matches": 0,
+    "resource_mismatches": [],
+    "match": false
+  },
+  "bytecode": {
+    "tool_used": "",
+    "classes_compared": 0,
+    "classes_identical": 0,
+    "classes_divergent": [],
+    "match": false
+  },
+  "error": "Build failed on rh-h100-01: Git tag v3.14.0 not found"
+}

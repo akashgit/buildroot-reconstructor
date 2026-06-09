@@ -1,0 +1,30 @@
+{
+  "coordinate": "org.springframework.security:spring-security-core:5.8.9",
+  "verdict": "FAILED",
+  "sha256_original": "28af3791e44421b944053a4b17678b60f69bce2ed4cf1e502f86e3d5fb563f4f",
+  "sha256_rebuilt": "",
+  "structural": {
+    "original_count": 0,
+    "rebuilt_count": 0,
+    "missing_entries": [],
+    "extra_entries": [],
+    "size_mismatches": [],
+    "crc_mismatches": [],
+    "match": false
+  },
+  "metadata": {
+    "manifest_match": false,
+    "manifest_diff_keys": [],
+    "resource_matches": 0,
+    "resource_mismatches": [],
+    "match": false
+  },
+  "bytecode": {
+    "tool_used": "",
+    "classes_compared": 0,
+    "classes_identical": 0,
+    "classes_divergent": [],
+    "match": false
+  },
+  "error": "Build failed on rh-h100-03: Containerfile parse error: secrets.GH_ACTIONS_REPO_TOKEN"
+}

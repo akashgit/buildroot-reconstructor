@@ -130,6 +130,66 @@ def fetch_jar_manifest_jdk(
     return ""
 
 
+def _jar_url(group_id: str, artifact_id: str, version: str) -> str:
+    group_path = group_id.replace(".", "/")
+    return f"{MAVEN_CENTRAL_BASE}/{group_path}/{artifact_id}/{version}/{artifact_id}-{version}.jar"
+
+
+def download_jar(
+    group_id: str,
+    artifact_id: str,
+    version: str,
+    dest_path: Path,
+    *,
+    verify_checksum: bool = True,
+) -> Path:
+    """Download a JAR from Maven Central and optionally verify its SHA-1 checksum.
+
+    Returns the path to the downloaded JAR.
+    Raises requests.HTTPError on download failure.
+    Raises ValueError if checksum verification fails.
+    """
+    url = _jar_url(group_id, artifact_id, version)
+    dest_path = Path(dest_path)
+    dest_path.parent.mkdir(parents=True, exist_ok=True)
+
+    logger.info("Downloading JAR from %s", url)
+    resp = requests.get(url, timeout=120, stream=True)
+    resp.raise_for_status()
+
+    sha1 = hashlib.sha1()  # noqa: S324
+    downloaded = 0
+    with open(dest_path, "wb") as f:
+        for chunk in resp.iter_content(chunk_size=8192):
+            downloaded += len(chunk)
+            if downloaded > _MAX_JAR_BYTES:
+                dest_path.unlink(missing_ok=True)
+                raise ValueError(
+                    f"JAR exceeds size limit of {_MAX_JAR_BYTES} bytes: {url}"
+                )
+            f.write(chunk)
+            sha1.update(chunk)
+    resp.close()
+
+    if verify_checksum:
+        sha1_url = url + ".sha1"
+        try:
+            sha1_resp = requests.get(sha1_url, timeout=30)
+            sha1_resp.raise_for_status()
+            expected = sha1_resp.text.strip().split()[0]
+            actual = sha1.hexdigest()
+            if actual != expected:
+                raise ValueError(
+                    f"SHA-1 mismatch for {url}: expected {expected}, got {actual}"
+                )
+            logger.info("SHA-1 verified for %s", dest_path)
+        except requests.RequestException:
+            logger.warning("Could not verify SHA-1 checksum for %s", url)
+
+    logger.info("Downloaded JAR to %s (%d bytes)", dest_path, downloaded)
+    return dest_path
+
+
 def _fetch_with_retry(url: str) -> str:
     last_exc: Exception | None = None
     for attempt in range(MAX_RETRIES):

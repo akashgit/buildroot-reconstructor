@@ -1,0 +1,30 @@
+{
+  "coordinate": "io.micrometer:micrometer-core:1.10.13",
+  "verdict": "FAILED",
+  "sha256_original": "15804f4267ece8abe8a59cfbcbff482c8f9d7676adaf3926b2c8a33cec365797",
+  "sha256_rebuilt": "",
+  "structural": {
+    "original_count": 0,
+    "rebuilt_count": 0,
+    "missing_entries": [],
+    "extra_entries": [],
+    "size_mismatches": [],
+    "crc_mismatches": [],
+    "match": false
+  },
+  "metadata": {
+    "manifest_match": false,
+    "manifest_diff_keys": [],
+    "resource_matches": 0,
+    "resource_mismatches": [],
+    "match": false
+  },
+  "bytecode": {
+    "tool_used": "",
+    "classes_compared": 0,
+    "classes_identical": 0,
+    "classes_divergent": [],
+    "match": false
+  },
+  "error": "Build failed on rh-h100-01: Containerfile parse error: secrets.GITHUB_TOKEN"
+}

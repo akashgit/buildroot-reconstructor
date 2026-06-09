@@ -1,0 +1,30 @@
+{
+  "coordinate": "org.springframework.boot:spring-boot-starter-web:2.7.18",
+  "verdict": "FAILED",
+  "sha256_original": "a74fab5f826b600e3c3f4cd7028c5c982b0bf1b849673629cbb758ae790a4c08",
+  "sha256_rebuilt": "",
+  "structural": {
+    "original_count": 0,
+    "rebuilt_count": 0,
+    "missing_entries": [],
+    "extra_entries": [],
+    "size_mismatches": [],
+    "crc_mismatches": [],
+    "match": false
+  },
+  "metadata": {
+    "manifest_match": false,
+    "manifest_diff_keys": [],
+    "resource_matches": 0,
+    "resource_mismatches": [],
+    "match": false
+  },
+  "bytecode": {
+    "tool_used": "",
+    "classes_compared": 0,
+    "classes_identical": 0,
+    "classes_divergent": [],
+    "match": false
+  },
+  "error": "Build failed on rh-h100-02: Containerfile parse error: secrets.GITHUB_TOKEN"
+}
