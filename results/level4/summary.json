@@ -2,51 +2,51 @@
   "total_packages": 10,
   "verdicts": {
     "IDENTICAL": 0,
-    "EQUIVALENT": 0,
-    "DIVERGENT": 0,
-    "FAILED": 10
+    "EQUIVALENT": 5,
+    "DIVERGENT": 5,
+    "FAILED": 0
   },
-  "reproducibility_score": 0.0,
+  "reproducibility_score": 0.5,
   "packages": [
     {
       "coordinate": "org.apache.commons:commons-lang3:3.14.0",
-      "verdict": "FAILED"
+      "verdict": "EQUIVALENT"
     },
     {
       "coordinate": "io.micrometer:micrometer-core:1.10.13",
-      "verdict": "FAILED"
-    },
-    {
-      "coordinate": "org.thymeleaf:thymeleaf-spring5:3.0.15.RELEASE",
-      "verdict": "FAILED"
-    },
-    {
-      "coordinate": "org.springframework.data:spring-data-jpa:2.7.18",
-      "verdict": "FAILED"
-    },
-    {
-      "coordinate": "org.springframework.cloud:spring-cloud-config-server:3.1.8",
-      "verdict": "FAILED"
-    },
-    {
-      "coordinate": "org.springframework.boot:spring-boot-starter-web:2.7.18",
-      "verdict": "FAILED"
-    },
-    {
-      "coordinate": "org.springframework.security:spring-security-core:5.8.9",
-      "verdict": "FAILED"
-    },
-    {
-      "coordinate": "org.springframework:spring-core:5.3.31",
-      "verdict": "FAILED"
-    },
-    {
-      "coordinate": "org.springframework:spring-context:5.3.31",
-      "verdict": "FAILED"
+      "verdict": "DIVERGENT"
     },
     {
       "coordinate": "org.springframework.boot:spring-boot:2.7.18",
-      "verdict": "FAILED"
+      "verdict": "DIVERGENT"
+    },
+    {
+      "coordinate": "org.springframework.boot:spring-boot-starter-web:2.7.18",
+      "verdict": "EQUIVALENT"
+    },
+    {
+      "coordinate": "org.springframework.cloud:spring-cloud-config-server:3.1.8",
+      "verdict": "EQUIVALENT"
+    },
+    {
+      "coordinate": "org.springframework:spring-context:5.3.31",
+      "verdict": "DIVERGENT"
+    },
+    {
+      "coordinate": "org.springframework:spring-core:5.3.31",
+      "verdict": "DIVERGENT"
+    },
+    {
+      "coordinate": "org.springframework.data:spring-data-jpa:2.7.18",
+      "verdict": "DIVERGENT"
+    },
+    {
+      "coordinate": "org.springframework.security:spring-security-core:5.8.9",
+      "verdict": "EQUIVALENT"
+    },
+    {
+      "coordinate": "org.thymeleaf:thymeleaf-spring5:3.0.15.RELEASE",
+      "verdict": "EQUIVALENT"
     }
   ]
 }

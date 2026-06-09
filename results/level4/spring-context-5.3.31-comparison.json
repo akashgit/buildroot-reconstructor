@@ -1,30 +1,43 @@
 {
   "coordinate": "org.springframework:spring-context:5.3.31",
-  "verdict": "FAILED",
+  "verdict": "DIVERGENT",
   "sha256_original": "38def055d1e22b5514b1cb19cef4474e5c1b0d2127c483e7d014bde87c4a4cf3",
-  "sha256_rebuilt": "",
+  "sha256_rebuilt": "58bba74ba7e8cd57d6789333d540c24dcda291aee1a71cb4c3bf342ade8289e4",
   "structural": {
-    "original_count": 0,
-    "rebuilt_count": 0,
+    "original_count": 979,
+    "rebuilt_count": 979,
     "missing_entries": [],
     "extra_entries": [],
     "size_mismatches": [],
-    "crc_mismatches": [],
+    "crc_mismatches": [
+      {
+        "entry": "META-INF/MANIFEST.MF",
+        "original_crc": 3105088584,
+        "rebuilt_crc": 3284245590
+      },
+      {
+        "entry": "META-INF/notice.txt",
+        "original_crc": 1484995066,
+        "rebuilt_crc": 4221326261
+      }
+    ],
     "match": false
   },
   "metadata": {
-    "manifest_match": false,
+    "manifest_match": true,
     "manifest_diff_keys": [],
-    "resource_matches": 0,
-    "resource_mismatches": [],
+    "resource_matches": 16,
+    "resource_mismatches": [
+      "META-INF/notice.txt"
+    ],
     "match": false
   },
   "bytecode": {
-    "tool_used": "",
-    "classes_compared": 0,
-    "classes_identical": 0,
+    "tool_used": "none",
+    "classes_compared": 892,
+    "classes_identical": 892,
     "classes_divergent": [],
-    "match": false
+    "match": true
   },
-  "error": "Build failed on rh-h100-03: Containerfile parse error: toJSON(github.event)"
+  "error": null
 }

@@ -1,30 +1,30 @@
 {
   "coordinate": "org.springframework.cloud:spring-cloud-config-server:3.1.8",
-  "verdict": "FAILED",
+  "verdict": "EQUIVALENT",
   "sha256_original": "10215537c4b4ca137f6105833d6b9881be7172b8cc7a3137d4b9892038c780ed",
-  "sha256_rebuilt": "",
+  "sha256_rebuilt": "d5b098fc5781468b24729a66d4640d9d6e5caafdcd6d86a870286e177659208a",
   "structural": {
-    "original_count": 0,
-    "rebuilt_count": 0,
+    "original_count": 294,
+    "rebuilt_count": 294,
     "missing_entries": [],
     "extra_entries": [],
     "size_mismatches": [],
     "crc_mismatches": [],
-    "match": false
+    "match": true
   },
   "metadata": {
-    "manifest_match": false,
+    "manifest_match": true,
     "manifest_diff_keys": [],
-    "resource_matches": 0,
+    "resource_matches": 6,
     "resource_mismatches": [],
-    "match": false
+    "match": true
   },
   "bytecode": {
-    "tool_used": "",
-    "classes_compared": 0,
-    "classes_identical": 0,
+    "tool_used": "none",
+    "classes_compared": 264,
+    "classes_identical": 264,
     "classes_divergent": [],
-    "match": false
+    "match": true
   },
-  "error": "Build failed on rh-h100-02: Containerfile parse error: secrets.GITHUB_TOKEN"
+  "error": null
 }

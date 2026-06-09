@@ -1,30 +1,44 @@
 {
   "coordinate": "org.springframework.data:spring-data-jpa:2.7.18",
-  "verdict": "FAILED",
+  "verdict": "DIVERGENT",
   "sha256_original": "a16bbbf5721d9c35cbb21ef3f079ae2c28fd9cb8d9d6451cacc0fa917e44620d",
-  "sha256_rebuilt": "",
+  "sha256_rebuilt": "703f16ebeeb26093775514efa20979e88958571b21060abd06c43d809c1d811f",
   "structural": {
-    "original_count": 0,
-    "rebuilt_count": 0,
+    "original_count": 266,
+    "rebuilt_count": 266,
     "missing_entries": [],
     "extra_entries": [],
-    "size_mismatches": [],
-    "crc_mismatches": [],
+    "size_mismatches": [
+      {
+        "entry": "builddef.lst",
+        "original_size": 10554,
+        "rebuilt_size": 6512
+      }
+    ],
+    "crc_mismatches": [
+      {
+        "entry": "builddef.lst",
+        "original_crc": 2186725001,
+        "rebuilt_crc": 3176166949
+      }
+    ],
     "match": false
   },
   "metadata": {
-    "manifest_match": false,
+    "manifest_match": true,
     "manifest_diff_keys": [],
-    "resource_matches": 0,
-    "resource_mismatches": [],
+    "resource_matches": 16,
+    "resource_mismatches": [
+      "builddef.lst"
+    ],
     "match": false
   },
   "bytecode": {
-    "tool_used": "",
-    "classes_compared": 0,
-    "classes_identical": 0,
+    "tool_used": "none",
+    "classes_compared": 224,
+    "classes_identical": 224,
     "classes_divergent": [],
-    "match": false
+    "match": true
   },
-  "error": "Build failed on rh-h100-02: Podman short-name resolution enforced (eclipse-temurin:8-jdk)"
+  "error": null
 }

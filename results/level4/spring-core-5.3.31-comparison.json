@@ -1,30 +1,43 @@
 {
   "coordinate": "org.springframework:spring-core:5.3.31",
-  "verdict": "FAILED",
+  "verdict": "DIVERGENT",
   "sha256_original": "7013ed3da15a8d4be797f5c310f9aa1b196b97f2313bc41e60ef3f5627224fe9",
-  "sha256_rebuilt": "",
+  "sha256_rebuilt": "4a5eaca4bfb6942a53b53faf3ddf979aafc0732c221781eb9a1f386ec8f1d39d",
   "structural": {
-    "original_count": 0,
-    "rebuilt_count": 0,
+    "original_count": 1037,
+    "rebuilt_count": 1037,
     "missing_entries": [],
     "extra_entries": [],
     "size_mismatches": [],
-    "crc_mismatches": [],
+    "crc_mismatches": [
+      {
+        "entry": "META-INF/MANIFEST.MF",
+        "original_crc": 2988559313,
+        "rebuilt_crc": 704415031
+      },
+      {
+        "entry": "META-INF/notice.txt",
+        "original_crc": 1484995066,
+        "rebuilt_crc": 4221326261
+      }
+    ],
     "match": false
   },
   "metadata": {
-    "manifest_match": false,
+    "manifest_match": true,
     "manifest_diff_keys": [],
-    "resource_matches": 0,
-    "resource_mismatches": [],
+    "resource_matches": 4,
+    "resource_mismatches": [
+      "META-INF/notice.txt"
+    ],
     "match": false
   },
   "bytecode": {
-    "tool_used": "",
-    "classes_compared": 0,
-    "classes_identical": 0,
+    "tool_used": "none",
+    "classes_compared": 978,
+    "classes_identical": 978,
     "classes_divergent": [],
-    "match": false
+    "match": true
   },
-  "error": "Build failed on rh-h100-03: Maven build failed: MissingProjectException (multi-module)"
+  "error": null
 }

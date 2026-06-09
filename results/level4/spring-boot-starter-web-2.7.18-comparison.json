@@ -1,30 +1,42 @@
 {
   "coordinate": "org.springframework.boot:spring-boot-starter-web:2.7.18",
-  "verdict": "FAILED",
+  "verdict": "EQUIVALENT",
   "sha256_original": "a74fab5f826b600e3c3f4cd7028c5c982b0bf1b849673629cbb758ae790a4c08",
-  "sha256_rebuilt": "",
+  "sha256_rebuilt": "875160fcbdbb4903f2d4d5adaf61bbb252b6bcc1f152632741a5c687bd335ae6",
   "structural": {
-    "original_count": 0,
-    "rebuilt_count": 0,
+    "original_count": 4,
+    "rebuilt_count": 4,
     "missing_entries": [],
     "extra_entries": [],
-    "size_mismatches": [],
-    "crc_mismatches": [],
+    "size_mismatches": [
+      {
+        "entry": "META-INF/MANIFEST.MF",
+        "original_size": 339,
+        "rebuilt_size": 336
+      }
+    ],
+    "crc_mismatches": [
+      {
+        "entry": "META-INF/MANIFEST.MF",
+        "original_crc": 321069042,
+        "rebuilt_crc": 805415857
+      }
+    ],
     "match": false
   },
   "metadata": {
-    "manifest_match": false,
+    "manifest_match": true,
     "manifest_diff_keys": [],
-    "resource_matches": 0,
+    "resource_matches": 2,
     "resource_mismatches": [],
-    "match": false
+    "match": true
   },
   "bytecode": {
-    "tool_used": "",
+    "tool_used": "none",
     "classes_compared": 0,
     "classes_identical": 0,
     "classes_divergent": [],
-    "match": false
+    "match": true
   },
-  "error": "Build failed on rh-h100-02: Containerfile parse error: secrets.GITHUB_TOKEN"
+  "error": null
 }

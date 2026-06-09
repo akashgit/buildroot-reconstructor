@@ -1,30 +1,36 @@
 {
   "coordinate": "org.springframework.security:spring-security-core:5.8.9",
-  "verdict": "FAILED",
+  "verdict": "EQUIVALENT",
   "sha256_original": "28af3791e44421b944053a4b17678b60f69bce2ed4cf1e502f86e3d5fb563f4f",
-  "sha256_rebuilt": "",
+  "sha256_rebuilt": "cb7aa85b6083f97f183247dc8c2e4d49ad36bdbfee2f12bcf93807817511b4a7",
   "structural": {
-    "original_count": 0,
-    "rebuilt_count": 0,
+    "original_count": 430,
+    "rebuilt_count": 430,
     "missing_entries": [],
     "extra_entries": [],
     "size_mismatches": [],
-    "crc_mismatches": [],
+    "crc_mismatches": [
+      {
+        "entry": "META-INF/MANIFEST.MF",
+        "original_crc": 3110739746,
+        "rebuilt_crc": 1398794267
+      }
+    ],
     "match": false
   },
   "metadata": {
-    "manifest_match": false,
+    "manifest_match": true,
     "manifest_diff_keys": [],
-    "resource_matches": 0,
+    "resource_matches": 22,
     "resource_mismatches": [],
-    "match": false
+    "match": true
   },
   "bytecode": {
-    "tool_used": "",
-    "classes_compared": 0,
-    "classes_identical": 0,
+    "tool_used": "none",
+    "classes_compared": 361,
+    "classes_identical": 361,
     "classes_divergent": [],
-    "match": false
+    "match": true
   },
-  "error": "Build failed on rh-h100-03: Containerfile parse error: secrets.GH_ACTIONS_REPO_TOKEN"
+  "error": null
 }

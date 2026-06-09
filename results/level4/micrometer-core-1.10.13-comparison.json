@@ -1,30 +1,3446 @@
 {
   "coordinate": "io.micrometer:micrometer-core:1.10.13",
-  "verdict": "FAILED",
+  "verdict": "DIVERGENT",
   "sha256_original": "15804f4267ece8abe8a59cfbcbff482c8f9d7676adaf3926b2c8a33cec365797",
-  "sha256_rebuilt": "",
+  "sha256_rebuilt": "98a871821b46b95bb24a697f927193cf6352c4fcfac0f86ae22629f3f42cd898",
   "structural": {
-    "original_count": 0,
-    "rebuilt_count": 0,
+    "original_count": 534,
+    "rebuilt_count": 534,
     "missing_entries": [],
     "extra_entries": [],
-    "size_mismatches": [],
-    "crc_mismatches": [],
+    "size_mismatches": [
+      {
+        "entry": "META-INF/MANIFEST.MF",
+        "original_size": 894,
+        "rebuilt_size": 866
+      },
+      {
+        "entry": "META-INF/micrometer-core.properties",
+        "original_size": 778,
+        "rebuilt_size": 750
+      },
+      {
+        "entry": "io/micrometer/core/aop/TimedAspect.class",
+        "original_size": 12928,
+        "rebuilt_size": 12926
+      },
+      {
+        "entry": "io/micrometer/core/instrument/Meter$Type.class",
+        "original_size": 1452,
+        "rebuilt_size": 1348
+      },
+      {
+        "entry": "io/micrometer/core/instrument/MeterRegistry$1.class",
+        "original_size": 1593,
+        "rebuilt_size": 1535
+      },
+      {
+        "entry": "io/micrometer/core/instrument/MeterRegistry$Config.class",
+        "original_size": 6993,
+        "rebuilt_size": 6963
+      },
+      {
+        "entry": "io/micrometer/core/instrument/MeterRegistry$More.class",
+        "original_size": 12525,
+        "rebuilt_size": 12495
+      },
+      {
+        "entry": "io/micrometer/core/instrument/MeterRegistry.class",
+        "original_size": 32989,
+        "rebuilt_size": 32986
+      },
+      {
+        "entry": "io/micrometer/core/instrument/Statistic.class",
+        "original_size": 1838,
+        "rebuilt_size": 1730
+      },
+      {
+        "entry": "io/micrometer/core/instrument/Tag.class",
+        "original_size": 1032,
+        "rebuilt_size": 1002
+      },
+      {
+        "entry": "io/micrometer/core/instrument/Tags$ArrayIterator.class",
+        "original_size": 1688,
+        "rebuilt_size": 1658
+      },
+      {
+        "entry": "io/micrometer/core/instrument/Tags.class",
+        "original_size": 7924,
+        "rebuilt_size": 7920
+      },
+      {
+        "entry": "io/micrometer/core/instrument/Timer$Builder.class",
+        "original_size": 7361,
+        "rebuilt_size": 7184
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/cache/CaffeineStatsCounter.class",
+        "original_size": 9193,
+        "rebuilt_size": 9192
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/commonspool2/CommonsObjectPool2Metrics.class",
+        "original_size": 20920,
+        "rebuilt_size": 20862
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/db/PostgreSQLDatabaseMetrics.class",
+        "original_size": 15155,
+        "rebuilt_size": 15137
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/DefaultGrpcClientObservationConvention.class",
+        "original_size": 2965,
+        "rebuilt_size": 2924
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/DefaultGrpcServerObservationConvention.class",
+        "original_size": 2965,
+        "rebuilt_size": 2924
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$1.class",
+        "original_size": 1485,
+        "rebuilt_size": 1451
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$2.class",
+        "original_size": 1571,
+        "rebuilt_size": 1537
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$GrpcClientEvents$1.class",
+        "original_size": 1007,
+        "rebuilt_size": 973
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$GrpcClientEvents$2.class",
+        "original_size": 1011,
+        "rebuilt_size": 977
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$GrpcClientEvents.class",
+        "original_size": 2351,
+        "rebuilt_size": 2247
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$GrpcServerEvents$1.class",
+        "original_size": 1011,
+        "rebuilt_size": 977
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$GrpcServerEvents$2.class",
+        "original_size": 1007,
+        "rebuilt_size": 973
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$GrpcServerEvents.class",
+        "original_size": 2351,
+        "rebuilt_size": 2247
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$LowCardinalityKeyNames$1.class",
+        "original_size": 1038,
+        "rebuilt_size": 1004
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$LowCardinalityKeyNames$2.class",
+        "original_size": 1036,
+        "rebuilt_size": 1002
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$LowCardinalityKeyNames$3.class",
+        "original_size": 1039,
+        "rebuilt_size": 1005
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$LowCardinalityKeyNames$4.class",
+        "original_size": 1042,
+        "rebuilt_size": 1008
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$LowCardinalityKeyNames$5.class",
+        "original_size": 1044,
+        "rebuilt_size": 1010
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$LowCardinalityKeyNames.class",
+        "original_size": 2826,
+        "rebuilt_size": 2722
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation.class",
+        "original_size": 2347,
+        "rebuilt_size": 2243
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/http/Outcome.class",
+        "original_size": 2122,
+        "rebuilt_size": 2018
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/httpcomponents/ApacheHttpClientObservationDocumentation$1.class",
+        "original_size": 1658,
+        "rebuilt_size": 1624
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/httpcomponents/ApacheHttpClientObservationDocumentation$ApacheHttpClientKeyNames$1.class",
+        "original_size": 1186,
+        "rebuilt_size": 1152
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/httpcomponents/ApacheHttpClientObservationDocumentation$ApacheHttpClientKeyNames$2.class",
+        "original_size": 1186,
+        "rebuilt_size": 1152
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/httpcomponents/ApacheHttpClientObservationDocumentation$ApacheHttpClientKeyNames$3.class",
+        "original_size": 1183,
+        "rebuilt_size": 1149
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/httpcomponents/ApacheHttpClientObservationDocumentation$ApacheHttpClientKeyNames$4.class",
+        "original_size": 1270,
+        "rebuilt_size": 1236
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/httpcomponents/ApacheHttpClientObservationDocumentation$ApacheHttpClientKeyNames$5.class",
+        "original_size": 1268,
+        "rebuilt_size": 1234
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/httpcomponents/ApacheHttpClientObservationDocumentation$ApacheHttpClientKeyNames$6.class",
+        "original_size": 1268,
+        "rebuilt_size": 1234
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/httpcomponents/ApacheHttpClientObservationDocumentation$ApacheHttpClientKeyNames.class",
+        "original_size": 3383,
+        "rebuilt_size": 3279
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/httpcomponents/ApacheHttpClientObservationDocumentation.class",
+        "original_size": 2200,
+        "rebuilt_size": 2096
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/httpcomponents/DefaultApacheHttpClientObservationConvention.class",
+        "original_size": 4790,
+        "rebuilt_size": 4749
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/httpcomponents/DefaultUriMapper.class",
+        "original_size": 1255,
+        "rebuilt_size": 1225
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/DefaultJerseyObservationConvention.class",
+        "original_size": 3163,
+        "rebuilt_size": 3122
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/JerseyObservationDocumentation$1.class",
+        "original_size": 1589,
+        "rebuilt_size": 1555
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/JerseyObservationDocumentation$JerseyLegacyLowCardinalityTags$1.class",
+        "original_size": 1135,
+        "rebuilt_size": 1101
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/JerseyObservationDocumentation$JerseyLegacyLowCardinalityTags$2.class",
+        "original_size": 1134,
+        "rebuilt_size": 1100
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/JerseyObservationDocumentation$JerseyLegacyLowCardinalityTags$3.class",
+        "original_size": 1131,
+        "rebuilt_size": 1097
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/JerseyObservationDocumentation$JerseyLegacyLowCardinalityTags$4.class",
+        "original_size": 1137,
+        "rebuilt_size": 1103
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/JerseyObservationDocumentation$JerseyLegacyLowCardinalityTags$5.class",
+        "original_size": 1134,
+        "rebuilt_size": 1100
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/JerseyObservationDocumentation$JerseyLegacyLowCardinalityTags.class",
+        "original_size": 3156,
+        "rebuilt_size": 3052
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/JerseyObservationDocumentation.class",
+        "original_size": 2173,
+        "rebuilt_size": 2069
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jetty/TimedHandler$1.class",
+        "original_size": 1020,
+        "rebuilt_size": 990
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jpa/HibernateMetrics.class",
+        "original_size": 15341,
+        "rebuilt_size": 15311
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jpa/HibernateQueryMetrics$MetricsEventHandler.class",
+        "original_size": 6464,
+        "rebuilt_size": 6430
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jvm/ExecutorServiceMetrics.class",
+        "original_size": 16141,
+        "rebuilt_size": 16103
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jvm/JvmGcMetrics$GcGenerationAge.class",
+        "original_size": 2048,
+        "rebuilt_size": 1944
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jvm/JvmGcMetrics$GcMetricsNotificationListener.class",
+        "original_size": 7337,
+        "rebuilt_size": 7303
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jvm/JvmGcMetrics.class",
+        "original_size": 12423,
+        "rebuilt_size": 12412
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jvm/JvmHeapPressureMetrics.class",
+        "original_size": 10919,
+        "rebuilt_size": 10914
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/kafka/KafkaClientMetrics.class",
+        "original_size": 3874,
+        "rebuilt_size": 3844
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/kafka/KafkaConsumerMetrics$1.class",
+        "original_size": 2946,
+        "rebuilt_size": 2884
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/kafka/KafkaConsumerMetrics.class",
+        "original_size": 29427,
+        "rebuilt_size": 29298
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/kafka/KafkaMetrics.class",
+        "original_size": 21523,
+        "rebuilt_size": 21452
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/kafka/KafkaStreamsMetrics.class",
+        "original_size": 2256,
+        "rebuilt_size": 2226
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/logging/Log4j2Metrics$MetricsFilter.class",
+        "original_size": 4370,
+        "rebuilt_size": 4328
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/logging/LogbackMetrics$1.class",
+        "original_size": 2381,
+        "rebuilt_size": 2351
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/DefaultOkHttpObservationConvention.class",
+        "original_size": 10666,
+        "rebuilt_size": 10625
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpConnectionPoolMetrics$ConnectionPoolConnectionStats.class",
+        "original_size": 2098,
+        "rebuilt_size": 2068
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpMetricsEventListener.class",
+        "original_size": 11559,
+        "rebuilt_size": 11550
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationDocumentation$1.class",
+        "original_size": 1547,
+        "rebuilt_size": 1513
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationDocumentation$OkHttpLegacyLowCardinalityTags$1.class",
+        "original_size": 1105,
+        "rebuilt_size": 1071
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationDocumentation$OkHttpLegacyLowCardinalityTags$2.class",
+        "original_size": 1103,
+        "rebuilt_size": 1069
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationDocumentation$OkHttpLegacyLowCardinalityTags$3.class",
+        "original_size": 1103,
+        "rebuilt_size": 1069
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationDocumentation$OkHttpLegacyLowCardinalityTags$4.class",
+        "original_size": 1096,
+        "rebuilt_size": 1062
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationDocumentation$OkHttpLegacyLowCardinalityTags$5.class",
+        "original_size": 1098,
+        "rebuilt_size": 1064
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationDocumentation$OkHttpLegacyLowCardinalityTags$6.class",
+        "original_size": 1095,
+        "rebuilt_size": 1061
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationDocumentation$OkHttpLegacyLowCardinalityTags$7.class",
+        "original_size": 1098,
+        "rebuilt_size": 1064
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationDocumentation$OkHttpLegacyLowCardinalityTags.class",
+        "original_size": 3440,
+        "rebuilt_size": 3336
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationDocumentation.class",
+        "original_size": 2113,
+        "rebuilt_size": 2009
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/tomcat/TomcatMetrics$1.class",
+        "original_size": 3134,
+        "rebuilt_size": 3076
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/tomcat/TomcatMetrics.class",
+        "original_size": 25642,
+        "rebuilt_size": 25583
+      },
+      {
+        "entry": "io/micrometer/core/instrument/composite/CompositeCounter.class",
+        "original_size": 2696,
+        "rebuilt_size": 2666
+      },
+      {
+        "entry": "io/micrometer/core/instrument/composite/CompositeDistributionSummary.class",
+        "original_size": 4846,
+        "rebuilt_size": 4816
+      },
+      {
+        "entry": "io/micrometer/core/instrument/composite/CompositeFunctionCounter.class",
+        "original_size": 3562,
+        "rebuilt_size": 3532
+      },
+      {
+        "entry": "io/micrometer/core/instrument/composite/CompositeFunctionTimer.class",
+        "original_size": 4143,
+        "rebuilt_size": 4113
+      },
+      {
+        "entry": "io/micrometer/core/instrument/composite/CompositeGauge.class",
+        "original_size": 3395,
+        "rebuilt_size": 3365
+      },
+      {
+        "entry": "io/micrometer/core/instrument/composite/CompositeLongTaskTimer.class",
+        "original_size": 5932,
+        "rebuilt_size": 5902
+      },
+      {
+        "entry": "io/micrometer/core/instrument/composite/CompositeTimeGauge.class",
+        "original_size": 3719,
+        "rebuilt_size": 3689
+      },
+      {
+        "entry": "io/micrometer/core/instrument/composite/CompositeTimer.class",
+        "original_size": 8865,
+        "rebuilt_size": 8835
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/MeterFilter$1.class",
+        "original_size": 1250,
+        "rebuilt_size": 1230
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/MeterFilter$10.class",
+        "original_size": 2449,
+        "rebuilt_size": 2429
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/MeterFilter$11.class",
+        "original_size": 2337,
+        "rebuilt_size": 2317
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/MeterFilter$12.class",
+        "original_size": 2449,
+        "rebuilt_size": 2429
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/MeterFilter$13.class",
+        "original_size": 2337,
+        "rebuilt_size": 2317
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/MeterFilter$2.class",
+        "original_size": 2179,
+        "rebuilt_size": 2159
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/MeterFilter$3.class",
+        "original_size": 2769,
+        "rebuilt_size": 2749
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/MeterFilter$4.class",
+        "original_size": 3433,
+        "rebuilt_size": 3413
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/MeterFilter$5.class",
+        "original_size": 1278,
+        "rebuilt_size": 1258
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/MeterFilter$6.class",
+        "original_size": 1267,
+        "rebuilt_size": 1247
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/MeterFilter$7.class",
+        "original_size": 1272,
+        "rebuilt_size": 1252
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/MeterFilter$8.class",
+        "original_size": 1591,
+        "rebuilt_size": 1583
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/MeterFilter$9.class",
+        "original_size": 2926,
+        "rebuilt_size": 2918
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/MeterFilterReply.class",
+        "original_size": 1292,
+        "rebuilt_size": 1188
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/validate/DurationValidator$1.class",
+        "original_size": 4088,
+        "rebuilt_size": 4050
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/validate/DurationValidator$2.class",
+        "original_size": 2158,
+        "rebuilt_size": 2120
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/validate/DurationValidator.class",
+        "original_size": 9927,
+        "rebuilt_size": 9814
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/validate/InvalidReason.class",
+        "original_size": 1281,
+        "rebuilt_size": 1177
+      },
+      {
+        "entry": "io/micrometer/core/instrument/distribution/AbstractTimeWindowHistogram.class",
+        "original_size": 10396,
+        "rebuilt_size": 10395
+      },
+      {
+        "entry": "io/micrometer/core/instrument/distribution/DistributionStatisticConfig.class",
+        "original_size": 7111,
+        "rebuilt_size": 7081
+      },
+      {
+        "entry": "io/micrometer/core/instrument/distribution/FixedBoundaryVictoriaMetricsHistogram.class",
+        "original_size": 8752,
+        "rebuilt_size": 8749
+      },
+      {
+        "entry": "io/micrometer/core/instrument/distribution/TimeWindowFixedBoundaryHistogram$FixedBoundaryHistogram.class",
+        "original_size": 2276,
+        "rebuilt_size": 2246
+      },
+      {
+        "entry": "io/micrometer/core/instrument/distribution/TimeWindowFixedBoundaryHistogram.class",
+        "original_size": 7604,
+        "rebuilt_size": 7511
+      },
+      {
+        "entry": "io/micrometer/core/instrument/distribution/TimeWindowPercentileHistogram.class",
+        "original_size": 4367,
+        "rebuilt_size": 4274
+      },
+      {
+        "entry": "io/micrometer/core/instrument/dropwizard/DropwizardFunctionCounter$1.class",
+        "original_size": 1858,
+        "rebuilt_size": 1824
+      },
+      {
+        "entry": "io/micrometer/core/instrument/dropwizard/DropwizardFunctionTimer$1$1.class",
+        "original_size": 2118,
+        "rebuilt_size": 2088
+      },
+      {
+        "entry": "io/micrometer/core/instrument/dropwizard/DropwizardFunctionTimer$1.class",
+        "original_size": 2361,
+        "rebuilt_size": 2323
+      },
+      {
+        "entry": "io/micrometer/core/instrument/dropwizard/DropwizardMeterRegistry.class",
+        "original_size": 16877,
+        "rebuilt_size": 16875
+      },
+      {
+        "entry": "io/micrometer/core/instrument/internal/DefaultLongTaskTimer$SampleImpl.class",
+        "original_size": 2900,
+        "rebuilt_size": 2870
+      },
+      {
+        "entry": "io/micrometer/core/instrument/internal/DefaultLongTaskTimer.class",
+        "original_size": 10305,
+        "rebuilt_size": 10304
+      },
+      {
+        "entry": "io/micrometer/core/instrument/kotlin/KotlinObservationContextElement.class",
+        "original_size": 6262,
+        "rebuilt_size": 6217
+      },
+      {
+        "entry": "io/micrometer/core/instrument/logging/LoggingMeterRegistry$Printer.class",
+        "original_size": 3631,
+        "rebuilt_size": 3597
+      },
+      {
+        "entry": "io/micrometer/core/instrument/logging/LoggingMeterRegistry.class",
+        "original_size": 18035,
+        "rebuilt_size": 18018
+      },
+      {
+        "entry": "io/micrometer/core/instrument/search/MeterNotFoundException$FromRequiredSearch.class",
+        "original_size": 11520,
+        "rebuilt_size": 11493
+      },
+      {
+        "entry": "io/micrometer/core/instrument/search/Search$1.class",
+        "original_size": 1625,
+        "rebuilt_size": 1595
+      },
+      {
+        "entry": "io/micrometer/core/instrument/simple/CountingMode.class",
+        "original_size": 1222,
+        "rebuilt_size": 1118
+      },
+      {
+        "entry": "io/micrometer/core/instrument/simple/SimpleMeterRegistry.class",
+        "original_size": 15322,
+        "rebuilt_size": 15319
+      },
+      {
+        "entry": "io/micrometer/core/instrument/util/AbstractPartition.class",
+        "original_size": 2008,
+        "rebuilt_size": 1978
+      },
+      {
+        "entry": "io/micrometer/core/ipc/http/HttpSender$Method.class",
+        "original_size": 1462,
+        "rebuilt_size": 1358
+      },
+      {
+        "entry": "io/micrometer/core/ipc/http/HttpStatusClass$1.class",
+        "original_size": 733,
+        "rebuilt_size": 691
+      },
+      {
+        "entry": "io/micrometer/core/ipc/http/HttpStatusClass.class",
+        "original_size": 2336,
+        "rebuilt_size": 2224
+      },
+      {
+        "entry": "io/micrometer/core/util/internal/logging/InternalLogLevel.class",
+        "original_size": 1508,
+        "rebuilt_size": 1404
+      }
+    ],
+    "crc_mismatches": [
+      {
+        "entry": "META-INF/MANIFEST.MF",
+        "original_crc": 422875985,
+        "rebuilt_crc": 3215488551
+      },
+      {
+        "entry": "META-INF/micrometer-core.properties",
+        "original_crc": 3886755800,
+        "rebuilt_crc": 2080559416
+      },
+      {
+        "entry": "io/micrometer/core/annotation/Counted.class",
+        "original_crc": 3868507421,
+        "rebuilt_crc": 3870288063
+      },
+      {
+        "entry": "io/micrometer/core/annotation/Incubating.class",
+        "original_crc": 2184998703,
+        "rebuilt_crc": 962031418
+      },
+      {
+        "entry": "io/micrometer/core/annotation/Timed.class",
+        "original_crc": 2185885115,
+        "rebuilt_crc": 1568053499
+      },
+      {
+        "entry": "io/micrometer/core/annotation/TimedSet.class",
+        "original_crc": 3465414775,
+        "rebuilt_crc": 2420379151
+      },
+      {
+        "entry": "io/micrometer/core/aop/CountedAspect.class",
+        "original_crc": 3684703942,
+        "rebuilt_crc": 3066322785
+      },
+      {
+        "entry": "io/micrometer/core/aop/TimedAspect.class",
+        "original_crc": 2756918245,
+        "rebuilt_crc": 896876885
+      },
+      {
+        "entry": "io/micrometer/core/instrument/AbstractDistributionSummary.class",
+        "original_crc": 738699242,
+        "rebuilt_crc": 4280516988
+      },
+      {
+        "entry": "io/micrometer/core/instrument/AbstractMeter.class",
+        "original_crc": 216396628,
+        "rebuilt_crc": 2411953352
+      },
+      {
+        "entry": "io/micrometer/core/instrument/AbstractTimer.class",
+        "original_crc": 2067978407,
+        "rebuilt_crc": 1940291570
+      },
+      {
+        "entry": "io/micrometer/core/instrument/AbstractTimerBuilder.class",
+        "original_crc": 4190134100,
+        "rebuilt_crc": 3074190584
+      },
+      {
+        "entry": "io/micrometer/core/instrument/Clock$1.class",
+        "original_crc": 863304880,
+        "rebuilt_crc": 3417614634
+      },
+      {
+        "entry": "io/micrometer/core/instrument/Clock.class",
+        "original_crc": 4111606280,
+        "rebuilt_crc": 787088592
+      },
+      {
+        "entry": "io/micrometer/core/instrument/Counter$1.class",
+        "original_crc": 2798488538,
+        "rebuilt_crc": 1031566215
+      },
+      {
+        "entry": "io/micrometer/core/instrument/Counter$Builder.class",
+        "original_crc": 2760205807,
+        "rebuilt_crc": 3715661752
+      },
+      {
+        "entry": "io/micrometer/core/instrument/Counter.class",
+        "original_crc": 1382720478,
+        "rebuilt_crc": 3030043269
+      },
+      {
+        "entry": "io/micrometer/core/instrument/DistributionSummary$1.class",
+        "original_crc": 3560032043,
+        "rebuilt_crc": 2391359986
+      },
+      {
+        "entry": "io/micrometer/core/instrument/DistributionSummary$Builder.class",
+        "original_crc": 2101718026,
+        "rebuilt_crc": 4021481609
+      },
+      {
+        "entry": "io/micrometer/core/instrument/DistributionSummary.class",
+        "original_crc": 2232324880,
+        "rebuilt_crc": 150129905
+      },
+      {
+        "entry": "io/micrometer/core/instrument/FunctionCounter$1.class",
+        "original_crc": 1294170946,
+        "rebuilt_crc": 3978242643
+      },
+      {
+        "entry": "io/micrometer/core/instrument/FunctionCounter$Builder.class",
+        "original_crc": 1856912886,
+        "rebuilt_crc": 1054969896
+      },
+      {
+        "entry": "io/micrometer/core/instrument/FunctionCounter.class",
+        "original_crc": 3430800257,
+        "rebuilt_crc": 2115136526
+      },
+      {
+        "entry": "io/micrometer/core/instrument/FunctionTimer$1.class",
+        "original_crc": 651957280,
+        "rebuilt_crc": 1987835945
+      },
+      {
+        "entry": "io/micrometer/core/instrument/FunctionTimer$Builder.class",
+        "original_crc": 613819593,
+        "rebuilt_crc": 2908935216
+      },
+      {
+        "entry": "io/micrometer/core/instrument/FunctionTimer.class",
+        "original_crc": 585739255,
+        "rebuilt_crc": 2381984045
+      },
+      {
+        "entry": "io/micrometer/core/instrument/Gauge$1.class",
+        "original_crc": 4032079696,
+        "rebuilt_crc": 179071742
+      },
+      {
+        "entry": "io/micrometer/core/instrument/Gauge$Builder.class",
+        "original_crc": 1375856541,
+        "rebuilt_crc": 1237913855
+      },
+      {
+        "entry": "io/micrometer/core/instrument/Gauge.class",
+        "original_crc": 3243482596,
+        "rebuilt_crc": 1288683508
+      },
+      {
+        "entry": "io/micrometer/core/instrument/HighCardinalityTagsDetector.class",
+        "original_crc": 4017128855,
+        "rebuilt_crc": 2462525307
+      },
+      {
+        "entry": "io/micrometer/core/instrument/ImmutableTag.class",
+        "original_crc": 299378074,
+        "rebuilt_crc": 2816163778
+      },
+      {
+        "entry": "io/micrometer/core/instrument/LongTaskTimer$1.class",
+        "original_crc": 1345760144,
+        "rebuilt_crc": 916173031
+      },
+      {
+        "entry": "io/micrometer/core/instrument/LongTaskTimer$Builder.class",
+        "original_crc": 721946211,
+        "rebuilt_crc": 3074022717
+      },
+      {
+        "entry": "io/micrometer/core/instrument/LongTaskTimer$Sample.class",
+        "original_crc": 2213468963,
+        "rebuilt_crc": 3928052111
+      },
+      {
+        "entry": "io/micrometer/core/instrument/LongTaskTimer.class",
+        "original_crc": 2719527245,
+        "rebuilt_crc": 351034603
+      },
+      {
+        "entry": "io/micrometer/core/instrument/Measurement.class",
+        "original_crc": 3632812852,
+        "rebuilt_crc": 1991791051
+      },
+      {
+        "entry": "io/micrometer/core/instrument/Meter$1.class",
+        "original_crc": 2212557669,
+        "rebuilt_crc": 3635601735
+      },
+      {
+        "entry": "io/micrometer/core/instrument/Meter$Builder.class",
+        "original_crc": 2737472159,
+        "rebuilt_crc": 4218171130
+      },
+      {
+        "entry": "io/micrometer/core/instrument/Meter$Id.class",
+        "original_crc": 641458057,
+        "rebuilt_crc": 2258408742
+      },
+      {
+        "entry": "io/micrometer/core/instrument/Meter$Type.class",
+        "original_crc": 2168924774,
+        "rebuilt_crc": 2518937050
+      },
+      {
+        "entry": "io/micrometer/core/instrument/Meter.class",
+        "original_crc": 231996601,
+        "rebuilt_crc": 3129700748
+      },
+      {
+        "entry": "io/micrometer/core/instrument/MeterRegistry$1.class",
+        "original_crc": 3764070555,
+        "rebuilt_crc": 3927528433
+      },
+      {
+        "entry": "io/micrometer/core/instrument/MeterRegistry$Config.class",
+        "original_crc": 1749766576,
+        "rebuilt_crc": 1048106344
+      },
+      {
+        "entry": "io/micrometer/core/instrument/MeterRegistry$More.class",
+        "original_crc": 197903199,
+        "rebuilt_crc": 3197204530
+      },
+      {
+        "entry": "io/micrometer/core/instrument/MeterRegistry.class",
+        "original_crc": 759753793,
+        "rebuilt_crc": 3007762917
+      },
+      {
+        "entry": "io/micrometer/core/instrument/Metrics$More.class",
+        "original_crc": 3676127502,
+        "rebuilt_crc": 3340291204
+      },
+      {
+        "entry": "io/micrometer/core/instrument/Metrics.class",
+        "original_crc": 622695864,
+        "rebuilt_crc": 2075478432
+      },
+      {
+        "entry": "io/micrometer/core/instrument/MockClock.class",
+        "original_crc": 656492078,
+        "rebuilt_crc": 2428608138
+      },
+      {
+        "entry": "io/micrometer/core/instrument/MultiGauge$1.class",
+        "original_crc": 3360722749,
+        "rebuilt_crc": 1217982722
+      },
+      {
+        "entry": "io/micrometer/core/instrument/MultiGauge$Builder.class",
+        "original_crc": 1563678960,
+        "rebuilt_crc": 2477875253
+      },
+      {
+        "entry": "io/micrometer/core/instrument/MultiGauge$Row.class",
+        "original_crc": 251378756,
+        "rebuilt_crc": 802600715
+      },
+      {
+        "entry": "io/micrometer/core/instrument/MultiGauge.class",
+        "original_crc": 2893041540,
+        "rebuilt_crc": 3942897955
+      },
+      {
+        "entry": "io/micrometer/core/instrument/Statistic.class",
+        "original_crc": 503984505,
+        "rebuilt_crc": 1682444713
+      },
+      {
+        "entry": "io/micrometer/core/instrument/StrongReferenceGaugeFunction.class",
+        "original_crc": 1753002951,
+        "rebuilt_crc": 1164199228
+      },
+      {
+        "entry": "io/micrometer/core/instrument/Tag.class",
+        "original_crc": 1460535555,
+        "rebuilt_crc": 2435472294
+      },
+      {
+        "entry": "io/micrometer/core/instrument/Tags$1.class",
+        "original_crc": 2009841614,
+        "rebuilt_crc": 3606944561
+      },
+      {
+        "entry": "io/micrometer/core/instrument/Tags$ArrayIterator.class",
+        "original_crc": 4142893685,
+        "rebuilt_crc": 898127154
+      },
+      {
+        "entry": "io/micrometer/core/instrument/Tags.class",
+        "original_crc": 4066294122,
+        "rebuilt_crc": 4201333345
+      },
+      {
+        "entry": "io/micrometer/core/instrument/TimeGauge$1.class",
+        "original_crc": 4139580355,
+        "rebuilt_crc": 2375072101
+      },
+      {
+        "entry": "io/micrometer/core/instrument/TimeGauge$Builder.class",
+        "original_crc": 3739663262,
+        "rebuilt_crc": 3600918287
+      },
+      {
+        "entry": "io/micrometer/core/instrument/TimeGauge.class",
+        "original_crc": 846007715,
+        "rebuilt_crc": 1646207503
+      },
+      {
+        "entry": "io/micrometer/core/instrument/Timer$Builder.class",
+        "original_crc": 1696876978,
+        "rebuilt_crc": 2114608003
+      },
+      {
+        "entry": "io/micrometer/core/instrument/Timer$ResourceSample.class",
+        "original_crc": 533131464,
+        "rebuilt_crc": 2235697102
+      },
+      {
+        "entry": "io/micrometer/core/instrument/Timer$Sample.class",
+        "original_crc": 292713204,
+        "rebuilt_crc": 1194027927
+      },
+      {
+        "entry": "io/micrometer/core/instrument/Timer.class",
+        "original_crc": 782105587,
+        "rebuilt_crc": 3061132737
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/BaseUnits.class",
+        "original_crc": 2618246482,
+        "rebuilt_crc": 3063856576
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/MeterBinder.class",
+        "original_crc": 2732622323,
+        "rebuilt_crc": 2838788467
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/cache/CacheMeterBinder.class",
+        "original_crc": 1618640376,
+        "rebuilt_crc": 2968080828
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/cache/CaffeineCacheMetrics.class",
+        "original_crc": 1572401969,
+        "rebuilt_crc": 3382092366
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/cache/CaffeineStatsCounter.class",
+        "original_crc": 2901069423,
+        "rebuilt_crc": 348541456
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/cache/EhCache2Metrics.class",
+        "original_crc": 262243364,
+        "rebuilt_crc": 334393468
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/cache/GuavaCacheMetrics.class",
+        "original_crc": 974021795,
+        "rebuilt_crc": 373505772
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/cache/HazelcastCacheMetrics.class",
+        "original_crc": 3594382023,
+        "rebuilt_crc": 1854792034
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/cache/HazelcastIMapAdapter$LocalMapStats.class",
+        "original_crc": 1525790318,
+        "rebuilt_crc": 1215270440
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/cache/HazelcastIMapAdapter$NearCacheStats.class",
+        "original_crc": 874991310,
+        "rebuilt_crc": 3319308193
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/cache/HazelcastIMapAdapter.class",
+        "original_crc": 3009219033,
+        "rebuilt_crc": 2418011769
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/cache/JCacheMetrics.class",
+        "original_crc": 3437555588,
+        "rebuilt_crc": 1497574826
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/cache/package-info.class",
+        "original_crc": 1371336559,
+        "rebuilt_crc": 1054393311
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/commonspool2/CommonsObjectPool2Metrics.class",
+        "original_crc": 823523266,
+        "rebuilt_crc": 3485107272
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/db/DatabaseTableMetrics.class",
+        "original_crc": 3354928218,
+        "rebuilt_crc": 1194188150
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/db/JooqExecuteListener.class",
+        "original_crc": 2455684967,
+        "rebuilt_crc": 1792778593
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/db/MetricsDSLContext.class",
+        "original_crc": 1989307663,
+        "rebuilt_crc": 1281220364
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/db/PostgreSQLDatabaseMetrics$Names.class",
+        "original_crc": 3798637225,
+        "rebuilt_crc": 2112167111
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/db/PostgreSQLDatabaseMetrics.class",
+        "original_crc": 1303532358,
+        "rebuilt_crc": 3684911592
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/AbstractMetricCollectingInterceptor$MetricSet.class",
+        "original_crc": 4214738761,
+        "rebuilt_crc": 1130096581
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/AbstractMetricCollectingInterceptor.class",
+        "original_crc": 663880226,
+        "rebuilt_crc": 2090026878
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/DefaultGrpcClientObservationConvention.class",
+        "original_crc": 944515793,
+        "rebuilt_crc": 1774892588
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/DefaultGrpcServerObservationConvention.class",
+        "original_crc": 1951334307,
+        "rebuilt_crc": 2211520169
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcClientObservationContext.class",
+        "original_crc": 643149858,
+        "rebuilt_crc": 1112124885
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcClientObservationConvention.class",
+        "original_crc": 2073578091,
+        "rebuilt_crc": 2658271891
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$1.class",
+        "original_crc": 3318064690,
+        "rebuilt_crc": 158472442
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$2.class",
+        "original_crc": 3783006599,
+        "rebuilt_crc": 2961881724
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$GrpcClientEvents$1.class",
+        "original_crc": 3619551558,
+        "rebuilt_crc": 3795899434
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$GrpcClientEvents$2.class",
+        "original_crc": 453210136,
+        "rebuilt_crc": 3991818290
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$GrpcClientEvents.class",
+        "original_crc": 486681266,
+        "rebuilt_crc": 351977509
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$GrpcServerEvents$1.class",
+        "original_crc": 518752072,
+        "rebuilt_crc": 1296409629
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$GrpcServerEvents$2.class",
+        "original_crc": 790632110,
+        "rebuilt_crc": 535315716
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$GrpcServerEvents.class",
+        "original_crc": 2651965119,
+        "rebuilt_crc": 3859456936
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$LowCardinalityKeyNames$1.class",
+        "original_crc": 1506748564,
+        "rebuilt_crc": 886099565
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$LowCardinalityKeyNames$2.class",
+        "original_crc": 3448929362,
+        "rebuilt_crc": 1883000237
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$LowCardinalityKeyNames$3.class",
+        "original_crc": 1494904101,
+        "rebuilt_crc": 860722814
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$LowCardinalityKeyNames$4.class",
+        "original_crc": 3020118001,
+        "rebuilt_crc": 3051871628
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$LowCardinalityKeyNames$5.class",
+        "original_crc": 749848985,
+        "rebuilt_crc": 3611622799
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$LowCardinalityKeyNames.class",
+        "original_crc": 2773671577,
+        "rebuilt_crc": 2659322066
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation.class",
+        "original_crc": 1763459964,
+        "rebuilt_crc": 3137386260
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcServerObservationContext.class",
+        "original_crc": 3151628534,
+        "rebuilt_crc": 2272728155
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/GrpcServerObservationConvention.class",
+        "original_crc": 1358814687,
+        "rebuilt_crc": 912365494
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/MetricCollectingClientCall.class",
+        "original_crc": 4135500476,
+        "rebuilt_crc": 4251165410
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/MetricCollectingClientCallListener.class",
+        "original_crc": 4029331098,
+        "rebuilt_crc": 3153388297
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/MetricCollectingClientInterceptor.class",
+        "original_crc": 2394260220,
+        "rebuilt_crc": 2312971409
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/MetricCollectingServerCall.class",
+        "original_crc": 3317686589,
+        "rebuilt_crc": 3598123042
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/MetricCollectingServerCallListener.class",
+        "original_crc": 2770260740,
+        "rebuilt_crc": 1624783904
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/MetricCollectingServerInterceptor.class",
+        "original_crc": 462470896,
+        "rebuilt_crc": 2370781345
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/ObservationGrpcClientCall.class",
+        "original_crc": 2307074660,
+        "rebuilt_crc": 1360069287
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/ObservationGrpcClientCallListener.class",
+        "original_crc": 4018617804,
+        "rebuilt_crc": 2885512775
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/ObservationGrpcClientInterceptor.class",
+        "original_crc": 2031630521,
+        "rebuilt_crc": 152492577
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/ObservationGrpcServerCall.class",
+        "original_crc": 1500666082,
+        "rebuilt_crc": 4205911522
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/ObservationGrpcServerCallListener.class",
+        "original_crc": 1308540009,
+        "rebuilt_crc": 4253884724
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/ObservationGrpcServerInterceptor.class",
+        "original_crc": 3020661725,
+        "rebuilt_crc": 3675985576
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/grpc/package-info.class",
+        "original_crc": 560223511,
+        "rebuilt_crc": 2442007498
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/http/DefaultHttpJakartaServletRequestTagsProvider.class",
+        "original_crc": 609765665,
+        "rebuilt_crc": 1693819661
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/http/DefaultHttpServletRequestTagsProvider.class",
+        "original_crc": 2398400124,
+        "rebuilt_crc": 2962836205
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/http/HttpJakartaServletRequestTagsProvider.class",
+        "original_crc": 534764008,
+        "rebuilt_crc": 2766684681
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/http/HttpRequestTags.class",
+        "original_crc": 3591573182,
+        "rebuilt_crc": 24161200
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/http/HttpServletRequestTagsProvider.class",
+        "original_crc": 895672898,
+        "rebuilt_crc": 2937692297
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/http/Outcome.class",
+        "original_crc": 5168235,
+        "rebuilt_crc": 574143425
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/http/package-info.class",
+        "original_crc": 73536255,
+        "rebuilt_crc": 2602710914
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/httpcomponents/ApacheHttpClientContext.class",
+        "original_crc": 2325486155,
+        "rebuilt_crc": 919595400
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/httpcomponents/ApacheHttpClientObservationConvention.class",
+        "original_crc": 4038714395,
+        "rebuilt_crc": 1290491731
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/httpcomponents/ApacheHttpClientObservationDocumentation$1.class",
+        "original_crc": 998957396,
+        "rebuilt_crc": 472471338
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/httpcomponents/ApacheHttpClientObservationDocumentation$ApacheHttpClientKeyNames$1.class",
+        "original_crc": 1560847745,
+        "rebuilt_crc": 415349779
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/httpcomponents/ApacheHttpClientObservationDocumentation$ApacheHttpClientKeyNames$2.class",
+        "original_crc": 207217956,
+        "rebuilt_crc": 498151943
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/httpcomponents/ApacheHttpClientObservationDocumentation$ApacheHttpClientKeyNames$3.class",
+        "original_crc": 3355357896,
+        "rebuilt_crc": 2818685024
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/httpcomponents/ApacheHttpClientObservationDocumentation$ApacheHttpClientKeyNames$4.class",
+        "original_crc": 3181571277,
+        "rebuilt_crc": 961294834
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/httpcomponents/ApacheHttpClientObservationDocumentation$ApacheHttpClientKeyNames$5.class",
+        "original_crc": 326920074,
+        "rebuilt_crc": 567570648
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/httpcomponents/ApacheHttpClientObservationDocumentation$ApacheHttpClientKeyNames$6.class",
+        "original_crc": 228613669,
+        "rebuilt_crc": 2150421196
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/httpcomponents/ApacheHttpClientObservationDocumentation$ApacheHttpClientKeyNames.class",
+        "original_crc": 878219430,
+        "rebuilt_crc": 2220293989
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/httpcomponents/ApacheHttpClientObservationDocumentation.class",
+        "original_crc": 574964388,
+        "rebuilt_crc": 1744746823
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/httpcomponents/DefaultApacheHttpClientObservationConvention.class",
+        "original_crc": 1664420299,
+        "rebuilt_crc": 364198247
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/httpcomponents/DefaultUriMapper.class",
+        "original_crc": 3469892468,
+        "rebuilt_crc": 4029481560
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/httpcomponents/HttpContextUtils.class",
+        "original_crc": 1524403885,
+        "rebuilt_crc": 2886360464
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/httpcomponents/MicrometerHttpClientInterceptor.class",
+        "original_crc": 3879715587,
+        "rebuilt_crc": 1354412048
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/httpcomponents/MicrometerHttpRequestExecutor$1.class",
+        "original_crc": 3830026116,
+        "rebuilt_crc": 1578644363
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/httpcomponents/MicrometerHttpRequestExecutor$Builder.class",
+        "original_crc": 1837423778,
+        "rebuilt_crc": 2003437520
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/httpcomponents/MicrometerHttpRequestExecutor.class",
+        "original_crc": 4096153582,
+        "rebuilt_crc": 136166955
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/httpcomponents/PoolingHttpClientConnectionManagerMetricsBinder.class",
+        "original_crc": 3525604736,
+        "rebuilt_crc": 3640361600
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/httpcomponents/package-info.class",
+        "original_crc": 1643994054,
+        "rebuilt_crc": 2891718962
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/hystrix/HystrixMetricsBinder.class",
+        "original_crc": 1287245897,
+        "rebuilt_crc": 759111255
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/hystrix/MicrometerMetricsPublisher.class",
+        "original_crc": 1139725315,
+        "rebuilt_crc": 3582903819
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/hystrix/MicrometerMetricsPublisherCommand.class",
+        "original_crc": 1883205265,
+        "rebuilt_crc": 1319377505
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/hystrix/MicrometerMetricsPublisherThreadPool.class",
+        "original_crc": 1298905904,
+        "rebuilt_crc": 3486403687
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/AnnotationFinder$1.class",
+        "original_crc": 1296905030,
+        "rebuilt_crc": 1516423146
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/AnnotationFinder.class",
+        "original_crc": 3549274324,
+        "rebuilt_crc": 2116472344
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/DefaultJerseyObservationConvention.class",
+        "original_crc": 3697095038,
+        "rebuilt_crc": 2344650060
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/DefaultJerseyTagsProvider.class",
+        "original_crc": 3252726676,
+        "rebuilt_crc": 4261522201
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/JerseyContext.class",
+        "original_crc": 511079492,
+        "rebuilt_crc": 2360485053
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/JerseyKeyValues.class",
+        "original_crc": 3044021198,
+        "rebuilt_crc": 3002474852
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/JerseyObservationConvention.class",
+        "original_crc": 3246197696,
+        "rebuilt_crc": 3435336604
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/JerseyObservationDocumentation$1.class",
+        "original_crc": 503776832,
+        "rebuilt_crc": 2805249056
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/JerseyObservationDocumentation$JerseyLegacyLowCardinalityTags$1.class",
+        "original_crc": 648957197,
+        "rebuilt_crc": 2388013433
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/JerseyObservationDocumentation$JerseyLegacyLowCardinalityTags$2.class",
+        "original_crc": 2981676833,
+        "rebuilt_crc": 1406708365
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/JerseyObservationDocumentation$JerseyLegacyLowCardinalityTags$3.class",
+        "original_crc": 1207718805,
+        "rebuilt_crc": 2033395904
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/JerseyObservationDocumentation$JerseyLegacyLowCardinalityTags$4.class",
+        "original_crc": 1467481458,
+        "rebuilt_crc": 4129283373
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/JerseyObservationDocumentation$JerseyLegacyLowCardinalityTags$5.class",
+        "original_crc": 1216774247,
+        "rebuilt_crc": 1341438386
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/JerseyObservationDocumentation$JerseyLegacyLowCardinalityTags.class",
+        "original_crc": 781193208,
+        "rebuilt_crc": 1906524698
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/JerseyObservationDocumentation.class",
+        "original_crc": 2792752508,
+        "rebuilt_crc": 2859151356
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/JerseyTags.class",
+        "original_crc": 29339993,
+        "rebuilt_crc": 2192698204
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/JerseyTagsProvider.class",
+        "original_crc": 3396947216,
+        "rebuilt_crc": 512673412
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/MetricsApplicationEventListener.class",
+        "original_crc": 119893470,
+        "rebuilt_crc": 1246404115
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/MetricsRequestEventListener$1.class",
+        "original_crc": 564294447,
+        "rebuilt_crc": 2172547337
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/MetricsRequestEventListener.class",
+        "original_crc": 3818020738,
+        "rebuilt_crc": 3232203245
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/ObservationApplicationEventListener.class",
+        "original_crc": 2147240750,
+        "rebuilt_crc": 3979956520
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/ObservationRequestEventListener$1.class",
+        "original_crc": 1092061004,
+        "rebuilt_crc": 1203351927
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/ObservationRequestEventListener$ObservationScopeAndContext.class",
+        "original_crc": 1195380375,
+        "rebuilt_crc": 3867855326
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/ObservationRequestEventListener.class",
+        "original_crc": 579919482,
+        "rebuilt_crc": 3363847100
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jersey/server/TimedFinder.class",
+        "original_crc": 2311934928,
+        "rebuilt_crc": 2005353637
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jetty/InstrumentedQueuedThreadPool.class",
+        "original_crc": 2232622246,
+        "rebuilt_crc": 1606631388
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jetty/JettyClientMetrics$Builder.class",
+        "original_crc": 285381864,
+        "rebuilt_crc": 3995993636
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jetty/JettyClientMetrics.class",
+        "original_crc": 3559538522,
+        "rebuilt_crc": 977428174
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jetty/JettyClientTags.class",
+        "original_crc": 2625352665,
+        "rebuilt_crc": 865313277
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jetty/JettyClientTagsProvider.class",
+        "original_crc": 2576614595,
+        "rebuilt_crc": 954062875
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jetty/JettyConnectionMetrics.class",
+        "original_crc": 3600559743,
+        "rebuilt_crc": 2763500539
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jetty/JettyServerThreadPoolMetrics.class",
+        "original_crc": 4119808167,
+        "rebuilt_crc": 3374395142
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jetty/JettySslHandshakeMetrics.class",
+        "original_crc": 2743087603,
+        "rebuilt_crc": 1988767000
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jetty/JettyStatisticsMetrics.class",
+        "original_crc": 2318721507,
+        "rebuilt_crc": 2068721541
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jetty/OnCompletionAsyncListener.class",
+        "original_crc": 2319875722,
+        "rebuilt_crc": 1433421842
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jetty/TimedHandler$1.class",
+        "original_crc": 2576088330,
+        "rebuilt_crc": 2611453438
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jetty/TimedHandler.class",
+        "original_crc": 3439057310,
+        "rebuilt_crc": 2772961887
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jpa/HibernateMetrics.class",
+        "original_crc": 2940666418,
+        "rebuilt_crc": 1942719126
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jpa/HibernateQueryMetrics$MetricsEventHandler.class",
+        "original_crc": 3317407778,
+        "rebuilt_crc": 2791717973
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jpa/HibernateQueryMetrics.class",
+        "original_crc": 1983631022,
+        "rebuilt_crc": 3915630177
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jvm/ClassLoaderMetrics.class",
+        "original_crc": 3983319712,
+        "rebuilt_crc": 686305143
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jvm/DiskSpaceMetrics.class",
+        "original_crc": 3692435210,
+        "rebuilt_crc": 1087742954
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jvm/ExecutorServiceMetrics.class",
+        "original_crc": 4191775602,
+        "rebuilt_crc": 3944072135
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jvm/JvmCompilationMetrics.class",
+        "original_crc": 313425665,
+        "rebuilt_crc": 2141271342
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jvm/JvmGcMetrics$GcGenerationAge$1.class",
+        "original_crc": 1846519199,
+        "rebuilt_crc": 2627298167
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jvm/JvmGcMetrics$GcGenerationAge.class",
+        "original_crc": 1733828650,
+        "rebuilt_crc": 901211005
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jvm/JvmGcMetrics$GcMetricsNotificationListener.class",
+        "original_crc": 4285791417,
+        "rebuilt_crc": 3146487917
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jvm/JvmGcMetrics.class",
+        "original_crc": 1199912796,
+        "rebuilt_crc": 2111153179
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jvm/JvmHeapPressureMetrics.class",
+        "original_crc": 159589958,
+        "rebuilt_crc": 2756269910
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jvm/JvmInfoMetrics.class",
+        "original_crc": 3157563536,
+        "rebuilt_crc": 459948045
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jvm/JvmMemory.class",
+        "original_crc": 1187427893,
+        "rebuilt_crc": 2101861661
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jvm/JvmMemoryMetrics.class",
+        "original_crc": 1655023843,
+        "rebuilt_crc": 596238404
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/jvm/JvmThreadMetrics.class",
+        "original_crc": 2840984577,
+        "rebuilt_crc": 2522927386
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/kafka/KafkaClientMetrics.class",
+        "original_crc": 3087542889,
+        "rebuilt_crc": 1936468185
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/kafka/KafkaConsumerMetrics$1.class",
+        "original_crc": 4158963754,
+        "rebuilt_crc": 3894036740
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/kafka/KafkaConsumerMetrics.class",
+        "original_crc": 1314779197,
+        "rebuilt_crc": 3911887115
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/kafka/KafkaMetrics.class",
+        "original_crc": 302645344,
+        "rebuilt_crc": 160329848
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/kafka/KafkaStreamsMetrics.class",
+        "original_crc": 1160301214,
+        "rebuilt_crc": 3514746044
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/logging/Log4j2Metrics$1.class",
+        "original_crc": 4137629619,
+        "rebuilt_crc": 131450294
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/logging/Log4j2Metrics$MetricsFilter.class",
+        "original_crc": 3168376880,
+        "rebuilt_crc": 868971333
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/logging/Log4j2Metrics.class",
+        "original_crc": 4165642936,
+        "rebuilt_crc": 2664926247
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/logging/LogbackMetrics$1.class",
+        "original_crc": 2409620085,
+        "rebuilt_crc": 1862688889
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/logging/LogbackMetrics.class",
+        "original_crc": 589984033,
+        "rebuilt_crc": 1230140208
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/logging/MetricsTurboFilter.class",
+        "original_crc": 364575066,
+        "rebuilt_crc": 412910737
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/mongodb/DefaultMongoCommandTagsProvider.class",
+        "original_crc": 1408881696,
+        "rebuilt_crc": 128476999
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/mongodb/DefaultMongoConnectionPoolTagsProvider.class",
+        "original_crc": 510848804,
+        "rebuilt_crc": 1832070816
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/mongodb/MongoCommandTagsProvider.class",
+        "original_crc": 1523039006,
+        "rebuilt_crc": 3760161397
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/mongodb/MongoConnectionPoolTagsProvider.class",
+        "original_crc": 2317542109,
+        "rebuilt_crc": 1194776952
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/mongodb/MongoMetricsCommandListener.class",
+        "original_crc": 3498732999,
+        "rebuilt_crc": 3072891103
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/mongodb/MongoMetricsConnectionPoolListener.class",
+        "original_crc": 1437789614,
+        "rebuilt_crc": 506297355
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/DefaultOkHttpObservationConvention.class",
+        "original_crc": 3532717832,
+        "rebuilt_crc": 226777718
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpConnectionPoolMetrics$1.class",
+        "original_crc": 2909177282,
+        "rebuilt_crc": 589090791
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpConnectionPoolMetrics$ConnectionPoolConnectionStats.class",
+        "original_crc": 2180750150,
+        "rebuilt_crc": 1103598818
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpConnectionPoolMetrics.class",
+        "original_crc": 3090083198,
+        "rebuilt_crc": 3233392659
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpContext.class",
+        "original_crc": 3071186120,
+        "rebuilt_crc": 131582224
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpMetricsEventListener$Builder.class",
+        "original_crc": 501437658,
+        "rebuilt_crc": 3213314332
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpMetricsEventListener$CallState.class",
+        "original_crc": 2251202709,
+        "rebuilt_crc": 3457290414
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpMetricsEventListener.class",
+        "original_crc": 2180482527,
+        "rebuilt_crc": 3051832898
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationConvention.class",
+        "original_crc": 3857815001,
+        "rebuilt_crc": 3365922852
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationDocumentation$1.class",
+        "original_crc": 336639682,
+        "rebuilt_crc": 1533709064
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationDocumentation$OkHttpLegacyLowCardinalityTags$1.class",
+        "original_crc": 2393022445,
+        "rebuilt_crc": 3865110947
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationDocumentation$OkHttpLegacyLowCardinalityTags$2.class",
+        "original_crc": 627944493,
+        "rebuilt_crc": 936572442
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationDocumentation$OkHttpLegacyLowCardinalityTags$3.class",
+        "original_crc": 204823981,
+        "rebuilt_crc": 3587403124
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationDocumentation$OkHttpLegacyLowCardinalityTags$4.class",
+        "original_crc": 32873041,
+        "rebuilt_crc": 213070435
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationDocumentation$OkHttpLegacyLowCardinalityTags$5.class",
+        "original_crc": 3184774356,
+        "rebuilt_crc": 1547850597
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationDocumentation$OkHttpLegacyLowCardinalityTags$6.class",
+        "original_crc": 133564887,
+        "rebuilt_crc": 1857526354
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationDocumentation$OkHttpLegacyLowCardinalityTags$7.class",
+        "original_crc": 3275541813,
+        "rebuilt_crc": 251832481
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationDocumentation$OkHttpLegacyLowCardinalityTags.class",
+        "original_crc": 1874237,
+        "rebuilt_crc": 4120242691
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationDocumentation.class",
+        "original_crc": 591654888,
+        "rebuilt_crc": 3213831059
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationInterceptor$Builder.class",
+        "original_crc": 1992748672,
+        "rebuilt_crc": 3687043589
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationInterceptor$CallState.class",
+        "original_crc": 3601096317,
+        "rebuilt_crc": 1041029012
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationInterceptor.class",
+        "original_crc": 295567948,
+        "rebuilt_crc": 2167993658
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/package-info.class",
+        "original_crc": 3150568407,
+        "rebuilt_crc": 1707398348
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/system/DiskSpaceMetrics.class",
+        "original_crc": 3454984515,
+        "rebuilt_crc": 3165948266
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/system/FileDescriptorMetrics.class",
+        "original_crc": 2725992586,
+        "rebuilt_crc": 2696952366
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/system/ProcessorMetrics.class",
+        "original_crc": 2612525535,
+        "rebuilt_crc": 2509746790
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/system/UptimeMetrics.class",
+        "original_crc": 3456417437,
+        "rebuilt_crc": 3508200253
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/tomcat/TomcatMetrics$1.class",
+        "original_crc": 2360025958,
+        "rebuilt_crc": 1202859064
+      },
+      {
+        "entry": "io/micrometer/core/instrument/binder/tomcat/TomcatMetrics.class",
+        "original_crc": 3485258236,
+        "rebuilt_crc": 757538325
+      },
+      {
+        "entry": "io/micrometer/core/instrument/composite/AbstractCompositeMeter.class",
+        "original_crc": 100081227,
+        "rebuilt_crc": 2514910926
+      },
+      {
+        "entry": "io/micrometer/core/instrument/composite/CompositeCounter.class",
+        "original_crc": 1358805238,
+        "rebuilt_crc": 1023786977
+      },
+      {
+        "entry": "io/micrometer/core/instrument/composite/CompositeCustomMeter.class",
+        "original_crc": 1448065650,
+        "rebuilt_crc": 1519815500
+      },
+      {
+        "entry": "io/micrometer/core/instrument/composite/CompositeDistributionSummary.class",
+        "original_crc": 3313760926,
+        "rebuilt_crc": 3025820726
+      },
+      {
+        "entry": "io/micrometer/core/instrument/composite/CompositeFunctionCounter.class",
+        "original_crc": 3250288242,
+        "rebuilt_crc": 1743221433
+      },
+      {
+        "entry": "io/micrometer/core/instrument/composite/CompositeFunctionTimer.class",
+        "original_crc": 673436569,
+        "rebuilt_crc": 148628872
+      },
+      {
+        "entry": "io/micrometer/core/instrument/composite/CompositeGauge.class",
+        "original_crc": 570128019,
+        "rebuilt_crc": 3558292037
+      },
+      {
+        "entry": "io/micrometer/core/instrument/composite/CompositeLongTaskTimer$1.class",
+        "original_crc": 777220763,
+        "rebuilt_crc": 1691047029
+      },
+      {
+        "entry": "io/micrometer/core/instrument/composite/CompositeLongTaskTimer$CompositeSample.class",
+        "original_crc": 4105160891,
+        "rebuilt_crc": 447654569
+      },
+      {
+        "entry": "io/micrometer/core/instrument/composite/CompositeLongTaskTimer.class",
+        "original_crc": 412989454,
+        "rebuilt_crc": 2473954072
+      },
+      {
+        "entry": "io/micrometer/core/instrument/composite/CompositeMeter.class",
+        "original_crc": 1172688864,
+        "rebuilt_crc": 2352395349
+      },
+      {
+        "entry": "io/micrometer/core/instrument/composite/CompositeMeterRegistry.class",
+        "original_crc": 982394299,
+        "rebuilt_crc": 3727588267
+      },
+      {
+        "entry": "io/micrometer/core/instrument/composite/CompositeTimeGauge.class",
+        "original_crc": 2215304939,
+        "rebuilt_crc": 4252887589
+      },
+      {
+        "entry": "io/micrometer/core/instrument/composite/CompositeTimer.class",
+        "original_crc": 299077162,
+        "rebuilt_crc": 3109019732
+      },
+      {
+        "entry": "io/micrometer/core/instrument/composite/package-info.class",
+        "original_crc": 243257239,
+        "rebuilt_crc": 332612610
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/InvalidConfigurationException.class",
+        "original_crc": 1579728317,
+        "rebuilt_crc": 2345576452
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/MeterFilter$1.class",
+        "original_crc": 606287793,
+        "rebuilt_crc": 3773601073
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/MeterFilter$10.class",
+        "original_crc": 708841461,
+        "rebuilt_crc": 2486730412
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/MeterFilter$11.class",
+        "original_crc": 3547164357,
+        "rebuilt_crc": 954777794
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/MeterFilter$12.class",
+        "original_crc": 3321616742,
+        "rebuilt_crc": 4094854793
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/MeterFilter$13.class",
+        "original_crc": 937625261,
+        "rebuilt_crc": 739599761
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/MeterFilter$2.class",
+        "original_crc": 114468531,
+        "rebuilt_crc": 3062881357
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/MeterFilter$3.class",
+        "original_crc": 3867771505,
+        "rebuilt_crc": 1174548534
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/MeterFilter$4.class",
+        "original_crc": 65460970,
+        "rebuilt_crc": 19364858
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/MeterFilter$5.class",
+        "original_crc": 1168707442,
+        "rebuilt_crc": 3212808618
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/MeterFilter$6.class",
+        "original_crc": 2966463309,
+        "rebuilt_crc": 4069415463
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/MeterFilter$7.class",
+        "original_crc": 2298851507,
+        "rebuilt_crc": 1212060026
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/MeterFilter$8.class",
+        "original_crc": 603560808,
+        "rebuilt_crc": 1268250957
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/MeterFilter$9.class",
+        "original_crc": 394280833,
+        "rebuilt_crc": 2996077611
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/MeterFilter.class",
+        "original_crc": 547555286,
+        "rebuilt_crc": 509374292
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/MeterFilterReply.class",
+        "original_crc": 880612536,
+        "rebuilt_crc": 1399151690
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/MeterRegistryConfig.class",
+        "original_crc": 2514226022,
+        "rebuilt_crc": 3042068590
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/MeterRegistryConfigValidator.class",
+        "original_crc": 2027720599,
+        "rebuilt_crc": 2711050239
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/MissingRequiredConfigurationException.class",
+        "original_crc": 2923058164,
+        "rebuilt_crc": 2109480494
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/NamingConvention$1.class",
+        "original_crc": 3890094237,
+        "rebuilt_crc": 1230447332
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/NamingConvention$2.class",
+        "original_crc": 2073946244,
+        "rebuilt_crc": 2538524727
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/NamingConvention$3.class",
+        "original_crc": 1736097842,
+        "rebuilt_crc": 2018762023
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/NamingConvention$4.class",
+        "original_crc": 1438002144,
+        "rebuilt_crc": 2526538159
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/NamingConvention.class",
+        "original_crc": 3059157126,
+        "rebuilt_crc": 1581020742
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/package-info.class",
+        "original_crc": 744775104,
+        "rebuilt_crc": 3561157142
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/validate/DurationValidator$1.class",
+        "original_crc": 689791454,
+        "rebuilt_crc": 3210795191
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/validate/DurationValidator$2.class",
+        "original_crc": 492979027,
+        "rebuilt_crc": 2485902197
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/validate/DurationValidator$3.class",
+        "original_crc": 2438700613,
+        "rebuilt_crc": 2653340891
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/validate/DurationValidator.class",
+        "original_crc": 1208366111,
+        "rebuilt_crc": 1710689604
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/validate/InvalidReason.class",
+        "original_crc": 4006846149,
+        "rebuilt_crc": 4119641516
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/validate/PropertyValidator.class",
+        "original_crc": 2550598152,
+        "rebuilt_crc": 2130068922
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/validate/Validated$Either.class",
+        "original_crc": 3351805669,
+        "rebuilt_crc": 1020170208
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/validate/Validated$Invalid.class",
+        "original_crc": 1594218633,
+        "rebuilt_crc": 1653400650
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/validate/Validated$None.class",
+        "original_crc": 1220380592,
+        "rebuilt_crc": 639415061
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/validate/Validated$Secret.class",
+        "original_crc": 2333472966,
+        "rebuilt_crc": 849403632
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/validate/Validated$Valid.class",
+        "original_crc": 357023985,
+        "rebuilt_crc": 1577564480
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/validate/Validated.class",
+        "original_crc": 3626628263,
+        "rebuilt_crc": 915610181
+      },
+      {
+        "entry": "io/micrometer/core/instrument/config/validate/ValidationException.class",
+        "original_crc": 1147630140,
+        "rebuilt_crc": 1082090698
+      },
+      {
+        "entry": "io/micrometer/core/instrument/cumulative/CumulativeCounter.class",
+        "original_crc": 3816889222,
+        "rebuilt_crc": 2264880192
+      },
+      {
+        "entry": "io/micrometer/core/instrument/cumulative/CumulativeDistributionSummary.class",
+        "original_crc": 3075314064,
+        "rebuilt_crc": 1154433783
+      },
+      {
+        "entry": "io/micrometer/core/instrument/cumulative/CumulativeFunctionCounter.class",
+        "original_crc": 2165765384,
+        "rebuilt_crc": 2032395791
+      },
+      {
+        "entry": "io/micrometer/core/instrument/cumulative/CumulativeFunctionTimer.class",
+        "original_crc": 3245122670,
+        "rebuilt_crc": 2758094896
+      },
+      {
+        "entry": "io/micrometer/core/instrument/cumulative/CumulativeTimer.class",
+        "original_crc": 3466005076,
+        "rebuilt_crc": 3055457090
+      },
+      {
+        "entry": "io/micrometer/core/instrument/cumulative/package-info.class",
+        "original_crc": 1220755724,
+        "rebuilt_crc": 2539370028
+      },
+      {
+        "entry": "io/micrometer/core/instrument/distribution/AbstractTimeWindowHistogram.class",
+        "original_crc": 285820814,
+        "rebuilt_crc": 1081250730
+      },
+      {
+        "entry": "io/micrometer/core/instrument/distribution/CountAtBucket.class",
+        "original_crc": 1460945115,
+        "rebuilt_crc": 2492314912
+      },
+      {
+        "entry": "io/micrometer/core/instrument/distribution/DistributionStatisticConfig$Builder.class",
+        "original_crc": 939835392,
+        "rebuilt_crc": 1410204330
+      },
+      {
+        "entry": "io/micrometer/core/instrument/distribution/DistributionStatisticConfig.class",
+        "original_crc": 3177423472,
+        "rebuilt_crc": 4226222409
+      },
+      {
+        "entry": "io/micrometer/core/instrument/distribution/FixedBoundaryVictoriaMetricsHistogram$IdxOffset.class",
+        "original_crc": 173440229,
+        "rebuilt_crc": 282647864
+      },
+      {
+        "entry": "io/micrometer/core/instrument/distribution/FixedBoundaryVictoriaMetricsHistogram.class",
+        "original_crc": 1899704099,
+        "rebuilt_crc": 3132086706
+      },
+      {
+        "entry": "io/micrometer/core/instrument/distribution/Histogram.class",
+        "original_crc": 3212071915,
+        "rebuilt_crc": 1146277071
+      },
+      {
+        "entry": "io/micrometer/core/instrument/distribution/HistogramGauges.class",
+        "original_crc": 2903908953,
+        "rebuilt_crc": 1896176957
+      },
+      {
+        "entry": "io/micrometer/core/instrument/distribution/HistogramSnapshot.class",
+        "original_crc": 2176348156,
+        "rebuilt_crc": 286186168
+      },
+      {
+        "entry": "io/micrometer/core/instrument/distribution/HistogramSupport.class",
+        "original_crc": 1400234308,
+        "rebuilt_crc": 2085254850
+      },
+      {
+        "entry": "io/micrometer/core/instrument/distribution/NoopHistogram.class",
+        "original_crc": 3330019822,
+        "rebuilt_crc": 2649738224
+      },
+      {
+        "entry": "io/micrometer/core/instrument/distribution/PercentileHistogramBuckets.class",
+        "original_crc": 3519233057,
+        "rebuilt_crc": 4038635794
+      },
+      {
+        "entry": "io/micrometer/core/instrument/distribution/TimeWindowFixedBoundaryHistogram$FixedBoundaryHistogram.class",
+        "original_crc": 3635663583,
+        "rebuilt_crc": 1168852643
+      },
+      {
+        "entry": "io/micrometer/core/instrument/distribution/TimeWindowFixedBoundaryHistogram.class",
+        "original_crc": 2066516304,
+        "rebuilt_crc": 2879496534
+      },
+      {
+        "entry": "io/micrometer/core/instrument/distribution/TimeWindowMax.class",
+        "original_crc": 2798546781,
+        "rebuilt_crc": 1190938521
+      },
+      {
+        "entry": "io/micrometer/core/instrument/distribution/TimeWindowPercentileHistogram.class",
+        "original_crc": 251450844,
+        "rebuilt_crc": 3840300142
+      },
+      {
+        "entry": "io/micrometer/core/instrument/distribution/TimeWindowSum.class",
+        "original_crc": 785250416,
+        "rebuilt_crc": 1939643033
+      },
+      {
+        "entry": "io/micrometer/core/instrument/distribution/ValueAtPercentile.class",
+        "original_crc": 429628971,
+        "rebuilt_crc": 1258823557
+      },
+      {
+        "entry": "io/micrometer/core/instrument/distribution/package-info.class",
+        "original_crc": 2495664729,
+        "rebuilt_crc": 697372786
+      },
+      {
+        "entry": "io/micrometer/core/instrument/distribution/pause/ClockDriftPauseDetector.class",
+        "original_crc": 1510533799,
+        "rebuilt_crc": 3859223669
+      },
+      {
+        "entry": "io/micrometer/core/instrument/distribution/pause/NoPauseDetector.class",
+        "original_crc": 1168638378,
+        "rebuilt_crc": 1290949289
+      },
+      {
+        "entry": "io/micrometer/core/instrument/distribution/pause/PauseDetector.class",
+        "original_crc": 2222641266,
+        "rebuilt_crc": 1754242422
+      },
+      {
+        "entry": "io/micrometer/core/instrument/distribution/pause/package-info.class",
+        "original_crc": 2444993707,
+        "rebuilt_crc": 4066935386
+      },
+      {
+        "entry": "io/micrometer/core/instrument/docs/MeterDocumentation.class",
+        "original_crc": 3289108648,
+        "rebuilt_crc": 2569255761
+      },
+      {
+        "entry": "io/micrometer/core/instrument/docs/package-info.class",
+        "original_crc": 449877507,
+        "rebuilt_crc": 2573371992
+      },
+      {
+        "entry": "io/micrometer/core/instrument/dropwizard/DropwizardClock.class",
+        "original_crc": 3776773115,
+        "rebuilt_crc": 105170070
+      },
+      {
+        "entry": "io/micrometer/core/instrument/dropwizard/DropwizardConfig.class",
+        "original_crc": 2283034725,
+        "rebuilt_crc": 2876958450
+      },
+      {
+        "entry": "io/micrometer/core/instrument/dropwizard/DropwizardCounter.class",
+        "original_crc": 3640871284,
+        "rebuilt_crc": 4050654549
+      },
+      {
+        "entry": "io/micrometer/core/instrument/dropwizard/DropwizardDistributionSummary.class",
+        "original_crc": 2691492874,
+        "rebuilt_crc": 4002910192
+      },
+      {
+        "entry": "io/micrometer/core/instrument/dropwizard/DropwizardFunctionCounter$1.class",
+        "original_crc": 1977258941,
+        "rebuilt_crc": 1030183371
+      },
+      {
+        "entry": "io/micrometer/core/instrument/dropwizard/DropwizardFunctionCounter.class",
+        "original_crc": 2266982189,
+        "rebuilt_crc": 1548012714
+      },
+      {
+        "entry": "io/micrometer/core/instrument/dropwizard/DropwizardFunctionTimer$1$1.class",
+        "original_crc": 1775217613,
+        "rebuilt_crc": 1838078117
+      },
+      {
+        "entry": "io/micrometer/core/instrument/dropwizard/DropwizardFunctionTimer$1.class",
+        "original_crc": 3373755063,
+        "rebuilt_crc": 1782350590
+      },
+      {
+        "entry": "io/micrometer/core/instrument/dropwizard/DropwizardFunctionTimer.class",
+        "original_crc": 1179450014,
+        "rebuilt_crc": 1821236050
+      },
+      {
+        "entry": "io/micrometer/core/instrument/dropwizard/DropwizardGauge.class",
+        "original_crc": 3700193632,
+        "rebuilt_crc": 2970702141
+      },
+      {
+        "entry": "io/micrometer/core/instrument/dropwizard/DropwizardMeterRegistry.class",
+        "original_crc": 342876295,
+        "rebuilt_crc": 3611253384
+      },
+      {
+        "entry": "io/micrometer/core/instrument/dropwizard/DropwizardRate.class",
+        "original_crc": 1809285967,
+        "rebuilt_crc": 4269744612
+      },
+      {
+        "entry": "io/micrometer/core/instrument/dropwizard/DropwizardTimer.class",
+        "original_crc": 3155964412,
+        "rebuilt_crc": 2361797132
+      },
+      {
+        "entry": "io/micrometer/core/instrument/dropwizard/package-info.class",
+        "original_crc": 1526219732,
+        "rebuilt_crc": 3904722612
+      },
+      {
+        "entry": "io/micrometer/core/instrument/internal/CumulativeHistogramLongTaskTimer.class",
+        "original_crc": 3306850638,
+        "rebuilt_crc": 2011662415
+      },
+      {
+        "entry": "io/micrometer/core/instrument/internal/DefaultGauge.class",
+        "original_crc": 419345695,
+        "rebuilt_crc": 682942260
+      },
+      {
+        "entry": "io/micrometer/core/instrument/internal/DefaultLongTaskTimer$1.class",
+        "original_crc": 2630707390,
+        "rebuilt_crc": 859572572
+      },
+      {
+        "entry": "io/micrometer/core/instrument/internal/DefaultLongTaskTimer$SampleImpl.class",
+        "original_crc": 3328883493,
+        "rebuilt_crc": 3016436251
+      },
+      {
+        "entry": "io/micrometer/core/instrument/internal/DefaultLongTaskTimer.class",
+        "original_crc": 737399207,
+        "rebuilt_crc": 2059840494
+      },
+      {
+        "entry": "io/micrometer/core/instrument/internal/DefaultMeter.class",
+        "original_crc": 2163130395,
+        "rebuilt_crc": 2443063940
+      },
+      {
+        "entry": "io/micrometer/core/instrument/internal/Mergeable.class",
+        "original_crc": 3715281346,
+        "rebuilt_crc": 2489891715
+      },
+      {
+        "entry": "io/micrometer/core/instrument/internal/OnlyOnceLoggingDenyMeterFilter.class",
+        "original_crc": 135256932,
+        "rebuilt_crc": 2626142122
+      },
+      {
+        "entry": "io/micrometer/core/instrument/internal/TimedCallable.class",
+        "original_crc": 928768394,
+        "rebuilt_crc": 2634179261
+      },
+      {
+        "entry": "io/micrometer/core/instrument/internal/TimedExecutor.class",
+        "original_crc": 932411607,
+        "rebuilt_crc": 552101204
+      },
+      {
+        "entry": "io/micrometer/core/instrument/internal/TimedExecutorService.class",
+        "original_crc": 3517898243,
+        "rebuilt_crc": 3213125098
+      },
+      {
+        "entry": "io/micrometer/core/instrument/internal/TimedRunnable.class",
+        "original_crc": 801496459,
+        "rebuilt_crc": 780638929
+      },
+      {
+        "entry": "io/micrometer/core/instrument/internal/TimedScheduledExecutorService.class",
+        "original_crc": 1482152701,
+        "rebuilt_crc": 2580677112
+      },
+      {
+        "entry": "io/micrometer/core/instrument/internal/package-info.class",
+        "original_crc": 1274628619,
+        "rebuilt_crc": 2886484030
+      },
+      {
+        "entry": "io/micrometer/core/instrument/kotlin/KotlinObservationContextElement$1.class",
+        "original_crc": 2071045098,
+        "rebuilt_crc": 1755282942
+      },
+      {
+        "entry": "io/micrometer/core/instrument/kotlin/KotlinObservationContextElement.class",
+        "original_crc": 2303346281,
+        "rebuilt_crc": 3565726455
+      },
+      {
+        "entry": "io/micrometer/core/instrument/kotlin/package-info.class",
+        "original_crc": 3990476033,
+        "rebuilt_crc": 3395284791
+      },
+      {
+        "entry": "io/micrometer/core/instrument/logging/LoggingMeterRegistry$1.class",
+        "original_crc": 3440026206,
+        "rebuilt_crc": 2975776186
+      },
+      {
+        "entry": "io/micrometer/core/instrument/logging/LoggingMeterRegistry$Builder.class",
+        "original_crc": 3003577795,
+        "rebuilt_crc": 1676949995
+      },
+      {
+        "entry": "io/micrometer/core/instrument/logging/LoggingMeterRegistry$Printer.class",
+        "original_crc": 3996541207,
+        "rebuilt_crc": 4150523249
+      },
+      {
+        "entry": "io/micrometer/core/instrument/logging/LoggingMeterRegistry.class",
+        "original_crc": 1245588959,
+        "rebuilt_crc": 1905654153
+      },
+      {
+        "entry": "io/micrometer/core/instrument/logging/LoggingRegistryConfig.class",
+        "original_crc": 3444687620,
+        "rebuilt_crc": 3745594981
+      },
+      {
+        "entry": "io/micrometer/core/instrument/logging/package-info.class",
+        "original_crc": 112330383,
+        "rebuilt_crc": 3972590973
+      },
+      {
+        "entry": "io/micrometer/core/instrument/noop/NoopCounter.class",
+        "original_crc": 2455982240,
+        "rebuilt_crc": 2717601810
+      },
+      {
+        "entry": "io/micrometer/core/instrument/noop/NoopDistributionSummary.class",
+        "original_crc": 1945253883,
+        "rebuilt_crc": 1464406051
+      },
+      {
+        "entry": "io/micrometer/core/instrument/noop/NoopFunctionCounter.class",
+        "original_crc": 127157448,
+        "rebuilt_crc": 3997471213
+      },
+      {
+        "entry": "io/micrometer/core/instrument/noop/NoopFunctionTimer.class",
+        "original_crc": 283291959,
+        "rebuilt_crc": 746024682
+      },
+      {
+        "entry": "io/micrometer/core/instrument/noop/NoopGauge.class",
+        "original_crc": 2706446495,
+        "rebuilt_crc": 601441378
+      },
+      {
+        "entry": "io/micrometer/core/instrument/noop/NoopLongTaskTimer$NoopSample.class",
+        "original_crc": 1970058493,
+        "rebuilt_crc": 1118163046
+      },
+      {
+        "entry": "io/micrometer/core/instrument/noop/NoopLongTaskTimer.class",
+        "original_crc": 647399983,
+        "rebuilt_crc": 1501891191
+      },
+      {
+        "entry": "io/micrometer/core/instrument/noop/NoopMeter.class",
+        "original_crc": 870348026,
+        "rebuilt_crc": 3391558933
+      },
+      {
+        "entry": "io/micrometer/core/instrument/noop/NoopTimeGauge.class",
+        "original_crc": 1996894514,
+        "rebuilt_crc": 1315724106
+      },
+      {
+        "entry": "io/micrometer/core/instrument/noop/NoopTimer.class",
+        "original_crc": 3061938647,
+        "rebuilt_crc": 2076718261
+      },
+      {
+        "entry": "io/micrometer/core/instrument/noop/package-info.class",
+        "original_crc": 2253288240,
+        "rebuilt_crc": 3418354686
+      },
+      {
+        "entry": "io/micrometer/core/instrument/observation/DefaultMeterObservationHandler.class",
+        "original_crc": 2118913947,
+        "rebuilt_crc": 643307257
+      },
+      {
+        "entry": "io/micrometer/core/instrument/observation/MeterObservationHandler.class",
+        "original_crc": 3487000841,
+        "rebuilt_crc": 53576700
+      },
+      {
+        "entry": "io/micrometer/core/instrument/observation/ObservationOrTimerCompatibleInstrumentation.class",
+        "original_crc": 1832084082,
+        "rebuilt_crc": 1928150687
+      },
+      {
+        "entry": "io/micrometer/core/instrument/observation/package-info.class",
+        "original_crc": 3927750215,
+        "rebuilt_crc": 1305934084
+      },
+      {
+        "entry": "io/micrometer/core/instrument/package-info.class",
+        "original_crc": 3855561087,
+        "rebuilt_crc": 81627355
+      },
+      {
+        "entry": "io/micrometer/core/instrument/push/PushMeterRegistry.class",
+        "original_crc": 3025486789,
+        "rebuilt_crc": 1014593570
+      },
+      {
+        "entry": "io/micrometer/core/instrument/push/PushRegistryConfig.class",
+        "original_crc": 3849879729,
+        "rebuilt_crc": 3977494721
+      },
+      {
+        "entry": "io/micrometer/core/instrument/push/package-info.class",
+        "original_crc": 2971366736,
+        "rebuilt_crc": 2048316470
+      },
+      {
+        "entry": "io/micrometer/core/instrument/search/MeterNotFoundException$1.class",
+        "original_crc": 1418611663,
+        "rebuilt_crc": 949469988
+      },
+      {
+        "entry": "io/micrometer/core/instrument/search/MeterNotFoundException$FromRequiredSearch.class",
+        "original_crc": 1200759080,
+        "rebuilt_crc": 1837634486
+      },
+      {
+        "entry": "io/micrometer/core/instrument/search/MeterNotFoundException.class",
+        "original_crc": 810822605,
+        "rebuilt_crc": 874668722
+      },
+      {
+        "entry": "io/micrometer/core/instrument/search/RequiredSearch.class",
+        "original_crc": 4047495462,
+        "rebuilt_crc": 2281712332
+      },
+      {
+        "entry": "io/micrometer/core/instrument/search/Search$1.class",
+        "original_crc": 1356367987,
+        "rebuilt_crc": 3481606280
+      },
+      {
+        "entry": "io/micrometer/core/instrument/search/Search.class",
+        "original_crc": 1430260019,
+        "rebuilt_crc": 2568441365
+      },
+      {
+        "entry": "io/micrometer/core/instrument/search/package-info.class",
+        "original_crc": 923306400,
+        "rebuilt_crc": 2444067825
+      },
+      {
+        "entry": "io/micrometer/core/instrument/simple/CountingMode.class",
+        "original_crc": 3718971495,
+        "rebuilt_crc": 755503700
+      },
+      {
+        "entry": "io/micrometer/core/instrument/simple/SimpleConfig.class",
+        "original_crc": 3594203413,
+        "rebuilt_crc": 304308968
+      },
+      {
+        "entry": "io/micrometer/core/instrument/simple/SimpleMeterRegistry$1.class",
+        "original_crc": 732704437,
+        "rebuilt_crc": 4094514136
+      },
+      {
+        "entry": "io/micrometer/core/instrument/simple/SimpleMeterRegistry.class",
+        "original_crc": 612611955,
+        "rebuilt_crc": 4108367404
+      },
+      {
+        "entry": "io/micrometer/core/instrument/simple/package-info.class",
+        "original_crc": 271980873,
+        "rebuilt_crc": 4262586434
+      },
+      {
+        "entry": "io/micrometer/core/instrument/step/StepCounter.class",
+        "original_crc": 820120847,
+        "rebuilt_crc": 3109898061
+      },
+      {
+        "entry": "io/micrometer/core/instrument/step/StepDistributionSummary.class",
+        "original_crc": 797985198,
+        "rebuilt_crc": 834563526
+      },
+      {
+        "entry": "io/micrometer/core/instrument/step/StepDouble.class",
+        "original_crc": 753072977,
+        "rebuilt_crc": 250413723
+      },
+      {
+        "entry": "io/micrometer/core/instrument/step/StepFunctionCounter.class",
+        "original_crc": 812335141,
+        "rebuilt_crc": 1840632301
+      },
+      {
+        "entry": "io/micrometer/core/instrument/step/StepFunctionTimer.class",
+        "original_crc": 3494302294,
+        "rebuilt_crc": 844616114
+      },
+      {
+        "entry": "io/micrometer/core/instrument/step/StepLong.class",
+        "original_crc": 1770233047,
+        "rebuilt_crc": 658410723
+      },
+      {
+        "entry": "io/micrometer/core/instrument/step/StepMeter.class",
+        "original_crc": 232480604,
+        "rebuilt_crc": 3047122933
+      },
+      {
+        "entry": "io/micrometer/core/instrument/step/StepMeterRegistry.class",
+        "original_crc": 3595622598,
+        "rebuilt_crc": 777486460
+      },
+      {
+        "entry": "io/micrometer/core/instrument/step/StepRegistryConfig.class",
+        "original_crc": 2330522898,
+        "rebuilt_crc": 3792964546
+      },
+      {
+        "entry": "io/micrometer/core/instrument/step/StepTimer.class",
+        "original_crc": 836015581,
+        "rebuilt_crc": 1778702331
+      },
+      {
+        "entry": "io/micrometer/core/instrument/step/StepTuple2.class",
+        "original_crc": 2679759250,
+        "rebuilt_crc": 1370010661
+      },
+      {
+        "entry": "io/micrometer/core/instrument/step/StepValue.class",
+        "original_crc": 1510762856,
+        "rebuilt_crc": 1178288825
+      },
+      {
+        "entry": "io/micrometer/core/instrument/step/package-info.class",
+        "original_crc": 3273981374,
+        "rebuilt_crc": 1681223343
+      },
+      {
+        "entry": "io/micrometer/core/instrument/util/AbstractPartition.class",
+        "original_crc": 996144744,
+        "rebuilt_crc": 2231504791
+      },
+      {
+        "entry": "io/micrometer/core/instrument/util/DoubleFormat.class",
+        "original_crc": 4184309283,
+        "rebuilt_crc": 2776605075
+      },
+      {
+        "entry": "io/micrometer/core/instrument/util/HierarchicalNameMapper.class",
+        "original_crc": 3796941517,
+        "rebuilt_crc": 402213728
+      },
+      {
+        "entry": "io/micrometer/core/instrument/util/IOUtils.class",
+        "original_crc": 3999011017,
+        "rebuilt_crc": 1836742920
+      },
+      {
+        "entry": "io/micrometer/core/instrument/util/MeterEquivalence.class",
+        "original_crc": 1204752131,
+        "rebuilt_crc": 1428140321
+      },
+      {
+        "entry": "io/micrometer/core/instrument/util/MeterPartition.class",
+        "original_crc": 2131723672,
+        "rebuilt_crc": 2635978529
+      },
+      {
+        "entry": "io/micrometer/core/instrument/util/NamedThreadFactory.class",
+        "original_crc": 3341191733,
+        "rebuilt_crc": 1000026801
+      },
+      {
+        "entry": "io/micrometer/core/instrument/util/StringEscapeUtils.class",
+        "original_crc": 4027666349,
+        "rebuilt_crc": 1873080749
+      },
+      {
+        "entry": "io/micrometer/core/instrument/util/StringUtils.class",
+        "original_crc": 1320450666,
+        "rebuilt_crc": 1691631905
+      },
+      {
+        "entry": "io/micrometer/core/instrument/util/TimeUtils$1.class",
+        "original_crc": 3676295320,
+        "rebuilt_crc": 967871071
+      },
+      {
+        "entry": "io/micrometer/core/instrument/util/TimeUtils.class",
+        "original_crc": 2694566462,
+        "rebuilt_crc": 1571006142
+      },
+      {
+        "entry": "io/micrometer/core/instrument/util/package-info.class",
+        "original_crc": 2795520661,
+        "rebuilt_crc": 2285676399
+      },
+      {
+        "entry": "io/micrometer/core/ipc/http/HttpSender$1.class",
+        "original_crc": 966221072,
+        "rebuilt_crc": 604626088
+      },
+      {
+        "entry": "io/micrometer/core/ipc/http/HttpSender$Method.class",
+        "original_crc": 2282731317,
+        "rebuilt_crc": 2873491950
+      },
+      {
+        "entry": "io/micrometer/core/ipc/http/HttpSender$Request$Builder.class",
+        "original_crc": 1384940749,
+        "rebuilt_crc": 1027861039
+      },
+      {
+        "entry": "io/micrometer/core/ipc/http/HttpSender$Request.class",
+        "original_crc": 190376852,
+        "rebuilt_crc": 2383866208
+      },
+      {
+        "entry": "io/micrometer/core/ipc/http/HttpSender$Response.class",
+        "original_crc": 3252243366,
+        "rebuilt_crc": 3081339191
+      },
+      {
+        "entry": "io/micrometer/core/ipc/http/HttpSender.class",
+        "original_crc": 1303254330,
+        "rebuilt_crc": 2079618733
+      },
+      {
+        "entry": "io/micrometer/core/ipc/http/HttpStatusClass$1.class",
+        "original_crc": 950851851,
+        "rebuilt_crc": 3557958995
+      },
+      {
+        "entry": "io/micrometer/core/ipc/http/HttpStatusClass.class",
+        "original_crc": 3569357709,
+        "rebuilt_crc": 1466088958
+      },
+      {
+        "entry": "io/micrometer/core/ipc/http/HttpUrlConnectionSender.class",
+        "original_crc": 1138696865,
+        "rebuilt_crc": 2779520133
+      },
+      {
+        "entry": "io/micrometer/core/ipc/http/OkHttpSender$1.class",
+        "original_crc": 3438021326,
+        "rebuilt_crc": 4069667719
+      },
+      {
+        "entry": "io/micrometer/core/ipc/http/OkHttpSender.class",
+        "original_crc": 2488604110,
+        "rebuilt_crc": 2056918714
+      },
+      {
+        "entry": "io/micrometer/core/lang/NonNull.class",
+        "original_crc": 2400571514,
+        "rebuilt_crc": 667531491
+      },
+      {
+        "entry": "io/micrometer/core/lang/NonNullApi.class",
+        "original_crc": 708248479,
+        "rebuilt_crc": 1352975850
+      },
+      {
+        "entry": "io/micrometer/core/lang/NonNullFields.class",
+        "original_crc": 39686206,
+        "rebuilt_crc": 3819832844
+      },
+      {
+        "entry": "io/micrometer/core/lang/Nullable.class",
+        "original_crc": 635004804,
+        "rebuilt_crc": 2637749086
+      },
+      {
+        "entry": "io/micrometer/core/util/internal/logging/AbstractInternalLogger$1.class",
+        "original_crc": 4051568205,
+        "rebuilt_crc": 396810502
+      },
+      {
+        "entry": "io/micrometer/core/util/internal/logging/AbstractInternalLogger.class",
+        "original_crc": 3343685384,
+        "rebuilt_crc": 3917578193
+      },
+      {
+        "entry": "io/micrometer/core/util/internal/logging/FormattingTuple.class",
+        "original_crc": 3340759926,
+        "rebuilt_crc": 2058802174
+      },
+      {
+        "entry": "io/micrometer/core/util/internal/logging/InternalLogLevel.class",
+        "original_crc": 2951078964,
+        "rebuilt_crc": 2738797638
+      },
+      {
+        "entry": "io/micrometer/core/util/internal/logging/InternalLogger.class",
+        "original_crc": 4287973628,
+        "rebuilt_crc": 782330414
+      },
+      {
+        "entry": "io/micrometer/core/util/internal/logging/InternalLoggerFactory.class",
+        "original_crc": 1682090797,
+        "rebuilt_crc": 136953060
+      },
+      {
+        "entry": "io/micrometer/core/util/internal/logging/JdkLogger.class",
+        "original_crc": 3264197208,
+        "rebuilt_crc": 3155446467
+      },
+      {
+        "entry": "io/micrometer/core/util/internal/logging/JdkLoggerFactory.class",
+        "original_crc": 2077376055,
+        "rebuilt_crc": 3399941894
+      },
+      {
+        "entry": "io/micrometer/core/util/internal/logging/LocationAwareSlf4JLogger.class",
+        "original_crc": 586385245,
+        "rebuilt_crc": 2805110407
+      },
+      {
+        "entry": "io/micrometer/core/util/internal/logging/MessageFormatter.class",
+        "original_crc": 2229456865,
+        "rebuilt_crc": 3478076639
+      },
+      {
+        "entry": "io/micrometer/core/util/internal/logging/Slf4JLogger.class",
+        "original_crc": 2146537529,
+        "rebuilt_crc": 3144574861
+      },
+      {
+        "entry": "io/micrometer/core/util/internal/logging/Slf4JLoggerFactory.class",
+        "original_crc": 541074104,
+        "rebuilt_crc": 732666793
+      },
+      {
+        "entry": "io/micrometer/core/util/internal/logging/WarnThenDebugLogger.class",
+        "original_crc": 815161563,
+        "rebuilt_crc": 3030410573
+      }
+    ],
     "match": false
   },
   "metadata": {
     "manifest_match": false,
-    "manifest_diff_keys": [],
-    "resource_matches": 0,
-    "resource_mismatches": [],
+    "manifest_diff_keys": [
+      "Build-Date",
+      "Build-Date-UTC",
+      "Build-Host",
+      "Build-Id",
+      "Build-Java-Version",
+      "Build-Job",
+      "Build-Number",
+      "Build-Url",
+      "Built-Status",
+      "Implementation-Title",
+      "Implementation-Version",
+      "Module-Origin"
+    ],
+    "resource_matches": 5,
+    "resource_mismatches": [
+      "META-INF/micrometer-core.properties"
+    ],
     "match": false
   },
   "bytecode": {
-    "tool_used": "",
-    "classes_compared": 0,
-    "classes_identical": 0,
-    "classes_divergent": [],
+    "tool_used": "none",
+    "classes_compared": 466,
+    "classes_identical": 13,
+    "classes_divergent": [
+      "io/micrometer/core/annotation/Counted.class",
+      "io/micrometer/core/annotation/Incubating.class",
+      "io/micrometer/core/annotation/Timed.class",
+      "io/micrometer/core/annotation/TimedSet.class",
+      "io/micrometer/core/aop/CountedAspect.class",
+      "io/micrometer/core/aop/TimedAspect.class",
+      "io/micrometer/core/instrument/AbstractDistributionSummary.class",
+      "io/micrometer/core/instrument/AbstractMeter.class",
+      "io/micrometer/core/instrument/AbstractTimer.class",
+      "io/micrometer/core/instrument/AbstractTimerBuilder.class",
+      "io/micrometer/core/instrument/Clock$1.class",
+      "io/micrometer/core/instrument/Clock.class",
+      "io/micrometer/core/instrument/Counter$1.class",
+      "io/micrometer/core/instrument/Counter$Builder.class",
+      "io/micrometer/core/instrument/Counter.class",
+      "io/micrometer/core/instrument/DistributionSummary$1.class",
+      "io/micrometer/core/instrument/DistributionSummary$Builder.class",
+      "io/micrometer/core/instrument/DistributionSummary.class",
+      "io/micrometer/core/instrument/FunctionCounter$1.class",
+      "io/micrometer/core/instrument/FunctionCounter$Builder.class",
+      "io/micrometer/core/instrument/FunctionCounter.class",
+      "io/micrometer/core/instrument/FunctionTimer$1.class",
+      "io/micrometer/core/instrument/FunctionTimer$Builder.class",
+      "io/micrometer/core/instrument/FunctionTimer.class",
+      "io/micrometer/core/instrument/Gauge$1.class",
+      "io/micrometer/core/instrument/Gauge$Builder.class",
+      "io/micrometer/core/instrument/Gauge.class",
+      "io/micrometer/core/instrument/HighCardinalityTagsDetector.class",
+      "io/micrometer/core/instrument/ImmutableTag.class",
+      "io/micrometer/core/instrument/LongTaskTimer$1.class",
+      "io/micrometer/core/instrument/LongTaskTimer$Builder.class",
+      "io/micrometer/core/instrument/LongTaskTimer$Sample.class",
+      "io/micrometer/core/instrument/LongTaskTimer.class",
+      "io/micrometer/core/instrument/Measurement.class",
+      "io/micrometer/core/instrument/Meter$1.class",
+      "io/micrometer/core/instrument/Meter$Builder.class",
+      "io/micrometer/core/instrument/Meter$Id.class",
+      "io/micrometer/core/instrument/Meter$Type.class",
+      "io/micrometer/core/instrument/Meter.class",
+      "io/micrometer/core/instrument/MeterRegistry$1.class",
+      "io/micrometer/core/instrument/MeterRegistry$Config.class",
+      "io/micrometer/core/instrument/MeterRegistry$More.class",
+      "io/micrometer/core/instrument/MeterRegistry.class",
+      "io/micrometer/core/instrument/Metrics$More.class",
+      "io/micrometer/core/instrument/Metrics.class",
+      "io/micrometer/core/instrument/MockClock.class",
+      "io/micrometer/core/instrument/MultiGauge$1.class",
+      "io/micrometer/core/instrument/MultiGauge$Builder.class",
+      "io/micrometer/core/instrument/MultiGauge$Row.class",
+      "io/micrometer/core/instrument/MultiGauge.class",
+      "io/micrometer/core/instrument/Statistic.class",
+      "io/micrometer/core/instrument/StrongReferenceGaugeFunction.class",
+      "io/micrometer/core/instrument/Tag.class",
+      "io/micrometer/core/instrument/Tags$1.class",
+      "io/micrometer/core/instrument/Tags$ArrayIterator.class",
+      "io/micrometer/core/instrument/Tags.class",
+      "io/micrometer/core/instrument/TimeGauge$1.class",
+      "io/micrometer/core/instrument/TimeGauge$Builder.class",
+      "io/micrometer/core/instrument/TimeGauge.class",
+      "io/micrometer/core/instrument/Timer$Builder.class",
+      "io/micrometer/core/instrument/Timer$ResourceSample.class",
+      "io/micrometer/core/instrument/Timer$Sample.class",
+      "io/micrometer/core/instrument/Timer.class",
+      "io/micrometer/core/instrument/binder/BaseUnits.class",
+      "io/micrometer/core/instrument/binder/MeterBinder.class",
+      "io/micrometer/core/instrument/binder/cache/CacheMeterBinder.class",
+      "io/micrometer/core/instrument/binder/cache/CaffeineCacheMetrics.class",
+      "io/micrometer/core/instrument/binder/cache/CaffeineStatsCounter.class",
+      "io/micrometer/core/instrument/binder/cache/EhCache2Metrics.class",
+      "io/micrometer/core/instrument/binder/cache/GuavaCacheMetrics.class",
+      "io/micrometer/core/instrument/binder/cache/HazelcastCacheMetrics.class",
+      "io/micrometer/core/instrument/binder/cache/HazelcastIMapAdapter$LocalMapStats.class",
+      "io/micrometer/core/instrument/binder/cache/HazelcastIMapAdapter$NearCacheStats.class",
+      "io/micrometer/core/instrument/binder/cache/HazelcastIMapAdapter.class",
+      "io/micrometer/core/instrument/binder/cache/JCacheMetrics.class",
+      "io/micrometer/core/instrument/binder/cache/package-info.class",
+      "io/micrometer/core/instrument/binder/commonspool2/CommonsObjectPool2Metrics.class",
+      "io/micrometer/core/instrument/binder/db/DatabaseTableMetrics.class",
+      "io/micrometer/core/instrument/binder/db/JooqExecuteListener.class",
+      "io/micrometer/core/instrument/binder/db/MetricsDSLContext.class",
+      "io/micrometer/core/instrument/binder/db/PostgreSQLDatabaseMetrics$Names.class",
+      "io/micrometer/core/instrument/binder/db/PostgreSQLDatabaseMetrics.class",
+      "io/micrometer/core/instrument/binder/grpc/AbstractMetricCollectingInterceptor$MetricSet.class",
+      "io/micrometer/core/instrument/binder/grpc/AbstractMetricCollectingInterceptor.class",
+      "io/micrometer/core/instrument/binder/grpc/DefaultGrpcClientObservationConvention.class",
+      "io/micrometer/core/instrument/binder/grpc/DefaultGrpcServerObservationConvention.class",
+      "io/micrometer/core/instrument/binder/grpc/GrpcClientObservationContext.class",
+      "io/micrometer/core/instrument/binder/grpc/GrpcClientObservationConvention.class",
+      "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$1.class",
+      "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$2.class",
+      "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$GrpcClientEvents$1.class",
+      "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$GrpcClientEvents$2.class",
+      "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$GrpcClientEvents.class",
+      "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$GrpcServerEvents$1.class",
+      "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$GrpcServerEvents$2.class",
+      "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$GrpcServerEvents.class",
+      "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$LowCardinalityKeyNames$1.class",
+      "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$LowCardinalityKeyNames$2.class",
+      "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$LowCardinalityKeyNames$3.class",
+      "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$LowCardinalityKeyNames$4.class",
+      "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$LowCardinalityKeyNames$5.class",
+      "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation$LowCardinalityKeyNames.class",
+      "io/micrometer/core/instrument/binder/grpc/GrpcObservationDocumentation.class",
+      "io/micrometer/core/instrument/binder/grpc/GrpcServerObservationContext.class",
+      "io/micrometer/core/instrument/binder/grpc/GrpcServerObservationConvention.class",
+      "io/micrometer/core/instrument/binder/grpc/MetricCollectingClientCall.class",
+      "io/micrometer/core/instrument/binder/grpc/MetricCollectingClientCallListener.class",
+      "io/micrometer/core/instrument/binder/grpc/MetricCollectingClientInterceptor.class",
+      "io/micrometer/core/instrument/binder/grpc/MetricCollectingServerCall.class",
+      "io/micrometer/core/instrument/binder/grpc/MetricCollectingServerCallListener.class",
+      "io/micrometer/core/instrument/binder/grpc/MetricCollectingServerInterceptor.class",
+      "io/micrometer/core/instrument/binder/grpc/ObservationGrpcClientCall.class",
+      "io/micrometer/core/instrument/binder/grpc/ObservationGrpcClientCallListener.class",
+      "io/micrometer/core/instrument/binder/grpc/ObservationGrpcClientInterceptor.class",
+      "io/micrometer/core/instrument/binder/grpc/ObservationGrpcServerCall.class",
+      "io/micrometer/core/instrument/binder/grpc/ObservationGrpcServerCallListener.class",
+      "io/micrometer/core/instrument/binder/grpc/ObservationGrpcServerInterceptor.class",
+      "io/micrometer/core/instrument/binder/grpc/package-info.class",
+      "io/micrometer/core/instrument/binder/http/DefaultHttpJakartaServletRequestTagsProvider.class",
+      "io/micrometer/core/instrument/binder/http/DefaultHttpServletRequestTagsProvider.class",
+      "io/micrometer/core/instrument/binder/http/HttpJakartaServletRequestTagsProvider.class",
+      "io/micrometer/core/instrument/binder/http/HttpRequestTags.class",
+      "io/micrometer/core/instrument/binder/http/HttpServletRequestTagsProvider.class",
+      "io/micrometer/core/instrument/binder/http/Outcome.class",
+      "io/micrometer/core/instrument/binder/http/package-info.class",
+      "io/micrometer/core/instrument/binder/httpcomponents/ApacheHttpClientContext.class",
+      "io/micrometer/core/instrument/binder/httpcomponents/ApacheHttpClientObservationConvention.class",
+      "io/micrometer/core/instrument/binder/httpcomponents/ApacheHttpClientObservationDocumentation$1.class",
+      "io/micrometer/core/instrument/binder/httpcomponents/ApacheHttpClientObservationDocumentation$ApacheHttpClientKeyNames$1.class",
+      "io/micrometer/core/instrument/binder/httpcomponents/ApacheHttpClientObservationDocumentation$ApacheHttpClientKeyNames$2.class",
+      "io/micrometer/core/instrument/binder/httpcomponents/ApacheHttpClientObservationDocumentation$ApacheHttpClientKeyNames$3.class",
+      "io/micrometer/core/instrument/binder/httpcomponents/ApacheHttpClientObservationDocumentation$ApacheHttpClientKeyNames$4.class",
+      "io/micrometer/core/instrument/binder/httpcomponents/ApacheHttpClientObservationDocumentation$ApacheHttpClientKeyNames$5.class",
+      "io/micrometer/core/instrument/binder/httpcomponents/ApacheHttpClientObservationDocumentation$ApacheHttpClientKeyNames$6.class",
+      "io/micrometer/core/instrument/binder/httpcomponents/ApacheHttpClientObservationDocumentation$ApacheHttpClientKeyNames.class",
+      "io/micrometer/core/instrument/binder/httpcomponents/ApacheHttpClientObservationDocumentation.class",
+      "io/micrometer/core/instrument/binder/httpcomponents/DefaultApacheHttpClientObservationConvention.class",
+      "io/micrometer/core/instrument/binder/httpcomponents/DefaultUriMapper.class",
+      "io/micrometer/core/instrument/binder/httpcomponents/HttpContextUtils.class",
+      "io/micrometer/core/instrument/binder/httpcomponents/MicrometerHttpClientInterceptor.class",
+      "io/micrometer/core/instrument/binder/httpcomponents/MicrometerHttpRequestExecutor$1.class",
+      "io/micrometer/core/instrument/binder/httpcomponents/MicrometerHttpRequestExecutor$Builder.class",
+      "io/micrometer/core/instrument/binder/httpcomponents/MicrometerHttpRequestExecutor.class",
+      "io/micrometer/core/instrument/binder/httpcomponents/PoolingHttpClientConnectionManagerMetricsBinder.class",
+      "io/micrometer/core/instrument/binder/httpcomponents/package-info.class",
+      "io/micrometer/core/instrument/binder/hystrix/HystrixMetricsBinder.class",
+      "io/micrometer/core/instrument/binder/hystrix/MicrometerMetricsPublisher.class",
+      "io/micrometer/core/instrument/binder/hystrix/MicrometerMetricsPublisherCommand.class",
+      "io/micrometer/core/instrument/binder/hystrix/MicrometerMetricsPublisherThreadPool.class",
+      "io/micrometer/core/instrument/binder/jersey/server/AnnotationFinder$1.class",
+      "io/micrometer/core/instrument/binder/jersey/server/AnnotationFinder.class",
+      "io/micrometer/core/instrument/binder/jersey/server/DefaultJerseyObservationConvention.class",
+      "io/micrometer/core/instrument/binder/jersey/server/DefaultJerseyTagsProvider.class",
+      "io/micrometer/core/instrument/binder/jersey/server/JerseyContext.class",
+      "io/micrometer/core/instrument/binder/jersey/server/JerseyKeyValues.class",
+      "io/micrometer/core/instrument/binder/jersey/server/JerseyObservationConvention.class",
+      "io/micrometer/core/instrument/binder/jersey/server/JerseyObservationDocumentation$1.class",
+      "io/micrometer/core/instrument/binder/jersey/server/JerseyObservationDocumentation$JerseyLegacyLowCardinalityTags$1.class",
+      "io/micrometer/core/instrument/binder/jersey/server/JerseyObservationDocumentation$JerseyLegacyLowCardinalityTags$2.class",
+      "io/micrometer/core/instrument/binder/jersey/server/JerseyObservationDocumentation$JerseyLegacyLowCardinalityTags$3.class",
+      "io/micrometer/core/instrument/binder/jersey/server/JerseyObservationDocumentation$JerseyLegacyLowCardinalityTags$4.class",
+      "io/micrometer/core/instrument/binder/jersey/server/JerseyObservationDocumentation$JerseyLegacyLowCardinalityTags$5.class",
+      "io/micrometer/core/instrument/binder/jersey/server/JerseyObservationDocumentation$JerseyLegacyLowCardinalityTags.class",
+      "io/micrometer/core/instrument/binder/jersey/server/JerseyObservationDocumentation.class",
+      "io/micrometer/core/instrument/binder/jersey/server/JerseyTags.class",
+      "io/micrometer/core/instrument/binder/jersey/server/JerseyTagsProvider.class",
+      "io/micrometer/core/instrument/binder/jersey/server/MetricsApplicationEventListener.class",
+      "io/micrometer/core/instrument/binder/jersey/server/MetricsRequestEventListener$1.class",
+      "io/micrometer/core/instrument/binder/jersey/server/MetricsRequestEventListener.class",
+      "io/micrometer/core/instrument/binder/jersey/server/ObservationApplicationEventListener.class",
+      "io/micrometer/core/instrument/binder/jersey/server/ObservationRequestEventListener$1.class",
+      "io/micrometer/core/instrument/binder/jersey/server/ObservationRequestEventListener$ObservationScopeAndContext.class",
+      "io/micrometer/core/instrument/binder/jersey/server/ObservationRequestEventListener.class",
+      "io/micrometer/core/instrument/binder/jersey/server/TimedFinder.class",
+      "io/micrometer/core/instrument/binder/jetty/InstrumentedQueuedThreadPool.class",
+      "io/micrometer/core/instrument/binder/jetty/JettyClientMetrics$Builder.class",
+      "io/micrometer/core/instrument/binder/jetty/JettyClientMetrics.class",
+      "io/micrometer/core/instrument/binder/jetty/JettyClientTags.class",
+      "io/micrometer/core/instrument/binder/jetty/JettyClientTagsProvider.class",
+      "io/micrometer/core/instrument/binder/jetty/JettyConnectionMetrics.class",
+      "io/micrometer/core/instrument/binder/jetty/JettyServerThreadPoolMetrics.class",
+      "io/micrometer/core/instrument/binder/jetty/JettySslHandshakeMetrics.class",
+      "io/micrometer/core/instrument/binder/jetty/JettyStatisticsMetrics.class",
+      "io/micrometer/core/instrument/binder/jetty/OnCompletionAsyncListener.class",
+      "io/micrometer/core/instrument/binder/jetty/TimedHandler$1.class",
+      "io/micrometer/core/instrument/binder/jetty/TimedHandler.class",
+      "io/micrometer/core/instrument/binder/jpa/HibernateMetrics.class",
+      "io/micrometer/core/instrument/binder/jpa/HibernateQueryMetrics$MetricsEventHandler.class",
+      "io/micrometer/core/instrument/binder/jpa/HibernateQueryMetrics.class",
+      "io/micrometer/core/instrument/binder/jvm/ClassLoaderMetrics.class",
+      "io/micrometer/core/instrument/binder/jvm/DiskSpaceMetrics.class",
+      "io/micrometer/core/instrument/binder/jvm/ExecutorServiceMetrics.class",
+      "io/micrometer/core/instrument/binder/jvm/JvmCompilationMetrics.class",
+      "io/micrometer/core/instrument/binder/jvm/JvmGcMetrics$GcGenerationAge$1.class",
+      "io/micrometer/core/instrument/binder/jvm/JvmGcMetrics$GcGenerationAge.class",
+      "io/micrometer/core/instrument/binder/jvm/JvmGcMetrics$GcMetricsNotificationListener.class",
+      "io/micrometer/core/instrument/binder/jvm/JvmGcMetrics.class",
+      "io/micrometer/core/instrument/binder/jvm/JvmHeapPressureMetrics.class",
+      "io/micrometer/core/instrument/binder/jvm/JvmInfoMetrics.class",
+      "io/micrometer/core/instrument/binder/jvm/JvmMemory.class",
+      "io/micrometer/core/instrument/binder/jvm/JvmMemoryMetrics.class",
+      "io/micrometer/core/instrument/binder/jvm/JvmThreadMetrics.class",
+      "io/micrometer/core/instrument/binder/kafka/KafkaClientMetrics.class",
+      "io/micrometer/core/instrument/binder/kafka/KafkaConsumerMetrics$1.class",
+      "io/micrometer/core/instrument/binder/kafka/KafkaConsumerMetrics.class",
+      "io/micrometer/core/instrument/binder/kafka/KafkaMetrics.class",
+      "io/micrometer/core/instrument/binder/kafka/KafkaStreamsMetrics.class",
+      "io/micrometer/core/instrument/binder/logging/Log4j2Metrics$1.class",
+      "io/micrometer/core/instrument/binder/logging/Log4j2Metrics$MetricsFilter.class",
+      "io/micrometer/core/instrument/binder/logging/Log4j2Metrics.class",
+      "io/micrometer/core/instrument/binder/logging/LogbackMetrics$1.class",
+      "io/micrometer/core/instrument/binder/logging/LogbackMetrics.class",
+      "io/micrometer/core/instrument/binder/logging/MetricsTurboFilter.class",
+      "io/micrometer/core/instrument/binder/mongodb/DefaultMongoCommandTagsProvider.class",
+      "io/micrometer/core/instrument/binder/mongodb/DefaultMongoConnectionPoolTagsProvider.class",
+      "io/micrometer/core/instrument/binder/mongodb/MongoCommandTagsProvider.class",
+      "io/micrometer/core/instrument/binder/mongodb/MongoConnectionPoolTagsProvider.class",
+      "io/micrometer/core/instrument/binder/mongodb/MongoMetricsCommandListener.class",
+      "io/micrometer/core/instrument/binder/mongodb/MongoMetricsConnectionPoolListener.class",
+      "io/micrometer/core/instrument/binder/okhttp3/DefaultOkHttpObservationConvention.class",
+      "io/micrometer/core/instrument/binder/okhttp3/OkHttpConnectionPoolMetrics$1.class",
+      "io/micrometer/core/instrument/binder/okhttp3/OkHttpConnectionPoolMetrics$ConnectionPoolConnectionStats.class",
+      "io/micrometer/core/instrument/binder/okhttp3/OkHttpConnectionPoolMetrics.class",
+      "io/micrometer/core/instrument/binder/okhttp3/OkHttpContext.class",
+      "io/micrometer/core/instrument/binder/okhttp3/OkHttpMetricsEventListener$Builder.class",
+      "io/micrometer/core/instrument/binder/okhttp3/OkHttpMetricsEventListener$CallState.class",
+      "io/micrometer/core/instrument/binder/okhttp3/OkHttpMetricsEventListener.class",
+      "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationConvention.class",
+      "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationDocumentation$1.class",
+      "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationDocumentation$OkHttpLegacyLowCardinalityTags$1.class",
+      "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationDocumentation$OkHttpLegacyLowCardinalityTags$2.class",
+      "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationDocumentation$OkHttpLegacyLowCardinalityTags$3.class",
+      "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationDocumentation$OkHttpLegacyLowCardinalityTags$4.class",
+      "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationDocumentation$OkHttpLegacyLowCardinalityTags$5.class",
+      "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationDocumentation$OkHttpLegacyLowCardinalityTags$6.class",
+      "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationDocumentation$OkHttpLegacyLowCardinalityTags$7.class",
+      "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationDocumentation$OkHttpLegacyLowCardinalityTags.class",
+      "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationDocumentation.class",
+      "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationInterceptor$Builder.class",
+      "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationInterceptor$CallState.class",
+      "io/micrometer/core/instrument/binder/okhttp3/OkHttpObservationInterceptor.class",
+      "io/micrometer/core/instrument/binder/package-info.class",
+      "io/micrometer/core/instrument/binder/system/DiskSpaceMetrics.class",
+      "io/micrometer/core/instrument/binder/system/FileDescriptorMetrics.class",
+      "io/micrometer/core/instrument/binder/system/ProcessorMetrics.class",
+      "io/micrometer/core/instrument/binder/system/UptimeMetrics.class",
+      "io/micrometer/core/instrument/binder/tomcat/TomcatMetrics$1.class",
+      "io/micrometer/core/instrument/binder/tomcat/TomcatMetrics.class",
+      "io/micrometer/core/instrument/composite/AbstractCompositeMeter.class",
+      "io/micrometer/core/instrument/composite/CompositeCounter.class",
+      "io/micrometer/core/instrument/composite/CompositeCustomMeter.class",
+      "io/micrometer/core/instrument/composite/CompositeDistributionSummary.class",
+      "io/micrometer/core/instrument/composite/CompositeFunctionCounter.class",
+      "io/micrometer/core/instrument/composite/CompositeFunctionTimer.class",
+      "io/micrometer/core/instrument/composite/CompositeGauge.class",
+      "io/micrometer/core/instrument/composite/CompositeLongTaskTimer$1.class",
+      "io/micrometer/core/instrument/composite/CompositeLongTaskTimer$CompositeSample.class",
+      "io/micrometer/core/instrument/composite/CompositeLongTaskTimer.class",
+      "io/micrometer/core/instrument/composite/CompositeMeter.class",
+      "io/micrometer/core/instrument/composite/CompositeMeterRegistry.class",
+      "io/micrometer/core/instrument/composite/CompositeTimeGauge.class",
+      "io/micrometer/core/instrument/composite/CompositeTimer.class",
+      "io/micrometer/core/instrument/composite/package-info.class",
+      "io/micrometer/core/instrument/config/InvalidConfigurationException.class",
+      "io/micrometer/core/instrument/config/MeterFilter$1.class",
+      "io/micrometer/core/instrument/config/MeterFilter$10.class",
+      "io/micrometer/core/instrument/config/MeterFilter$11.class",
+      "io/micrometer/core/instrument/config/MeterFilter$12.class",
+      "io/micrometer/core/instrument/config/MeterFilter$13.class",
+      "io/micrometer/core/instrument/config/MeterFilter$2.class",
+      "io/micrometer/core/instrument/config/MeterFilter$3.class",
+      "io/micrometer/core/instrument/config/MeterFilter$4.class",
+      "io/micrometer/core/instrument/config/MeterFilter$5.class",
+      "io/micrometer/core/instrument/config/MeterFilter$6.class",
+      "io/micrometer/core/instrument/config/MeterFilter$7.class",
+      "io/micrometer/core/instrument/config/MeterFilter$8.class",
+      "io/micrometer/core/instrument/config/MeterFilter$9.class",
+      "io/micrometer/core/instrument/config/MeterFilter.class",
+      "io/micrometer/core/instrument/config/MeterFilterReply.class",
+      "io/micrometer/core/instrument/config/MeterRegistryConfig.class",
+      "io/micrometer/core/instrument/config/MeterRegistryConfigValidator.class",
+      "io/micrometer/core/instrument/config/MissingRequiredConfigurationException.class",
+      "io/micrometer/core/instrument/config/NamingConvention$1.class",
+      "io/micrometer/core/instrument/config/NamingConvention$2.class",
+      "io/micrometer/core/instrument/config/NamingConvention$3.class",
+      "io/micrometer/core/instrument/config/NamingConvention$4.class",
+      "io/micrometer/core/instrument/config/NamingConvention.class",
+      "io/micrometer/core/instrument/config/package-info.class",
+      "io/micrometer/core/instrument/config/validate/DurationValidator$1.class",
+      "io/micrometer/core/instrument/config/validate/DurationValidator$2.class",
+      "io/micrometer/core/instrument/config/validate/DurationValidator$3.class",
+      "io/micrometer/core/instrument/config/validate/DurationValidator.class",
+      "io/micrometer/core/instrument/config/validate/InvalidReason.class",
+      "io/micrometer/core/instrument/config/validate/PropertyValidator.class",
+      "io/micrometer/core/instrument/config/validate/Validated$Either.class",
+      "io/micrometer/core/instrument/config/validate/Validated$Invalid.class",
+      "io/micrometer/core/instrument/config/validate/Validated$None.class",
+      "io/micrometer/core/instrument/config/validate/Validated$Secret.class",
+      "io/micrometer/core/instrument/config/validate/Validated$Valid.class",
+      "io/micrometer/core/instrument/config/validate/Validated.class",
+      "io/micrometer/core/instrument/config/validate/ValidationException.class",
+      "io/micrometer/core/instrument/cumulative/CumulativeCounter.class",
+      "io/micrometer/core/instrument/cumulative/CumulativeDistributionSummary.class",
+      "io/micrometer/core/instrument/cumulative/CumulativeFunctionCounter.class",
+      "io/micrometer/core/instrument/cumulative/CumulativeFunctionTimer.class",
+      "io/micrometer/core/instrument/cumulative/CumulativeTimer.class",
+      "io/micrometer/core/instrument/cumulative/package-info.class",
+      "io/micrometer/core/instrument/distribution/AbstractTimeWindowHistogram.class",
+      "io/micrometer/core/instrument/distribution/CountAtBucket.class",
+      "io/micrometer/core/instrument/distribution/DistributionStatisticConfig$Builder.class",
+      "io/micrometer/core/instrument/distribution/DistributionStatisticConfig.class",
+      "io/micrometer/core/instrument/distribution/FixedBoundaryVictoriaMetricsHistogram$IdxOffset.class",
+      "io/micrometer/core/instrument/distribution/FixedBoundaryVictoriaMetricsHistogram.class",
+      "io/micrometer/core/instrument/distribution/Histogram.class",
+      "io/micrometer/core/instrument/distribution/HistogramGauges.class",
+      "io/micrometer/core/instrument/distribution/HistogramSnapshot.class",
+      "io/micrometer/core/instrument/distribution/HistogramSupport.class",
+      "io/micrometer/core/instrument/distribution/NoopHistogram.class",
+      "io/micrometer/core/instrument/distribution/PercentileHistogramBuckets.class",
+      "io/micrometer/core/instrument/distribution/TimeWindowFixedBoundaryHistogram$FixedBoundaryHistogram.class",
+      "io/micrometer/core/instrument/distribution/TimeWindowFixedBoundaryHistogram.class",
+      "io/micrometer/core/instrument/distribution/TimeWindowMax.class",
+      "io/micrometer/core/instrument/distribution/TimeWindowPercentileHistogram.class",
+      "io/micrometer/core/instrument/distribution/TimeWindowSum.class",
+      "io/micrometer/core/instrument/distribution/ValueAtPercentile.class",
+      "io/micrometer/core/instrument/distribution/package-info.class",
+      "io/micrometer/core/instrument/distribution/pause/ClockDriftPauseDetector.class",
+      "io/micrometer/core/instrument/distribution/pause/NoPauseDetector.class",
+      "io/micrometer/core/instrument/distribution/pause/PauseDetector.class",
+      "io/micrometer/core/instrument/distribution/pause/package-info.class",
+      "io/micrometer/core/instrument/docs/MeterDocumentation.class",
+      "io/micrometer/core/instrument/docs/package-info.class",
+      "io/micrometer/core/instrument/dropwizard/DropwizardClock.class",
+      "io/micrometer/core/instrument/dropwizard/DropwizardConfig.class",
+      "io/micrometer/core/instrument/dropwizard/DropwizardCounter.class",
+      "io/micrometer/core/instrument/dropwizard/DropwizardDistributionSummary.class",
+      "io/micrometer/core/instrument/dropwizard/DropwizardFunctionCounter$1.class",
+      "io/micrometer/core/instrument/dropwizard/DropwizardFunctionCounter.class",
+      "io/micrometer/core/instrument/dropwizard/DropwizardFunctionTimer$1$1.class",
+      "io/micrometer/core/instrument/dropwizard/DropwizardFunctionTimer$1.class",
+      "io/micrometer/core/instrument/dropwizard/DropwizardFunctionTimer.class",
+      "io/micrometer/core/instrument/dropwizard/DropwizardGauge.class",
+      "io/micrometer/core/instrument/dropwizard/DropwizardMeterRegistry.class",
+      "io/micrometer/core/instrument/dropwizard/DropwizardRate.class",
+      "io/micrometer/core/instrument/dropwizard/DropwizardTimer.class",
+      "io/micrometer/core/instrument/dropwizard/package-info.class",
+      "io/micrometer/core/instrument/internal/CumulativeHistogramLongTaskTimer.class",
+      "io/micrometer/core/instrument/internal/DefaultGauge.class",
+      "io/micrometer/core/instrument/internal/DefaultLongTaskTimer$1.class",
+      "io/micrometer/core/instrument/internal/DefaultLongTaskTimer$SampleImpl.class",
+      "io/micrometer/core/instrument/internal/DefaultLongTaskTimer.class",
+      "io/micrometer/core/instrument/internal/DefaultMeter.class",
+      "io/micrometer/core/instrument/internal/Mergeable.class",
+      "io/micrometer/core/instrument/internal/OnlyOnceLoggingDenyMeterFilter.class",
+      "io/micrometer/core/instrument/internal/TimedCallable.class",
+      "io/micrometer/core/instrument/internal/TimedExecutor.class",
+      "io/micrometer/core/instrument/internal/TimedExecutorService.class",
+      "io/micrometer/core/instrument/internal/TimedRunnable.class",
+      "io/micrometer/core/instrument/internal/TimedScheduledExecutorService.class",
+      "io/micrometer/core/instrument/internal/package-info.class",
+      "io/micrometer/core/instrument/kotlin/KotlinObservationContextElement$1.class",
+      "io/micrometer/core/instrument/kotlin/KotlinObservationContextElement.class",
+      "io/micrometer/core/instrument/kotlin/package-info.class",
+      "io/micrometer/core/instrument/logging/LoggingMeterRegistry$1.class",
+      "io/micrometer/core/instrument/logging/LoggingMeterRegistry$Builder.class",
+      "io/micrometer/core/instrument/logging/LoggingMeterRegistry$Printer.class",
+      "io/micrometer/core/instrument/logging/LoggingMeterRegistry.class",
+      "io/micrometer/core/instrument/logging/LoggingRegistryConfig.class",
+      "io/micrometer/core/instrument/logging/package-info.class",
+      "io/micrometer/core/instrument/noop/NoopCounter.class",
+      "io/micrometer/core/instrument/noop/NoopDistributionSummary.class",
+      "io/micrometer/core/instrument/noop/NoopFunctionCounter.class",
+      "io/micrometer/core/instrument/noop/NoopFunctionTimer.class",
+      "io/micrometer/core/instrument/noop/NoopGauge.class",
+      "io/micrometer/core/instrument/noop/NoopLongTaskTimer$NoopSample.class",
+      "io/micrometer/core/instrument/noop/NoopLongTaskTimer.class",
+      "io/micrometer/core/instrument/noop/NoopMeter.class",
+      "io/micrometer/core/instrument/noop/NoopTimeGauge.class",
+      "io/micrometer/core/instrument/noop/NoopTimer.class",
+      "io/micrometer/core/instrument/noop/package-info.class",
+      "io/micrometer/core/instrument/observation/DefaultMeterObservationHandler.class",
+      "io/micrometer/core/instrument/observation/MeterObservationHandler.class",
+      "io/micrometer/core/instrument/observation/ObservationOrTimerCompatibleInstrumentation.class",
+      "io/micrometer/core/instrument/observation/package-info.class",
+      "io/micrometer/core/instrument/package-info.class",
+      "io/micrometer/core/instrument/push/PushMeterRegistry.class",
+      "io/micrometer/core/instrument/push/PushRegistryConfig.class",
+      "io/micrometer/core/instrument/push/package-info.class",
+      "io/micrometer/core/instrument/search/MeterNotFoundException$1.class",
+      "io/micrometer/core/instrument/search/MeterNotFoundException$FromRequiredSearch.class",
+      "io/micrometer/core/instrument/search/MeterNotFoundException.class",
+      "io/micrometer/core/instrument/search/RequiredSearch.class",
+      "io/micrometer/core/instrument/search/Search$1.class",
+      "io/micrometer/core/instrument/search/Search.class",
+      "io/micrometer/core/instrument/search/package-info.class",
+      "io/micrometer/core/instrument/simple/CountingMode.class",
+      "io/micrometer/core/instrument/simple/SimpleConfig.class",
+      "io/micrometer/core/instrument/simple/SimpleMeterRegistry$1.class",
+      "io/micrometer/core/instrument/simple/SimpleMeterRegistry.class",
+      "io/micrometer/core/instrument/simple/package-info.class",
+      "io/micrometer/core/instrument/step/StepCounter.class",
+      "io/micrometer/core/instrument/step/StepDistributionSummary.class",
+      "io/micrometer/core/instrument/step/StepDouble.class",
+      "io/micrometer/core/instrument/step/StepFunctionCounter.class",
+      "io/micrometer/core/instrument/step/StepFunctionTimer.class",
+      "io/micrometer/core/instrument/step/StepLong.class",
+      "io/micrometer/core/instrument/step/StepMeter.class",
+      "io/micrometer/core/instrument/step/StepMeterRegistry.class",
+      "io/micrometer/core/instrument/step/StepRegistryConfig.class",
+      "io/micrometer/core/instrument/step/StepTimer.class",
+      "io/micrometer/core/instrument/step/StepTuple2.class",
+      "io/micrometer/core/instrument/step/StepValue.class",
+      "io/micrometer/core/instrument/step/package-info.class",
+      "io/micrometer/core/instrument/util/AbstractPartition.class",
+      "io/micrometer/core/instrument/util/DoubleFormat.class",
+      "io/micrometer/core/instrument/util/HierarchicalNameMapper.class",
+      "io/micrometer/core/instrument/util/IOUtils.class",
+      "io/micrometer/core/instrument/util/MeterEquivalence.class",
+      "io/micrometer/core/instrument/util/MeterPartition.class",
+      "io/micrometer/core/instrument/util/NamedThreadFactory.class",
+      "io/micrometer/core/instrument/util/StringEscapeUtils.class",
+      "io/micrometer/core/instrument/util/StringUtils.class",
+      "io/micrometer/core/instrument/util/TimeUtils$1.class",
+      "io/micrometer/core/instrument/util/TimeUtils.class",
+      "io/micrometer/core/instrument/util/package-info.class",
+      "io/micrometer/core/ipc/http/HttpSender$1.class",
+      "io/micrometer/core/ipc/http/HttpSender$Method.class",
+      "io/micrometer/core/ipc/http/HttpSender$Request$Builder.class",
+      "io/micrometer/core/ipc/http/HttpSender$Request.class",
+      "io/micrometer/core/ipc/http/HttpSender$Response.class",
+      "io/micrometer/core/ipc/http/HttpSender.class",
+      "io/micrometer/core/ipc/http/HttpStatusClass$1.class",
+      "io/micrometer/core/ipc/http/HttpStatusClass.class",
+      "io/micrometer/core/ipc/http/HttpUrlConnectionSender.class",
+      "io/micrometer/core/ipc/http/OkHttpSender$1.class",
+      "io/micrometer/core/ipc/http/OkHttpSender.class",
+      "io/micrometer/core/lang/NonNull.class",
+      "io/micrometer/core/lang/NonNullApi.class",
+      "io/micrometer/core/lang/NonNullFields.class",
+      "io/micrometer/core/lang/Nullable.class",
+      "io/micrometer/core/util/internal/logging/AbstractInternalLogger$1.class",
+      "io/micrometer/core/util/internal/logging/AbstractInternalLogger.class",
+      "io/micrometer/core/util/internal/logging/FormattingTuple.class",
+      "io/micrometer/core/util/internal/logging/InternalLogLevel.class",
+      "io/micrometer/core/util/internal/logging/InternalLogger.class",
+      "io/micrometer/core/util/internal/logging/InternalLoggerFactory.class",
+      "io/micrometer/core/util/internal/logging/JdkLogger.class",
+      "io/micrometer/core/util/internal/logging/JdkLoggerFactory.class",
+      "io/micrometer/core/util/internal/logging/LocationAwareSlf4JLogger.class",
+      "io/micrometer/core/util/internal/logging/MessageFormatter.class",
+      "io/micrometer/core/util/internal/logging/Slf4JLogger.class",
+      "io/micrometer/core/util/internal/logging/Slf4JLoggerFactory.class",
+      "io/micrometer/core/util/internal/logging/WarnThenDebugLogger.class"
+    ],
     "match": false
   },
-  "error": "Build failed on rh-h100-01: Containerfile parse error: secrets.GITHUB_TOKEN"
+  "error": null
 }
