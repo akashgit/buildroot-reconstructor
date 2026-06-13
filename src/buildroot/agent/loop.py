@@ -25,6 +25,7 @@ class LoopResult:
     dead_ends: list[DeadEndEntry] = field(default_factory=list)
     iterations: int = 0
     elapsed_seconds: float = 0.0
+    error_message: str = ""
 
     def to_dict(self) -> dict:
         return {
@@ -58,7 +59,13 @@ def run_inner_loop(
 
     logger.info("Starting inner loop for %s (max %d iterations)", coordinate, max_iterations)
 
-    spec, containerfile = observer.observe(coordinate)
+    try:
+        spec, containerfile = observer.observe(coordinate)
+    except Exception as e:
+        result.status = "observer_failed"
+        result.error_message = str(e)
+        result.elapsed_seconds = time.time() - start_time
+        return result
     if not containerfile:
         result.status = "observer_failed"
         result.elapsed_seconds = time.time() - start_time
@@ -78,7 +85,7 @@ def run_inner_loop(
                 eval_result.error_summary, eval_result.build_log
             ),
             build_log_summary=eval_result.error_summary[:500],
-            diff_summary=getattr(eval_result, "diff_summary", ""),
+            diff_summary=eval_result.diff_summary,
         )
         result.attempts.append(attempt)
         result.iterations = t + 1

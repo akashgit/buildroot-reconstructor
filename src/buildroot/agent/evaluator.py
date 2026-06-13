@@ -44,7 +44,7 @@ class Evaluator:
             result.compute_reward()
             return result
 
-        if not self._l3_command(tag, coordinate, result):
+        if not self._l3_command(tag, result):
             self._cleanup_image(tag)
             result.compute_reward()
             return result
@@ -95,7 +95,7 @@ class Evaluator:
             result.error_summary = f"L2 build error: {e}"
             return False
 
-    def _l3_command(self, tag: str, coordinate: str, result: EvalResult) -> bool:
+    def _l3_command(self, tag: str, result: EvalResult) -> bool:
         try:
             check_cmd = (
                 f"podman run --rm {tag} sh -c '"

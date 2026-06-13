@@ -38,12 +38,21 @@ def run_outer_loop(
     for i, coordinate in enumerate(packages, 1):
         logger.info("=== Outer loop: package %d/%d: %s ===", i, len(packages), coordinate)
 
-        loop_result = run_inner_loop(
-            coordinate,
-            max_iterations=max_iterations,
-            host=host,
-            model=model,
-        )
+        try:
+            loop_result = run_inner_loop(
+                coordinate,
+                max_iterations=max_iterations,
+                host=host,
+                model=model,
+            )
+        except Exception as e:
+            logger.error("Inner loop failed for %s: %s", coordinate, e)
+            loop_result = LoopResult(
+                coordinate=coordinate,
+                status="error",
+                best_reward=0.0,
+                elapsed_seconds=0.0,
+            )
 
         _save_package_results(out, coordinate, loop_result, yaml)
 

@@ -90,7 +90,7 @@ class TestEvaluatorWithMocks:
         evaluator = Evaluator()
         from buildroot.agent.models import EvalResult
         result = EvalResult()
-        assert evaluator._l3_command("test-tag", "g:a:1.0", result) is True
+        assert evaluator._l3_command("test-tag", result) is True
         assert result.l3_command is True
 
     @patch("buildroot.agent.evaluator.subprocess.run")
@@ -103,4 +103,4 @@ class TestEvaluatorWithMocks:
         evaluator = Evaluator()
         from buildroot.agent.models import EvalResult
         result = EvalResult()
-        assert evaluator._l3_command("test-tag", "g:a:1.0", result) is False
+        assert evaluator._l3_command("test-tag", result) is False
