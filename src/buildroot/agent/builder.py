@@ -80,20 +80,28 @@ def _format_spec_metadata(spec: BuildrootSpec) -> str:
 class Builder:
     """LLM-driven Containerfile generation and mutation."""
 
-    def __init__(self, model: str = DEFAULT_MODEL) -> None:
+    def __init__(
+        self, model: str = DEFAULT_MODEL, meta_guidance: str | None = None
+    ) -> None:
         self._client = AnthropicVertex(
             region="us-east5", project_id="itpc-gcp-ai-eng-claude"
         )
         self._model = model
+        self._meta_guidance = meta_guidance
 
     def _call_llm(self, prompt: str) -> str:
+        system = SYSTEM_PROMPT
+        if self._meta_guidance:
+            system = self._meta_guidance + "\n\n" + system
+
         response = self._client.messages.create(
             model=self._model,
             max_tokens=4096,
-            system=SYSTEM_PROMPT,
+            system=system,
             messages=[{"role": "user", "content": prompt}],
         )
-        text = response.content[0].text.strip()
+        block = response.content[0]
+        text = block.text.strip()  # type: ignore[union-attr]
         if text.startswith("```"):
             lines = text.split("\n")
             lines = lines[1:]

@@ -46,13 +46,14 @@ def run_inner_loop(
     host: str = "rh-h100-01",
     model: str = "claude-opus-4-6",
     skip_deps: bool = True,
+    meta_guidance: str | None = None,
 ) -> LoopResult:
     """Run the inner loop: Observer → [Builder → Evaluator → Analyzer]* → result."""
     start_time = time.time()
     result = LoopResult(coordinate=coordinate)
 
     observer = Observer(skip_deps=skip_deps)
-    builder = Builder(model=model)
+    builder = Builder(model=model, meta_guidance=meta_guidance)
     evaluator = Evaluator(host=host)
     progress = ProgressSignal()
     dead_ends: list[DeadEndEntry] = []

@@ -26,7 +26,6 @@ class TestL1Parse:
         evaluator = Evaluator()
         from buildroot.agent.models import EvalResult
         result = EvalResult()
-        # dockerfile-parse is lenient — most content parses
         evaluator._l1_parse(INVALID_CONTAINERFILE, result)
 
 
