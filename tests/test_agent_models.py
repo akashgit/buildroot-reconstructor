@@ -1,0 +1,155 @@
+"""Tests for agent data models — ProgressSignal, BuildAttempt, DeadEndEntry, EvalResult."""
+
+from buildroot.agent.models import (
+    BuildAttempt,
+    DeadEndEntry,
+    EvalResult,
+    ProgressSignal,
+)
+
+
+class TestProgressSignal:
+    def test_initial_state_returns_exploit(self):
+        ps = ProgressSignal()
+        assert ps.g_t == 1.0
+        assert ps.best_reward == 0.0
+        mode = ps.update(0.05)
+        assert mode == "exploit"
+
+    def test_stagnation_decays_g_t(self):
+        ps = ProgressSignal()
+        ps.update(0.15)
+        initial_g = ps.g_t
+        for _ in range(10):
+            ps.update(0.15)
+        assert ps.g_t < initial_g
+
+    def test_repeated_stagnation_reaches_meta_shift(self):
+        ps = ProgressSignal()
+        # Start from a moderate g_t (avoid massive spike from 0->non-zero)
+        ps.g_t = 0.5
+        ps.best_reward = 0.15
+        for _ in range(200):
+            mode = ps.update(0.15)
+        assert mode == "meta_shift"
+        assert ps.g_t < ps.tau_s
+
+    def test_improvement_keeps_exploit(self):
+        ps = ProgressSignal()
+        rewards = [0.05, 0.15, 0.50, 0.85]
+        for r in rewards:
+            mode = ps.update(r)
+        assert mode == "exploit"
+
+    def test_best_reward_tracks_max(self):
+        ps = ProgressSignal()
+        ps.update(0.5)
+        ps.update(0.3)
+        ps.update(0.8)
+        assert ps.best_reward == 0.8
+
+    def test_reset(self):
+        ps = ProgressSignal()
+        ps.update(0.5)
+        ps.reset()
+        assert ps.g_t == 1.0
+        assert ps.best_reward == 0.0
+
+    def test_custom_parameters(self):
+        ps = ProgressSignal(rho=0.5, tau_m=0.2, tau_s=0.05)
+        assert ps.rho == 0.5
+        assert ps.tau_m == 0.2
+        assert ps.tau_s == 0.05
+
+    def test_zero_reward_does_not_crash(self):
+        ps = ProgressSignal()
+        mode = ps.update(0.0)
+        assert mode in ("exploit", "explore", "meta_shift")
+
+
+class TestDeadEndEntry:
+    def test_not_exhausted_initially(self):
+        de = DeadEndEntry(error_class="test", approach="try1")
+        assert not de.is_exhausted
+
+    def test_exhausted_after_threshold(self):
+        de = DeadEndEntry(error_class="test", approach="try1", threshold=2)
+        de.record_failure("error 1")
+        assert not de.is_exhausted
+        de.record_failure("error 2")
+        assert de.is_exhausted
+
+    def test_examples_capped_at_3(self):
+        de = DeadEndEntry(error_class="test", approach="try1")
+        for i in range(5):
+            de.record_failure(f"error {i}")
+        assert len(de.examples) == 3
+
+    def test_to_dict(self):
+        de = DeadEndEntry(error_class="jdk", approach="use jdk 11")
+        de.record_failure("failed")
+        d = de.to_dict()
+        assert d["error_class"] == "jdk"
+        assert d["failure_count"] == 1
+        assert d["is_exhausted"] is False
+
+    def test_custom_threshold(self):
+        de = DeadEndEntry(error_class="test", approach="try1", threshold=5)
+        for _ in range(4):
+            de.record_failure("err")
+        assert not de.is_exhausted
+        de.record_failure("err")
+        assert de.is_exhausted
+
+
+class TestEvalResult:
+    def test_all_levels_pass(self):
+        er = EvalResult(l1_parse=True, l2_build=True, l3_command=True, l4_match=True)
+        reward = er.compute_reward()
+        assert reward == 1.0
+        assert er.level_reached == 4
+
+    def test_no_levels_pass(self):
+        er = EvalResult()
+        reward = er.compute_reward()
+        assert reward == 0.0
+        assert er.level_reached == 0
+
+    def test_l1_only(self):
+        er = EvalResult(l1_parse=True)
+        reward = er.compute_reward()
+        assert reward == 0.05
+        assert er.level_reached == 1
+
+    def test_l1_l2(self):
+        er = EvalResult(l1_parse=True, l2_build=True)
+        reward = er.compute_reward()
+        assert abs(reward - 0.15) < 1e-9
+        assert er.level_reached == 2
+
+    def test_l1_l2_l3(self):
+        er = EvalResult(l1_parse=True, l2_build=True, l3_command=True)
+        reward = er.compute_reward()
+        assert reward == 0.50
+        assert er.level_reached == 3
+
+    def test_to_dict(self):
+        er = EvalResult(l1_parse=True, l2_build=True)
+        er.compute_reward()
+        d = er.to_dict()
+        assert abs(d["reward"] - 0.15) < 1e-9
+        assert d["level_reached"] == 2
+
+
+class TestBuildAttempt:
+    def test_default_id(self):
+        ba = BuildAttempt()
+        assert ba.id
+        assert len(ba.id) == 36  # uuid4
+
+    def test_to_dict(self):
+        ba = BuildAttempt(reward=0.5, level_reached=3, error_class="test")
+        d = ba.to_dict()
+        assert d["reward"] == 0.5
+        assert d["level_reached"] == 3
+        assert d["error_class"] == "test"
