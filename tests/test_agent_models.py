@@ -66,6 +66,12 @@ class TestProgressSignal:
         mode = ps.update(0.0)
         assert mode in ("exploit", "explore", "meta_shift")
 
+    def test_cold_start_no_spike(self):
+        ps = ProgressSignal()
+        assert ps.best_reward == 0.0
+        ps.update(0.05)
+        assert ps.g_t <= 1.0
+
 
 class TestDeadEndEntry:
     def test_not_exhausted_initially(self):

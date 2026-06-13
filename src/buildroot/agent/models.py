@@ -127,7 +127,7 @@ class ProgressSignal:
         self.tau_s = tau_s
 
     def update(self, new_reward: float) -> str:
-        delta = max(0, new_reward - self.best_reward) / max(self.best_reward, 1e-6)
+        delta = min(1.0, max(0, new_reward - self.best_reward) / max(self.best_reward, 1e-6))
         self.g_t = self.rho * self.g_t + (1 - self.rho) * delta ** 2
         self.best_reward = max(self.best_reward, new_reward)
         if self.g_t > self.tau_m:

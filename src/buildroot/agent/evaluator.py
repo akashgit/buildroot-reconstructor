@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import re
+import shlex
 import subprocess
 import tempfile
 import uuid
@@ -66,9 +67,11 @@ class Evaluator:
 
     def _l2_build(self, containerfile: str, tag: str, result: EvalResult) -> bool:
         try:
+            delimiter = f"CONTAINERFILE_EOF_{uuid.uuid4().hex[:8]}"
+            safe_containerfile = containerfile.replace(delimiter, "")
             build_cmd = (
                 f"cd $(mktemp -d) && "
-                f"cat > Containerfile << 'CONTAINERFILE_EOF'\n{containerfile}\nCONTAINERFILE_EOF\n"
+                f"cat > Containerfile << '{delimiter}'\n{safe_containerfile}\n{delimiter}\n"
                 f"podman build --no-cache -t {tag} -f Containerfile ."
             )
             proc = subprocess.run(
@@ -202,7 +205,7 @@ class Evaluator:
 
             local_jar = dest / f"{artifact_id}-{version}-rebuilt.jar"
             copy_cmd = (
-                f"podman run --rm {tag} cat '{target_jar}'"
+                f"podman run --rm {tag} cat {shlex.quote(target_jar)}"
             )
             proc = subprocess.run(
                 ["ssh", "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=no",
