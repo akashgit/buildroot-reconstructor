@@ -72,3 +72,43 @@ python -m buildroot reconstruct org.apache.commons:commons-lang3:3.14.0 --output
 - Each change should be accompanied by at least one test
 - Follow the existing code style and conventions
 - Use Podman (not Docker) for container operations
+
+## Research Target
+
+- objective: Maximize solve rate of agentic Containerfile reconstruction across Maven packages
+- metric: solve_rate
+- target: 0.80
+- run_command: python -m buildroot agent --batch results/packages_smoke.txt --host rh-h100-01 --output results/agent-smoke/ --max-iterations 15
+- result_path: results/agent-smoke/summary.json
+- result_parser: json
+- timeout: 7200
+
+## Mutable Surfaces
+
+- src/buildroot/agent/builder.py
+- src/buildroot/agent/analyzer.py
+- src/buildroot/agent/loop.py
+- src/buildroot/agent/observer.py
+- src/buildroot/agent/outer_loop.py
+- src/buildroot/agent/models.py
+- src/buildroot/templates/*.j2
+
+## Fixed Surfaces
+
+- src/buildroot/agent/evaluator.py
+- eval/score.py
+- results/packages_smoke.txt
+- src/buildroot/utils/jar_comparator.py
+- src/buildroot/utils/maven_central.py
+
+## Research Constraints
+
+- Do not change the 4-level scoring formula (L1=0.05, L2=0.10, L3=0.35, L4=0.50)
+- Do not modify the JAR comparison logic
+- Do not hardcode package-specific fixes — changes must generalize across packages
+- Do not change the evaluation host or SSH configuration
+- Builder prompts must remain grounded in error classification, not memorized solutions
+
+## Cost Budget
+
+- max_per_cycle: 50.00
