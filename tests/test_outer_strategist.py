@@ -39,7 +39,8 @@ class TestComputeJScore:
 
     def test_zero_baseline(self):
         j = compute_j_score(0.0, 0.5)
-        assert j == 0.0  # log(1 + 0) = 0
+        expected = 0.5 * math.log(1 + 0.01)
+        assert abs(j - expected) < 1e-10
 
     def test_window_size_zero_treated_as_one(self):
         j = compute_j_score(0.3, 0.5, window_size=0)
@@ -47,7 +48,7 @@ class TestComputeJScore:
 
     def test_formula_correctness(self):
         s_start, s_end, w = 0.3, 0.6, 2
-        expected = (s_end - s_start) * math.log(1 + s_start) / math.sqrt(w)
+        expected = (s_end - s_start) * math.log(1 + s_start + 0.01) / math.sqrt(w)
         actual = compute_j_score(s_start, s_end, window_size=w)
         assert abs(actual - expected) < 1e-10
 
