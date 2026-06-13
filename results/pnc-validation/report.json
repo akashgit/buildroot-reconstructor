@@ -1,0 +1,193 @@
+{
+  "packages": [
+    {
+      "coordinate": "org.apache.commons:commons-lang3:3.14.0",
+      "image_name": "builder-rhel-7-j8-mvn3.3.9",
+      "aggregate_score": 0.325,
+      "dimensions": [
+        {
+          "dimension": "jdk_major_version",
+          "weight": 0.25,
+          "score": 0.0,
+          "weighted_score": 0.0,
+          "expected": "8",
+          "actual": "21",
+          "detail": "mismatch"
+        },
+        {
+          "dimension": "jdk_vendor",
+          "weight": 0.1,
+          "score": 0.0,
+          "weighted_score": 0.0,
+          "expected": "openjdk",
+          "actual": "${{ runner.os == 'macos' && matrix.java == '8' && 'zulu' || 'temurin' }}",
+          "detail": "mismatch"
+        },
+        {
+          "dimension": "build_tool",
+          "weight": 0.25,
+          "score": 1.0,
+          "weighted_score": 0.25,
+          "expected": "maven",
+          "actual": "maven",
+          "detail": "tool match"
+        },
+        {
+          "dimension": "build_tool_version",
+          "weight": 0.15,
+          "score": 0.0,
+          "weighted_score": 0.0,
+          "expected": "3.3.9",
+          "actual": "",
+          "detail": "version not available for comparison"
+        },
+        {
+          "dimension": "os_family",
+          "weight": 0.1,
+          "score": 0.0,
+          "weighted_score": 0.0,
+          "expected": "",
+          "actual": "unknown",
+          "detail": "OS family mismatch"
+        },
+        {
+          "dimension": "scm_url",
+          "weight": 0.15,
+          "score": 0.5,
+          "weighted_score": 0.075,
+          "expected": "",
+          "actual": "https://github.com/apache/commons-lang",
+          "detail": "no ground truth SCM URL to compare"
+        }
+      ]
+    },
+    {
+      "coordinate": "com.fasterxml.jackson.core:jackson-core:2.17.0",
+      "image_name": "builder-rhel-7-j8-mvn3.3.9",
+      "aggregate_score": 0.75,
+      "dimensions": [
+        {
+          "dimension": "jdk_major_version",
+          "weight": 0.25,
+          "score": 1.0,
+          "weighted_score": 0.25,
+          "expected": "8",
+          "actual": "8",
+          "detail": "exact match"
+        },
+        {
+          "dimension": "jdk_vendor",
+          "weight": 0.1,
+          "score": 1.0,
+          "weighted_score": 0.1,
+          "expected": "openjdk",
+          "actual": "openjdk",
+          "detail": "exact match (normalized)"
+        },
+        {
+          "dimension": "build_tool",
+          "weight": 0.25,
+          "score": 1.0,
+          "weighted_score": 0.25,
+          "expected": "maven",
+          "actual": "maven",
+          "detail": "tool match"
+        },
+        {
+          "dimension": "build_tool_version",
+          "weight": 0.15,
+          "score": 0.5,
+          "weighted_score": 0.075,
+          "expected": "3.3.9",
+          "actual": "3.9.11",
+          "detail": "major version match only"
+        },
+        {
+          "dimension": "os_family",
+          "weight": 0.1,
+          "score": 0.0,
+          "weighted_score": 0.0,
+          "expected": "",
+          "actual": "unknown",
+          "detail": "OS family mismatch"
+        },
+        {
+          "dimension": "scm_url",
+          "weight": 0.15,
+          "score": 0.5,
+          "weighted_score": 0.075,
+          "expected": "",
+          "actual": "https://github.com/FasterXML/jackson-core",
+          "detail": "no ground truth SCM URL to compare"
+        }
+      ]
+    },
+    {
+      "coordinate": "org.yaml:snakeyaml:2.2",
+      "image_name": "builder-rhel-7-j11-mvn3.6.3",
+      "aggregate_score": 0.675,
+      "dimensions": [
+        {
+          "dimension": "jdk_major_version",
+          "weight": 0.25,
+          "score": 1.0,
+          "weighted_score": 0.25,
+          "expected": "11",
+          "actual": "11",
+          "detail": "exact match"
+        },
+        {
+          "dimension": "jdk_vendor",
+          "weight": 0.1,
+          "score": 1.0,
+          "weighted_score": 0.1,
+          "expected": "openjdk",
+          "actual": "openjdk",
+          "detail": "exact match (normalized)"
+        },
+        {
+          "dimension": "build_tool",
+          "weight": 0.25,
+          "score": 1.0,
+          "weighted_score": 0.25,
+          "expected": "maven",
+          "actual": "maven",
+          "detail": "tool match"
+        },
+        {
+          "dimension": "build_tool_version",
+          "weight": 0.15,
+          "score": 0.0,
+          "weighted_score": 0.0,
+          "expected": "3.6.3",
+          "actual": "",
+          "detail": "version not available for comparison"
+        },
+        {
+          "dimension": "os_family",
+          "weight": 0.1,
+          "score": 0.0,
+          "weighted_score": 0.0,
+          "expected": "",
+          "actual": "unknown",
+          "detail": "OS family mismatch"
+        },
+        {
+          "dimension": "scm_url",
+          "weight": 0.15,
+          "score": 0.5,
+          "weighted_score": 0.075,
+          "expected": "",
+          "actual": "",
+          "detail": "no ground truth SCM URL to compare"
+        }
+      ]
+    }
+  ],
+  "aggregate": {
+    "total_packages": 3,
+    "mean_accuracy": 0.5833,
+    "min_accuracy": 0.325,
+    "max_accuracy": 0.75
+  }
+}
