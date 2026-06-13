@@ -214,8 +214,8 @@ def _normalize_scm_url(url: str) -> str:
     """Normalize SCM URLs for comparison."""
     url = url.strip().rstrip("/")
     url = re.sub(r"\.git$", "", url)
-    url = re.sub(r"^https?://", "", url)
     url = re.sub(r"^scm:git:", "", url)
+    url = re.sub(r"^https?://", "", url)
     url = re.sub(r"^git@github\.com:", "github.com/", url)
     return url.lower()
 
