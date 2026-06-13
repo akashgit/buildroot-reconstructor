@@ -232,9 +232,17 @@ def check_all(
     historical_best: float,
     test_coordinates: list[str] | None = None,
     run_tests: bool = True,
+    file_names: list[str] | None = None,
 ) -> GuardResult:
-    """Run all guards and return the first failure, or pass if all succeed."""
-    surface = check_surfaces(diff_output)
+    """Run all guards and return the first failure, or pass if all succeed.
+
+    Args:
+        diff_output: Full unified diff for leakage scanning.
+        file_names: List of changed file paths for surface checking.
+            If not provided, falls back to diff_output (legacy).
+    """
+    surface_input = "\n".join(file_names) if file_names else diff_output
+    surface = check_surfaces(surface_input)
     if not surface:
         return surface
 

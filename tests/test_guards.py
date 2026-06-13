@@ -202,6 +202,38 @@ class TestCheckAll:
         assert not result.passed
         assert "Regression" in result.reason
 
+    def test_file_names_used_for_surface_check(self):
+        unified_diff = (
+            "diff --git a/src/buildroot/agent/builder.py b/src/buildroot/agent/builder.py\n"
+            "--- a/src/buildroot/agent/builder.py\n"
+            "+++ b/src/buildroot/agent/builder.py\n"
+            "@@ -1,3 +1,3 @@\n"
+            "-old line\n"
+            "+new line\n"
+        )
+        result = check_all(
+            diff_output=unified_diff,
+            solve_rate_before=0.3,
+            solve_rate_after=0.5,
+            historical_best=0.3,
+            run_tests=False,
+            file_names=["src/buildroot/agent/builder.py"],
+        )
+        assert result.passed
+
+    def test_file_names_catches_fixed_surface(self):
+        unified_diff = "diff --git a/eval/score.py ...\n+new line\n"
+        result = check_all(
+            diff_output=unified_diff,
+            solve_rate_before=0.3,
+            solve_rate_after=0.5,
+            historical_best=0.3,
+            run_tests=False,
+            file_names=["eval/score.py"],
+        )
+        assert not result.passed
+        assert "FIXED" in result.reason
+
 
 class TestSurfaceConstants:
     def test_evaluator_is_fixed(self):

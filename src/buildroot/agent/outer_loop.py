@@ -295,6 +295,7 @@ def run_intelligent_outer_loop(
                 historical_best=archive.historical_best_solve_rate,
                 test_coordinates=_load_packages(packages_file),
                 run_tests=False,
+                file_names=list(changes.keys()),
             )
 
             # Step 9: Verdict
@@ -504,6 +505,7 @@ def _get_git_diff(changed_files: list[str] | None = None) -> str:
         )
         return result.stdout
     except Exception:
+        logger.warning("git diff failed — guards will see an empty diff", exc_info=True)
         return ""
 
 
