@@ -80,6 +80,7 @@ class EvalResult:
     build_log: str = ""
     error_summary: str = ""
     comparison_verdict: str = ""
+    diff_summary: str = ""
     level_reached: int = 0
 
     def compute_reward(self) -> float:

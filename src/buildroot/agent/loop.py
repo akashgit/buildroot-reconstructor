@@ -78,6 +78,7 @@ def run_inner_loop(
                 eval_result.error_summary, eval_result.build_log
             ),
             build_log_summary=eval_result.error_summary[:500],
+            diff_summary=getattr(eval_result, "diff_summary", ""),
         )
         result.attempts.append(attempt)
         result.iterations = t + 1
