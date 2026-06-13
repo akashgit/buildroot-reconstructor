@@ -1,0 +1,61 @@
+{
+  "coordinate": "org.apache.commons:commons-lang3:3.14.0",
+  "image_name": "builder-rhel-7-j8-mvn3.3.9",
+  "aggregate_score": 0.325,
+  "dimensions": [
+    {
+      "dimension": "jdk_major_version",
+      "weight": 0.25,
+      "score": 0.0,
+      "weighted_score": 0.0,
+      "expected": "8",
+      "actual": "21",
+      "detail": "mismatch"
+    },
+    {
+      "dimension": "jdk_vendor",
+      "weight": 0.1,
+      "score": 0.0,
+      "weighted_score": 0.0,
+      "expected": "openjdk",
+      "actual": "${{ runner.os == 'macos' && matrix.java == '8' && 'zulu' || 'temurin' }}",
+      "detail": "mismatch"
+    },
+    {
+      "dimension": "build_tool",
+      "weight": 0.25,
+      "score": 1.0,
+      "weighted_score": 0.25,
+      "expected": "maven",
+      "actual": "maven",
+      "detail": "tool match"
+    },
+    {
+      "dimension": "build_tool_version",
+      "weight": 0.15,
+      "score": 0.0,
+      "weighted_score": 0.0,
+      "expected": "3.3.9",
+      "actual": "",
+      "detail": "version not available for comparison"
+    },
+    {
+      "dimension": "os_family",
+      "weight": 0.1,
+      "score": 0.0,
+      "weighted_score": 0.0,
+      "expected": "",
+      "actual": "unknown",
+      "detail": "OS family mismatch"
+    },
+    {
+      "dimension": "scm_url",
+      "weight": 0.15,
+      "score": 0.5,
+      "weighted_score": 0.075,
+      "expected": "",
+      "actual": "https://github.com/apache/commons-lang",
+      "detail": "no ground truth SCM URL to compare"
+    }
+  ]
+}
