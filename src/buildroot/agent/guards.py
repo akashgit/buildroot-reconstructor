@@ -36,7 +36,7 @@ FIXED_SURFACES = frozenset({
     "src/buildroot/agent/evaluator.py",
     "src/buildroot/utils/jar_comparator.py",
     "eval/score.py",
-    "packages_smoke.txt",
+    "results/packages_smoke.txt",
 })
 
 

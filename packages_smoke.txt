@@ -1,3 +1,0 @@
-org.apache.commons:commons-lang3:3.14.0
-io.micrometer:micrometer-core:1.10.13
-org.springframework.security:spring-security-core:5.8.9
