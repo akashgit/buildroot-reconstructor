@@ -1,0 +1,12 @@
+FROM docker.io/library/eclipse-temurin:17-jdk
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends git ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN git clone --depth 1 --branch 'v1.10.13' 'https://github.com/micrometer-metrics/micrometer' /build
+WORKDIR /build
+
+# This is a Gradle project, not Maven. Use the included Gradle wrapper.
+RUN chmod +x ./gradlew && \
+    ./gradlew build -x test -x javadoc --no-daemon
