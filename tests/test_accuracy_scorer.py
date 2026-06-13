@@ -5,7 +5,6 @@ from __future__ import annotations
 from buildroot.parsers.pnc_containerfile import PNCGroundTruth
 from buildroot.utils.accuracy_scorer import (
     AccuracyReport,
-    DimensionScore,
     score_accuracy,
     _normalize_jdk_version,
     _normalize_vendor,

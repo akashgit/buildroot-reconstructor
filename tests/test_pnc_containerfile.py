@@ -5,7 +5,6 @@ from __future__ import annotations
 from pathlib import Path
 
 from buildroot.parsers.pnc_containerfile import (
-    PNCGroundTruth,
     parse_pnc_containerfile_chain,
     _extract_jdk_from_rpms,
     _extract_build_tool_from_env,
