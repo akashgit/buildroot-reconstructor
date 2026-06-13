@@ -127,17 +127,19 @@ def compute_j_score(
     solve_rate_start: float,
     solve_rate_end: float,
     window_size: int = 1,
+    epsilon: float = 0.01,
 ) -> float:
-    """Compute J(S) = (s_end - s_start) * log(1 + s_start) / sqrt(W).
+    """Compute J(S) = (s_end - s_start) * log(1 + s_start + epsilon) / sqrt(W).
 
     The log term upweights improvements from higher baselines.
     W is the window size (number of cycles the strategy spans).
+    Epsilon prevents J=0 when solve_rate_start=0.
     """
     if window_size <= 0:
         window_size = 1
 
     delta = solve_rate_end - solve_rate_start
-    log_term = math.log(1 + solve_rate_start)
+    log_term = math.log(1 + solve_rate_start + epsilon)
     sqrt_w = math.sqrt(window_size)
 
     return delta * log_term / sqrt_w

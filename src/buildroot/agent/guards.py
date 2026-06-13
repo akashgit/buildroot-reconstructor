@@ -178,6 +178,12 @@ def scan_leakage(
 
     violations = []
 
+    added_lines = [
+        line for line in diff_output.splitlines()
+        if line.startswith("+") and not line.startswith("+++")
+    ]
+    added_text = "\n".join(added_lines)
+
     if test_coordinates:
         for coord in test_coordinates:
             parts = coord.split(":")
@@ -186,14 +192,14 @@ def scan_leakage(
                 group_id = parts[0]
                 if re.search(
                     rf'["\'].*{re.escape(artifact_id)}.*["\']',
-                    diff_output,
+                    added_text,
                 ):
                     violations.append(
                         f"Test artifact name '{artifact_id}' found in diff"
                     )
                 if re.search(
                     rf'["\'].*{re.escape(group_id)}.*["\']',
-                    diff_output,
+                    added_text,
                 ):
                     violations.append(
                         f"Test group ID '{group_id}' found in diff"
@@ -206,10 +212,6 @@ def scan_leakage(
     ]
 
     for pattern, description in leakage_patterns:
-        added_lines = [
-            line for line in diff_output.splitlines()
-            if line.startswith("+") and not line.startswith("+++")
-        ]
         for line in added_lines:
             if re.search(pattern, line):
                 violations.append(f"{description}: {line.strip()[:100]}")

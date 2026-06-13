@@ -272,53 +272,58 @@ def run_intelligent_outer_loop(
 
         # Step 6: Apply changes and get diff
         originals = _apply_changes(changes)
-        diff_output = _get_git_diff()
+        try:
+            diff_output = _get_git_diff(list(changes.keys()))
 
-        # Step 7: Re-run batch
-        batch_after = run_batch(
-            packages_file,
-            host=host,
-            model=model,
-            max_iterations=max_iterations,
-            output_dir=str(cycle_dir / "batch_after"),
-            meta_guidance=kb_patterns if kb_patterns else None,
-        )
-
-        solve_rate_after = batch_after.get("solve_rate", 0.0)
-
-        # Step 8: Guards check
-        guard_result = check_all(
-            diff_output,
-            solve_rate_before=current_solve_rate,
-            solve_rate_after=solve_rate_after,
-            historical_best=archive.historical_best_solve_rate,
-            test_coordinates=_load_packages(packages_file),
-            run_tests=False,
-        )
-
-        # Step 9: Verdict
-        j_score = compute_j_score(current_solve_rate, solve_rate_after)
-
-        if guard_result.passed and solve_rate_after >= current_solve_rate:
-            verdict = "keep"
-            logger.info(
-                "Cycle %d KEEP: %.4f → %.4f (J=%.4f)",
-                cycle, current_solve_rate, solve_rate_after, j_score,
+            # Step 7: Re-run batch
+            batch_after = run_batch(
+                packages_file,
+                host=host,
+                model=model,
+                max_iterations=max_iterations,
+                output_dir=str(cycle_dir / "batch_after"),
+                meta_guidance=kb_patterns if kb_patterns else None,
             )
-            record_pattern(
-                "General Patterns",
-                f"Cycle {cycle}: {hypothesis.target_error_class} fix improved "
-                f"solve_rate {current_solve_rate:.2f} → {solve_rate_after:.2f}",
+
+            solve_rate_after = batch_after.get("solve_rate", 0.0)
+
+            # Step 8: Guards check
+            guard_result = check_all(
+                diff_output,
+                solve_rate_before=current_solve_rate,
+                solve_rate_after=solve_rate_after,
+                historical_best=archive.historical_best_solve_rate,
+                test_coordinates=_load_packages(packages_file),
+                run_tests=False,
             )
-            current_solve_rate = solve_rate_after
-        else:
-            verdict = "revert"
-            logger.info(
-                "Cycle %d REVERT: %.4f → %.4f (J=%.4f, guard=%s)",
-                cycle, current_solve_rate, solve_rate_after, j_score,
-                guard_result.reason[:100],
-            )
+
+            # Step 9: Verdict
+            j_score = compute_j_score(current_solve_rate, solve_rate_after)
+
+            if guard_result.passed and solve_rate_after >= current_solve_rate:
+                verdict = "keep"
+                logger.info(
+                    "Cycle %d KEEP: %.4f → %.4f (J=%.4f)",
+                    cycle, current_solve_rate, solve_rate_after, j_score,
+                )
+                record_pattern(
+                    "General Patterns",
+                    f"Cycle {cycle}: {hypothesis.target_error_class} fix improved "
+                    f"solve_rate {current_solve_rate:.2f} → {solve_rate_after:.2f}",
+                )
+                current_solve_rate = solve_rate_after
+            else:
+                verdict = "revert"
+                logger.info(
+                    "Cycle %d REVERT: %.4f → %.4f (J=%.4f, guard=%s)",
+                    cycle, current_solve_rate, solve_rate_after, j_score,
+                    guard_result.reason[:100],
+                )
+                _revert_changes(originals)
+        except Exception:
+            logger.error("Cycle %d crashed after applying changes — reverting", cycle)
             _revert_changes(originals)
+            raise
 
         archive.add(StrategyScore(
             cycle=cycle,
@@ -484,11 +489,15 @@ def _revert_changes(originals: dict[str, str]) -> None:
         logger.info("Reverted %s", file_path)
 
 
-def _get_git_diff() -> str:
-    """Get the current git diff output."""
+def _get_git_diff(changed_files: list[str] | None = None) -> str:
+    """Get the current git diff output for specific files."""
     try:
+        cmd = ["git", "diff"]
+        if changed_files:
+            cmd.append("--")
+            cmd.extend(changed_files)
         result = subprocess.run(
-            ["git", "diff", "--name-only"],
+            cmd,
             capture_output=True,
             text=True,
             timeout=30,
