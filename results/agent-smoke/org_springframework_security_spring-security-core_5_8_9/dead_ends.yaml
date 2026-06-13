@@ -1,0 +1,87 @@
+- error_class: source/wrong_tag
+  approach: FROM eclipse-temurin:17-jdk | RUN mvn clean install -B -DskipTests
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "Cloning into '/build'...\nfatal: Remote branch v5.8.9 not found in upstream origin\n\
+    Error: building at STEP \"RUN git clone --depth 1 --branch 'v5.8.9' 'https://github.com/spring-projects/spring-security"
+- error_class: unknown
+  approach: FROM eclipse-temurin:17-jdk | RUN mvn clean install -B -DskipTests
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "[INFO] ------------------------------------------------------------------------\n\
+    [ERROR] The goal you specified requires a project to execute but there is no POM
+    in this directory (/build). Please veri"
+- error_class: unknown
+  approach: 'FROM docker.io/eclipse-temurin:17-jdk | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+- error_class: source/wrong_tag
+  approach: 'FROM docker.io/eclipse-temurin:17-jdk | '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "Cloning into '/build'...\nfatal: Remote branch v5.8.9 not found in upstream origin\n\
+    Error: building at STEP \"RUN git clone --depth 1 --branch 'v5.8.9' 'https://github.com/spring-projects/spring-security"
+- error_class: unknown
+  approach: 'FROM docker.io/library/ubuntu:22.04 | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+- error_class: source/wrong_tag
+  approach: FROM docker.io/library/debian:bullseye-slim AS builder | RUN mvn 
+    clean install -B -DskipTests
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "Cloning into '/build'...\nwarning: Could not find remote branch v5.8.9 to clone.\n\
+    fatal: Remote branch v5.8.9 not found in upstream origin\nError: building at STEP
+    \"RUN git clone --depth 1 --branch 'v5.8"
+- error_class: unknown
+  approach: FROM docker.io/library/debian:bullseye-slim AS builder | RUN mvn 
+    clean install -B -DskipTests
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+  - "[INFO] ------------------------------------------------------------------------\n\
+    [ERROR] The goal you specified requires a project to execute but there is no POM
+    in this directory (/build). Please veri"
+- error_class: unknown
+  approach: FROM docker.io/library/debian:bullseye-slim AS builder | RUN mvn 
+    -version
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+- error_class: source/wrong_tag
+  approach: FROM docker.io/library/debian:bullseye-slim | RUN mvn -version
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "Cloning into '/build'...\nwarning: Could not find remote branch v5.8.9 to clone.\n\
+    fatal: Remote branch v5.8.9 not found in upstream origin\nError: building at STEP
+    \"RUN git clone --depth 1 --branch 'v5.8"
+- error_class: unknown
+  approach: FROM docker.io/library/debian:bullseye-slim | RUN mvn -version
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'

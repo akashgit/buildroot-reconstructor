@@ -1,0 +1,29 @@
+{
+  "total_packages": 3,
+  "solved": 1,
+  "solve_rate": 0.3333,
+  "total_elapsed_seconds": 2395.3,
+  "packages": [
+    {
+      "coordinate": "org.apache.commons:commons-lang3:3.14.0",
+      "status": "success",
+      "best_reward": 1.0,
+      "iterations": 1,
+      "elapsed_seconds": 741.3
+    },
+    {
+      "coordinate": "io.micrometer:micrometer-core:1.10.13",
+      "status": "budget_exhausted",
+      "best_reward": 0.15000000000000002,
+      "iterations": 15,
+      "elapsed_seconds": 973.5
+    },
+    {
+      "coordinate": "org.springframework.security:spring-security-core:5.8.9",
+      "status": "budget_exhausted",
+      "best_reward": 0.05,
+      "iterations": 15,
+      "elapsed_seconds": 680.5
+    }
+  ]
+}

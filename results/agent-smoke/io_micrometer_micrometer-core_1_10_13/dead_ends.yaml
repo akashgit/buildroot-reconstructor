@@ -1,0 +1,78 @@
+- error_class: unknown
+  approach: FROM eclipse-temurin:17-jdk | RUN mvn clean install -B -DskipTests
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "[INFO] ------------------------------------------------------------------------\n\
+    [ERROR] The goal you specified requires a project to execute but there is no POM
+    in this directory (/build). Please veri"
+- error_class: unknown
+  approach: 'FROM eclipse-temurin:17-jdk | '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+- error_class: unknown
+  approach: 'FROM docker.io/library/eclipse-temurin:17-jdk | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - "BUILD FAILED in 1m 53s\nError: building at STEP \"RUN chmod +x ./gradlew && \
+    \    ./gradlew build -x test -x javadoc -x jmhJar -x dokkaHtmlMultiModule --no-daemon
+    --stacktrace\": while running runtime: exi"
+- error_class: unknown
+  approach: 'FROM docker.io/library/ubuntu:22.04 | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+- error_class: unknown
+  approach: FROM docker.io/library/gradle:7.6.4-jdk17 | RUN chmod +x ./gradlew 
+    && ./gradlew assemble -x test -x javadoc -x jmhJar -x dok
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+  - "BUILD FAILED in 1m 53s\nError: building at STEP \"RUN chmod +x ./gradlew && ./gradlew
+    assemble -x test -x javadoc -x jmhJar -x dokkaHtmlMultiModule -x dokkaHtml -x
+    dokkaJavadoc -x dokkaJavadocJar -x jav"
+- error_class: unknown
+  approach: 'FROM docker.io/library/gradle:8.0.2-jdk17 | '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+- error_class: unknown
+  approach: FROM docker.io/library/gradle:8.0.2-jdk17 | RUN chmod +x ./gradlew 
+    && ./gradlew compileJava compileTestJava jar -x test -x j
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+  - "BUILD FAILED in 1m 55s\nError: building at STEP \"RUN chmod +x ./gradlew && ./gradlew
+    compileJava compileTestJava jar -x test -x javadoc -x jmhJar -x dokkaHtmlMultiModule
+    -x dokkaHtml -x dokkaJavadoc -x"
+- error_class: unknown
+  approach: 'FROM docker.io/library/gradle:8.0.2-jdk17-jammy | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+- error_class: unknown
+  approach: 'FROM docker.io/library/gradle:7.6.3-jdk17 | '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
