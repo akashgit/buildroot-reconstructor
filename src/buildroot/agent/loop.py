@@ -9,7 +9,7 @@ from dataclasses import dataclass, field
 from buildroot.agent import analyzer
 from buildroot.agent.builder import Builder
 from buildroot.agent.evaluator import Evaluator
-from buildroot.agent.models import BuildAttempt, DeadEndEntry, EvalResult, ProgressSignal
+from buildroot.agent.models import BuildAttempt, DeadEndEntry, ProgressSignal
 from buildroot.agent.observer import Observer
 
 logger = logging.getLogger(__name__)

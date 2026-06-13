@@ -1,7 +1,5 @@
 """Tests for agent analyzer — error classification, dead-end registry, fix suggestions."""
 
-import pytest
-
 from buildroot.agent.analyzer import (
     FUNDAMENTAL_BLOCKERS,
     AnalysisResult,

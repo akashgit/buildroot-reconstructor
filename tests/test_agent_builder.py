@@ -1,7 +1,5 @@
 """Tests for agent builder — GHA sanitization and prompt structure."""
 
-import pytest
-
 from buildroot.agent.builder import sanitize_gha_expressions
 from buildroot.agent.models import DeadEndEntry
 

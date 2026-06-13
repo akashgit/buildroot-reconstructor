@@ -2,13 +2,11 @@
 
 from __future__ import annotations
 
-import io
 import logging
 import re
 import subprocess
 import tempfile
 import uuid
-import zipfile
 from pathlib import Path
 
 import requests
@@ -188,8 +186,8 @@ class Evaluator:
                 capture_output=True, text=True, timeout=60,
             )
             jar_paths = [
-                l.strip() for l in proc.stdout.strip().splitlines()
-                if l.strip().endswith(".jar")
+                line.strip() for line in proc.stdout.strip().splitlines()
+                if line.strip().endswith(".jar")
             ]
             if not jar_paths:
                 return None

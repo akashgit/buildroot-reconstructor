@@ -2,8 +2,6 @@
 
 from unittest.mock import MagicMock, patch
 
-import pytest
-
 from buildroot.agent.evaluator import Evaluator, _extract_error_lines
 
 
