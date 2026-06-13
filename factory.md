@@ -16,6 +16,8 @@ Reconstruct build environments (buildroots) for Maven Central artifacts as Conta
 
 - src/**/*.py
 - src/**/*.j2
+- src/**/*.md
+- src/**/.gitkeep
 - tests/**/*.py
 - results/**
 - factory.md
