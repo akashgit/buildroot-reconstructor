@@ -143,8 +143,9 @@ def _score_build_tool(truth: PNCGroundTruth, buildroot: dict) -> DimensionScore:
 def _score_build_tool_version(truth: PNCGroundTruth, buildroot: dict) -> DimensionScore:
     expected = truth.build_tool_version
 
-    raw_mvn = buildroot.get("maven_version", {})
-    actual = raw_mvn.get("value", "") if isinstance(raw_mvn, dict) else str(raw_mvn)
+    version_key = "gradle_version" if truth.build_tool.lower() == "gradle" else "maven_version"
+    raw_version = buildroot.get(version_key, {})
+    actual = raw_version.get("value", "") if isinstance(raw_version, dict) else str(raw_version)
     if actual == "system-default":
         actual = ""
 

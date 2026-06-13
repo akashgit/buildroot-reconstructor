@@ -24,7 +24,7 @@ from buildroot.utils.accuracy_scorer import score_accuracy
     help="PNC builder image name (e.g. builder-rhel-7-j8-mvn3.3.9).",
 )
 @click.option("--output-dir", default="results/pnc-validation", help="Output directory for results.")
-@click.option("--skip-deps", is_flag=True, default=True, help="Skip transitive dependency resolution.")
+@click.option("--skip-deps", is_flag=True, default=False, help="Skip transitive dependency resolution.")
 def validate(coordinate, builders_image_dir, pnc_image, output_dir, skip_deps):
     """Validate buildroot reconstruction against PNC ground truth for a Maven COORDINATE."""
     try:
