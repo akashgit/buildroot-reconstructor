@@ -16,17 +16,40 @@ import click
 @click.option("--model", default="claude-opus-4-6", help="LLM model for Containerfile mutation")
 @click.option("--batch", type=click.Path(exists=True), help="File with package coordinates (one per line)")
 @click.option("--output", default="results/agent-smoke", help="Output directory for batch results")
+@click.option("--outer-loop", "outer_loop", is_flag=True, help="Run intelligent outer loop with self-improvement")
+@click.option("--target-solve-rate", default=1.0, type=float, help="Target solve rate for outer loop (0.0-1.0)")
+@click.option("--max-cycles", default=5, type=int, help="Max outer loop cycles")
 @click.option("-v", "--verbose", is_flag=True, help="Enable debug logging")
-def agent_cmd(coordinate, host, max_iterations, model, batch, output, verbose):
+def agent_cmd(coordinate, host, max_iterations, model, batch, output, outer_loop, target_solve_rate, max_cycles, verbose):
     """Run agentic reconstruction loop for a Maven COORDINATE.
 
     Single package: buildroot agent org.apache.commons:commons-lang3:3.14.0
     Batch mode:     buildroot agent --batch packages.txt --output results/
+    Outer loop:     buildroot agent --outer-loop --batch packages.txt --max-cycles 3
     """
     logging.basicConfig(
         level=logging.DEBUG if verbose else logging.INFO,
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     )
+
+    if outer_loop:
+        if not batch:
+            raise click.UsageError("--outer-loop requires --batch")
+
+        from buildroot.agent.outer_loop import run_intelligent_outer_loop
+
+        summary = run_intelligent_outer_loop(
+            batch,
+            host=host,
+            model=model,
+            max_iterations=max_iterations,
+            output_dir=output,
+            target_solve_rate=target_solve_rate,
+            max_cycles=max_cycles,
+        )
+        click.echo(json.dumps(summary, indent=2))
+        final_rate = summary.get("final_solve_rate", 0)
+        sys.exit(0 if final_rate >= target_solve_rate else 1)
 
     if batch:
         from buildroot.agent.outer_loop import run_outer_loop

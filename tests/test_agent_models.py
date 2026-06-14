@@ -26,7 +26,6 @@ class TestProgressSignal:
 
     def test_repeated_stagnation_reaches_meta_shift(self):
         ps = ProgressSignal()
-        # Start from a moderate g_t (avoid massive spike from 0->non-zero)
         ps.g_t = 0.5
         ps.best_reward = 0.15
         for _ in range(200):
