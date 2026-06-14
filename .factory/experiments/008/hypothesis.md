@@ -1,0 +1,1 @@
+Replace raw API calls with Claude Code subprocess agents across all loops (issue #19)

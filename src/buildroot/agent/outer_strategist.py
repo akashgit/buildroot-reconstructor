@@ -8,6 +8,7 @@ import math
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from buildroot.agent.claude_runner import spawn_claude_agent
 from buildroot.agent.failure_analyst import FailureAnalysis
 from buildroot.agent.guards import MUTABLE_SURFACES
 
@@ -145,25 +146,146 @@ def compute_j_score(
     return delta * log_term / sqrt_w
 
 
+STRATEGIST_MODEL = "claude-opus-4-6"
+
+HYPOTHESIS_JSON_SCHEMA: dict = {
+    "type": "object",
+    "properties": {
+        "target_error_class": {"type": "string"},
+        "files_to_modify": {"type": "array", "items": {"type": "string"}},
+        "expected_impact": {"type": "string"},
+        "rationale": {"type": "string"},
+        "priority": {"type": "integer"},
+    },
+    "required": [
+        "target_error_class",
+        "files_to_modify",
+        "expected_impact",
+        "rationale",
+    ],
+}
+
+STRATEGIST_SYSTEM_PROMPT = """\
+You are a strategy agent for a build-environment reconstruction system.
+
+Your job: analyze failure patterns from a batch of Maven package builds and propose \
+a single CodeChangeHypothesis — a targeted code change that will improve the solve rate.
+
+Rules:
+- Only propose changes to files in the MUTABLE SURFACES list
+- Do NOT propose changes to evaluator.py, eval/score.py, or test fixtures
+- Do NOT hardcode package-specific fixes
+- Focus on the dominant error class unless it has been previously tried and reverted
+- If stagnation is detected (3+ consecutive low-J cycles), propose architectural changes
+- Your output MUST be a JSON object matching the CodeChangeHypothesis schema
+"""
+
+
+
 def propose_hypothesis(
     analysis: FailureAnalysis,
     archive: StrategyArchive,
     kb_patterns: str = "",
+    research_report: str = "",
 ) -> CodeChangeHypothesis:
-    """Generate a code change hypothesis based on failure analysis and archive state.
+    """Generate a code change hypothesis using a Claude Code subprocess.
 
-    If the archive shows stagnation (J < threshold for 3 consecutive cycles),
-    shifts from error-class fixes to architectural changes.
+    Falls back to a simple heuristic if the agent fails.
     """
     previously_tried = set()
     for score in archive.scores:
         if score.hypothesis and score.verdict == "revert":
             previously_tried.add(score.hypothesis.target_error_class)
 
-    if archive.is_stagnant:
-        logger.info("Strategy stagnation detected — shifting to architectural changes")
-        return _propose_architectural_change(analysis, previously_tried)
+    mutable_list = sorted(MUTABLE_SURFACES)
 
+    archive_context = ""
+    for score in archive.last_n(5):
+        hyp_target = score.hypothesis.target_error_class if score.hypothesis else "?"
+        archive_context += (
+            f"- Cycle {score.cycle}: target={hyp_target}, "
+            f"verdict={score.verdict}, J={score.j_score:.4f}\n"
+        )
+
+    error_freq_text = ""
+    for ef in analysis.error_frequencies:
+        status = ""
+        if ef.error_class in previously_tried:
+            status = " [PREVIOUSLY REVERTED]"
+        if ef.exhausted_count > 0 and ef.under_explored_count == 0:
+            status += " [EXHAUSTED]"
+        error_freq_text += (
+            f"- {ef.error_class}: count={ef.count}, "
+            f"exhausted={ef.exhausted_count}, "
+            f"under_explored={ef.under_explored_count}{status}\n"
+        )
+
+    research_section = ""
+    if research_report:
+        research_section = f"\n## Research Report\n{research_report}\n"
+
+    system_prompt = f"""\
+{STRATEGIST_SYSTEM_PROMPT}
+
+## Failure Analysis
+Total packages: {analysis.total_packages}
+Failed: {analysis.failed_packages}
+Solved: {analysis.solved_packages}
+Solve rate: {analysis.solve_rate:.4f}
+Dominant error class: {analysis.dominant_error_class}
+Is stagnant: {analysis.is_stagnant}
+
+## Error Frequencies
+{error_freq_text or "No errors recorded."}
+
+## Strategy Archive (recent cycles)
+{archive_context or "No prior cycles."}
+
+## Previously Tried & Reverted
+{', '.join(sorted(previously_tried)) or 'None'}
+
+## Knowledge Base Patterns
+{kb_patterns or "No KB patterns available."}
+{research_section}
+## Mutable Surfaces
+{chr(10).join(f"- {s}" for s in mutable_list)}
+"""
+
+    task = (
+        "Analyze the failure patterns and propose a CodeChangeHypothesis. "
+        "Return a JSON object with: target_error_class, files_to_modify, "
+        "expected_impact, rationale, and priority (integer)."
+    )
+
+    agent_result = spawn_claude_agent(
+        task=task,
+        system_prompt=system_prompt,
+        model=STRATEGIST_MODEL,
+        json_schema=HYPOTHESIS_JSON_SCHEMA,
+        max_turns=10,
+        max_budget_usd=2.0,
+        timeout=300,
+    )
+
+    if agent_result.ok and agent_result.structured_output:
+        data = agent_result.structured_output
+        return CodeChangeHypothesis(
+            target_error_class=data.get("target_error_class", "unknown"),
+            files_to_modify=data.get("files_to_modify", ["src/buildroot/agent/builder.py"]),
+            expected_impact=data.get("expected_impact", ""),
+            rationale=data.get("rationale", ""),
+            priority=data.get("priority", 0),
+        )
+
+    logger.warning("Strategist agent failed, using fallback: %s", agent_result.error_message)
+    return _fallback_hypothesis(analysis, previously_tried)
+
+
+def _fallback_hypothesis(
+    analysis: FailureAnalysis,
+    previously_tried: set[str],
+) -> CodeChangeHypothesis:
+    """Simple heuristic fallback when the Claude Code strategist fails."""
     if not analysis.error_frequencies:
         return CodeChangeHypothesis(
             target_error_class="unknown",
@@ -178,74 +300,14 @@ def propose_hypothesis(
         if ef.exhausted_count > 0 and ef.under_explored_count == 0:
             continue
 
-        return _propose_for_error_class(ef.error_class, ef, kb_patterns)
-
-    return _propose_architectural_change(analysis, previously_tried)
-
-
-def _propose_for_error_class(
-    error_class: str,
-    freq: object,
-    kb_patterns: str,
-) -> CodeChangeHypothesis:
-    """Propose a targeted fix for a specific error class."""
-    strategies: dict[str, CodeChangeHypothesis] = {
-        "compilation/jdk_mismatch": CodeChangeHypothesis(
-            target_error_class="compilation/jdk_mismatch",
+        return CodeChangeHypothesis(
+            target_error_class=ef.error_class,
             files_to_modify=["src/buildroot/agent/builder.py"],
-            expected_impact="Fix JDK version selection in Builder prompts",
-            rationale="JDK mismatch is the most common compilation error. "
-            "Improve Builder's JDK version inference from POM metadata.",
+            expected_impact=f"Address {ef.error_class} failures",
+            rationale=f"Target dominant error class {ef.error_class} with count={ef.count}",
             priority=1,
-        ),
-        "dependency_resolution/missing_artifact": CodeChangeHypothesis(
-            target_error_class="dependency_resolution/missing_artifact",
-            files_to_modify=["src/buildroot/agent/builder.py"],
-            expected_impact="Improve dependency resolution handling",
-            rationale="Missing artifacts need better Maven repository configuration "
-            "and dependency management in Containerfile.",
-            priority=2,
-        ),
-        "build_tool/multi_module": CodeChangeHypothesis(
-            target_error_class="build_tool/multi_module",
-            files_to_modify=[
-                "src/buildroot/agent/builder.py",
-                "src/buildroot/agent/analyzer.py",
-            ],
-            expected_impact="Better multi-module Maven project handling",
-            rationale="Multi-module builds need reactor-aware build ordering "
-            "and parent POM installation.",
-            priority=2,
-        ),
-        "plugin/configuration_error": CodeChangeHypothesis(
-            target_error_class="plugin/configuration_error",
-            files_to_modify=["src/buildroot/agent/builder.py"],
-            expected_impact="Better Maven plugin error recovery",
-            rationale="Plugin configuration errors can often be resolved by "
-            "skipping non-essential plugins.",
-            priority=3,
-        ),
-    }
+        )
 
-    if error_class in strategies:
-        return strategies[error_class]
-
-    mutable = sorted(MUTABLE_SURFACES)[:3]
-    return CodeChangeHypothesis(
-        target_error_class=error_class,
-        files_to_modify=list(mutable[:1]),
-        expected_impact=f"Address {error_class} failures",
-        rationale=f"Target the {error_class} error class "
-        f"with count={getattr(freq, 'count', '?')}",
-        priority=5,
-    )
-
-
-def _propose_architectural_change(
-    analysis: FailureAnalysis,
-    previously_tried: set[str],
-) -> CodeChangeHypothesis:
-    """Propose an architectural change when error-class fixes have stagnated."""
     return CodeChangeHypothesis(
         target_error_class="architectural",
         files_to_modify=[
@@ -254,9 +316,7 @@ def _propose_architectural_change(
         ],
         expected_impact="Architectural improvement to escape local optimum",
         rationale=(
-            "Error-class fixes have stagnated. Shifting to structural changes: "
-            "improve error pattern matching, add new fix strategies, or "
-            "enhance the Builder's prompt template. "
+            "Error-class fixes have stagnated. Shifting to structural changes. "
             f"Previously tried: {', '.join(sorted(previously_tried)) or 'none'}"
         ),
         priority=0,

@@ -1,0 +1,15 @@
+{
+  "id": 1,
+  "timestamp": "2026-06-08 11:49:04.822758",
+  "hypothesis": "Fix all 6 Level 3 gaps and run full source rebuilds for 10 test packages",
+  "change_summary": "Implemented all 6 Level 3 rebuild gaps: SCM extraction from POM XML, git tag discovery via GitHub API, template git clone source acquisition, JDK from JAR manifest (Priority 0), build command enrichment (-Dgpg.skip, -Drat.skip, -DskipTests, -Papache-release), Maven wrapper version detection. 35 new tests across 8 test classes. Eval: 0.6433\u21920.8499 (+32.1%).",
+  "issue_number": 2,
+  "pr_number": 3,
+  "score_before": null,
+  "score_after": null,
+  "delta": null,
+  "verdict": "keep",
+  "cost_usd": null,
+  "notes": "ceo:keep score_delta=+0.2066 precheck=passed agents_spawned=R,S,B,R,E pr_status=open_for_review hypothesis_type=mixed execution_artifacts=partial e2e=pass backlog_cleared=partial review_pipeline=full review_iterations=1 final_review_iterations=3",
+  "research_citations": []
+}
