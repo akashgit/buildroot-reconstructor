@@ -435,6 +435,7 @@ to implement the hypothesis.
         max_turns=30,
         max_budget_usd=5.0,
         timeout=600,
+        allowed_tools=["Read", "Edit"],
     )
 
     if agent_result.is_error:
@@ -442,6 +443,29 @@ to implement the hypothesis.
         for fp, orig in originals.items():
             Path(fp).write_text(orig)
         return {}
+
+    try:
+        git_status = subprocess.run(
+            ["git", "diff", "--name-only"],
+            capture_output=True, text=True, timeout=30,
+        )
+        if git_status.returncode == 0:
+            modified_files = {
+                f for f in git_status.stdout.strip().splitlines() if f
+            }
+            expected = set(target_files_list)
+            unexpected = modified_files - expected
+            if unexpected:
+                logger.warning(
+                    "OuterBuilder modified files outside hypothesis scope, "
+                    "reverting: %s", unexpected,
+                )
+                subprocess.run(
+                    ["git", "checkout", "--"] + sorted(unexpected),
+                    capture_output=True, timeout=30,
+                )
+    except (subprocess.TimeoutExpired, OSError) as exc:
+        logger.warning("Failed to check for unexpected modifications: %s", exc)
 
     changes: dict[str, str] = {}
     for file_path, original in originals.items():
