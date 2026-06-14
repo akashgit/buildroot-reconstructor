@@ -1,0 +1,1 @@
+Fix all 6 Level 3 gaps (SCM extraction, git tag discovery, template source acquisition, JDK from manifest, build command enrichment, Maven wrapper) and run full source rebuilds for 10 test packages

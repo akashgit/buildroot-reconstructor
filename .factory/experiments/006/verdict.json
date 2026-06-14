@@ -1,0 +1,15 @@
+{
+  "id": 6,
+  "timestamp": "2026-06-13 16:44:46.172571",
+  "hypothesis": "Implement Agentic Reconstructor Inner Loop MVP with Outer Loop Skeleton",
+  "change_summary": "8 new modules under src/buildroot/agent/ implementing inner loop (Observer\u2192Builder\u2192Evaluator\u2192Analyzer cycle with AdaEvolve G_t mode switching) and outer loop skeleton. 75 tests, 3 security fixes, lint clean. Operationally validated: commons-lang3 solved (reward=1.0), micrometer-core and spring-security-core iterated but did not solve. Solve rate 33%.",
+  "issue_number": 14,
+  "pr_number": 15,
+  "score_before": null,
+  "score_after": null,
+  "delta": null,
+  "verdict": "keep",
+  "cost_usd": null,
+  "notes": "ceo:keep score_delta=+0.0038 precheck=scope_false_positive(factory_infra_bug) agents_spawned=R,S,B,R,E pr_status=open_for_review hypothesis_type=mixed execution_artifacts=present e2e=pass backlog_cleared=yes review_pipeline=full review_iterations=2 final_review_iterations=3 solve_rate=0.33 packages_tested=3 packages_solved=1",
+  "research_citations": []
+}

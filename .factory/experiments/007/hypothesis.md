@@ -1,0 +1,1 @@
+Implement Outer Loop with Failure Analyst, Knowledge Base, Guards, and Strategy Archive (issue #16)
