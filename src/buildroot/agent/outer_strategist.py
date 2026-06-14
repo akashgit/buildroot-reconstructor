@@ -181,6 +181,7 @@ Rules:
 """
 
 
+
 def propose_hypothesis(
     analysis: FailureAnalysis,
     archive: StrategyArchive,
