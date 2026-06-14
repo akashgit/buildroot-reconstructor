@@ -1,12 +1,11 @@
-"""Builder agent — LLM-driven Containerfile mutation with three modes."""
+"""Builder agent — Claude Code subprocess-driven Containerfile mutation with three modes."""
 
 from __future__ import annotations
 
 import logging
 import re
 
-from anthropic import AnthropicVertex
-
+from buildroot.agent.claude_runner import AgentResult, spawn_claude_agent
 from buildroot.agent.models import DeadEndEntry
 from buildroot.pipeline.models import BuildrootSpec
 
@@ -77,38 +76,32 @@ def _format_spec_metadata(spec: BuildrootSpec) -> str:
     return "\n".join(parts)
 
 
+def _extract_containerfile(agent_result: AgentResult) -> str:
+    """Extract Containerfile content from agent output, stripping markdown fences."""
+    text = agent_result.text.strip()
+    if text.startswith("```"):
+        lines = text.split("\n")
+        lines = lines[1:]
+        if lines and lines[-1].strip() == "```":
+            lines = lines[:-1]
+        text = "\n".join(lines)
+    return text
+
+
 class Builder:
-    """LLM-driven Containerfile generation and mutation."""
+    """Claude Code subprocess-driven Containerfile generation and mutation."""
 
     def __init__(
         self, model: str = DEFAULT_MODEL, meta_guidance: str | None = None
     ) -> None:
-        self._client = AnthropicVertex(
-            region="us-east5", project_id="itpc-gcp-ai-eng-claude"
-        )
         self._model = model
         self._meta_guidance = meta_guidance
 
-    def _call_llm(self, prompt: str) -> str:
+    def _build_system_prompt(self) -> str:
         system = SYSTEM_PROMPT
         if self._meta_guidance:
             system = self._meta_guidance + "\n\n" + system
-
-        response = self._client.messages.create(
-            model=self._model,
-            max_tokens=4096,
-            system=system,
-            messages=[{"role": "user", "content": prompt}],
-        )
-        block = response.content[0]
-        text = block.text.strip()  # type: ignore[union-attr]
-        if text.startswith("```"):
-            lines = text.split("\n")
-            lines = lines[1:]
-            if lines and lines[-1].strip() == "```":
-                lines = lines[:-1]
-            text = "\n".join(lines)
-        return text
+        return system
 
     def refine(
         self,
@@ -119,7 +112,7 @@ class Builder:
         spec: BuildrootSpec,
     ) -> str:
         """Exploit mode: targeted fix based on error analysis."""
-        prompt = f"""\
+        task = f"""\
 Fix the following Containerfile build failure.
 
 ## Current Containerfile
@@ -139,7 +132,20 @@ Fix the following Containerfile build failure.
 
 Produce the corrected Containerfile with a targeted fix for the identified error."""
 
-        result = self._call_llm(prompt)
+        agent_result = spawn_claude_agent(
+            task=task,
+            system_prompt=self._build_system_prompt(),
+            model=self._model,
+            max_turns=10,
+            max_budget_usd=5.0,
+            timeout=600,
+        )
+
+        if agent_result.is_error:
+            logger.error("Builder refine failed: %s", agent_result.error_message)
+            return containerfile
+
+        result = _extract_containerfile(agent_result)
         return sanitize_gha_expressions(result)
 
     def explore(
@@ -151,7 +157,7 @@ Produce the corrected Containerfile with a targeted fix for the identified error
         dead_ends: list[DeadEndEntry],
     ) -> str:
         """Explore mode: fundamentally different approach."""
-        prompt = f"""\
+        task = f"""\
 The current Containerfile approach is not working. Take a fundamentally different approach.
 
 ## Current Containerfile (NOT WORKING — try something different)
@@ -175,12 +181,25 @@ Try a completely different strategy:
 
 Produce a new Containerfile using a fundamentally different approach."""
 
-        result = self._call_llm(prompt)
+        agent_result = spawn_claude_agent(
+            task=task,
+            system_prompt=self._build_system_prompt(),
+            model=self._model,
+            max_turns=10,
+            max_budget_usd=5.0,
+            timeout=600,
+        )
+
+        if agent_result.is_error:
+            logger.error("Builder explore failed: %s", agent_result.error_message)
+            return containerfile
+
+        result = _extract_containerfile(agent_result)
         return sanitize_gha_expressions(result)
 
     def fresh_start(self, spec: BuildrootSpec) -> str:
         """Meta-shift mode: regenerate from metadata only, ignoring prior attempts."""
-        prompt = f"""\
+        task = f"""\
 Generate a Containerfile from scratch for this Maven package. Ignore any prior attempts.
 
 ## Package Metadata
@@ -197,5 +216,18 @@ Generate a Containerfile from scratch for this Maven package. Ignore any prior a
 
 Produce a complete Containerfile."""
 
-        result = self._call_llm(prompt)
+        agent_result = spawn_claude_agent(
+            task=task,
+            system_prompt=self._build_system_prompt(),
+            model=self._model,
+            max_turns=10,
+            max_budget_usd=5.0,
+            timeout=600,
+        )
+
+        if agent_result.is_error:
+            logger.error("Builder fresh_start failed: %s", agent_result.error_message)
+            return ""
+
+        result = _extract_containerfile(agent_result)
         return sanitize_gha_expressions(result)

@@ -2,12 +2,15 @@
 
 import math
 from pathlib import Path
+from unittest.mock import patch
 
+from buildroot.agent.claude_runner import AgentResult
 from buildroot.agent.failure_analyst import ErrorClassFrequency, FailureAnalysis
 from buildroot.agent.outer_strategist import (
     CodeChangeHypothesis,
     StrategyArchive,
     StrategyScore,
+    _fallback_hypothesis,
     compute_j_score,
     propose_hypothesis,
 )
@@ -132,7 +135,33 @@ class TestCodeChangeHypothesis:
 
 
 class TestProposeHypothesis:
-    def test_proposes_for_dominant_error(self):
+    @patch("buildroot.agent.outer_strategist.spawn_claude_agent")
+    def test_proposes_from_agent(self, mock_spawn):
+        mock_spawn.return_value = AgentResult(
+            text="",
+            structured_output={
+                "target_error_class": "compilation/jdk_mismatch",
+                "files_to_modify": ["src/buildroot/agent/builder.py"],
+                "expected_impact": "Fix JDK selection",
+                "rationale": "JDK mismatch is dominant",
+                "priority": 1,
+            },
+        )
+        analysis = FailureAnalysis(
+            error_frequencies=[
+                ErrorClassFrequency(error_class="compilation/jdk_mismatch", count=5),
+            ],
+        )
+        archive = StrategyArchive()
+        hyp = propose_hypothesis(analysis, archive)
+        assert hyp.target_error_class == "compilation/jdk_mismatch"
+        assert mock_spawn.called
+
+    @patch("buildroot.agent.outer_strategist.spawn_claude_agent")
+    def test_falls_back_on_agent_error(self, mock_spawn):
+        mock_spawn.return_value = AgentResult(
+            text="", is_error=True, error_message="timeout",
+        )
         analysis = FailureAnalysis(
             error_frequencies=[
                 ErrorClassFrequency(error_class="compilation/jdk_mismatch", count=5),
@@ -142,6 +171,42 @@ class TestProposeHypothesis:
         hyp = propose_hypothesis(analysis, archive)
         assert hyp.target_error_class == "compilation/jdk_mismatch"
 
+    @patch("buildroot.agent.outer_strategist.spawn_claude_agent")
+    def test_research_report_in_prompt(self, mock_spawn):
+        mock_spawn.return_value = AgentResult(
+            text="",
+            structured_output={
+                "target_error_class": "test",
+                "files_to_modify": ["src/buildroot/agent/builder.py"],
+                "expected_impact": "test",
+                "rationale": "test",
+            },
+        )
+        analysis = FailureAnalysis(
+            error_frequencies=[
+                ErrorClassFrequency(error_class="test", count=1),
+            ],
+        )
+        propose_hypothesis(
+            analysis, StrategyArchive(),
+            research_report="JDK 17 fixes this issue",
+        )
+        system_prompt = mock_spawn.call_args.kwargs.get(
+            "system_prompt", mock_spawn.call_args[1].get("system_prompt", "")
+        )
+        assert "JDK 17 fixes this issue" in system_prompt
+
+
+class TestFallbackHypothesis:
+    def test_proposes_for_dominant_error(self):
+        analysis = FailureAnalysis(
+            error_frequencies=[
+                ErrorClassFrequency(error_class="compilation/jdk_mismatch", count=5),
+            ],
+        )
+        hyp = _fallback_hypothesis(analysis, set())
+        assert hyp.target_error_class == "compilation/jdk_mismatch"
+
     def test_skips_previously_reverted(self):
         analysis = FailureAnalysis(
             error_frequencies=[
@@ -149,37 +214,12 @@ class TestProposeHypothesis:
                 ErrorClassFrequency(error_class="plugin/configuration_error", count=3),
             ],
         )
-        archive = StrategyArchive()
-        archive.add(StrategyScore(
-            cycle=1, solve_rate_before=0.3, solve_rate_after=0.3, j_score=0.0,
-            hypothesis=CodeChangeHypothesis(
-                target_error_class="compilation/jdk_mismatch",
-                files_to_modify=["builder.py"],
-                expected_impact="fix", rationale="reason",
-            ),
-            verdict="revert",
-        ))
-        hyp = propose_hypothesis(analysis, archive)
+        hyp = _fallback_hypothesis(analysis, {"compilation/jdk_mismatch"})
         assert hyp.target_error_class == "plugin/configuration_error"
-
-    def test_architectural_on_stagnation(self):
-        analysis = FailureAnalysis(
-            error_frequencies=[
-                ErrorClassFrequency(error_class="compilation/jdk_mismatch", count=5),
-            ],
-        )
-        archive = StrategyArchive(j_threshold=0.01)
-        for i in range(3):
-            archive.add(StrategyScore(
-                cycle=i, solve_rate_before=0.3, solve_rate_after=0.3, j_score=0.005,
-            ))
-        hyp = propose_hypothesis(analysis, archive)
-        assert hyp.target_error_class == "architectural"
 
     def test_empty_analysis_proposes_builder(self):
         analysis = FailureAnalysis()
-        archive = StrategyArchive()
-        hyp = propose_hypothesis(analysis, archive)
+        hyp = _fallback_hypothesis(analysis, set())
         assert "builder.py" in hyp.files_to_modify[0]
 
     def test_skips_exhausted_error_class(self):
@@ -195,6 +235,17 @@ class TestProposeHypothesis:
                 ),
             ],
         )
-        archive = StrategyArchive()
-        hyp = propose_hypothesis(analysis, archive)
+        hyp = _fallback_hypothesis(analysis, set())
         assert hyp.target_error_class == "plugin/configuration_error"
+
+    def test_architectural_when_all_exhausted(self):
+        analysis = FailureAnalysis(
+            error_frequencies=[
+                ErrorClassFrequency(
+                    error_class="compilation/jdk_mismatch", count=5,
+                    exhausted_count=5, under_explored_count=0,
+                ),
+            ],
+        )
+        hyp = _fallback_hypothesis(analysis, set())
+        assert hyp.target_error_class == "architectural"

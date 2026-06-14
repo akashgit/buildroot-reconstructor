@@ -1,7 +1,7 @@
 """Outer loop orchestrator — intelligent self-improving cycle.
 
-Replaces the dumb for-loop with: batch → analyze → strategize → implement →
-guards → re-batch → verdict → update KB → loop.
+Replaces the dumb for-loop with: batch → analyze → research → strategize →
+implement → guards → re-batch → verdict → update KB → loop.
 """
 
 from __future__ import annotations
@@ -12,9 +12,9 @@ import subprocess
 import time
 from pathlib import Path
 
-from anthropic import AnthropicVertex
 from ruamel.yaml import YAML
 
+from buildroot.agent.claude_runner import spawn_claude_agent
 from buildroot.agent.failure_analyst import analyze_batch
 from buildroot.agent.guards import check_all, check_surfaces
 from buildroot.agent.knowledge.knowledge_base import (
@@ -23,6 +23,7 @@ from buildroot.agent.knowledge.knowledge_base import (
     update_taxonomy,
 )
 from buildroot.agent.loop import LoopResult, run_inner_loop
+from buildroot.agent.outer_researcher import research_failures
 from buildroot.agent.outer_strategist import (
     CodeChangeHypothesis,
     StrategyArchive,
@@ -157,8 +158,8 @@ def run_intelligent_outer_loop(
 ) -> dict:
     """Run the full intelligent outer loop cycle.
 
-    Cycle: batch → analyze → strategize → implement → guards → re-batch →
-           verdict → update KB → loop until target or max_cycles.
+    Cycle: batch → analyze → research → strategize → implement → guards →
+           re-batch → verdict → update KB → loop until target or max_cycles.
     """
     packages = _load_packages(packages_file)
     if not packages:
@@ -214,8 +215,19 @@ def run_intelligent_outer_loop(
         analysis.save(cycle_dir / "failure_analysis.json")
         update_taxonomy(analysis)
 
+        # Step 2.5: Research dominant failure patterns
+        research_report = ""
+        if analysis.failed_packages > 0:
+            research_report = research_failures(
+                analysis,
+                kb_patterns=kb_patterns or "",
+                output_path=cycle_dir / "research_report.md",
+            )
+
         # Step 3: Strategize
-        hypothesis = propose_hypothesis(analysis, archive, kb_patterns)
+        hypothesis = propose_hypothesis(
+            analysis, archive, kb_patterns, research_report=research_report,
+        )
         (cycle_dir / "hypothesis.json").write_text(
             json.dumps(hypothesis.to_dict(), indent=2) + "\n"
         )
@@ -369,105 +381,74 @@ def run_intelligent_outer_loop(
     return final_summary
 
 
-class OuterBuilder:
-    """LLM-driven code mutation for the outer loop."""
-
-    def __init__(self, model: str = OUTER_BUILDER_MODEL) -> None:
-        self._client = AnthropicVertex(
-            region="us-east5", project_id="itpc-gcp-ai-eng-claude"
-        )
-        self._model = model
-
-    def generate_change(
-        self,
-        hypothesis: CodeChangeHypothesis,
-        file_path: str,
-        current_source: str,
-        error_classes: list[str],
-        archive_entries: list[dict],
-    ) -> str:
-        """Generate modified file content based on the hypothesis."""
-        archive_context = ""
-        if archive_entries:
-            archive_context = "\n## Recent Strategy Archive\n"
-            for entry in archive_entries[-3:]:
-                archive_context += (
-                    f"- Cycle {entry.get('cycle', '?')}: "
-                    f"target={entry.get('hypothesis', {}).get('target_error_class', '?')}, "
-                    f"verdict={entry.get('verdict', '?')}, "
-                    f"J={entry.get('j_score', 0.0):.4f}\n"
-                )
-
-        prompt = f"""\
-Implement the following code change hypothesis.
-
-## Hypothesis
-Target error class: {hypothesis.target_error_class}
-Expected impact: {hypothesis.expected_impact}
-Rationale: {hypothesis.rationale}
-
-## Top Error Classes
-{chr(10).join(f"- {ec}" for ec in error_classes[:3])}
-{archive_context}
-## Current Source ({file_path})
-```python
-{current_source}
-```
-
-Produce the complete modified file implementing the hypothesis. \
-Only modify what the hypothesis requires — preserve all existing functionality."""
-
-        response = self._client.messages.create(
-            model=self._model,
-            max_tokens=8192,
-            system=OUTER_BUILDER_SYSTEM,
-            messages=[{"role": "user", "content": prompt}],
-        )
-
-        block = response.content[0]
-        text = block.text.strip()  # type: ignore[union-attr]
-        if text.startswith("```"):
-            lines = text.split("\n")
-            lines = lines[1:]
-            if lines and lines[-1].strip() == "```":
-                lines = lines[:-1]
-            text = "\n".join(lines)
-        return text
-
-
 def _outer_builder_implement(
     hypothesis: CodeChangeHypothesis,
 ) -> dict[str, str]:
-    """Use OuterBuilder to generate code changes for the hypothesis.
+    """Use a Claude Code subprocess to implement code changes for the hypothesis.
+
+    The agent edits files directly using the Edit tool.  We snapshot originals
+    beforehand and diff afterward to capture what changed.
 
     Returns a dict of {file_path: new_content}.
     """
-    builder = OuterBuilder()
-    changes: dict[str, str] = {}
+    originals: dict[str, str] = {}
+    target_files_list: list[str] = []
 
     for file_path in hypothesis.files_to_modify:
         path = Path(file_path)
         if not path.exists():
             logger.warning("Target file does not exist: %s", file_path)
             continue
+        originals[file_path] = path.read_text()
+        target_files_list.append(file_path)
 
-        current_source = path.read_text()
-        if len(current_source.splitlines()) > 200:
-            logger.warning("File too large for full rewrite: %s", file_path)
-            continue
+    if not target_files_list:
+        return {}
 
-        try:
-            new_source = builder.generate_change(
-                hypothesis=hypothesis,
-                file_path=file_path,
-                current_source=current_source,
-                error_classes=[hypothesis.target_error_class],
-                archive_entries=[],
-            )
-            if new_source and new_source != current_source:
-                changes[file_path] = new_source
-        except Exception as e:
-            logger.error("OuterBuilder failed for %s: %s", file_path, e)
+    system_prompt = f"""\
+{OUTER_BUILDER_SYSTEM}
+
+## Target Files
+{chr(10).join(f"- {f}" for f in target_files_list)}
+
+## Hypothesis
+Target error class: {hypothesis.target_error_class}
+Expected impact: {hypothesis.expected_impact}
+Rationale: {hypothesis.rationale}
+
+You MUST only modify the listed target files. Use the Edit tool for surgical changes — \
+do NOT rewrite entire files. Read each file first, then make the minimal edits needed \
+to implement the hypothesis.
+"""
+
+    task = (
+        f"Implement this code change hypothesis: {hypothesis.rationale}\n\n"
+        f"Target error class: {hypothesis.target_error_class}\n"
+        f"Files to modify: {', '.join(target_files_list)}\n\n"
+        f"Read each target file, then use Edit to make the necessary changes."
+    )
+
+    agent_result = spawn_claude_agent(
+        task=task,
+        system_prompt=system_prompt,
+        model=OUTER_BUILDER_MODEL,
+        max_turns=30,
+        max_budget_usd=5.0,
+        timeout=600,
+    )
+
+    if agent_result.is_error:
+        logger.error("OuterBuilder agent failed: %s", agent_result.error_message)
+        for fp, orig in originals.items():
+            Path(fp).write_text(orig)
+        return {}
+
+    changes: dict[str, str] = {}
+    for file_path, original in originals.items():
+        current = Path(file_path).read_text()
+        if current != original:
+            changes[file_path] = current
+            Path(file_path).write_text(original)
 
     return changes
 
