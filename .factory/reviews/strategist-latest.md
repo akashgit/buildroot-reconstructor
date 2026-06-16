@@ -1,15 +1,17 @@
 # Strategist Agent Output
 
-- **timestamp:** 2026-06-14T00:45:40Z
+- **timestamp:** 2026-06-16T02:08:42Z
 - **exit_code:** 0
 
 ---
 
-Strategy written to `.factory/strategy/current.md`.
+Strategy written to `.factory/strategy/current.md` with one hypothesis for issue #24.
 
-**Summary:** Single hypothesis (targeted mode) — **H1: Replace raw API calls with Claude Code subprocess agents** (issue #19, EXPLORE, growth dimension: capability_surface).
-
-The hypothesis covers all 4 deliverables from the issue: Inner Builder, Outer Builder, and Outer Strategist replacements plus the new Outer Researcher agent. It creates a shared `claude_runner.py` utility, replaces the 2 `AnthropicVertex` call sites (builder.py:86, outer_loop.py:376) and the hardcoded dict in outer_strategist.py:148, adds outer_researcher.py, updates guards.py mutable surfaces, and mandates E2E verification on commons-lang3 + the 3-package smoke test. Current baseline: composite 0.844 (tests=1.0, lint=1.0, type_check=0.2, coverage=1.0, observability=0.33).
+**H1: Node-scoped agents** (EXPLORE, mixed type)
+- 10 node agents + 3 post-build failure agents + `AgentAugmentedObserver` + CLI `--node-agents` flag
+- Mandatory full 31-package benchmark run on rh-h100-01 with results in `results/benchmark-agents/summary.json`
+- Expected impact: L2 rate 23% → 58-74%, L4 rate 13% → 26-48%, capability_surface 0.41 → 0.50+
+- Anti-patterns documented: no prose contamination (structured data review), no phased delivery, no mocked E2E, no self-assessed confidence scores
 ---
 
 > **⚠ CEO IDENTITY RE-ANCHOR (Sacred Rule 8)**

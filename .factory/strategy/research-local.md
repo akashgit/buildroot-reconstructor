@@ -1,310 +1,412 @@
-# Local Research — Replace Raw API Calls with Claude Code Agents (Issue #19)
+# Local Research — Node-Scoped Agents (Issue #24)
 
-## 1. Current Implementation of AnthropicVertex Calls
+## 1. Agent Architecture (`src/buildroot/agent/`)
 
-### 1.1 Inner Builder (`builder.py`)
+### Existing Agents
 
-**Location:** `src/buildroot/agent/builder.py:86-111`
+| File | Role | Uses Claude Code? |
+|---|---|---|
+| `observer.py` | Wraps `BuildrootOrchestrator.reconstruct()` to produce initial spec + Containerfile | No — pure deterministic |
+| `builder.py` | Containerfile mutation (refine/explore/fresh_start/diagnose) | Yes — `spawn_claude_agent` |
+| `evaluator.py` | 4-level scoring (L1 parse, L2 build, L3 command, L4 JAR match) via SSH to rh-h100-01 | No — deterministic SSH/subprocess |
+| `analyzer.py` | Error classification, dead-end registry, build progress estimation, root cause extraction | No — regex-based |
+| `failure_analyst.py` | Batch failure aggregation, stagnation detection | No — aggregation logic |
+| `outer_researcher.py` | Web research on failure patterns | Yes — `spawn_claude_agent` |
+| `outer_strategist.py` | Hypothesis generation with J(S) scoring | Yes — `spawn_claude_agent` with JSON schema |
+| `loop.py` | Inner loop: Observer → [Builder → Evaluator → Analyzer]* | Orchestrator only |
+| `outer_loop.py` | Intelligent self-improving cycle: batch → analyze → research → strategize → implement → guards → verdict | Orchestrator + uses `spawn_claude_agent` for OuterBuilder |
+| `claude_runner.py` | Shared subprocess runner for all Claude Code invocations | Infrastructure |
+| `guards.py` | Surface guards, leakage detection, monotonic enforcement | No — deterministic |
+| `knowledge/knowledge_base.py` | KB read/write for cross-package patterns | No — file I/O |
 
-The `Builder` class creates an `AnthropicVertex` client directly:
+### `claude_runner.py` Infrastructure (claude_runner.py:33-136)
+
+The `spawn_claude_agent()` function is the single entry point for all Claude Code subprocess invocations:
+
 ```python
-self._client = AnthropicVertex(region="us-east5", project_id="itpc-gcp-ai-eng-claude")
+def spawn_claude_agent(
+    task: str,
+    system_prompt: str,
+    *,
+    model: str = "claude-opus-4-6",
+    json_schema: dict | None = None,   # for structured output
+    max_turns: int = 30,
+    max_budget_usd: float = 5.0,
+    timeout: int = 600,
+    cwd: str | None = None,
+    allowed_tools: list[str] | None = None,
+) -> AgentResult
 ```
 
-**`_call_llm()` (line 92-111):** Single-shot `messages.create()` with `max_tokens=4096`. Returns raw text, strips markdown code fences manually. No tools, no iteration, no file reading.
+Key capabilities:
+- **Structured output** via `--json-schema` — used by strategist for `CodeChangeHypothesis`
+- **Tool scoping** via `--allowedTools` — OuterBuilder uses `["Read", "Edit"]`, Researcher uses `["Read", "WebSearch", "Bash"]`
+- **System prompt injection** via `--append-system-prompt-file` (temp file, cleaned up in finally block)
+- **Permission bypass** via `--dangerously-skip-permissions`
+- Returns `AgentResult(text, structured_output, is_error, cost_usd, num_turns)`
 
-**Three mode methods all call `_call_llm()`:**
-- `refine()` (line 113-143) — exploit mode, targeted fix with error + dead-ends + spec
-- `explore()` (line 145-179) — different approach, explicitly tells LLM to change strategy
-- `fresh_start()` (line 181-201) — regenerate from metadata only, ignores prior attempts
+**This is the foundation for all node agents.** Each node agent will call `spawn_claude_agent()` with a node-specific system prompt, scoped allowed tools, and a JSON schema for structured candidate ranking output.
 
-**Key constraint:** `meta_guidance` from the knowledge base is prepended to SYSTEM_PROMPT at line 94-95. This flow must be preserved in the Claude Code agent version.
+## 2. The Deterministic Pipeline (`pipeline/orchestrator.py:78-229`)
 
-**What's broken:**
-- One-shot text completion — can't iterate on errors
-- No tool access (can't read POM files, search Maven docs, check dependency versions)
-- Output is full Containerfile replacement — no surgical edits
-- `sanitize_gha_expressions()` post-processing needed because LLM can't be told to not use them reliably
+`BuildrootOrchestrator.reconstruct()` runs 13 sequential steps. Each step maps to one or more node agents from issue #24:
 
-### 1.2 Outer Builder (`outer_loop.py:372-472`)
+| Step | Code | What It Does | Node Agent |
+|---|---|---|---|
+| 1 | `fetch_pom()` | Download POM from Maven Central | **Node 1: POM Agent** |
+| 2 | `PomParser.parse()` | Parse POM XML | Node 1 |
+| 3 | `resolve_parent_chain()` | Walk parent POM chain | **Node 2: Parent Chain Agent** |
+| 4 | `merge_poms()` | Merge parent → child properties | Node 2 |
+| 5 | `PropertyResolver.resolve()` | Resolve `${...}` placeholders | **Node 3: Property Agent** |
+| 6 | `discover_repo_from_pom()` | Find source repo URL | **Node 4: Repo Agent** |
+| 7 | `CIParser.discover_ci_type()` + parse | Parse CI config (GHA, CircleCI) | **Node 5: CI Agent** |
+| 8 | `JdkResolver.resolve()` | Determine JDK version + vendor | **Node 6: JDK Agent** |
+| 9 | `ContainerImageResolver.resolve()` | Resolve container base image | **Node 7: Image Agent** |
+| 10 | `DependencyResolver.resolve()` | Dependency tree | — |
+| 11 | `discover_git_tag()` | Find correct git tag | **Node 8: Tag Agent** |
+| 12 | `_detect_maven_wrapper_version()` | Maven wrapper version + `_enrich_build_commands()` | **Node 9: Build Cmd Agent** |
+| 13 | `GapDetector.analyze()` + `ContainerfileGenerator.generate()` | Gap detection + Containerfile rendering | **Node 10: Template Agent** |
 
-**`OuterBuilder` class (line 372-435):** Same pattern — `AnthropicVertex` client, `messages.create()` with `max_tokens=8192`, manual code-fence stripping.
+### Where Agents Insert
 
-**`generate_change()` (line 381-435):** Takes hypothesis + file path + current source + error classes + archive entries. Feeds entire file content into prompt, asks for complete modified file back.
+Each node agent inserts **after** its deterministic step. The agent receives:
+1. The current `BuildrootSpec` (partially built, all upstream fields populated)
+2. The gap classification for this node's field (OBSERVED/INFERRED/DEFAULTED)
+3. Read access to upstream context (POM XML text, CI YAML, git repo data)
 
-**`_outer_builder_implement()` (line 438-472):** Orchestrator function:
-- Iterates `hypothesis.files_to_modify`
-- **200-line file cap at line 456** — skips files >200 lines
-- Creates `OuterBuilder()` for each call
-- Returns `dict[str, str]` of `{file_path: new_content}`
+The agent **can modify** only the current node's contribution to the spec before the next step consumes it.
 
-**What's broken:**
-- Full-file replacement model means it can't handle large files
-- No ability to run tests or verify changes compile
-- No iterative debugging — one-shot rewrite
-- Each file modification is independent (can't see cross-file dependencies)
+## 3. The GapDetector (`pipeline/gap_detector.py:16-199`)
 
-### 1.3 Outer Strategist (`outer_strategist.py:148-263`)
+`GapDetector.analyze()` checks 6 dimensions and classifies each as OBSERVED/INFERRED/DEFAULTED via the `Source` enum:
 
-**`propose_hypothesis()` (line 148-183):** NOT an LLM call at all. Pure Python dict lookup:
-- Checks archive for previously reverted strategies (line 159-161)
-- On stagnation → `_propose_architectural_change()` (line 164)
-- Iterates `analysis.error_frequencies`, skips exhausted/previously-tried classes (line 175-181)
-- Calls `_propose_for_error_class()` which is a hardcoded `strategies` dict (line 192-228) mapping 4 known error classes to canned `CodeChangeHypothesis` objects
+| Check Method | Field | Gap Trigger |
+|---|---|---|
+| `_check_jdk_confidence` | `jdk_version` | `JdkSpec.confidence.level == DEFAULTED/INFERRED` |
+| `_check_ubuntu_latest` | `runner_os` | `ubuntu-latest` mapping → INFERRED |
+| `_check_unresolved_properties` | `property:*` | Any `${...}` remaining → DEFAULTED |
+| `_check_maven_wrapper` | `maven_version` | No wrapper found → DEFAULTED |
+| `_check_build_command` | `build_command` | No CI build command → DEFAULTED |
+| `_check_system_packages` | `system_packages` | No CI data → DEFAULTED |
 
-**What's broken:**
-- Only knows 4 error classes: `compilation/jdk_mismatch`, `dependency_resolution/missing_artifact`, `build_tool/multi_module`, `plugin/configuration_error`
-- Fallback for unknown errors is generic: "Address X failures" with first mutable surface (line 233-241)
-- No reasoning, no web research, no access to knowledge base content
-- Cannot discover novel strategies
+**For issue #24:** The GapDetector currently runs post-hoc at step 13. For node-scoped agents, the approach is:
+1. Run the full deterministic pipeline → produces draft `BuildrootSpec`
+2. Run `GapDetector.analyze(spec)` → gap report with per-field source classifications
+3. Use gap entries to determine which node agents activate and at what level:
+   - **DEFAULTED** → agent always fires (highest value)
+   - **INFERRED** → agent fires in standard mode (verify the inference)
+   - **OBSERVED** → agent fires in light/validate-only mode (sanity check)
+4. Each node agent can update the spec → re-render Containerfile
 
-### 1.4 Outer Researcher
+This avoids refactoring the GapDetector to run per-field during the pipeline.
 
-**Does not exist.** The outer loop goes directly from `analyze_batch()` → `propose_hypothesis()` with no research step in between. The strategist is blind to external knowledge about failure patterns.
+## 4. The Template System (`generators/`)
 
----
+Three Jinja2 templates, selected by `ContainerfileGenerator._select_template()` at `containerfile.py:116`:
 
-## 2. Factory Claude Code Subprocess Pattern
+| Template | Selector | FROM Source |
+|---|---|---|
+| `jdk_base.j2` | Default | `{{ base_image }}-jdk` (e.g., `docker.io/library/eclipse-temurin:17-jdk`) |
+| `jdk_on_ubuntu.j2` | `spec.system_packages` non-empty | `ubuntu:{{ ubuntu_version }}` + manual JDK install |
+| `custom_base.j2` | `spec.base_image` set | `{{ custom_image }}` (from CI container reference) |
 
-**Reference implementation:** `factory/runners/claude.py` (remote-factory repo)
+All templates share the same structure: FROM → Maven install → ENV vars → git clone → build RUN.
 
-### `ClaudeRunner.build_command()` (line 57-82)
-```python
-cmd = [
-    "claude", "--append-system-prompt-file", prompt_file.name,
-    "-p", request.task,
-    "--output-format", "json",
-]
-if request.skip_permissions:
-    cmd.append("--dangerously-skip-permissions")
-if request.model:
-    cmd.extend(["--model", request.model])
+**Node 10 (Template Agent)** reviews the rendered Containerfile, not the template. It validates:
+- Syntax of every line (ENV, ARG, RUN)
+- Unresolved `${...}` in ENV/ARG values
+- Missing package installs
+- Dockerfile best practices
+
+Re-rendering after agent updates is straightforward — `ContainerfileGenerator.generate(updated_spec, output_dir)`.
+
+## 5. The Evaluator (`evaluator.py:26-267`)
+
+4-level pipeline, all via SSH to rh-h100-01:
+
+| Level | Method | What It Tests | Reward Weight |
+|---|---|---|---|
+| L1 | `_l1_parse()` | `dockerfile_parse.DockerfileParser` structural parse | 0.05 |
+| L2 | `_l2_build()` | `ssh rh-h100-01 "podman build --no-cache -t TAG -f Containerfile ."` | 0.10 |
+| L3 | `_l3_command()` | `podman run --rm TAG sh -c 'ls target/*.jar && echo BUILD_SUCCESS'` | 0.35 |
+| L4 | `_l4_match()` | Download original JAR from Maven Central, extract rebuilt JAR, `compare_jars()` | 0.50 |
+
+**FIXED surface** — evaluator.py and jar_comparator.py cannot be modified.
+
+Reward function (`models.py:86`): `reward = 0.05*L1 + 0.10*L2 + 0.35*L3 + 0.50*L4`
+
+**Post-build failure agents** fire based on evaluator results:
+- L2 failure (container build failed) → **L2 Failure Agent** reads build log, proposes Containerfile fixes
+- L3 failure (no JAR in target/) → **L3 Failure Agent** reads Maven/Gradle output, proposes build command fixes
+- L4 failure (JAR mismatch) → **L4 Failure Agent** reads comparison report, proposes reproducibility fixes
+
+## 6. The Benchmark Script
+
+**No dedicated `benchmark.py` or `benchmark` CLI command exists.** Benchmarking is done via:
+```bash
+buildroot agent --batch results/packages_benchmark.txt --output results/benchmark-full
 ```
 
-Key patterns:
-1. **System prompt → temp file** via `--append-system-prompt-file`
-2. **Task → `-p` flag** (single-shot headless mode)
-3. **JSON output** via `--output-format json`
-4. **Permissions bypass** via `--dangerously-skip-permissions`
-5. **Model override** via `--model`
-6. **Temp file cleanup** in `finally` block
-7. **Result parsing:** JSON output contains `{result, usage, cost_usd, duration_ms, num_turns, model}`
-8. **CWD control:** `subprocess.run(cmd, cwd=request.cwd)` — agent runs in the project directory
+This routes through `agent_cmd.py:54` → `run_outer_loop()` → `run_batch()` in `outer_loop.py:73`.
 
-### Async subprocess execution
-Uses `run_subprocess()` helper (imported from `_subprocess.py`) for non-blocking execution with timeout.
+Package lists:
+- `results/packages_smoke.txt` — 3 packages (commons-lang3, micrometer-core, spring-security-core)
+- `results/packages_benchmark.txt` — 31 packages (full benchmark set)
 
-### What the buildroot project needs to adopt
-- System prompt written to temp file (contains: KB patterns, error context, dead-end registry, spec metadata, mutable surfaces list)
-- Task string describes the specific mutation goal (refine/explore/fresh_start for inner; hypothesis implementation for outer)
-- Output parsed from JSON `result` field
-- CWD set to project root so the agent can read any file
-- `--dangerously-skip-permissions` for headless operation
-- Model set to `claude-opus-4-6`
+Current baseline from `results/benchmark-full/summary.json`:
+```
+L1: 31/31 (100%), L2: 7/31 (23%), L3: 5/31 (16%), L4: 4/31 (13%)
+```
 
----
+**For issue #24:** The `agent_cmd.py` CLI needs a `--node-agents` flag or similar to enable the node agent layer. The benchmark command already exists as `agent --batch`.
 
-## 3. Models and Data Structures
+## 7. Current Flow vs. Target Flow
 
-### Inner Loop (`models.py`, `loop.py`)
+### Current Flow
+```
+Observer.observe(coordinate)
+  └── BuildrootOrchestrator.reconstruct()  ← 13 deterministic steps, no review
+       └── GapDetector runs at end (post-hoc)
+       └── ContainerfileGenerator renders template
+       └── returns (spec, containerfile)
 
-**`BuildAttempt`** — tracks each iteration: containerfile, reward, level_reached, error_class, build_log_summary, diff_summary, fix_applied, q_value, n_expansions, timestamp.
+[Inner Loop] (only used in agentic mode, not in benchmark):
+  for t in range(max_iterations):
+      Evaluator.evaluate(containerfile)
+      Analyzer.classify + analyze
+      Builder.refine/explore/fresh_start(containerfile)
+```
 
-**`DeadEndEntry`** — exhausted approach: error_class, approach, failure_count, threshold (default 2), examples. `is_exhausted` when failure_count >= threshold.
+### Target Flow (Issue #24)
+```
+Phase 1: Deterministic + Agent Augmentation
+  BuildrootOrchestrator.reconstruct()  ← 13 deterministic steps (draft)
+  GapDetector.analyze(spec)            ← classify each field
+  For each Node Agent (1-10):
+      if gap_status warrants activation:
+          NodeAgent.review(spec, context) → ranked candidates
+          Apply best candidate to spec
+  ContainerfileGenerator.generate(updated_spec)  ← re-render with fixes
 
-**`EvalResult`** — 4-level scoring: l1_parse (0.05), l2_build (0.10), l3_command (0.35), l4_match (0.50). Total reward = weighted sum. FIXED — cannot change.
+Phase 2: Evaluate + Post-Build Agents
+  Evaluator.evaluate(containerfile)
+  If L2 fail → L2FailureAgent.diagnose(build_log) → fix + re-evaluate
+  If L3 fail → L3FailureAgent.diagnose(build_output) → fix + re-evaluate
+  If L4 fail → L4FailureAgent.diagnose(comparison_report) → note for future
+```
 
-**`ProgressSignal`** — AdaEvolve G_t exponential-decay for mode switching. exploit (G_t > tau_m=0.12), explore (G_t > tau_s=0.02), meta_shift (G_t ≤ tau_s).
+**Key insight:** The inner Builder loop from the current agentic pipeline may become unnecessary for most packages. If node agents fix upstream issues (wrong repo, wrong tag, wrong image, wrong build command), the first Containerfile should be correct. The post-build failure agents handle the remaining cases.
 
-**`LoopResult`** — aggregate: coordinate, status, best_reward, best_attempt, attempts list, dead_ends list, iterations, elapsed_seconds, error_message.
+## 8. Integration Architecture
 
-### Outer Loop (`outer_strategist.py`)
+### Recommended: AgentAugmentedObserver
 
-**`CodeChangeHypothesis`** — target_error_class, files_to_modify, expected_impact, rationale, priority. The Strategist Claude Code agent must produce this as structured JSON output.
+**Option C from issue analysis** — modify `observer.py` or create a new class:
 
-**`StrategyScore`** — J(S) scoring per cycle: cycle, solve_rate_before, solve_rate_after, j_score, hypothesis, verdict.
+```
+AgentAugmentedObserver.observe(coordinate)
+  1. deterministic_spec, draft_containerfile = super().observe(coordinate)
+  2. gap_report = GapDetector().analyze(deterministic_spec)
+  3. for node_agent in ordered_agents:
+         if node_agent.should_activate(gap_report):
+             candidates = node_agent.review(deterministic_spec, context)
+             node_agent.apply_best(deterministic_spec, candidates)
+  4. final_containerfile = ContainerfileGenerator().generate(updated_spec)
+  5. return updated_spec, final_containerfile
+```
 
-**`StrategyArchive`** — list of StrategyScore, stagnation detection (3 consecutive J < 0.01), save/load to JSON.
+This approach:
+- Doesn't modify `orchestrator.py` (the deterministic pipeline stays clean)
+- Drops into the existing inner loop seamlessly (the loop calls `observer.observe()`)
+- Allows enabling/disabling via a flag (`--node-agents`)
 
-**`FailureAnalysis`** — total/failed/solved packages, error_frequencies (list of ErrorClassFrequency), dominant_error_class, is_stagnant.
+### File Organization
 
-### Key data flow for Claude Code agent outputs
+New files:
+```
+src/buildroot/agent/node_agents/
+├── __init__.py
+├── base.py              # NodeAgent base class
+├── pom_agent.py         # Node 1
+├── parent_chain_agent.py # Node 2
+├── property_agent.py    # Node 3
+├── repo_agent.py        # Node 4
+├── ci_agent.py          # Node 5
+├── jdk_agent.py         # Node 6
+├── image_agent.py       # Node 7
+├── tag_agent.py         # Node 8
+├── build_cmd_agent.py   # Node 9
+├── template_agent.py    # Node 10
+└── failure_agents.py    # L2, L3, L4 post-build agents
 
-| Agent | Input | Expected Output | Format |
-|-------|-------|-----------------|--------|
-| Inner Builder | error, spec, dead_ends, meta_guidance, containerfile | New Containerfile text | Raw text (Containerfile content) |
-| Outer Builder | hypothesis, target files | Modified file contents | Dict[str, str] — {file_path: content} |
-| Outer Strategist | failure_analysis, archive, KB patterns | CodeChangeHypothesis | JSON matching dataclass schema |
-| Outer Researcher (NEW) | failure_analysis, KB | Research report text | Markdown text appended to KB |
+src/buildroot/agent/augmented_observer.py  # AgentAugmentedObserver
+```
 
----
+### NodeAgent Base Class Shape
 
-## 4. Current Test Coverage
+```python
+@dataclass
+class Candidate:
+    value: Any                    # The proposed value for this field
+    evidence_type: str            # From the ranking hierarchy
+    evidence_citations: list[str] # Specific citations
+    reasoning: str                # Why this candidate
 
-### Test files and counts
-| File | Tests | What it covers |
-|------|-------|----------------|
-| `test_agent_builder.py` | 10 | `sanitize_gha_expressions()`, `_format_dead_ends()` — NO tests for `_call_llm`, `refine`, `explore`, `fresh_start` |
-| `test_outer_loop_v2.py` | 12 | `_load_packages`, `_apply_changes`, `_revert_changes`, `_get_git_diff`, `_save_package_results`, `run_batch`, `run_outer_loop` — tests mock `run_inner_loop` |
-| `test_outer_strategist.py` | 16 | `compute_j_score`, `StrategyArchive`, `CodeChangeHypothesis`, `propose_hypothesis` — comprehensive coverage of the Python logic |
-| `test_failure_analyst.py` | ~15 | `analyze_batch`, `_extract_dominant_error`, `_check_stagnation` |
-| `test_guards.py` | ~20 | `check_surfaces`, `scan_leakage`, `check_monotonic`, `check_all` |
-| `test_knowledge_base.py` | ~10 | `read_patterns`, `record_pattern`, `update_taxonomy` |
+class NodeAgent:
+    node_name: str
+    field_name: str               # Maps to GapEntry.field
+    system_prompt: str
 
-**Total:** 401 tests pass (eval dimension), 5023 LOC across all test files.
+    def should_activate(self, gap_report: GapReport) -> bool:
+        entry = next((e for e in gap_report.entries if e.field == self.field_name), None)
+        if entry is None:
+            return False  # No gap → OBSERVED → light mode or skip
+        if entry.source == Source.DEFAULTED:
+            return True   # Always fire
+        if entry.source == Source.INFERRED:
+            return True   # Standard mode
+        return False      # OBSERVED → skip
 
-### Coverage gaps relevant to this change
-1. **Builder LLM calls are NOT tested** — `test_agent_builder.py` only tests `sanitize_gha_expressions` and `_format_dead_ends`. The `Builder` class's `refine/explore/fresh_start` methods are untestable without mocking `AnthropicVertex`.
-2. **OuterBuilder is NOT tested** — no tests for `OuterBuilder.generate_change()` or `_outer_builder_implement()`.
-3. **Inner loop integration** (`test_outer_loop_v2.py`) mocks `run_inner_loop` — no test exercises Builder → Evaluator flow.
-4. **`run_intelligent_outer_loop` has NO tests** — the full outer cycle is only exercised in E2E runs.
+    def review(self, spec: BuildrootSpec, context: dict) -> list[Candidate]:
+        result = spawn_claude_agent(
+            task=self._build_task(spec, context),
+            system_prompt=self.system_prompt,
+            json_schema=CANDIDATE_RANKING_SCHEMA,
+            allowed_tools=self._allowed_tools(),
+            max_turns=10,
+            max_budget_usd=2.0,
+            timeout=300,
+        )
+        return self._parse_candidates(result)
 
-### Testing strategy for Claude Code replacement
-- Tests that mock `AnthropicVertex` will need to mock `subprocess.run` instead
-- The contract changes: instead of asserting on API call args, assert on CLI command construction
-- `_outer_builder_implement()` tests should verify temp file creation/cleanup
-- The Strategist's `propose_hypothesis()` will need new tests since it changes from pure Python to subprocess call
-- Existing tests for `sanitize_gha_expressions`, dead-end formatting, and helper functions remain unchanged
+    def apply_best(self, spec: BuildrootSpec, candidates: list[Candidate]) -> None:
+        if candidates:
+            self._update_spec(spec, candidates[0])
+```
 
----
+### Evidence Ranking Schema
 
-## 5. Mutable and Fixed Surfaces
+From issue #24, agents rank proposals by evidence type (NOT self-assessed "confidence"):
+1. **Direct observation** — file exists, API returns value, tag found in git ls-remote
+2. **CI inference** — value from GitHub Actions / Jenkins / CircleCI
+3. **Cross-reference** — multiple independent sources agree
+4. **Historical pattern** — project's own conventions
+5. **Ecosystem heuristic** — common practice
+6. **Default** — last resort
 
-### From `factory.md`
-**Mutable Surfaces:**
-- `src/buildroot/agent/builder.py` ← PRIMARY target
-- `src/buildroot/agent/analyzer.py`
-- `src/buildroot/agent/loop.py` ← needs update (Builder instantiation)
-- `src/buildroot/agent/observer.py`
-- `src/buildroot/agent/outer_loop.py` ← PRIMARY target (OuterBuilder)
-- `src/buildroot/agent/models.py`
-- `src/buildroot/templates/*.j2`
+```python
+CANDIDATE_RANKING_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "candidates": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "value": {"type": "string"},
+                    "evidence_type": {"type": "string", "enum": [
+                        "direct_observation", "ci_inference", "cross_reference",
+                        "historical_pattern", "ecosystem_heuristic", "default"
+                    ]},
+                    "evidence_citations": {"type": "array", "items": {"type": "string"}},
+                    "reasoning": {"type": "string"},
+                },
+                "required": ["value", "evidence_type"]
+            }
+        },
+        "field_updated": {"type": "string"},
+    },
+    "required": ["candidates", "field_updated"]
+}
+```
 
-**Fixed Surfaces:**
-- `src/buildroot/agent/evaluator.py` — CANNOT modify
-- `eval/score.py` — CANNOT modify
-- `results/packages_smoke.txt` — CANNOT modify
-- `src/buildroot/utils/jar_comparator.py` — CANNOT modify
-- `src/buildroot/utils/maven_central.py` — CANNOT modify
+## 9. Benchmark Failure Category → Node Agent Mapping
 
-### From `guards.py`
-`MUTABLE_SURFACES` frozenset (line 12-26) includes all agent files + CLI command. This set needs to be updated if new files are added (e.g., `outer_researcher.py`).
+From the issue spec's failure breakdown:
 
-`MUTABLE_GLOBS` (line 28-33) includes `src/buildroot/agent/knowledge/`, `src/buildroot/templates/`, `tests/`, `results/`.
+| Category | Count | % | Primary Agent | How Agent Fixes It |
+|---|---|---|---|---|
+| Multi-module / wrong directory | 8 | 26% | **Node 4: Repo Agent** | Identifies correct subdir for multi-module repos, adjusts clone + build |
+| Base image not found | 6 | 19% | **Node 7: Image Agent** | Checks Docker Hub registry API for tag existence, finds alternatives |
+| Build tool not found | 3 | 10% | **Node 9: Build Cmd Agent** | Detects gradlew vs mvn vs gradle, checks for mvnw presence |
+| Containerfile syntax (unresolved props) | 2 | 6% | **Node 3: Property Agent** | Resolves remaining `${...}` from CI env vars, profiles, docs |
+| Git tag not found | 2 | 6% | **Node 8: Tag Agent** | `git ls-remote --tags`, checks tag naming conventions |
+| Build command / environment | 3 | 10% | **Node 9: Build Cmd Agent** | Cross-references CI config with detected build tool |
+| L3 build failures | 2 | 6% | **L3 Failure Agent** | Reads Maven/Gradle build output, diagnoses compile/dep issues |
+| L4 JAR mismatch | 1 | 3% | **L4 Failure Agent** | Diffs JAR contents, identifies timestamp/JDK/plugin issues |
+| L4 pass (baseline) | 4 | 13% | — | No action needed |
 
-### Implications for the change
-1. The primary targets (`builder.py`, `outer_loop.py`, `outer_strategist.py`) are all in MUTABLE_SURFACES — good.
-2. If we add `outer_researcher.py`, it falls under the `src/buildroot/agent/` prefix which isn't in MUTABLE_GLOBS. Need to either add it to `MUTABLE_SURFACES` in `guards.py` or accept that the outer loop doesn't self-modify the researcher.
-3. `loop.py` is mutable — we can change how `Builder` is instantiated there.
-4. `knowledge_base.py` and its directory are mutable via MUTABLE_GLOBS.
+**Total addressable: 24/27 failing packages (89%)** if all agents work correctly.
 
----
+## 10. Specific Failure Details (from benchmark)
 
-## 6. meta_guidance Flow: KB → Builder
+### Multi-module failures (8 packages) — Repo Agent target
+Packages: tomcat-catalina, nimbus-jose-jwt, jetty-server, lz4-java, kafka-clients, snakeyaml, commons-beanutils, protobuf-java
 
-### Current flow
-1. `knowledge_base.py:read_patterns()` reads `knowledge/patterns.md`, extracts "General Patterns" section
-2. `outer_loop.py:run_intelligent_outer_loop()` calls `read_patterns()` at line 183
-3. Passes `kb_patterns` to `run_batch()` as `meta_guidance` at line 190
-4. `run_batch()` passes `meta_guidance` to `run_inner_loop()` at line 103
-5. `loop.py:run_inner_loop()` passes `meta_guidance` to `Builder(model=model, meta_guidance=meta_guidance)` at line 56
-6. `builder.py:Builder.__init__()` stores `self._meta_guidance` at line 90
-7. `builder.py:Builder._call_llm()` prepends meta_guidance to SYSTEM_PROMPT at line 94-95
+Root cause: `discover_repo_from_pom()` finds the repo, but the POM is in a subdirectory. The generated Containerfile clones at root and runs `mvn clean install` at root, which fails because the target module's POM is in a subdirectory.
 
-### Required preservation in Claude Code version
-The meta_guidance content must be included in the system prompt file that `--append-system-prompt-file` points to. The flow path needs to be:
-1. `read_patterns()` → string content (unchanged)
-2. `run_batch()` → `run_inner_loop()` → meta_guidance parameter (unchanged)
-3. `run_inner_loop()` → write meta_guidance into the temp prompt file before spawning Claude Code
-4. Claude Code agent reads the system prompt with KB patterns as context
+Repo Agent fix: Detect multi-module structure, identify the correct subdirectory, set `WORKDIR /build/<subdir>` in the Containerfile or add `-pl <module>` to the build command.
 
-This is actually cleaner with Claude Code because the agent can also directly read `knowledge/patterns.md` and other KB files if needed.
+### Base image failures (6 packages) — Image Agent target
+Packages: spring-boot, netty-buffer, jakarta.mail, assertj-core, snappy-java, junit
 
----
+Root cause: The `JdkSpec.base_image` resolves to a tag that doesn't exist on Docker Hub (e.g., `eclipse-temurin:17-jdk` without OS suffix, or a version that was never published).
 
-## 7. Eval Score Baseline
+Image Agent fix: HTTP HEAD or Docker Hub registry API (`/v2/<image>/tags/list`) to verify tag existence. If missing, try alternative tags (same JDK, different OS suffix or vendor).
 
-**Current composite: passing** (tests=1.0, lint=1.0, type_check=0.2, coverage=1.0, observability≈0.58)
+### Build tool failures (3 packages) — Build Cmd Agent target
+Packages: json-smart, hibernate-validator, json-path
 
-- 401 tests pass (one test_level1 failure in spring-security-core JDK version, excluded from eval)
-- Lint: clean
-- Mypy: 10 errors in 6 files (most in evaluator.py which is FIXED)
-- Coverage: 73%
+Root cause: Project uses Gradle (has `build.gradle`, `gradlew`) but the pipeline defaults to `mvn clean install -B`.
 
-### Regression risk
-The main risk is breaking existing tests that mock `AnthropicVertex`. However, reviewing the tests:
-- `test_agent_builder.py` does NOT mock or call `Builder` — only tests utility functions
-- `test_outer_loop_v2.py` mocks `run_inner_loop`, not `Builder` directly
-- `test_outer_strategist.py` tests pure Python logic, not LLM calls
+Build Cmd Agent fix: Check repo for `build.gradle`, `gradlew`, `settings.gradle`. If found, switch to `./gradlew build` or `gradle build`.
 
-**Conclusion:** No existing tests mock `AnthropicVertex`, so replacing it with subprocess calls should NOT break any tests. The untested LLM paths are the ones being replaced.
+## 11. Cost & Performance Estimates
 
----
+Current agent costs per invocation:
+| Agent | Budget | Turns | Timeout | Typical Cost |
+|---|---|---|---|---|
+| Inner Builder (refine) | $5 | 10 | 600s | $1-3 |
+| Inner Builder (diagnose) | $1 | 3 | 180s | $0.30 |
+| Outer Researcher | $3 | 20 | 600s | $1-2 |
+| Outer Strategist | $2 | 10 | 300s | $0.50 |
 
-## 8. Architecture Summary & Implementation Considerations
+Node agents should be lightweight — most do simple lookups:
+| Agent | Budget | Turns | Timeout | Expected Cost |
+|---|---|---|---|---|
+| Node agents (1-10) | $2 | 5-10 | 300s | $0.50-1.50 |
+| Failure agents (L2/L3/L4) | $3 | 10 | 300s | $1-2 |
 
-### Subprocess wrapper needed
-Create a lightweight `_run_claude_agent()` helper (in `builder.py` or a shared module) that:
-1. Writes system prompt to temp file
-2. Builds `claude -p ... --append-system-prompt-file ... --output-format json --dangerously-skip-permissions` command
-3. Runs subprocess with timeout
-4. Parses JSON output → extracts `result` field
-5. Cleans up temp files
-6. Returns the agent's text output
+Full benchmark run:
+- 31 packages × ~10 node agents × ~$1 each = ~$310 for node agents
+- Plus ~5-10 failure agent calls per failing package = ~$150
+- **Total estimated cost for full 31-package benchmark: $400-600**
 
-### Inner Builder transformation
-- `Builder.__init__()` no longer needs `AnthropicVertex` client — just stores model name + meta_guidance
-- `_call_llm()` → `_run_claude_agent()` with system prompt = meta_guidance + SYSTEM_PROMPT
-- Three modes (refine/explore/fresh_start) become different task descriptions, not separate code paths (or keep as separate methods with different task prompts)
-- Output still goes through `sanitize_gha_expressions()` post-processing
-- `loop.py` changes minimally — Builder constructor signature stays the same
+Optimization: Only fire agents for DEFAULTED/INFERRED fields. The 4 L4-passing packages likely have mostly OBSERVED fields → fewer agent calls.
 
-### Outer Builder transformation
-- `OuterBuilder` class → Claude Code subprocess
-- Remove 200-line file cap — agent uses Edit tool for surgical changes
-- Agent runs in project root CWD so it can read target files directly
-- System prompt includes: hypothesis details, error classes, archive context, mutable surfaces
-- Task prompt tells agent which files to modify and what to change
-- Output: agent writes files directly (no need for `_apply_changes`), OR returns structured JSON with changes
+## 12. Critical Dependencies & Risks
 
-**Design decision needed:** Should the Outer Builder agent:
-(a) Write files directly (agent modifies on disk, outer loop checks diff), or
-(b) Return modified file contents in structured output (current pattern preserved)?
+| Dependency | Status | Risk |
+|---|---|---|
+| `spawn_claude_agent()` infrastructure | ✅ Proven, used by 4 agents | None |
+| `GapDetector` field classification | ✅ Works, 6 checks | May need more checks for full coverage |
+| `BuildrootSpec` mutability | ✅ Mutable dataclass | Fields like `source_repo`, `git_tag` are simple strings — easy to update |
+| `ContainerfileGenerator` re-rendering | ✅ Can re-render from updated spec | Works |
+| SSH to rh-h100-01 | ✅ Evaluator handles this | Must be reachable during benchmark |
+| `--dangerously-skip-permissions` | ✅ Set in spawn_claude_agent | No change needed |
+| Docker Hub API for Image Agent | New dependency | May have rate limits |
+| `git ls-remote` for Tag Agent | Available via Bash tool | Requires network access |
+| `MUTABLE_SURFACES` in guards.py | Needs update | Add new files to the set |
 
-Option (a) is more natural for Claude Code (it has Edit/Write tools) but requires the outer loop to use git diff to detect what changed. Option (b) preserves the existing `_apply_changes` / `_revert_changes` flow.
+## 13. Summary of Gaps
 
-**Recommendation:** Option (a) — let the agent write directly. The outer loop already calls `_get_git_diff()` and `_revert_changes()` uses git. The agent can make surgical edits and the outer loop validates via guards.
-
-### Outer Strategist transformation
-- `propose_hypothesis()` → Claude Code agent with structured output
-- System prompt: failure analysis data, archive state, KB patterns, mutable surfaces
-- Task: "Analyze the failure patterns and propose a CodeChangeHypothesis"
-- Agent outputs JSON matching `CodeChangeHypothesis.to_dict()` schema
-- Parse JSON → construct `CodeChangeHypothesis` dataclass
-- Keep `compute_j_score()`, `StrategyArchive`, `StrategyScore` unchanged (pure Python, no LLM)
-
-### Outer Researcher (NEW)
-- New module: `src/buildroot/agent/outer_researcher.py`
-- Claude Code agent that runs between Failure Analyst and Strategist
-- Input: failure analysis (dominant error classes, frequencies), KB content
-- Agent uses web search to research solutions for dominant failure patterns
-- Output: research report → written to KB or returned as context for Strategist
-- Add to `MUTABLE_SURFACES` in `guards.py`
-
-### `anthropic` dependency
-After this change, the `anthropic` package import can be removed from `builder.py` and `outer_loop.py`. Check if it's used elsewhere before removing from `pyproject.toml`.
-
----
-
-## 9. Risk Assessment
-
-| Risk | Likelihood | Mitigation |
-|------|-----------|------------|
-| Claude Code CLI not available on build hosts | Medium | Check `shutil.which("claude")` before spawning; fall back to error |
-| Subprocess timeout on complex tasks | Medium | Set reasonable timeouts (inner: 300s, outer: 600s, strategist: 120s) |
-| JSON parsing failures from Claude Code output | Low | Robust parsing with fallback; the factory runner handles this pattern |
-| Agent writes to FIXED surfaces | Medium | Set CWD appropriately; include surface constraints in system prompt; guards still check post-hoc |
-| meta_guidance not flowing through | Low | Include KB content directly in system prompt file; agent can also read KB files |
-| Existing tests break | Very Low | No tests mock AnthropicVertex; all LLM-calling code paths are untested |
-| Cost increase (Claude Code uses more tokens) | High | Each agent invocation includes full tool-use context; but the quality improvement justifies this |
-| Wall clock time increase | High | Claude Code agents take longer than single API calls; acceptable per issue spec ("60 min is acceptable") |
+| Gap | Severity | Resolution |
+|---|---|---|
+| No `NodeAgent` base class or implementations | **Critical** | Implement all 13 agents (10 node + 3 failure) |
+| No `AgentAugmentedObserver` | **Critical** | New class wrapping Observer with agent layer |
+| No benchmark CLI flag for agent mode | Medium | Add `--node-agents` flag to `agent_cmd.py` |
+| `GapDetector` missing checks for repo, tag, image | Medium | Add `_check_source_repo`, `_check_git_tag`, `_check_base_image` |
+| `MUTABLE_SURFACES` doesn't include new files | Low | Update `guards.py` after implementation |
+| No per-node agent cost tracking | Low | Log cost from `AgentResult.cost_usd` |
+| Template re-rendering path not exposed | Low | `ContainerfileGenerator` already supports this |
+| No benchmark storage for agent-augmented results | Low | Use `results/benchmark-agents/` directory |
