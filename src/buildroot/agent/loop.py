@@ -120,10 +120,6 @@ def run_inner_loop(
                     "  reward=%.2f level=%d error_class=%s (failure_agent activated)",
                     eval_result.reward, eval_result.level_reached, attempt.error_class,
                 )
-                if eval_result.reward > result.best_reward:
-                    result.best_reward = eval_result.reward
-                    result.best_attempt = attempt
-                continue
 
         logger.info(
             "  reward=%.2f level=%d error_class=%s",

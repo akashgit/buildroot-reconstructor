@@ -88,7 +88,7 @@ class NodeAgent:
     node_name: str = ""
     field_name: str = ""
     system_prompt: str = ""
-    allowed_tools: list[str] = ["Read", "Bash", "WebSearch"]
+    allowed_tools: tuple[str, ...] = ("Read", "Bash", "WebSearch")
 
     def should_activate(self, gap_report: GapReport) -> bool:
         for entry in gap_report.entries:
