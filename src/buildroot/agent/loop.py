@@ -47,18 +47,23 @@ def run_inner_loop(
     model: str = "claude-opus-4-6",
     skip_deps: bool = True,
     meta_guidance: str | None = None,
+    node_agents: bool = False,
 ) -> LoopResult:
     """Run the inner loop: Observer → [Builder → Evaluator → Analyzer]* → result."""
     start_time = time.time()
     result = LoopResult(coordinate=coordinate)
 
-    observer = Observer(skip_deps=skip_deps)
+    if node_agents:
+        from buildroot.agent.augmented_observer import AgentAugmentedObserver
+        observer = AgentAugmentedObserver(skip_deps=skip_deps)
+    else:
+        observer = Observer(skip_deps=skip_deps)
     builder = Builder(model=model, meta_guidance=meta_guidance)
     evaluator = Evaluator(host=host)
     progress = ProgressSignal()
     dead_ends: list[DeadEndEntry] = []
 
-    logger.info("Starting inner loop for %s (max %d iterations)", coordinate, max_iterations)
+    logger.info("Starting inner loop for %s (max %d iterations, node_agents=%s)", coordinate, max_iterations, node_agents)
 
     try:
         spec, containerfile = observer.observe(coordinate)
@@ -73,6 +78,8 @@ def run_inner_loop(
         return result
 
     logger.info("Observer produced initial Containerfile (%d bytes)", len(containerfile))
+
+    failure_agent_used = False
 
     for t in range(max_iterations):
         logger.info("Iteration %d/%d for %s", t + 1, max_iterations, coordinate)
@@ -90,6 +97,26 @@ def run_inner_loop(
         )
         result.attempts.append(attempt)
         result.iterations = t + 1
+
+        if (
+            node_agents
+            and not failure_agent_used
+            and t == 0
+            and eval_result.level_reached < 4
+            and hasattr(observer, "run_failure_agents")
+        ):
+            failure_result = observer.run_failure_agents(
+                spec, containerfile,
+                level_reached=eval_result.level_reached,
+                build_log=eval_result.build_log,
+                diff_summary=eval_result.diff_summary,
+                comparison_verdict=eval_result.comparison_verdict,
+            )
+            if failure_result:
+                spec, containerfile = failure_result
+                attempt.fix_applied = "failure_agent_fix"
+                failure_agent_used = True
+                continue
 
         logger.info(
             "  reward=%.2f level=%d error_class=%s",
