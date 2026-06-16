@@ -1,0 +1,245 @@
+{
+  "total_packages": 3,
+  "solved": 1,
+  "solve_rate": 0.3333,
+  "total_elapsed_seconds": 1470.3,
+  "packages": [
+    {
+      "coordinate": "org.apache.commons:commons-lang3:3.14.0",
+      "status": "success",
+      "best_reward": 1.0,
+      "iterations": 2,
+      "elapsed_seconds": 860.6,
+      "attempts": [
+        {
+          "id": "f849e887-d164-42a2-bbff-0bc17e2c7aad",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "source/wrong_tag",
+          "build_log_summary": "Cloning into '/build'...\nfatal: Remote branch v3.14.0 not found in upstream origin\nError: building at STEP \"RUN git clone --depth 1 --branch 'v3.14.0' 'https://github.com/apache/commons-lang' /build\": while running runtime: exit status 128",
+          "diff_summary": "",
+          "fix_applied": "refine: Try alternate tag formats: remove 'v' prefix, try 'rel/' prefix, or use the branch name.",
+          "timestamp": 1781389930.778253
+        },
+        {
+          "id": "4808a5d5-2fa2-4612-a078-eeb064e33ee4",
+          "parent_id": null,
+          "reward": 1.0,
+          "level_reached": 4,
+          "error_class": "unknown",
+          "build_log_summary": "",
+          "diff_summary": "",
+          "fix_applied": "",
+          "timestamp": 1781390335.183797
+        }
+      ],
+      "dead_ends": [
+        {
+          "error_class": "source/wrong_tag",
+          "approach": "FROM eclipse-temurin:21-jdk | RUN mvn clean install -B -DskipTests -Dgpg.skip=true -Drat.skip=true -Papache-re",
+          "failure_count": 1,
+          "threshold": 2,
+          "is_exhausted": false,
+          "examples": [
+            "Cloning into '/build'...\nfatal: Remote branch v3.14.0 not found in upstream origin\nError: building at STEP \"RUN git clone --depth 1 --branch 'v3.14.0' 'https://github.com/apache/commons-lang' /build\":"
+          ]
+        }
+      ]
+    },
+    {
+      "coordinate": "io.micrometer:micrometer-core:1.10.13",
+      "status": "budget_exhausted",
+      "best_reward": 0.15000000000000002,
+      "iterations": 5,
+      "elapsed_seconds": 398.4,
+      "attempts": [
+        {
+          "id": "7387f8f8-dca1-4277-8973-25224107d6ad",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please verify you invoked Maven from the correct directory. -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR] Re-run Maven using the -X switch to enable full debug logging.\n[ERROR] For more information about the errors and possible solutions, please",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781390774.271779
+        },
+        {
+          "id": "7db02739-aac3-4c19-a427-c8ac7ccf1e15",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781390788.953027
+        },
+        {
+          "id": "0669452d-b573-4167-acad-db4f42ec0457",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781390796.020892
+        },
+        {
+          "id": "cc2018ae-486e-4d9b-8a8e-63e872cdf46f",
+          "parent_id": null,
+          "reward": 0.15000000000000002,
+          "level_reached": 2,
+          "error_class": "unknown",
+          "build_log_summary": "BUILD_FAILED",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781391084.4286468
+        },
+        {
+          "id": "daf4c869-6153-438c-99ed-df00cc99b3df",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "",
+          "timestamp": 1781391097.893545
+        }
+      ],
+      "dead_ends": [
+        {
+          "error_class": "unknown",
+          "approach": "FROM eclipse-temurin:17-jdk | RUN mvn clean install -B -DskipTests",
+          "failure_count": 1,
+          "threshold": 2,
+          "is_exhausted": false,
+          "examples": [
+            "[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please veri"
+          ]
+        },
+        {
+          "error_class": "unknown",
+          "approach": "FROM docker.io/library/eclipse-temurin:17-jdk | ",
+          "failure_count": 2,
+          "threshold": 2,
+          "is_exhausted": true,
+          "examples": [
+            "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+            "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")"
+          ]
+        },
+        {
+          "error_class": "unknown",
+          "approach": "FROM docker.io/library/gradle:7.6-jdk17 | ",
+          "failure_count": 1,
+          "threshold": 2,
+          "is_exhausted": false,
+          "examples": [
+            "BUILD_FAILED"
+          ]
+        }
+      ]
+    },
+    {
+      "coordinate": "org.springframework.security:spring-security-core:5.8.9",
+      "status": "budget_exhausted",
+      "best_reward": 0.05,
+      "iterations": 5,
+      "elapsed_seconds": 211.2,
+      "attempts": [
+        {
+          "id": "083874ed-9c79-41a3-87e7-8067b4fe72de",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "/bin/sh: 1: gradle: not found\nError: building at STEP \"RUN gradle clean upgradeGradleWrapperAll --continue -Porg.gradle.java.installations.auto-download=false -DskipTests\": while running runtime: exit status 127",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781391201.118428
+        },
+        {
+          "id": "5a76a915-bd7f-4b55-9adb-07829b8b5bd8",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781391214.153274
+        },
+        {
+          "id": "c387b2d1-0186-46ff-ae8d-6eca69266dff",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781391223.0676239
+        },
+        {
+          "id": "b882e58f-3d5c-4ab3-bfc0-d5b6126a866f",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Unrecognized VM option 'MaxPermSize=2048m'\nError: Could not create the Java Virtual Machine.\nError: A fatal exception has occurred. Program will exit.\n* Get more help at https://help.gradle.org\nError: building at STEP \"RUN ./gradlew clean build -PskipCheckExpectedBranchVersion --continue -x test -x integrationTest -x javadoc --no-daemon -Porg.gradle.java.installations.auto-download=false\": while running runtime: exit status 1",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781391298.302447
+        },
+        {
+          "id": "79718803-9aff-4e90-bf99-50fe6bb66d81",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "",
+          "timestamp": 1781391309.132797
+        }
+      ],
+      "dead_ends": [
+        {
+          "error_class": "unknown",
+          "approach": "FROM eclipse-temurin:25-jdk | ",
+          "failure_count": 1,
+          "threshold": 2,
+          "is_exhausted": false,
+          "examples": [
+            "/bin/sh: 1: gradle: not found\nError: building at STEP \"RUN gradle clean upgradeGradleWrapperAll --continue -Porg.gradle.java.installations.auto-download=false -DskipTests\": while running runtime: exit"
+          ]
+        },
+        {
+          "error_class": "unknown",
+          "approach": "FROM docker.io/library/eclipse-temurin:17-jdk | ",
+          "failure_count": 2,
+          "threshold": 2,
+          "is_exhausted": true,
+          "examples": [
+            "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+            "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")"
+          ]
+        },
+        {
+          "error_class": "unknown",
+          "approach": "FROM docker.io/library/eclipse-temurin:25-jdk | ",
+          "failure_count": 1,
+          "threshold": 2,
+          "is_exhausted": false,
+          "examples": [
+            "Unrecognized VM option 'MaxPermSize=2048m'\nError: Could not create the Java Virtual Machine.\nError: A fatal exception has occurred. Program will exit.\n* Get more help at https://help.gradle.org\nError:"
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,542 @@
+{
+  "total_packages": 3,
+  "solved": 1,
+  "solve_rate": 0.3333,
+  "total_elapsed_seconds": 2818.4,
+  "packages": [
+    {
+      "coordinate": "org.apache.commons:commons-lang3:3.14.0",
+      "status": "success",
+      "best_reward": 1.0,
+      "iterations": 1,
+      "elapsed_seconds": 924.2,
+      "attempts": [
+        {
+          "id": "af75422a-3166-4cbe-80fe-b4c818e101c4",
+          "parent_id": null,
+          "reward": 1.0,
+          "level_reached": 4,
+          "error_class": "unknown",
+          "build_log_summary": "",
+          "diff_summary": "",
+          "fix_applied": "",
+          "timestamp": 1781471707.114235
+        }
+      ],
+      "dead_ends": []
+    },
+    {
+      "coordinate": "io.micrometer:micrometer-core:1.10.13",
+      "status": "budget_exhausted",
+      "best_reward": 0.05,
+      "iterations": 15,
+      "elapsed_seconds": 485.1,
+      "attempts": [
+        {
+          "id": "afb8eaf5-a900-4409-bb0a-9ef2aea1b9d6",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please verify you invoked Maven from the correct directory. -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR] Re-run Maven using the -X switch to enable full debug logging.\n[ERROR] For more information about the errors and possible solutions, please",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781472245.238503
+        },
+        {
+          "id": "f705075a-3d3f-4095-8ab2-d37d4ec49680",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781472284.9699452
+        },
+        {
+          "id": "3f40d890-fa93-41ac-ac9e-cec8b44d9e3b",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781472299.390959
+        },
+        {
+          "id": "ae1242da-5a28-479a-a50d-fa4cd5ca21a3",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781472313.658412
+        },
+        {
+          "id": "22944428-8371-4e6c-91f4-1ea10cc53ca4",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781472332.513716
+        },
+        {
+          "id": "1b2eaf7c-f5b6-410c-b253-aa1a38e87ed2",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781472352.386733
+        },
+        {
+          "id": "0798e8ba-bdeb-4f5b-ae1e-30b693aa1947",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781472365.814416
+        },
+        {
+          "id": "7172d21a-6468-4a2c-878c-3fdf74138ca1",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781472385.423031
+        },
+        {
+          "id": "78945c30-ebde-4b8f-a281-51515aa2dc2d",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781472464.400969
+        },
+        {
+          "id": "8facd1d4-803b-47ee-a31a-7ec636664e4c",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781472512.364314
+        },
+        {
+          "id": "fce32093-883c-43df-90e1-11f86ec160fa",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781472562.9306118
+        },
+        {
+          "id": "6c64b780-ddeb-42af-985c-11c2a17195f0",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781472589.999874
+        },
+        {
+          "id": "bc6cb944-7e88-4d0c-9974-3dd0a987896f",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781472614.306421
+        },
+        {
+          "id": "268742a5-367c-40d8-a5d0-6ca84d399807",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781472637.1438441
+        },
+        {
+          "id": "80371da8-1db0-4e59-ba63-cf053000ff98",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "",
+          "timestamp": 1781472650.390282
+        }
+      ],
+      "dead_ends": [
+        {
+          "error_class": "unknown",
+          "approach": "FROM eclipse-temurin:17-jdk | RUN mvn clean install -B -DskipTests",
+          "failure_count": 1,
+          "threshold": 2,
+          "is_exhausted": false,
+          "examples": [
+            "[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please veri"
+          ]
+        },
+        {
+          "error_class": "unknown",
+          "approach": "FROM eclipse-temurin:17-jdk | ",
+          "failure_count": 1,
+          "threshold": 2,
+          "is_exhausted": false,
+          "examples": [
+            "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")"
+          ]
+        },
+        {
+          "error_class": "unknown",
+          "approach": "FROM docker.io/library/eclipse-temurin:17-jdk | ",
+          "failure_count": 2,
+          "threshold": 2,
+          "is_exhausted": true,
+          "examples": [
+            "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+            "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")"
+          ]
+        },
+        {
+          "error_class": "unknown",
+          "approach": "FROM docker.io/library/eclipse-temurin:17-jdk-jammy | ",
+          "failure_count": 2,
+          "threshold": 2,
+          "is_exhausted": true,
+          "examples": [
+            "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+            "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")"
+          ]
+        },
+        {
+          "error_class": "unknown",
+          "approach": "FROM docker.io/library/amazoncorretto:17 | ",
+          "failure_count": 2,
+          "threshold": 2,
+          "is_exhausted": true,
+          "examples": [
+            "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+            "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")"
+          ]
+        },
+        {
+          "error_class": "unknown",
+          "approach": "FROM docker.io/library/ubuntu:22.04 | ",
+          "failure_count": 1,
+          "threshold": 2,
+          "is_exhausted": false,
+          "examples": [
+            "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")"
+          ]
+        },
+        {
+          "error_class": "unknown",
+          "approach": "FROM docker.io/library/ubuntu:22.04 | RUN chmod +x gradlew && PATH=\"$JAVA_HOME/bin:$PATH\" ./gradlew publishToMavenLoca",
+          "failure_count": 2,
+          "threshold": 2,
+          "is_exhausted": true,
+          "examples": [
+            "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+            "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")"
+          ]
+        },
+        {
+          "error_class": "unknown",
+          "approach": "FROM docker.io/library/gradle:7-jdk17 | ",
+          "failure_count": 2,
+          "threshold": 2,
+          "is_exhausted": true,
+          "examples": [
+            "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+            "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")"
+          ]
+        },
+        {
+          "error_class": "unknown",
+          "approach": "FROM docker.io/library/eclipse-temurin:17-jdk-focal | ",
+          "failure_count": 1,
+          "threshold": 2,
+          "is_exhausted": false,
+          "examples": [
+            "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")"
+          ]
+        }
+      ]
+    },
+    {
+      "coordinate": "org.springframework.security:spring-security-core:5.8.9",
+      "status": "budget_exhausted",
+      "best_reward": 0.05,
+      "iterations": 15,
+      "elapsed_seconds": 1409.1,
+      "attempts": [
+        {
+          "id": "fce10a8f-31a9-407e-83e9-147f8601c0b6",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "/bin/sh: 1: gradle: not found\nError: building at STEP \"RUN gradle clean upgradeGradleWrapperAll --continue -Porg.gradle.java.installations.auto-download=false -DskipTests\": while running runtime: exit status 127",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781472726.802731
+        },
+        {
+          "id": "693c4b8b-8e47-4ebe-9253-95a5a2d57a60",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781472747.5695732
+        },
+        {
+          "id": "b3bb6ec6-4f7a-4dd1-badc-fd778f487715",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781472782.202291
+        },
+        {
+          "id": "a2274866-8eb2-4b42-9c5d-26dc9c66c37b",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781472940.435146
+        },
+        {
+          "id": "2f291adb-2c15-4333-9817-885006336da2",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Unrecognized VM option 'MaxPermSize=2048m'\nError: Could not create the Java Virtual Machine.\nError: A fatal exception has occurred. Program will exit.\n* Get more help at https://help.gradle.org\nError: building at STEP \"RUN ./gradlew clean build -PskipCheckExpectedBranchVersion --continue -x test -x integrationTest --no-daemon\": while running runtime: exit status 1",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781473014.897451
+        },
+        {
+          "id": "29f2ab17-ddb8-4fee-88fe-9aaaa3c484ef",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781473060.472162
+        },
+        {
+          "id": "967694a9-28f4-46af-b22a-64b7bd02d4df",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781473074.2059772
+        },
+        {
+          "id": "6b2abb6b-1e64-466e-9403-a075e18dc83b",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781473111.3980858
+        },
+        {
+          "id": "dc37fe1d-bd63-44cc-949a-ef72cf9fd08a",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781473130.4122932
+        },
+        {
+          "id": "4dfe7ccf-5e4a-4b66-928a-8f32210bb9ac",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781473168.16577
+        },
+        {
+          "id": "d7766909-d40e-42fe-93e9-a352a0df052f",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781473242.8758762
+        },
+        {
+          "id": "aa8bf389-adde-4274-8c0f-92affd5e836f",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781473362.827093
+        },
+        {
+          "id": "639aed82-1303-409f-b7d8-8d82ce584cbe",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781473505.5230248
+        },
+        {
+          "id": "58a9beb7-d59c-4ba7-85df-eab7154e738d",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "refine: Analyze the build log for specific failure details.",
+          "timestamp": 1781473693.845248
+        },
+        {
+          "id": "1724232e-cd44-4934-8aac-e2f00c858424",
+          "parent_id": null,
+          "reward": 0.05,
+          "level_reached": 1,
+          "error_class": "unknown",
+          "build_log_summary": "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+          "diff_summary": "",
+          "fix_applied": "",
+          "timestamp": 1781474059.530659
+        }
+      ],
+      "dead_ends": [
+        {
+          "error_class": "unknown",
+          "approach": "FROM eclipse-temurin:25-jdk | ",
+          "failure_count": 1,
+          "threshold": 2,
+          "is_exhausted": false,
+          "examples": [
+            "/bin/sh: 1: gradle: not found\nError: building at STEP \"RUN gradle clean upgradeGradleWrapperAll --continue -Porg.gradle.java.installations.auto-download=false -DskipTests\": while running runtime: exit"
+          ]
+        },
+        {
+          "error_class": "unknown",
+          "approach": "FROM docker.io/library/eclipse-temurin:17-jdk | ",
+          "failure_count": 2,
+          "threshold": 2,
+          "is_exhausted": true,
+          "examples": [
+            "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+            "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")"
+          ]
+        },
+        {
+          "error_class": "unknown",
+          "approach": "FROM docker.io/library/eclipse-temurin:21-jdk | ",
+          "failure_count": 2,
+          "threshold": 2,
+          "is_exhausted": true,
+          "examples": [
+            "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+            "Unrecognized VM option 'MaxPermSize=2048m'\nError: Could not create the Java Virtual Machine.\nError: A fatal exception has occurred. Program will exit.\n* Get more help at https://help.gradle.org\nError:"
+          ]
+        },
+        {
+          "error_class": "unknown",
+          "approach": "FROM docker.io/library/eclipse-temurin:11-jdk | ",
+          "failure_count": 2,
+          "threshold": 2,
+          "is_exhausted": true,
+          "examples": [
+            "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+            "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")"
+          ]
+        },
+        {
+          "error_class": "unknown",
+          "approach": "FROM docker.io/library/eclipse-temurin:11-jdk-jammy | ",
+          "failure_count": 2,
+          "threshold": 2,
+          "is_exhausted": true,
+          "examples": [
+            "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+            "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")"
+          ]
+        },
+        {
+          "error_class": "unknown",
+          "approach": "FROM docker.io/library/amazoncorretto:11 | ",
+          "failure_count": 5,
+          "threshold": 2,
+          "is_exhausted": true,
+          "examples": [
+            "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+            "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")",
+            "Error: reading multiple stages: stage 1 requires a FROM instruction (\"\")"
+          ]
+        }
+      ]
+    }
+  ]
+}

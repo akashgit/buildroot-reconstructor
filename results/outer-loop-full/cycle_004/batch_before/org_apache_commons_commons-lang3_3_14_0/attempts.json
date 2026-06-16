@@ -1,0 +1,21 @@
+{
+  "coordinate": "org.apache.commons:commons-lang3:3.14.0",
+  "status": "success",
+  "best_reward": 1.0,
+  "iterations": 1,
+  "elapsed_seconds": 922.4,
+  "attempts": [
+    {
+      "id": "200e1792-8130-49bf-88c9-ce776385d03b",
+      "parent_id": null,
+      "reward": 1.0,
+      "level_reached": 4,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "",
+      "timestamp": 1781484490.3501499
+    }
+  ],
+  "dead_ends": []
+}

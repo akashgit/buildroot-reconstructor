@@ -1,0 +1,58 @@
+{
+  "scores": [
+    {
+      "cycle": 1,
+      "solve_rate_before": 0.3333,
+      "solve_rate_after": 0.3333,
+      "j_score": 0.0,
+      "hypothesis": {
+        "target_error_class": "unknown",
+        "files_to_modify": [
+          "src/buildroot/agent/builder.py",
+          "src/buildroot/agent/analyzer.py"
+        ],
+        "expected_impact": "Eliminates the Containerfile extraction corruption death spiral that caused 27/30 (90%) of inner-loop iterations to be completely wasted. By properly extracting Containerfile content from Claude's prose-wrapped responses and validating the output before passing it to the build pipeline, each iteration will produce a parseable Containerfile (FROM instruction present), allowing the loop to make real progress on the actual build errors. Additionally, proper classification of 'stage 1 requires FROM' and 'no POM in directory' errors will route to actionable fix suggestions instead of the generic 'unknown' fallback. Expected solve rate improvement from 0.33 to 0.67+ (at least one of the two currently-failing packages should progress past the L1 parse barrier).",
+        "rationale": "Root cause analysis of 30 inner-loop iterations across 2 failed packages (micrometer-core, spring-security-core) reveals a single dominant failure mode: `_extract_containerfile()` in builder.py only strips a leading code fence (`if text.startswith(\"```\")`), but Claude frequently returns responses like \"Here's the corrected Containerfile:\\n```dockerfile\\nFROM ...\\n```\\nThis should fix...\". The extractor sees the prose prefix, skips stripping, and passes the entire prose+code blob as the Containerfile. Podman then fails with \"stage 1 requires a FROM instruction\" because the first line is prose, not a FROM instruction. This corrupted Containerfile becomes the input for the next Claude call, which returns another prose-wrapped response, creating an infinite death spiral. 27 of 30 iterations hit this exact error.\n\nThe fix has two parts:\n1. **builder.py \u2014 Harden `_extract_containerfile()`**: Implement multi-strategy extraction: (a) regex to find ```dockerfile or ``` code blocks anywhere in the text, (b) scan for first FROM line and extract from there, (c) add a `_validate_containerfile()` guard that rejects outputs lacking a FROM instruction and falls back to the previous valid Containerfile rather than feeding garbage forward.\n2. **analyzer.py \u2014 Add missing error patterns**: Add `containerfile/parse_error` for \"requires a FROM instruction\" and `build_tool/wrong_build_system` for \"gradle: not found\" / \"no POM in this directory\" errors, with targeted fix suggestions.\n\nThis is the highest-leverage single change: it unblocks the entire inner loop from a pre-build corruption issue, allowing iterations to reach actual build errors where the existing refine/explore/meta-shift logic can be effective. It is generic (not package-specific) and addresses the root cause of 90% of wasted compute.",
+        "priority": 0
+      },
+      "verdict": "keep"
+    },
+    {
+      "cycle": 2,
+      "solve_rate_before": 0.3333,
+      "solve_rate_after": 0.3333,
+      "j_score": 0.0,
+      "hypothesis": {
+        "target_error_class": "unknown",
+        "files_to_modify": [
+          "src/buildroot/agent/loop.py",
+          "src/buildroot/agent/builder.py",
+          "src/buildroot/agent/analyzer.py"
+        ],
+        "expected_impact": "Solve rate 0.33 \u2192 0.67 (+1 package). Breaking the death spiral recovers 90% of wasted iterations (27/30 across both packages burned on prose-as-Containerfile). With the anchor fallback, the builder gets a valid Containerfile on every retry instead of corrupted prose. The spring-security package already proved it can get past FROM errors when given a real Containerfile (attempt 4 reached the actual MaxPermSize error). Combined with the obsolete-JVM-flag pattern and strengthened extraction, at least one of the two failing Gradle packages should solve.",
+        "rationale": "**Death spiral analysis (confirmed by attempt data):**\n\nBoth failing packages (micrometer-core, spring-security-core) show the identical pattern:\n- Attempt 0: Real build error (wrong build system) correctly triggers builder\n- Attempt 1: Builder produces prose-wrapped Containerfile \u2192 `_extract_containerfile` Strategy 3 extracts FROM line + trailing prose \u2192 `_validate_containerfile` sees FROM and accepts the prose \u2192 containerfile variable becomes corrupted\n- Attempts 2-14: Corrupted prose sent to podman \u2192 \"stage 1 requires a FROM instruction\" \u2192 builder gets prose input \u2192 produces more prose \u2192 infinite loop\n\n**Three-file fix (single coherent change):**\n\n1. **`loop.py`** \u2014 Preserve `anchor_containerfile` (original observer output) as immutable fallback. After every builder call, if the result fails structural validation, reset to anchor. Pass anchor to builder methods. This breaks the death spiral's core mechanism: the fallback can never be corrupted.\n\n2. **`builder.py`** \u2014 Three sub-fixes:\n   a. Strengthen `_validate_containerfile`: require BOTH a FROM instruction AND at least one RUN/COPY/ADD instruction. Current check only verifies FROM exists, which passes prose like \"FROM docker.io/... \\n\\nThe key changes I made...\". Requiring a second instruction type filters prose.\n   b. Improve `_extract_containerfile` Strategy 3: after finding FROM, only keep lines that are valid Dockerfile instructions (FROM/RUN/COPY/ADD/ENV/ARG/WORKDIR/EXPOSE/CMD/ENTRYPOINT/LABEL/USER/VOLUME/SHELL/#/continuation lines). Stop at first non-instruction prose line.\n   c. Update SYSTEM_PROMPT: mention that projects may use Gradle (./gradlew) instead of Maven, and the builder should detect build.gradle/gradlew presence.\n\n3. **`analyzer.py`** \u2014 Add `environment/obsolete_jvm_flag` pattern matching `Unrecognized VM option|MaxPermSize|PermSize` (confirmed in spring-security attempt 4). Add suggestion to remove the flag via sed or use JDK 8. This converts another \"unknown\" into an actionable error class.\n\n**Why this is not package-specific:** The death spiral affects ANY package where the builder produces prose output. The anchor fallback, structural validation, and instruction-line extraction are all generic Containerfile-handling improvements. The Gradle awareness and JVM flag patterns are class-level, not package-level.",
+        "priority": 0
+      },
+      "verdict": "keep"
+    },
+    {
+      "cycle": 3,
+      "solve_rate_before": 0.3333,
+      "solve_rate_after": 0.3333,
+      "j_score": 0.0,
+      "hypothesis": {
+        "target_error_class": "architectural",
+        "files_to_modify": [
+          "src/buildroot/agent/builder.py",
+          "src/buildroot/agent/analyzer.py"
+        ],
+        "expected_impact": "Architectural improvement to escape local optimum",
+        "rationale": "Error-class fixes have stagnated. Shifting to structural changes. Previously tried: none",
+        "priority": 0
+      },
+      "verdict": "keep"
+    }
+  ],
+  "stagnation_count": 3,
+  "j_threshold": 0.01
+}

@@ -1,0 +1,43 @@
+{
+  "coordinate": "org.apache.commons:commons-lang3:3.14.0",
+  "status": "success",
+  "best_reward": 1.0,
+  "iterations": 2,
+  "elapsed_seconds": 860.6,
+  "attempts": [
+    {
+      "id": "f849e887-d164-42a2-bbff-0bc17e2c7aad",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "source/wrong_tag",
+      "build_log_summary": "Cloning into '/build'...\nfatal: Remote branch v3.14.0 not found in upstream origin\nError: building at STEP \"RUN git clone --depth 1 --branch 'v3.14.0' 'https://github.com/apache/commons-lang' /build\": while running runtime: exit status 128",
+      "diff_summary": "",
+      "fix_applied": "refine: Try alternate tag formats: remove 'v' prefix, try 'rel/' prefix, or use the branch name.",
+      "timestamp": 1781389930.778253
+    },
+    {
+      "id": "4808a5d5-2fa2-4612-a078-eeb064e33ee4",
+      "parent_id": null,
+      "reward": 1.0,
+      "level_reached": 4,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "",
+      "timestamp": 1781390335.183797
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "source/wrong_tag",
+      "approach": "FROM eclipse-temurin:21-jdk | RUN mvn clean install -B -DskipTests -Dgpg.skip=true -Drat.skip=true -Papache-re",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "Cloning into '/build'...\nfatal: Remote branch v3.14.0 not found in upstream origin\nError: building at STEP \"RUN git clone --depth 1 --branch 'v3.14.0' 'https://github.com/apache/commons-lang' /build\":"
+      ]
+    }
+  ]
+}

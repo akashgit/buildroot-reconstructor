@@ -1,0 +1,64 @@
+- error_class: unknown
+  approach: 'FROM eclipse-temurin:25-jdk | '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "/bin/sh: 1: gradle: not found\nError: building at STEP \"RUN gradle clean upgradeGradleWrapperAll
+    --continue -Porg.gradle.java.installations.auto-download=false -DskipTests\":
+    while running runtime: exit"
+- error_class: unknown
+  approach: 'FROM docker.io/library/eclipse-temurin:17-jdk | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+- error_class: unknown
+  approach: 'FROM docker.io/library/eclipse-temurin:21-jdk | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+- error_class: unknown
+  approach: 'FROM docker.io/library/eclipse-temurin:11-jdk | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+- error_class: unknown
+  approach: 'FROM docker.io/library/amazoncorretto:11 | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+- error_class: unknown
+  approach: 'FROM docker.io/library/amazoncorretto:17 | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+- error_class: unknown
+  approach: 'FROM docker.io/library/amazoncorretto:21 | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+- error_class: unknown
+  approach: 'FROM docker.io/azul/zulu-openjdk:17-jdk | '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'

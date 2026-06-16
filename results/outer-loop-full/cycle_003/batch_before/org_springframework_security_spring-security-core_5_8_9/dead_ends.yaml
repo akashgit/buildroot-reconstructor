@@ -1,0 +1,60 @@
+- error_class: unknown
+  approach: 'FROM eclipse-temurin:25-jdk | '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "/bin/sh: 1: gradle: not found\nError: building at STEP \"RUN gradle clean upgradeGradleWrapperAll
+    --continue -Porg.gradle.java.installations.auto-download=false -DskipTests\":
+    while running runtime: exit"
+- error_class: unknown
+  approach: 'FROM docker.io/library/eclipse-temurin:17-jdk | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+- error_class: unknown
+  approach: 'FROM docker.io/library/eclipse-temurin:17-jdk-jammy | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+  - "Unrecognized VM option 'MaxPermSize=2048m'\nError: Could not create the Java
+    Virtual Machine.\nError: A fatal exception has occurred. Program will exit.\n\
+    * Get more help at https://help.gradle.org\nError:"
+- error_class: unknown
+  approach: 'FROM docker.io/library/eclipse-temurin:17-jdk-noble | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+- error_class: unknown
+  approach: 'FROM docker.io/library/amazoncorretto:17-al2023 | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+- error_class: unknown
+  approach: 'FROM docker.io/library/gradle:7-jdk17 | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+- error_class: unknown
+  approach: 'FROM docker.io/library/gradle:7.6-jdk17 | '
+  failure_count: 3
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'
+  - 'Error: reading multiple stages: stage 1 requires a FROM instruction ("")'

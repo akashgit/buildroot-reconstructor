@@ -1,0 +1,10 @@
+- error_class: source/wrong_tag
+  approach: FROM eclipse-temurin:21-jdk | RUN mvn clean install -B -DskipTests 
+    -Dgpg.skip=true -Drat.skip=true -Papache-re
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "Cloning into '/build'...\nfatal: Remote branch v3.14.0 not found in upstream
+    origin\nError: building at STEP \"RUN git clone --depth 1 --branch 'v3.14.0' 'https://github.com/apache/commons-lang'
+    /build\":"

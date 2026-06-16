@@ -1,0 +1,21 @@
+{
+  "total_packages": 3,
+  "failed_packages": 2,
+  "solved_packages": 1,
+  "solve_rate": 0.3333333333333333,
+  "error_frequencies": [
+    {
+      "error_class": "unknown",
+      "count": 2,
+      "packages": [
+        "io.micrometer:micrometer-core:1.10.13",
+        "org.springframework.security:spring-security-core:5.8.9"
+      ],
+      "exhausted_count": 2,
+      "under_explored_count": 0
+    }
+  ],
+  "dominant_error_class": "unknown",
+  "is_stagnant": false,
+  "stagnation_reason": ""
+}
