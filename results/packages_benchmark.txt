@@ -1,0 +1,33 @@
+# 33 packages with PNC images (from image-directory-mapping.csv)
+# Format: groupId:artifactId:version
+com.fasterxml.jackson.core:jackson-core:2.15.3
+com.fasterxml.jackson.core:jackson-databind:2.15.3
+org.springframework.boot:spring-boot:2.7.18
+org.apache.tomcat:tomcat-catalina:10.1.18
+org.apache.commons:commons-lang3:3.14.0
+ch.qos.logback:logback-classic:1.4.14
+io.netty:netty-buffer:4.1.104.Final
+com.nimbusds:nimbus-jose-jwt:9.37.3
+org.eclipse.jetty:jetty-server:11.0.20
+org.apache.avro:avro:1.11.3
+org.lz4:lz4-java:1.8.0
+com.google.guava:guava:33.0.0-jre
+org.apache.kafka:kafka-clients:3.6.1
+org.yaml:snakeyaml:2.2
+com.sun.mail:jakarta.mail:2.0.1
+org.hibernate.orm:hibernate-core:6.4.2.Final
+org.assertj:assertj-core:3.25.1
+net.minidev:json-smart:2.5.0
+org.glassfish.jersey.core:jersey-common:3.1.5
+org.codehaus.plexus:plexus-utils:4.0.0
+commons-beanutils:commons-beanutils:1.9.4
+org.json:json:20231013
+org.postgresql:postgresql:42.7.1
+commons-fileupload:commons-fileupload:1.5
+com.google.protobuf:protobuf-java:3.25.2
+org.xerial.snappy:snappy-java:1.1.10.5
+org.codehaus.jettison:jettison:1.5.4
+org.hibernate.validator:hibernate-validator:8.0.1.Final
+com.jayway.jsonpath:json-path:2.9.0
+junit:junit:4.13.2
+org.junit.jupiter:junit-jupiter-api:5.10.1
