@@ -26,7 +26,7 @@ def _minimal_spec(**overrides) -> BuildrootSpec:
         "jdk_spec": JdkSpec(
             version="17",
             distribution="temurin",
-            base_image="eclipse-temurin:17",
+            base_image="eclipse-temurin:17-jdk",
             confidence=Confidence(
                 level=Source.OBSERVED,
                 reason="CI setup-java action",

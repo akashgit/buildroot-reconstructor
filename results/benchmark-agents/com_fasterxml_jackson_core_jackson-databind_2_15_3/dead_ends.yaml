@@ -1,0 +1,9 @@
+- error_class: environment/image_resolution
+  approach: 'FROM eclipse-temurin:8-jdk-jdk | '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "Trying to pull docker.io/library/eclipse-temurin:8-jdk-jdk...\nError: creating
+    build container: unable to copy from source docker://eclipse-temurin:8-jdk-jdk:
+    initializing source docker://eclipse-temur"

@@ -1,0 +1,21 @@
+- error_class: environment/image_resolution
+  approach: 'FROM bellsoft/liberica-openjdk-debian:8-jdk | '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "Trying to pull docker.io/bellsoft/liberica-openjdk-debian:8-jdk...\nError: creating
+    build container: unable to copy from source docker://bellsoft/liberica-openjdk-debian:8-jdk:
+    initializing source dock"
+- error_class: unknown
+  approach: 'FROM docker.io/bellsoft/liberica-openjdk-debian:8 | '
+  failure_count: 12
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "BUILD FAILED in 2m 43s\nError: building at STEP \"RUN ./gradlew systemTest -x
+    test\": while running runtime: exit status 1"
+  - "BUILD FAILED in 2m 40s\nError: building at STEP \"RUN ./gradlew systemTest -x
+    test\": while running runtime: exit status 1"
+  - "BUILD FAILED in 2m 42s\nError: building at STEP \"RUN ./gradlew systemTest -x
+    test\": while running runtime: exit status 1"

@@ -1,0 +1,261 @@
+{
+  "coordinate": "com.nimbusds:nimbus-jose-jwt:9.37.3",
+  "status": "budget_exhausted",
+  "best_reward": 0.5,
+  "iterations": 15,
+  "elapsed_seconds": 2275.4,
+  "attempts": [
+    {
+      "id": "dc429fbc-592c-4f4a-81c6-d4d8b30921dc",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "environment/image_resolution",
+      "build_log_summary": "Trying to pull docker.io/library/eclipse-temurin:11-jdk-jdk...\nError: creating build container: unable to copy from source docker://eclipse-temurin:11-jdk-jdk: initializing source docker://eclipse-temurin:11-jdk-jdk: reading manifest 11-jdk-jdk in docker.io/library/eclipse-temurin: manifest unknown",
+      "diff_summary": "",
+      "fix_applied": "failure_agent_fix",
+      "timestamp": 1781592720.810604
+    },
+    {
+      "id": "ab231bca-d883-48b2-89e6-5a1d7924a97f",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "environment/image_resolution",
+      "build_log_summary": "Trying to pull docker.io/library/eclipse-temurin:11-jdk-jdk...\nError: creating build container: unable to copy from source docker://eclipse-temurin:11-jdk-jdk: initializing source docker://eclipse-temurin:11-jdk-jdk: reading manifest 11-jdk-jdk in docker.io/library/eclipse-temurin: manifest unknown",
+      "diff_summary": "",
+      "fix_applied": "refine: Use fully-qualified image names with docker.io/ prefix.",
+      "timestamp": 1781592748.536844
+    },
+    {
+      "id": "823847db-5d1d-46a4-b84a-7b2ca448bb98",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781592816.789491
+    },
+    {
+      "id": "7147dc75-c5d5-42ed-94aa-0e37765f0bc4",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781592925.250711
+    },
+    {
+      "id": "3c64bd30-46ba-4119-a4a8-6df665caec93",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781593010.443786
+    },
+    {
+      "id": "5503ce8d-5d1c-4287-93ef-cae0d70d8940",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781593129.3606348
+    },
+    {
+      "id": "926e9b48-14af-4ff5-aa08-67ac6684a6ca",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781593347.135987
+    },
+    {
+      "id": "c51faa47-7f5c-468a-901e-d5ec2f4f9184",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "fatal: unable to auto-detect email address (got 'root@cd1555809f45.(none)')\nError: building at STEP \"RUN git init && git add -A && git commit -m \"init\" --allow-empty\": while running runtime: exit status 128",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781593485.786187
+    },
+    {
+      "id": "739cf102-27f7-424d-9ac7-a43845dfea77",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781593565.356715
+    },
+    {
+      "id": "410ac1ba-9952-46f9-bcd0-bf527613edcd",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781593791.0873191
+    },
+    {
+      "id": "d9d0268d-9541-4c3f-aa42-5d88f0dd9364",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781593946.742301
+    },
+    {
+      "id": "b2988934-9b1a-4165-bfb9-2f7391eab847",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Error: parsing main Dockerfile: Containerfile: PYEOF: unterminated heredoc",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781594073.393503
+    },
+    {
+      "id": "9eab5151-515b-41da-b4e8-c9a254e29b75",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781594273.262466
+    },
+    {
+      "id": "b33042a6-8a5c-4e2e-8180-7f2880171ab1",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "plugin/configuration_error",
+      "build_log_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] Plugin org.apache.maven.plugins:maven-source-plugin:3.0.0 or one of its dependencies could not be resolved:\n[ERROR] \tThe following artifacts could not be resolved: org.apache.maven.plugins:maven-source-plugin:pom:3.0.0 (absent): Could not transfer artifact org.apache.maven.plugins:maven-source-plugin:pom:3.0.0 from/to central (https://repo.maven.apache.org/maven2): status code: 429, reason phrase: Too Many Re",
+      "diff_summary": "",
+      "fix_applied": "refine: Try skipping the failing plugin with -Dplugin.skip=true or updating the plugin version.\n\nSpecific en",
+      "timestamp": 1781594496.5279949
+    },
+    {
+      "id": "bb09218f-1bd4-43d2-aefd-89c00fcb0fd2",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "/bin/sh: -c: line 1: unexpected EOF while looking for matching `\"'\nError: building at STEP \"RUN python3 -c \"\": while running runtime: exit status 2",
+      "diff_summary": "",
+      "fix_applied": "",
+      "timestamp": 1781594578.8778298
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "environment/image_resolution",
+      "approach": "FROM eclipse-temurin:11-jdk-jdk | RUN mvn clean install -B -DskipTests -Dgpg.skip=true",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "Trying to pull docker.io/library/eclipse-temurin:11-jdk-jdk...\nError: creating build container: unable to copy from source docker://eclipse-temurin:11-jdk-jdk: initializing source docker://eclipse-tem"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:11-jdk | RUN mvn clean install -B -DskipTests -Dgpg.skip=true",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-eclipse-temurin-11 | RUN mvn clean install -B -DskipTests -Dgpg.skip=true -Dmaven.javadoc.skip=true -",
+      "failure_count": 3,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.8-eclipse-temurin-11 | RUN mvn clean install -B \\",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "fatal: unable to auto-detect email address (got 'root@cd1555809f45.(none)')\nError: building at STEP \"RUN git init && git add -A && git commit -m \"init\" --allow-empty\": while running runtime: exit stat",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.8-amazoncorretto-11 | RUN mvn clean install -B \\",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-amazoncorretto-11-al2023 | ",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "Error: parsing main Dockerfile: Containerfile: PYEOF: unterminated heredoc"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-amazoncorretto-11-al2023 | RUN mvn clean package -B -e \\",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        ""
+      ]
+    },
+    {
+      "error_class": "plugin/configuration_error",
+      "approach": "FROM docker.io/library/maven:3.9-amazoncorretto-11-al2023 | RUN mvn clean package -B -e \\",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "[INFO] ------------------------------------------------------------------------\n[ERROR] Plugin org.apache.maven.plugins:maven-source-plugin:3.0.0 or one of its dependencies could not be resolved:\n[ERR"
+      ]
+    }
+  ]
+}

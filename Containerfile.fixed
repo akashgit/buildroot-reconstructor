@@ -1,0 +1,81 @@
+FROM docker.io/library/eclipse-temurin:17-jdk-jammy
+
+RUN apt-get update && \
+    apt-get install -y git perl && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN git clone --branch '3.6.1' 'https://github.com/apache/kafka.git' /build
+WORKDIR /build
+
+# 1) Rewrite settings.gradle to completely remove Gradle Enterprise plugin
+#    which fails when ge.apache.org is unreachable
+RUN printf '%s\n' \
+  "// Gradle Enterprise plugin removed for offline build" \
+  "" \
+  "include 'clients'," \
+  "    'connect:api'," \
+  "    'connect:basic-auth-extension'," \
+  "    'connect:file'," \
+  "    'connect:json'," \
+  "    'connect:mirror'," \
+  "    'connect:mirror-client'," \
+  "    'connect:runtime'," \
+  "    'connect:test-plugins'," \
+  "    'connect:transforms'," \
+  "    'core'," \
+  "    'examples'," \
+  "    'generator'," \
+  "    'group-coordinator'," \
+  "    'jmh-benchmarks'," \
+  "    'log4j-appender'," \
+  "    'metadata'," \
+  "    'raft'," \
+  "    'server-common'," \
+  "    'shell'," \
+  "    'storage'," \
+  "    'storage:api'," \
+  "    'streams'," \
+  "    'streams:examples'," \
+  "    'streams:streams-scala'," \
+  "    'streams:test-utils'," \
+  "    'streams:upgrade-system-tests-0100'," \
+  "    'streams:upgrade-system-tests-0101'," \
+  "    'streams:upgrade-system-tests-0102'," \
+  "    'streams:upgrade-system-tests-0110'," \
+  "    'streams:upgrade-system-tests-10'," \
+  "    'streams:upgrade-system-tests-11'," \
+  "    'streams:upgrade-system-tests-20'," \
+  "    'streams:upgrade-system-tests-21'," \
+  "    'streams:upgrade-system-tests-22'," \
+  "    'streams:upgrade-system-tests-23'," \
+  "    'streams:upgrade-system-tests-24'," \
+  "    'streams:upgrade-system-tests-25'," \
+  "    'streams:upgrade-system-tests-26'," \
+  "    'streams:upgrade-system-tests-27'," \
+  "    'streams:upgrade-system-tests-28'," \
+  "    'streams:upgrade-system-tests-30'," \
+  "    'streams:upgrade-system-tests-31'," \
+  "    'streams:upgrade-system-tests-32'," \
+  "    'streams:upgrade-system-tests-33'," \
+  "    'streams:upgrade-system-tests-34'," \
+  "    'streams:upgrade-system-tests-35'," \
+  "    'tools'," \
+  "    'tools:tools-api'," \
+  "    'trogdor'" \
+  "" \
+  "rootProject.name = 'kafka'" \
+  > settings.gradle
+
+# 2) Remove retry { ... } blocks from build.gradle
+#    The retry() method is provided by the Gradle Enterprise test-retry plugin
+#    which we removed above. Without this patch, project evaluation fails with:
+#    "Could not find method retry() for arguments [...] on task ':clients:test'"
+RUN perl -0777 -i -pe 's/\n\s*retry\s*\{[^}]*\}//gs' build.gradle
+
+RUN chmod +x gradlew && \
+    ./gradlew clean jar \
+      -x test -x integrationTest -x unitTest \
+      -x rat -x checkstyleMain -x checkstyleTest \
+      -x spotbugsMain -x spotbugsTest -x javadoc \
+      --no-daemon --no-scan --no-build-cache \
+      -PskipSigning=true -PcommitId=unknown

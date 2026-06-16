@@ -1,0 +1,221 @@
+{
+  "coordinate": "com.google.guava:guava:33.0.0-jre",
+  "status": "budget_exhausted",
+  "best_reward": 0.15000000000000002,
+  "iterations": 15,
+  "elapsed_seconds": 3009.1,
+  "attempts": [
+    {
+      "id": "070d40a2-e281-4f6e-a1bb-98a046a9eb17",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "environment/image_resolution",
+      "build_log_summary": "Trying to pull docker.io/library/eclipse-temurin:11-jdk-jdk...\nError: creating build container: unable to copy from source docker://eclipse-temurin:11-jdk-jdk: initializing source docker://eclipse-temurin:11-jdk-jdk: reading manifest 11-jdk-jdk in docker.io/library/eclipse-temurin: manifest unknown",
+      "diff_summary": "",
+      "fix_applied": "failure_agent_fix",
+      "timestamp": 1781610257.041944
+    },
+    {
+      "id": "fd7b5d2c-3856-40b6-a522-066d631d8951",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "environment/image_resolution",
+      "build_log_summary": "Trying to pull docker.io/library/eclipse-temurin:11-jdk-jdk...\nError: creating build container: unable to copy from source docker://eclipse-temurin:11-jdk-jdk: initializing source docker://eclipse-temurin:11-jdk-jdk: reading manifest 11-jdk-jdk in docker.io/library/eclipse-temurin: manifest unknown",
+      "diff_summary": "",
+      "fix_applied": "refine: Use fully-qualified image names with docker.io/ prefix.",
+      "timestamp": 1781610330.540241
+    },
+    {
+      "id": "afd33c8b-d9b1-4039-b08c-8ce115a32515",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781610546.286384
+    },
+    {
+      "id": "11bd9dff-03af-46b3-9b7b-1151079f3d0e",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781610809.2593222
+    },
+    {
+      "id": "0d35930c-c2b0-4eac-8cfe-e93cfdeeaafa",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781611122.772065
+    },
+    {
+      "id": "9e040e29-d4c5-4721-9c4b-5bd23de4c984",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781611277.3579478
+    },
+    {
+      "id": "33eb86c3-6f7c-404f-9034-82246274fdaa",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781611397.979234
+    },
+    {
+      "id": "ca45fe0c-9414-4082-8f63-a7239d87b513",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] Unknown lifecycle phase \"/root/.m2\". You must specify a valid lifecycle phase or a goal in the format <plugin-prefix>:<goal> or <plugin-group-id>:<plugin-artifact-id>[:<plugin-version>]:<goal>. Available lifecycle phases are: pre-clean, clean, post-clean, validate, initialize, generate-sources, process-sources, generate-resources, process-resources, compile, process-classes, generate-test-sources, process-tes",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781611521.362935
+    },
+    {
+      "id": "5454e5db-7812-4a28-8b66-fe516b6f170d",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] Unknown lifecycle phase \"/root/.m2\". You must specify a valid lifecycle phase or a goal in the format <plugin-prefix>:<goal> or <plugin-group-id>:<plugin-artifact-id>[:<plugin-version>]:<goal>. Available lifecycle phases are: pre-clean, clean, post-clean, validate, initialize, generate-sources, process-sources, generate-resources, process-resources, compile, process-classes, generate-test-sources, process-tes",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781611610.86021
+    },
+    {
+      "id": "9e2d6f4d-45d3-4fce-9ac4-d32ea2957fb3",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "cp: '.' and '' are the same file",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781611836.693108
+    },
+    {
+      "id": "59a07ee3-9397-4417-8f57-c73a21ef155f",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "cp: '.' and '' are the same file",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781611989.723797
+    },
+    {
+      "id": "47f25b30-b135-4c64-aa21-1e1c89708850",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "cp: '.' and '' are the same file",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781612193.681851
+    },
+    {
+      "id": "2529625a-070f-45d5-9c9b-3daab0d17093",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "cp: '.' and '' are the same file",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781612416.072435
+    },
+    {
+      "id": "94534171-4e2b-4472-a0b8-4328182769b8",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "cp: '.' and '' are the same file",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781612618.5200279
+    },
+    {
+      "id": "ac65a124-a3ce-4a97-a921-b4ae4a646c07",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "cp: '.' and '' are the same file",
+      "diff_summary": "",
+      "fix_applied": "",
+      "timestamp": 1781612770.595341
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "environment/image_resolution",
+      "approach": "FROM eclipse-temurin:11-jdk-jdk | ",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "Trying to pull docker.io/library/eclipse-temurin:11-jdk-jdk...\nError: creating build container: unable to copy from source docker://eclipse-temurin:11-jdk-jdk: initializing source docker://eclipse-tem"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:11-jdk | ",
+      "failure_count": 3,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-eclipse-temurin-17 | RUN mvn -B -ntp install -U -DskipTests=true -Dmaven.javadoc.skip=true -Dgpg.skip",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-eclipse-temurin-11 | ",
+      "failure_count": 7,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "[INFO] ------------------------------------------------------------------------\n[ERROR] Unknown lifecycle phase \"/root/.m2\". You must specify a valid lifecycle phase or a goal in the format <plugin-pr",
+        "[INFO] ------------------------------------------------------------------------\n[ERROR] Unknown lifecycle phase \"/root/.m2\". You must specify a valid lifecycle phase or a goal in the format <plugin-pr",
+        "cp: '.' and '' are the same file"
+      ]
+    }
+  ]
+}

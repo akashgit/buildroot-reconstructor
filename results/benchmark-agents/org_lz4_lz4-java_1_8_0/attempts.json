@@ -1,0 +1,209 @@
+{
+  "coordinate": "org.lz4:lz4-java:1.8.0",
+  "status": "budget_exhausted",
+  "best_reward": 0.15000000000000002,
+  "iterations": 15,
+  "elapsed_seconds": 4137.3,
+  "attempts": [
+    {
+      "id": "7fb1a40d-b062-482f-9304-4de7fc581d25",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "environment/image_resolution",
+      "build_log_summary": "Trying to pull docker.io/library/eclipse-temurin:17-jdk-jdk...\nError: creating build container: unable to copy from source docker://eclipse-temurin:17-jdk-jdk: initializing source docker://eclipse-temurin:17-jdk-jdk: reading manifest 17-jdk-jdk in docker.io/library/eclipse-temurin: manifest unknown",
+      "diff_summary": "",
+      "fix_applied": "failure_agent_fix",
+      "timestamp": 1781606100.2720509
+    },
+    {
+      "id": "6684680d-0a37-46f7-a690-d462ab1d9f67",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-16T10:35:40Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781606141.688119
+    },
+    {
+      "id": "eee61272-988e-4e95-8b62-859dbe588c0a",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781606273.5380921
+    },
+    {
+      "id": "13d4cb01-31b6-4919-afcc-0089786a9d25",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781606667.6066618
+    },
+    {
+      "id": "7b667970-e451-42b5-b6db-06d44b6685de",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781606833.107601
+    },
+    {
+      "id": "e38be14a-c032-431a-a6f3-e23412a6ed5b",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781607139.587733
+    },
+    {
+      "id": "6d74b1d7-595a-42e7-8370-e1fd28fb09dd",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781607383.4264488
+    },
+    {
+      "id": "31063052-4f8d-4436-9617-c4711a9c4ed5",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781607561.9567308
+    },
+    {
+      "id": "1712b47c-f793-4796-b9b9-b48f05840419",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781607798.563104
+    },
+    {
+      "id": "6b30f0e1-05de-45e6-a259-3a8427b10c92",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781608033.476814
+    },
+    {
+      "id": "adab2482-05f5-41e6-be4c-8561a481498d",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781608450.877162
+    },
+    {
+      "id": "3886e7a6-d420-4471-93f0-56fb9d1da063",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781608786.700264
+    },
+    {
+      "id": "c70101f3-a92c-4e70-9ad2-e27c61ac6127",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781609280.092291
+    },
+    {
+      "id": "0febf89a-96f9-4575-9ff9-968411f9671a",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781609448.410254
+    },
+    {
+      "id": "5eeeac13-261a-423b-b4b3-c469dcbe67bc",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "",
+      "timestamp": 1781609761.512512
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "unknown",
+      "approach": "FROM ubuntu:24.04 | ",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "time=\"2026-06-16T10:35:40Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteracti"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:8-jdk | ",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/amazoncorretto:8 | ",
+      "failure_count": 10,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    }
+  ]
+}

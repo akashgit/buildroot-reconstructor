@@ -1,0 +1,39 @@
+- error_class: unknown
+  approach: FROM ubuntu:24.04 | RUN mvn -B clean install -DskipTests 
+    -Dgpg.skip=true -Drat.skip=true
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - time="2026-06-16T09:45:08Z" level=error msg="+(UNHANDLED LOGLEVEL) 
+    &imagebuilder.Step{Env:[]string{\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\",
+    \"DEBIAN_FRONTEND=noninteracti
+- error_class: unknown
+  approach: FROM docker.io/library/ubuntu:24.04 | RUN mvn -B clean install 
+    -DskipTests -Dgpg.skip=true -Drat.skip=true -Dmaven.jav
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-8 | RUN mvn -B -ntp
+    clean install \
+  failure_count: 6
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+  - BUILD_FAILED
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-11 | RUN mvn -B 
+    clean install \
+  failure_count: 4
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+  - BUILD_FAILED

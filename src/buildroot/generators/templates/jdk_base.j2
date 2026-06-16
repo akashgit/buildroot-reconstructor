@@ -7,7 +7,7 @@
 
 # JDK version: {{ jdk_version }} (source: {{ jdk_source }}, confidence: {{ jdk_confidence }})
 # Distribution: {{ jdk_distribution }} (source: {{ dist_source }}, confidence: {{ dist_confidence }})
-FROM {{ base_image }}-jdk
+FROM {{ base_image }}
 
 # Maven version: {{ maven_version }} (source: {{ maven_source }}, confidence: {{ maven_confidence }})
 {% if maven_version %}

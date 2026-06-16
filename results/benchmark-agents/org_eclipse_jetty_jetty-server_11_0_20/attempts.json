@@ -1,0 +1,219 @@
+{
+  "coordinate": "org.eclipse.jetty:jetty-server:11.0.20",
+  "status": "budget_exhausted",
+  "best_reward": 0.15000000000000002,
+  "iterations": 15,
+  "elapsed_seconds": 9590.4,
+  "attempts": [
+    {
+      "id": "f6320705-b783-460e-80cb-e90e1a1b427d",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "environment/image_resolution",
+      "build_log_summary": "Trying to pull docker.io/library/eclipse-temurin:21-jdk-jdk...\nError: creating build container: unable to copy from source docker://eclipse-temurin:21-jdk-jdk: initializing source docker://eclipse-temurin:21-jdk-jdk: reading manifest 21-jdk-jdk in docker.io/library/eclipse-temurin: manifest unknown",
+      "diff_summary": "",
+      "fix_applied": "failure_agent_fix",
+      "timestamp": 1781593776.063066
+    },
+    {
+      "id": "e99ec812-f161-4f2d-ad66-693d48ccd41c",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "environment/image_resolution",
+      "build_log_summary": "Trying to pull docker.io/library/eclipse-temurin:21-jdk-jdk...\nError: creating build container: unable to copy from source docker://eclipse-temurin:21-jdk-jdk: initializing source docker://eclipse-temurin:21-jdk-jdk: reading manifest 21-jdk-jdk in docker.io/library/eclipse-temurin: manifest unknown",
+      "diff_summary": "",
+      "fix_applied": "refine: Use fully-qualified image names with docker.io/ prefix.",
+      "timestamp": 1781593802.5541172
+    },
+    {
+      "id": "31e8d24a-878d-4910-8947-be8cab15d18b",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781593913.2420359
+    },
+    {
+      "id": "16ef1d9a-fb58-469f-a251-34cf626eb271",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781594039.660961
+    },
+    {
+      "id": "59574170-bfbc-480e-be55-b6d7690bd809",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781594202.257332
+    },
+    {
+      "id": "977ed826-c65e-4bf2-98b3-d86d7c627ed6",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "L2 build timed out after 900s",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781595199.732478
+    },
+    {
+      "id": "0abadd8b-2b9f-4986-a40a-7933c7a9ed67",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "L2 build timed out after 900s",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781596204.75047
+    },
+    {
+      "id": "8fc845d9-82fa-4d8b-bb80-4c741e715104",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "L2 build timed out after 900s",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781597179.5196621
+    },
+    {
+      "id": "7d1c9ed7-0866-4ea0-9bad-50e6fcccdfee",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "L2 build timed out after 900s",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781598175.895958
+    },
+    {
+      "id": "07aec7ca-be50-49ce-a0eb-c110ae90cfcd",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "L2 build timed out after 900s",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781599182.705591
+    },
+    {
+      "id": "7aebeb88-6ed1-4498-83b9-4acba37b3489",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "L2 build timed out after 900s",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781600239.449816
+    },
+    {
+      "id": "626bd40f-63da-4f97-bdde-991447f9425f",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "[INFO] Scanning for projects...\n[ERROR] [ERROR] Some problems were encountered while processing the POMs:\n[ERROR] Non-resolvable import POM: The following artifacts could not be resolved: com.fasterxml.jackson:jackson-bom:pom:2.16.1 (absent): Could not transfer artifact com.fasterxml.jackson:jackson-bom:pom:2.16.1 from/to central (https://repo.maven.apache.org/maven2): status code: 429, reason phrase: Too Many Requests (429) @ line 359, column 19\n[ERROR] Non-resolvable import POM: The following ",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nSpecific entities involved: [missing_repository",
+      "timestamp": 1781600528.498657
+    },
+    {
+      "id": "6ad8859c-aba0-496f-875f-39dc52c0b878",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "L2 build timed out after 900s",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781601517.737268
+    },
+    {
+      "id": "8ba20636-c09c-4c28-8678-b8c2652647e1",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "L2 build timed out after 900s",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781602541.5031219
+    },
+    {
+      "id": "79dc1afc-b0bd-4c29-8174-14121a8b17f7",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "",
+      "timestamp": 1781602759.312334
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "environment/image_resolution",
+      "approach": "FROM eclipse-temurin:21-jdk-jdk | RUN mvn clean install -B -DskipTests",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "Trying to pull docker.io/library/eclipse-temurin:21-jdk-jdk...\nError: creating build container: unable to copy from source docker://eclipse-temurin:21-jdk-jdk: initializing source docker://eclipse-tem"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:21-jdk | RUN mvn clean install -B -DskipTests -pl jetty-server -am -Denforcer.skip=true -",
+      "failure_count": 9,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-eclipse-temurin-17 | RUN mvn install -B -ntp -T 2C \\",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "[INFO] Scanning for projects...\n[ERROR] [ERROR] Some problems were encountered while processing the POMs:\n[ERROR] Non-resolvable import POM: The following artifacts could not be resolved: com.fasterxm"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-eclipse-temurin-17 | ",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "L2 build timed out after 900s",
+        "L2 build timed out after 900s"
+      ]
+    }
+  ]
+}

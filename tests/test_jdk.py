@@ -110,7 +110,7 @@ class TestDistributionToImageMapping:
     def test_temurin(self):
         resolver = JdkResolver()
         spec = resolver.resolve(PomData(), _ci_with_java("17", "temurin"), {})
-        assert spec.base_image == "eclipse-temurin:17"
+        assert spec.base_image == "eclipse-temurin:17-jdk"
 
     def test_corretto(self):
         resolver = JdkResolver()
@@ -130,14 +130,14 @@ class TestDistributionToImageMapping:
     def test_unknown_distribution_defaults_to_temurin(self):
         resolver = JdkResolver()
         spec = resolver.resolve(PomData(), _ci_with_java("17", "unknown-jdk"), {})
-        assert spec.base_image == "eclipse-temurin:17"
+        assert spec.base_image == "eclipse-temurin:17-jdk"
 
     def test_default_distribution_when_none_specified(self):
         """When no CI and no distribution hint, defaults to temurin."""
         resolver = JdkResolver()
         spec = resolver.resolve(PomData(), None, {"maven.compiler.release": "17"})
         assert spec.distribution == "temurin"
-        assert spec.base_image == "eclipse-temurin:17"
+        assert spec.base_image == "eclipse-temurin:17-jdk"
 
 
 class TestCompilerPluginResolution:

@@ -1,0 +1,209 @@
+{
+  "coordinate": "io.netty:netty-buffer:4.1.104.Final",
+  "status": "budget_exhausted",
+  "best_reward": 0.15000000000000002,
+  "iterations": 15,
+  "elapsed_seconds": 2406.4,
+  "attempts": [
+    {
+      "id": "e946154d-2feb-4049-9c8d-31a58dfb44f7",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "environment/image_resolution",
+      "build_log_summary": "Trying to pull docker.io/azul/zulu-openjdk:8-jdk...\nError: creating build container: unable to copy from source docker://azul/zulu-openjdk:8-jdk: initializing source docker://azul/zulu-openjdk:8-jdk: reading manifest 8-jdk in docker.io/azul/zulu-openjdk: manifest unknown",
+      "diff_summary": "",
+      "fix_applied": "failure_agent_fix",
+      "timestamp": 1781590665.061368
+    },
+    {
+      "id": "9fe6ffc8-b65e-4105-bc76-e356f47ae4e3",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "environment/image_resolution",
+      "build_log_summary": "Trying to pull docker.io/azul/zulu-openjdk:8-jdk...\nError: creating build container: unable to copy from source docker://azul/zulu-openjdk:8-jdk: initializing source docker://azul/zulu-openjdk:8-jdk: reading manifest 8-jdk in docker.io/azul/zulu-openjdk: manifest unknown",
+      "diff_summary": "",
+      "fix_applied": "refine: Use fully-qualified image names with docker.io/ prefix.",
+      "timestamp": 1781590689.94516
+    },
+    {
+      "id": "2e743c87-3164-4b4d-a8dc-db2886b64324",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781590827.6467352
+    },
+    {
+      "id": "628ca3d2-188e-4c41-b527-662e004c9f1e",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781590965.9254222
+    },
+    {
+      "id": "8824d4a2-8ba1-474a-b137-3b032dd4a864",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781591098.0073018
+    },
+    {
+      "id": "1e534900-3a26-49c3-b5e1-b888cac03d31",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781591193.061903
+    },
+    {
+      "id": "ca76cc9a-f247-4839-8383-0ccb7bc6e19f",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781591317.435589
+    },
+    {
+      "id": "a8743690-de1a-4dca-99e5-43ea33fea5ec",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781591421.5369549
+    },
+    {
+      "id": "2f587a52-3835-467b-b252-02c458ad02a1",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781591527.136272
+    },
+    {
+      "id": "f8e66f4f-21e7-46bf-bf5e-90a5fac04343",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781591669.314004
+    },
+    {
+      "id": "98ed37d4-5a58-4cbb-9038-7c7298ca5397",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781591784.87863
+    },
+    {
+      "id": "5037ac36-2803-4cd7-9bc0-e334f240776c",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781591924.554177
+    },
+    {
+      "id": "51c1a292-e43d-472c-945b-49b5a721bb62",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781592029.9679291
+    },
+    {
+      "id": "15d37793-e499-4ab0-8799-33c19947a06e",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781592155.110261
+    },
+    {
+      "id": "7bc9205b-27b1-47ac-931e-ebaed6495027",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "",
+      "timestamp": 1781592303.4950101
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "environment/image_resolution",
+      "approach": "FROM azul/zulu-openjdk:8-jdk | RUN ./mvnw -B -ntp clean package org.sonatype.plugins:nexus-staging-maven-plugin",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "Trying to pull docker.io/azul/zulu-openjdk:8-jdk...\nError: creating build container: unable to copy from source docker://azul/zulu-openjdk:8-jdk: initializing source docker://azul/zulu-openjdk:8-jdk: "
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/azul/zulu-openjdk:8 | RUN ./mvnw -B -ntp clean package -pl buffer -am -DskipTests=true -Dcheckstyle.sk",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9.9-eclipse-temurin-8 | RUN mvn -B -ntp clean package -pl buffer -am -DskipTests=true -Dcheckstyle.skip=",
+      "failure_count": 10,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    }
+  ]
+}
