@@ -102,7 +102,7 @@ class _BaseFailureAgent:
                     key, _, val = fix.proposed_value.partition("=")
                     if spec.ci_data:
                         spec.ci_data.env_vars[key.strip()] = val.strip()
-                applied.append(f"env_var → {fix.proposed_value}")
+                        applied.append(f"env_var → {fix.proposed_value}")
             elif fix.fix_type == "system_package":
                 spec.system_packages.append(fix.proposed_value)
                 applied.append(f"system_package → {fix.proposed_value}")

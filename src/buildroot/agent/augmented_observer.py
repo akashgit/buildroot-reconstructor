@@ -87,10 +87,13 @@ class AgentAugmentedObserver(Observer):
 
         lines = containerfile.splitlines()
         result = []
+        replaced = False
         for line in lines:
-            result.append(line)
-            if line.strip() == "WORKDIR /build":
+            if not replaced and line.strip() == "WORKDIR /build":
                 result.append(f"WORKDIR /build/{subdir}")
+                replaced = True
+            else:
+                result.append(line)
 
         return "\n".join(result) + "\n"
 
