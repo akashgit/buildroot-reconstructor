@@ -1,0 +1,293 @@
+{
+  "total_packages": 31,
+  "solved": 7,
+  "solve_rate": 0.2258,
+  "level_counts": {
+    "l1": 31,
+    "l2": 25,
+    "l3": 13,
+    "l4": 7
+  },
+  "total_elapsed_seconds": 74191.8,
+  "packages": [
+    {
+      "coordinate": "ch.qos.logback:logback-classic:1.4.14",
+      "status": "budget_exhausted",
+      "best_reward": 0.05,
+      "best_level": 1,
+      "iterations": 15,
+      "elapsed_seconds": 1714.8,
+      "source_node": "rh-h100-06"
+    },
+    {
+      "coordinate": "com.fasterxml.jackson.core:jackson-core:2.15.3",
+      "status": "budget_exhausted",
+      "best_reward": 0.5,
+      "best_level": 3,
+      "iterations": 15,
+      "elapsed_seconds": 3176.4,
+      "source_node": "rh-h100-09"
+    },
+    {
+      "coordinate": "com.fasterxml.jackson.core:jackson-databind:2.15.3",
+      "status": "success",
+      "best_reward": 1.0,
+      "best_level": 4,
+      "iterations": 1,
+      "elapsed_seconds": 1132.1,
+      "source_node": "rh-h100-09"
+    },
+    {
+      "coordinate": "com.google.guava:guava:33.0.0-jre",
+      "status": "budget_exhausted",
+      "best_reward": 0.15000000000000002,
+      "best_level": 2,
+      "iterations": 15,
+      "elapsed_seconds": 3108.4,
+      "source_node": "rh-h100-01"
+    },
+    {
+      "coordinate": "com.google.protobuf:protobuf-java:3.25.2",
+      "status": "budget_exhausted",
+      "best_reward": 0.15000000000000002,
+      "best_level": 2,
+      "iterations": 15,
+      "elapsed_seconds": 2519.7,
+      "source_node": "rh-h100-07"
+    },
+    {
+      "coordinate": "com.jayway.jsonpath:json-path:2.9.0",
+      "status": "budget_exhausted",
+      "best_reward": 0.05,
+      "best_level": 1,
+      "iterations": 15,
+      "elapsed_seconds": 1911.1,
+      "source_node": "rh-h100-04"
+    },
+    {
+      "coordinate": "com.nimbusds:nimbus-jose-jwt:9.37.3",
+      "status": "budget_exhausted",
+      "best_reward": 0.5,
+      "best_level": 3,
+      "iterations": 15,
+      "elapsed_seconds": 2790.5,
+      "source_node": "rh-h100-01"
+    },
+    {
+      "coordinate": "com.sun.mail:jakarta.mail:2.0.1",
+      "status": "budget_exhausted",
+      "best_reward": 0.5,
+      "best_level": 3,
+      "iterations": 15,
+      "elapsed_seconds": 2858.0,
+      "source_node": "rh-h100-02"
+    },
+    {
+      "coordinate": "commons-beanutils:commons-beanutils:1.9.4",
+      "status": "budget_exhausted",
+      "best_reward": 0.5,
+      "best_level": 3,
+      "iterations": 15,
+      "elapsed_seconds": 3613.4,
+      "source_node": "rh-h100-03"
+    },
+    {
+      "coordinate": "commons-fileupload:commons-fileupload:1.5",
+      "status": "budget_exhausted",
+      "best_reward": 0.5,
+      "best_level": 3,
+      "iterations": 15,
+      "elapsed_seconds": 3256.9,
+      "source_node": "rh-h100-03"
+    },
+    {
+      "coordinate": "io.netty:netty-buffer:4.1.104.Final",
+      "status": "budget_exhausted",
+      "best_reward": 0.15000000000000002,
+      "best_level": 2,
+      "iterations": 15,
+      "elapsed_seconds": 2724.3,
+      "source_node": "rh-h100-01"
+    },
+    {
+      "coordinate": "junit:junit:4.13.2",
+      "status": "budget_exhausted",
+      "best_reward": 0.05,
+      "best_level": 1,
+      "iterations": 15,
+      "elapsed_seconds": 2128.3,
+      "source_node": "rh-h100-04"
+    },
+    {
+      "coordinate": "net.minidev:json-smart:2.5.0",
+      "status": "budget_exhausted",
+      "best_reward": 0.15000000000000002,
+      "best_level": 2,
+      "iterations": 15,
+      "elapsed_seconds": 2222.5,
+      "source_node": "rh-h100-02"
+    },
+    {
+      "coordinate": "org.apache.avro:avro:1.11.3",
+      "status": "success",
+      "best_reward": 1.0,
+      "best_level": 4,
+      "iterations": 4,
+      "elapsed_seconds": 1190.5,
+      "source_node": "rh-h100-01"
+    },
+    {
+      "coordinate": "org.apache.commons:commons-lang3:3.14.0",
+      "status": "budget_exhausted",
+      "best_reward": 0.05,
+      "best_level": 1,
+      "iterations": 15,
+      "elapsed_seconds": 2299.6,
+      "source_node": "rh-h100-06"
+    },
+    {
+      "coordinate": "org.apache.kafka:kafka-clients:3.6.1",
+      "status": "budget_exhausted",
+      "best_reward": 0.15000000000000002,
+      "best_level": 2,
+      "iterations": 15,
+      "elapsed_seconds": 2061.2,
+      "source_node": "rh-h100-02"
+    },
+    {
+      "coordinate": "org.apache.tomcat:tomcat-catalina:10.1.18",
+      "status": "budget_exhausted",
+      "best_reward": 0.05,
+      "best_level": 1,
+      "iterations": 15,
+      "elapsed_seconds": 3136.6,
+      "source_node": "rh-h100-06"
+    },
+    {
+      "coordinate": "org.assertj:assertj-core:3.25.1",
+      "status": "budget_exhausted",
+      "best_reward": 0.15000000000000002,
+      "best_level": 2,
+      "iterations": 15,
+      "elapsed_seconds": 2708.2,
+      "source_node": "rh-h100-02"
+    },
+    {
+      "coordinate": "org.codehaus.jettison:jettison:1.5.4",
+      "status": "success",
+      "best_reward": 1.0,
+      "best_level": 4,
+      "iterations": 2,
+      "elapsed_seconds": 545.6,
+      "source_node": "rh-h100-07"
+    },
+    {
+      "coordinate": "org.codehaus.plexus:plexus-utils:4.0.0",
+      "status": "success",
+      "best_reward": 1.0,
+      "best_level": 4,
+      "iterations": 1,
+      "elapsed_seconds": 581.5,
+      "source_node": "rh-h100-03"
+    },
+    {
+      "coordinate": "org.eclipse.jetty:jetty-server:11.0.20",
+      "status": "budget_exhausted",
+      "best_reward": 0.15000000000000002,
+      "best_level": 2,
+      "iterations": 15,
+      "elapsed_seconds": 2557.5,
+      "source_node": "rh-h100-01"
+    },
+    {
+      "coordinate": "org.glassfish.jersey.core:jersey-common:3.1.5",
+      "status": "budget_exhausted",
+      "best_reward": 0.5,
+      "best_level": 3,
+      "iterations": 15,
+      "elapsed_seconds": 2759.0,
+      "source_node": "rh-h100-03"
+    },
+    {
+      "coordinate": "org.hibernate.orm:hibernate-core:6.4.2.Final",
+      "status": "budget_exhausted",
+      "best_reward": 0.05,
+      "best_level": 1,
+      "iterations": 15,
+      "elapsed_seconds": 2122.5,
+      "source_node": "rh-h100-02"
+    },
+    {
+      "coordinate": "org.hibernate.validator:hibernate-validator:8.0.1.Final",
+      "status": "budget_exhausted",
+      "best_reward": 0.15000000000000002,
+      "best_level": 2,
+      "iterations": 15,
+      "elapsed_seconds": 3348.6,
+      "source_node": "rh-h100-08"
+    },
+    {
+      "coordinate": "org.json:json:20231013",
+      "status": "success",
+      "best_reward": 1.0,
+      "best_level": 4,
+      "iterations": 2,
+      "elapsed_seconds": 683.6,
+      "source_node": "rh-h100-03"
+    },
+    {
+      "coordinate": "org.junit.jupiter:junit-jupiter-api:5.10.1",
+      "status": "budget_exhausted",
+      "best_reward": 0.15000000000000002,
+      "best_level": 2,
+      "iterations": 15,
+      "elapsed_seconds": 4016.6,
+      "source_node": "rh-h100-08"
+    },
+    {
+      "coordinate": "org.lz4:lz4-java:1.8.0",
+      "status": "budget_exhausted",
+      "best_reward": 0.15000000000000002,
+      "best_level": 2,
+      "iterations": 15,
+      "elapsed_seconds": 2951.5,
+      "source_node": "rh-h100-01"
+    },
+    {
+      "coordinate": "org.postgresql:postgresql:42.7.1",
+      "status": "budget_exhausted",
+      "best_reward": 0.15000000000000002,
+      "best_level": 2,
+      "iterations": 15,
+      "elapsed_seconds": 3747.3,
+      "source_node": "rh-h100-03"
+    },
+    {
+      "coordinate": "org.springframework.boot:spring-boot:2.7.18",
+      "status": "budget_exhausted",
+      "best_reward": 0.15000000000000002,
+      "best_level": 2,
+      "iterations": 15,
+      "elapsed_seconds": 4186.4,
+      "source_node": "rh-h100-09"
+    },
+    {
+      "coordinate": "org.xerial.snappy:snappy-java:1.1.10.5",
+      "status": "success",
+      "best_reward": 1.0,
+      "best_level": 4,
+      "iterations": 8,
+      "elapsed_seconds": 1149.7,
+      "source_node": "rh-h100-07"
+    },
+    {
+      "coordinate": "org.yaml:snakeyaml:2.2",
+      "status": "success",
+      "best_reward": 1.0,
+      "best_level": 4,
+      "iterations": 5,
+      "elapsed_seconds": 989.5,
+      "source_node": "rh-h100-02"
+    }
+  ]
+}

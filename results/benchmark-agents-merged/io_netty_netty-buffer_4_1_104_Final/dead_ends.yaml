@@ -1,0 +1,28 @@
+- error_class: unknown
+  approach: 'FROM azul/zulu-openjdk:8 | '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "/bin/sh: 1: ./mvnw: not found\nError: building at STEP \"RUN ./mvnw -B -ntp clean
+    package org.sonatype.plugins:nexus-staging-maven-plugin:deploy -DskipRemoteStaging=true
+    -DaltStagingDirectory=$HOME/loca"
+- error_class: unknown
+  approach: FROM azul/zulu-openjdk:8 | RUN mvn -B -ntp -pl buffer -am clean 
+    package -DskipTests=true -Dgpg.skip=true -D
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-8 | RUN mvn -B -ntp
+    -pl buffer -am clean package \
+  failure_count: 11
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+  - BUILD_FAILED

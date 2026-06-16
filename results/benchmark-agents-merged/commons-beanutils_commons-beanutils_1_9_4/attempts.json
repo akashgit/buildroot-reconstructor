@@ -1,0 +1,298 @@
+{
+  "coordinate": "commons-beanutils:commons-beanutils:1.9.4",
+  "status": "budget_exhausted",
+  "best_reward": 0.5,
+  "iterations": 15,
+  "elapsed_seconds": 3613.4,
+  "attempts": [
+    {
+      "id": "3067cf75-faf4-4929-9f09-8b6d824da0cd",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781619835.6683848
+    },
+    {
+      "id": "07f881e1-eb68-4ea2-8a53-6ab1c84c751f",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781620005.031528
+    },
+    {
+      "id": "1687db20-4050-48a9-80c3-e9429d8f578d",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781620100.598126
+    },
+    {
+      "id": "12ba93f4-7241-4bb4-9c49-9a4fac581eac",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781620317.7538772
+    },
+    {
+      "id": "dcda2566-66a1-4e35-951a-a9f947f82566",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781620525.4329019
+    },
+    {
+      "id": "0433e570-699d-4f1a-a7a6-c6e826961b4f",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781620810.0180466
+    },
+    {
+      "id": "cd02b29e-0585-4e8d-83c6-9a043978c6f7",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781621039.9626048
+    },
+    {
+      "id": "e81889f3-0223-4c17-88d3-90ba2f920860",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781621145.5203562
+    },
+    {
+      "id": "3079acf7-782a-4616-ad1e-6c73b1d3a612",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781621402.5993938
+    },
+    {
+      "id": "d77710bd-4feb-4aa1-801a-41088faf920b",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781621587.923884
+    },
+    {
+      "id": "260da009-436f-4263-99c2-2aa75f5c0c34",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781621733.2000294
+    },
+    {
+      "id": "050cbc15-1a71-419c-a73b-b2d7b226db5c",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781621900.440901
+    },
+    {
+      "id": "750e689b-99a3-4607-9621-483860fa6154",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781622320.5399392
+    },
+    {
+      "id": "92faee73-df82-4491-8523-1b9e9078820a",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "E: The repository 'http://deb.debian.org/debian buster-updates Release' does not have a Release file.\nError: building at STEP \"RUN apt-get update &&     apt-get install -y git &&     apt-get clean && rm -rf /var/lib/apt/lists/*\": while running runtime: exit status 100",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781622387.673554
+    },
+    {
+      "id": "901761e1-da70-48db-8d48-9726bc8dfdfd",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "",
+      "timestamp": 1781622553.9256432
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "unknown",
+      "approach": "FROM eclipse-temurin:8-jdk | RUN mvn clean install -B -DskipTests -Dgpg.skip=true -Drat.skip=true",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-eclipse-temurin-8 | RUN mvn clean install -B -DskipTests -Dgpg.skip=true -Drat.skip=true -Denforcer.",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.8-eclipse-temurin-8 | RUN mvn clean install -B -U -DskipTests -Dgpg.skip=true -Drat.skip=true -Denforc",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:8-jdk | RUN mvn clean install -B -U -DskipTests -Dgpg.skip=true -Drat.skip=true -Denforc",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:8-jdk | RUN mvn clean install -B -U -ntp -DskipTests -Dgpg.skip=true -Drat.skip=true -De",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.8.8-eclipse-temurin-8 | RUN mvn clean install -B -U -DskipTests -Dgpg.skip=true -Drat.skip=true -Denforc",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.6.3-jdk-8 | RUN mvn clean install -B -ntp -DskipTests -Dgpg.skip=true -Drat.skip=true -Denfo",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:8-jdk-jammy | RUN mvn clean install -B -DskipTests -Dgpg.skip=true -Drat.skip=true -Denforcer.",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.8.6-eclipse-temurin-11 | RUN mvn clean install -B -ntp -DskipTests -Dgpg.skip=true -Drat.skip=true -Denfo",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.8.6-eclipse-temurin-8 | RUN mvn clean install -B -e -DskipTests -Dgpg.skip=true -Drat.skip=true -Denforc",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:8-jdk | RUN mvn clean install -B -e -DskipTests \\",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.6.3-jdk-8 | RUN mvn -V clean package -B -e -ntp -DskipTests \\",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "E: The repository 'http://deb.debian.org/debian buster-updates Release' does not have a Release file.\nError: building at STEP \"RUN apt-get update &&     apt-get install -y git &&     apt-get clean && "
+      ]
+    }
+  ]
+}

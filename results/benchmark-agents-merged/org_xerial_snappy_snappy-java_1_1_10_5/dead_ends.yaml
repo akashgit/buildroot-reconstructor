@@ -1,0 +1,28 @@
+- error_class: unknown
+  approach: FROM docker.io/azul/zulu-openjdk:21 | RUN mvn clean install -B 
+    -DskipTests
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "STEP 1/12: FROM azul/zulu-openjdk:21\nError: creating build container: short-name
+    resolution enforced but cannot prompt without a TTY"
+- error_class: build_tool/wrong_build_system
+  approach: FROM docker.io/azul/zulu-openjdk:21 | RUN mvn clean install -B 
+    -DskipTests
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "[INFO] ------------------------------------------------------------------------\n\
+    [ERROR] The goal you specified requires a project to execute but there is no POM
+    in this directory (/build). Please veri"
+- error_class: unknown
+  approach: 'FROM docker.io/azul/zulu-openjdk:21 | '
+  failure_count: 5
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+  - ''

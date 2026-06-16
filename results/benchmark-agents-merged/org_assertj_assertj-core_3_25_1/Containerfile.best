@@ -1,0 +1,13 @@
+FROM docker.io/library/eclipse-temurin:21-jdk
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends git && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN git clone --depth 1 --branch 'assertj-build-3.25.1' 'https://github.com/assertj/assertj' /build
+WORKDIR /build
+
+RUN chmod +x mvnw && \
+    ./mvnw -B -V -ntp -e install -N -DskipTests && \
+    ./mvnw -B -V -ntp -e -f assertj-parent/pom.xml install -DskipTests -Dgpg.skip=true && \
+    ./mvnw -B -V -ntp -e -f assertj-core/pom.xml package -DskipTests -Dgpg.skip=true -Dcheckstyle.skip=true -Denforcer.skip=true -Danimal.sniffer.skip=true -Djavadoc.skip=true -Dmaven.javadoc.skip=true -Dpmd.skip=true -Dspotbugs.skip=true -Djacoco.skip=true -Drat.skip=true

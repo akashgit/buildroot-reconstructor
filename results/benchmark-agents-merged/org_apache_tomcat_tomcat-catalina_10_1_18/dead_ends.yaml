@@ -1,0 +1,55 @@
+- error_class: unknown
+  approach: 'FROM ubuntu:24.04 | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+- error_class: unknown
+  approach: 'FROM docker.io/library/eclipse-temurin:17-jdk-jammy | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+- error_class: unknown
+  approach: 'FROM docker.io/library/eclipse-temurin:17-jdk-noble | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+- error_class: unknown
+  approach: 'FROM docker.io/library/eclipse-temurin:17-jdk-alpine | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+- error_class: unknown
+  approach: 'FROM docker.io/library/amazoncorretto:17 | '
+  failure_count: 4
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+- error_class: unknown
+  approach: 'FROM docker.io/library/fedora:40 | '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+- error_class: unknown
+  approach: 'FROM docker.io/library/debian:bookworm | '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'

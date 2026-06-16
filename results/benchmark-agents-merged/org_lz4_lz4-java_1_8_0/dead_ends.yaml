@@ -1,0 +1,50 @@
+- error_class: build_tool/wrong_build_system
+  approach: 'FROM ubuntu:24.04 | '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "[INFO] ------------------------------------------------------------------------\n\
+    [ERROR] The goal you specified requires a project to execute but there is no POM
+    in this directory (/build). Please veri"
+- error_class: unknown
+  approach: 'FROM ubuntu:24.04 | '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "gpg: no valid OpenPGP data found.\nError: building at STEP \"RUN apt-get update
+    &&     apt-get install -y --no-install-recommends wget apt-transport-https gpg
+    &&     wget -qO - https://packages.adoptium"
+- error_class: unknown
+  approach: 'FROM docker.io/library/eclipse-temurin:8-jdk-jammy | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+- error_class: unknown
+  approach: 'FROM docker.io/library/eclipse-temurin:8-jdk-focal | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+- error_class: unknown
+  approach: 'FROM docker.io/library/amazoncorretto:8 | '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - BUILD_FAILED
+- error_class: unknown
+  approach: 'FROM docker.io/library/debian:bullseye-slim | '
+  failure_count: 7
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+  - BUILD_FAILED

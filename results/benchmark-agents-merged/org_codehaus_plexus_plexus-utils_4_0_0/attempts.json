@@ -1,0 +1,21 @@
+{
+  "coordinate": "org.codehaus.plexus:plexus-utils:4.0.0",
+  "status": "success",
+  "best_reward": 1.0,
+  "iterations": 1,
+  "elapsed_seconds": 581.5,
+  "attempts": [
+    {
+      "id": "99197c9d-a2f2-4bec-bd4f-763287deb5c5",
+      "parent_id": null,
+      "reward": 1.0,
+      "level_reached": 4,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "",
+      "timestamp": 1781618884.4836385
+    }
+  ],
+  "dead_ends": []
+}

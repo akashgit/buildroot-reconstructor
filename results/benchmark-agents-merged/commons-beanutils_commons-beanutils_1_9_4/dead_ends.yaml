@@ -1,0 +1,100 @@
+- error_class: unknown
+  approach: FROM eclipse-temurin:8-jdk | RUN mvn clean install -B -DskipTests 
+    -Dgpg.skip=true -Drat.skip=true
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-8 | RUN mvn clean 
+    install -B -DskipTests -Dgpg.skip=true -Drat.skip=true -Denforcer.
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.8-eclipse-temurin-8 | RUN mvn clean 
+    install -B -U -DskipTests -Dgpg.skip=true -Drat.skip=true -Denforc
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/eclipse-temurin:8-jdk | RUN mvn clean install
+    -B -U -DskipTests -Dgpg.skip=true -Drat.skip=true -Denforc
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/eclipse-temurin:8-jdk | RUN mvn clean install
+    -B -U -ntp -DskipTests -Dgpg.skip=true -Drat.skip=true -De
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.8.8-eclipse-temurin-8 | RUN mvn clean
+    install -B -U -DskipTests -Dgpg.skip=true -Drat.skip=true -Denforc
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.6.3-jdk-8 | RUN mvn clean install -B 
+    -ntp -DskipTests -Dgpg.skip=true -Drat.skip=true -Denfo
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/eclipse-temurin:8-jdk-jammy | RUN mvn clean 
+    install -B -DskipTests -Dgpg.skip=true -Drat.skip=true -Denforcer.
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.8.6-eclipse-temurin-11 | RUN mvn 
+    clean install -B -ntp -DskipTests -Dgpg.skip=true -Drat.skip=true -Denfo
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.8.6-eclipse-temurin-8 | RUN mvn clean
+    install -B -e -DskipTests -Dgpg.skip=true -Drat.skip=true -Denforc
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/eclipse-temurin:8-jdk | RUN mvn clean install
+    -B -e -DskipTests \
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.6.3-jdk-8 | RUN mvn -V clean package 
+    -B -e -ntp -DskipTests \
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "E: The repository 'http://deb.debian.org/debian buster-updates Release' does
+    not have a Release file.\nError: building at STEP \"RUN apt-get update &&    \
+    \ apt-get install -y git &&     apt-get clean && "

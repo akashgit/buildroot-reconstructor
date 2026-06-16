@@ -1,0 +1,43 @@
+{
+  "coordinate": "org.json:json:20231013",
+  "status": "success",
+  "best_reward": 1.0,
+  "iterations": 2,
+  "elapsed_seconds": 683.6,
+  "attempts": [
+    {
+      "id": "1eb6cdb3-8355-45a2-becd-f3fc5b4972d4",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781623092.578954
+    },
+    {
+      "id": "896e734c-58e7-4647-8216-f8fa3c79e3e5",
+      "parent_id": null,
+      "reward": 1.0,
+      "level_reached": 4,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "",
+      "timestamp": 1781623199.4838986
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "unknown",
+      "approach": "FROM eclipse-temurin:8-jdk | RUN mvn clean package -Dmaven.test.skip=true -Dmaven.site.skip=true -Dmaven.java",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "BUILD_FAILED"
+      ]
+    }
+  ]
+}

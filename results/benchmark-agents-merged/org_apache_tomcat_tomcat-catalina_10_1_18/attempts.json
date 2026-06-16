@@ -1,0 +1,252 @@
+{
+  "coordinate": "org.apache.tomcat:tomcat-catalina:10.1.18",
+  "status": "budget_exhausted",
+  "best_reward": 0.05,
+  "iterations": 15,
+  "elapsed_seconds": 3136.6,
+  "attempts": [
+    {
+      "id": "bc0e6f87-6681-4669-997e-a547e660c451",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781624325.3872151
+    },
+    {
+      "id": "c9371300-e269-4f06-a100-913864f4b247",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781624463.7052162
+    },
+    {
+      "id": "a048a79b-5170-4823-a5ef-a8a88e83a33b",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781624604.1162388
+    },
+    {
+      "id": "e0b7690b-c42e-42c2-a6ff-fd0dc6c73eba",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781624759.6842978
+    },
+    {
+      "id": "9afe40a0-1e12-4301-b135-0b9fd14d08dc",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781624869.8712227
+    },
+    {
+      "id": "12acfa1e-4cb2-4b21-a50a-8250c53cc234",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781625007.1722813
+    },
+    {
+      "id": "68e8caad-434a-427a-85e9-7859dfd73ff6",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781625126.9652023
+    },
+    {
+      "id": "f558eb85-c759-42f2-9348-b2c5b4eca415",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781625249.0754833
+    },
+    {
+      "id": "57ee38d3-38d2-4333-a2fc-157bb8bc80cf",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781625419.1793978
+    },
+    {
+      "id": "a0c23a67-e316-4eb1-a3cc-5e3a9e9bde87",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781625625.5115407
+    },
+    {
+      "id": "e2441afe-af71-498d-80a5-5d352f5cb0b2",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781625832.0404391
+    },
+    {
+      "id": "14c7ab2b-9a9d-4aea-a98b-a034a0b3232b",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781625980.6444638
+    },
+    {
+      "id": "abced998-bde4-4737-b267-d32c3a75de98",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781626185.8515418
+    },
+    {
+      "id": "3f2247df-9040-4f28-9270-74f1073051c1",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781626390.7315094
+    },
+    {
+      "id": "9eef53e0-67e8-4a73-a5f6-d9275fa3a2a1",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).",
+      "diff_summary": "",
+      "fix_applied": "",
+      "timestamp": 1781626590.4814882
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "unknown",
+      "approach": "FROM ubuntu:24.04 | ",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).",
+        "lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic)."
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:17-jdk-jammy | ",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).",
+        "lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic)."
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:17-jdk-noble | ",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).",
+        "lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic)."
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:17-jdk-alpine | ",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).",
+        "lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic)."
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/amazoncorretto:17 | ",
+      "failure_count": 4,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).",
+        "lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).",
+        "lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic)."
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/fedora:40 | ",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic)."
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/debian:bookworm | ",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic)."
+      ]
+    }
+  ]
+}

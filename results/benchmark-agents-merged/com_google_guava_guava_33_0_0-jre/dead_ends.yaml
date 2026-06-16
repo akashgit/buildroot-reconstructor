@@ -1,0 +1,46 @@
+- error_class: unknown
+  approach: 'FROM eclipse-temurin:11-jdk | '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "/bin/sh: 1: ./mvnw: not found\nError: building at STEP \"RUN ./mvnw -B -ntp -Dtoolchain.skip
+    install -U -DskipTests=true -f $ROOT_POM\": while running runtime: exit status
+    127"
+- error_class: unknown
+  approach: 'FROM docker.io/library/eclipse-temurin:11-jdk | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+- error_class: dependency_resolution/missing_artifact
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-17 | RUN mvn -B 
+    -ntp install -U \
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "[INFO] ------------------------------------------------------------------------\n\
+    [ERROR] Failed to execute goal on project guava-gwt: Could not resolve dependencies
+    for project com.google.guava:guava-g"
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-17 | RUN mvn -B 
+    -ntp install -U \
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-11 | RUN mvn -B 
+    -ntp package -U \
+  failure_count: 8
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+  - BUILD_FAILED

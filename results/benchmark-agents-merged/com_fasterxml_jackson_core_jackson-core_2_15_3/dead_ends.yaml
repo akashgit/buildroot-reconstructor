@@ -1,0 +1,30 @@
+- error_class: unknown
+  approach: 'FROM docker.io/library/eclipse-temurin:8-jdk | '
+  failure_count: 5
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "STEP 1/13: FROM eclipse-temurin:8-jdk\nError: creating build container: short-name
+    resolution enforced but cannot prompt without a TTY"
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-amazoncorretto-8 | RUN mvn -B -ff 
+    -ntp verify -DskipTests -Dgpg.skip=true
+  failure_count: 3
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-17 | RUN mvn -B -ff
+    -ntp verify -DskipTests \
+  failure_count: 6
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+  - ''

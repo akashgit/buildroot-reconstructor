@@ -1,0 +1,73 @@
+- error_class: unknown
+  approach: FROM docker.io/azul/zulu-openjdk:25 | RUN ./mvnw $MAVEN_ARGS -f 
+    assertj-core/pom.xml package -DskipTests
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "STEP 1/13: FROM azul/zulu-openjdk:25\nError: creating build container: short-name
+    resolution enforced but cannot prompt without a TTY"
+- error_class: unknown
+  approach: FROM docker.io/azul/zulu-openjdk:25 | RUN ./mvnw -f 
+    assertj-core/pom.xml package -DskipTests -Dgpg.skip=true -Dcheckst
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "Trying to pull docker.io/azul/zulu-openjdk:25...\nError: creating build container:
+    initializing source docker://azul/zulu-openjdk:25: getting username and password:
+    reading JSON file \"/home/lab/.docker"
+- error_class: unknown
+  approach: FROM docker.io/azul/zulu-openjdk:21 | RUN ./mvnw -B -V -ntp -e -f 
+    assertj-core/pom.xml package -DskipTests -Dgpg.skip=
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "Trying to pull docker.io/azul/zulu-openjdk:21...\nError: creating build container:
+    initializing source docker://azul/zulu-openjdk:21: getting username and password:
+    reading JSON file \"/home/lab/.docker"
+- error_class: unknown
+  approach: 'FROM docker.io/library/eclipse-temurin:21-jdk | '
+  failure_count: 6
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "Trying to pull docker.io/library/eclipse-temurin:21-jdk...\nError: creating build
+    container: initializing source docker://eclipse-temurin:21-jdk: getting username
+    and password: reading JSON file \"/home"
+  - BUILD_FAILED
+  - BUILD_FAILED
+- error_class: unknown
+  approach: 'FROM docker.io/library/ubuntu:22.04 | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "Trying to pull docker.io/library/ubuntu:22.04...\nError: creating build container:
+    initializing source docker://ubuntu:22.04: getting username and password: reading
+    JSON file \"/home/lab/.docker/config."
+  - "Trying to pull docker.io/library/ubuntu:22.04...\nError: creating build container:
+    initializing source docker://ubuntu:22.04: getting username and password: reading
+    JSON file \"/home/lab/.docker/config."
+- error_class: unknown
+  approach: 'FROM docker.io/library/maven:3.9-eclipse-temurin-21 | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-21...\nError: creating
+    build container: initializing source docker://maven:3.9-eclipse-temurin-21: getting
+    username and password: reading JSON"
+  - "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-21...\nError: creating
+    build container: initializing source docker://maven:3.9-eclipse-temurin-21: getting
+    username and password: reading JSON"
+- error_class: unknown
+  approach: 'FROM docker.io/azul/zulu-openjdk:21-jdk | '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "Trying to pull docker.io/azul/zulu-openjdk:21-jdk...\nError: creating build container:
+    initializing source docker://azul/zulu-openjdk:21-jdk: getting username and password:
+    reading JSON file \"/home/lab"

@@ -1,0 +1,30 @@
+FROM docker.io/library/maven:3.8.8-eclipse-temurin-8
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    cmake \
+    liblzma-dev \
+    libsnappy-dev \
+    libjansson-dev \
+    zlib1g-dev \
+    pkg-config \
+    gcc \
+    g++ \
+    libboost-all-dev \
+    libzstd-dev \
+    libicu-dev \
+    libbz2-dev \
+    git \
+    ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+ENV TZ=America/Los_Angeles
+
+RUN git clone --depth 1 --branch 'release-1.11.3' 'https://github.com/apache/avro' /build
+WORKDIR /build/lang/java
+
+RUN mvn -B install -N -PskipQuality -DskipTests -Dgpg.skip=true -Drat.skip=true
+WORKDIR /build/lang/java/avro
+RUN mvn -B clean install -PskipQuality -DskipTests -Dgpg.skip=true -Drat.skip=true -Dspotless.check.skip=true -Dcheckstyle.skip=true -Denforcer.skip=true -Dmaven.javadoc.skip=true -Djacoco.skip=true

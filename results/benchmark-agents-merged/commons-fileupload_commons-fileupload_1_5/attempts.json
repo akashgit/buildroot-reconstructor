@@ -1,0 +1,289 @@
+{
+  "coordinate": "commons-fileupload:commons-fileupload:1.5",
+  "status": "budget_exhausted",
+  "best_reward": 0.5,
+  "iterations": 15,
+  "elapsed_seconds": 3256.9,
+  "attempts": [
+    {
+      "id": "e5a09f73-8e0b-42e4-8c22-276355f98fe6",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "plugin/configuration_error",
+      "build_log_summary": "[WARNING] Cannot get the branch information from the git repository:\nDetecting the current branch failed: fatal: ref HEAD is not a symbolic ref\n[INFO] CycloneDX: Resolving Dependencies\n[ERROR] An error occurred attempting to read POM\norg.codehaus.plexus.util.xml.pull.XmlPullParserException: UTF-8 BOM plus xml decl of ISO-8859-1 is incompatible (position: START_DOCUMENT seen <?xml version=\"1.0\" encoding=\"ISO-8859-1\"... @1:42)\n[INFO] ----------------------------------------------------------------",
+      "diff_summary": "",
+      "fix_applied": "refine: Try skipping the failing plugin with -Dplugin.skip=true or updating the plugin version.\n\nSpecific en",
+      "timestamp": 1781627728.7068644
+    },
+    {
+      "id": "5c532f90-f8e4-4dc5-8c01-3c4d9105acad",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "gpg: no valid OpenPGP data found.\nError: building at STEP \"RUN apt-get update &&     apt-get install -y --no-install-recommends wget apt-transport-https gpg &&     wget -qO - https://packages.adoptium.net/artifactory/api/gpg/key/public | gpg --dearmor -o /usr/share/keyrings/adoptium.gpg &&     echo \"deb [signed-by=/usr/share/keyrings/adoptium.gpg] https://packages.adoptium.net/artifactory/deb $(. /etc/os-release && echo $VERSION_CODENAME) main\" > /etc/apt/sources.list.d/adoptium.list &&     apt-",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781627944.4646873
+    },
+    {
+      "id": "e48a7c3a-23e0-4deb-90d1-e3023bc7aa8b",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781628105.325474
+    },
+    {
+      "id": "36eafbda-4a6a-499d-9a3d-8fe2018cbab8",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781628311.5127113
+    },
+    {
+      "id": "0c75a56f-6319-4461-a6d6-6d5a9b6598c0",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781628417.0102627
+    },
+    {
+      "id": "91b2cecb-b72b-45fb-9aae-e52b32cdf77a",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781628567.1194844
+    },
+    {
+      "id": "876b602d-cc43-4ed6-8c8c-a93e006ab184",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781628653.9422617
+    },
+    {
+      "id": "9b238023-6e9b-40a0-9aa8-77ecad69eed9",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781628791.3274899
+    },
+    {
+      "id": "c458eb29-10ff-46a3-9834-7362e2b4ab18",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781629066.755694
+    },
+    {
+      "id": "552366f0-bd00-46f2-86ec-d6c67a5a6573",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781629310.160031
+    },
+    {
+      "id": "a42689db-2eb3-4142-91c1-5ba8490fc03b",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781629451.7721047
+    },
+    {
+      "id": "7cb09e44-268f-4e29-a3cd-3bd5655424f5",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781629592.8647225
+    },
+    {
+      "id": "4778dc3e-5a5f-42c9-a4d1-75691f05d668",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "E: The repository 'http://deb.debian.org/debian buster-updates Release' does not have a Release file.\nError: building at STEP \"RUN apt-get update &&     apt-get install -y --no-install-recommends git &&     rm -rf /var/lib/apt/lists/*\": while running runtime: exit status 100",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781629769.2867086
+    },
+    {
+      "id": "6dbb553e-cb96-4abe-ba0c-d4757ab4e1f2",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781630103.549182
+    },
+    {
+      "id": "67754e26-9077-4d9f-9b2c-9bc24b148831",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "",
+      "timestamp": 1781630241.7158723
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "plugin/configuration_error",
+      "approach": "FROM ubuntu:24.04 | RUN mvn --errors --show-version --batch-mode --no-transfer-progress -DskipTests ",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "[WARNING] Cannot get the branch information from the git repository:\nDetecting the current branch failed: fatal: ref HEAD is not a symbolic ref\n[INFO] CycloneDX: Resolving Dependencies\n[ERROR] An erro"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM ubuntu:24.04 | RUN mvn --errors --show-version --batch-mode --no-transfer-progress -DskipTests ",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "gpg: no valid OpenPGP data found.\nError: building at STEP \"RUN apt-get update &&     apt-get install -y --no-install-recommends wget apt-transport-https gpg &&     wget -qO - https://packages.adoptium"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:8-jdk | RUN mvn --errors --show-version --batch-mode --no-transfer-progress -DskipTests ",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-eclipse-temurin-11 | RUN mvn --errors --show-version --batch-mode --no-transfer-progress package -Dsk",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.8-eclipse-temurin-8 | RUN mvn --errors --show-version --batch-mode package -DskipTests -Dgpg.skip=true",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-eclipse-temurin-11 | RUN mvn --errors --show-version --batch-mode -DskipTests -Dgpg.skip=true -Drat.s",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-eclipse-temurin-8 | RUN mvn --errors --show-version --batch-mode -DskipTests -Dgpg.skip=true -Drat.s",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.8-eclipse-temurin-11 | RUN mvn --errors --show-version --batch-mode -U \\",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-eclipse-temurin-8 | RUN mvn --errors --show-version --batch-mode --no-transfer-progress -U \\",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.6.3-jdk-8 | RUN mvn --errors --show-version --batch-mode -U \\",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "E: The repository 'http://deb.debian.org/debian buster-updates Release' does not have a Release file.\nError: building at STEP \"RUN apt-get update &&     apt-get install -y --no-install-recommends git "
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-amazoncorretto-8 | RUN mvn --errors --show-version --batch-mode -U \\",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        ""
+      ]
+    }
+  ]
+}

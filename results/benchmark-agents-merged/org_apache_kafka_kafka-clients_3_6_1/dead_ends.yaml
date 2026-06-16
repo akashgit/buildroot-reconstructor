@@ -1,0 +1,93 @@
+- error_class: unknown
+  approach: 'FROM docker.io/library/eclipse-temurin:11-jdk | '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "STEP 1/5: FROM eclipse-temurin:8-jdk\nError: creating build container: short-name
+    resolution enforced but cannot prompt without a TTY"
+- error_class: unknown
+  approach: 'FROM docker.io/library/eclipse-temurin:8-jdk | '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "Trying to pull docker.io/library/eclipse-temurin:8-jdk...\nError: creating build
+    container: initializing source docker://eclipse-temurin:8-jdk: getting username
+    and password: reading JSON file \"/home/l"
+- error_class: unknown
+  approach: 'FROM docker.io/library/eclipse-temurin:17-jdk-jammy | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "Trying to pull docker.io/library/eclipse-temurin:17-jdk-jammy...\nError: creating
+    build container: initializing source docker://eclipse-temurin:17-jdk-jammy: getting
+    username and password: reading JSON"
+  - "Trying to pull docker.io/library/eclipse-temurin:17-jdk-jammy...\nError: creating
+    build container: initializing source docker://eclipse-temurin:17-jdk-jammy: getting
+    username and password: reading JSON"
+- error_class: unknown
+  approach: 'FROM docker.io/library/ubuntu:22.04 | '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "Trying to pull docker.io/library/ubuntu:22.04...\nError: creating build container:
+    initializing source docker://ubuntu:22.04: getting username and password: reading
+    JSON file \"/home/lab/.docker/config."
+- error_class: unknown
+  approach: 'FROM docker.io/library/amazoncorretto:17-al2023 | '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "Trying to pull docker.io/library/amazoncorretto:17-al2023...\nError: creating
+    build container: initializing source docker://amazoncorretto:17-al2023: getting
+    username and password: reading JSON file \"/"
+- error_class: unknown
+  approach: 'FROM docker.io/library/debian:bookworm | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "Trying to pull docker.io/library/debian:bookworm...\nError: creating build container:
+    initializing source docker://debian:bookworm: getting username and password: reading
+    JSON file \"/home/lab/.docker/c"
+  - "E: Unable to locate package openjdk-8-jdk-headless\nError: building at STEP \"\
+    RUN apt-get update &&     apt-get install -y --no-install-recommends       openjdk-8-jdk-headless
+    git perl ca-certificates c"
+- error_class: build_tool/wrong_build_system
+  approach: 'FROM docker.io/library/debian:bookworm | '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "./gradlew: 118: curl: not found\nError: Could not find or load main class org.gradle.wrapper.GradleWrapperMain\n\
+    Caused by: java.lang.ClassNotFoundException: org.gradle.wrapper.GradleWrapperMain\n\
+    Error: b"
+- error_class: unknown
+  approach: 'FROM docker.io/library/eclipse-temurin:8-jdk-focal | '
+  failure_count: 3
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "Trying to pull docker.io/library/eclipse-temurin:8-jdk-focal...\nError: creating
+    build container: initializing source docker://eclipse-temurin:8-jdk-focal: getting
+    username and password: reading JSON f"
+  - "A problem occurred evaluating settings 'build'.\n> Could not find method gradleEnterprise()
+    for arguments [settings_79z0o90mcz78hshxgwgvlyn1r$_run_closure1@22b16d2e] on settings
+    'build' of type org.gra"
+  - "A problem occurred evaluating settings 'build'.\n> Could not find method gradleEnterprise()
+    for arguments [settings_79z0o90mcz78hshxgwgvlyn1r$_run_closure1@22b16d2e] on settings
+    'build' of type org.gra"
+- error_class: unknown
+  approach: 'FROM docker.io/library/eclipse-temurin:11-jdk-focal | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "Trying to pull docker.io/library/eclipse-temurin:11-jdk-focal...\nError: creating
+    build container: initializing source docker://eclipse-temurin:11-jdk-focal: getting
+    username and password: reading JSON"
+  - BUILD_FAILED

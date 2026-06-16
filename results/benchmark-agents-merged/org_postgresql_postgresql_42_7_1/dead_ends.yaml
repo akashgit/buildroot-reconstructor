@@ -1,0 +1,19 @@
+- error_class: unknown
+  approach: 'FROM ubuntu:24.04 | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "Error: parsing main Dockerfile: Containerfile: Syntax error - can't find = in
+    \"fs\". Must be of the form: name=value"
+  - "\e[0m        \e[0;0;90mat org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)\n\
+    \e[0m        org.gradle.api.internal.provider.AbstractProperty$PropertyQueryExcepti"
+- error_class: unknown
+  approach: 'FROM docker.io/library/debian:bookworm-slim | '
+  failure_count: 12
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+  - BUILD_FAILED

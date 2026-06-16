@@ -1,0 +1,15 @@
+FROM docker.io/library/eclipse-temurin:8-jdk
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends maven && \
+    rm -rf /var/lib/apt/lists/*
+
+ENV MAVEN_OPTS=-Xmx1024M
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends git ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+RUN git clone --depth 1 --branch 'jettison-1.5.4' 'https://github.com/jettison-json/jettison' /build
+WORKDIR /build
+
+RUN mvn -U clean install -Djava.awt.headless=true -fae -B -DskipTests

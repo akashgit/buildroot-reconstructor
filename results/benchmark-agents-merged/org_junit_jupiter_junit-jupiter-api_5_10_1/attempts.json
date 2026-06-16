@@ -1,0 +1,219 @@
+{
+  "coordinate": "org.junit.jupiter:junit-jupiter-api:5.10.1",
+  "status": "budget_exhausted",
+  "best_reward": 0.15000000000000002,
+  "iterations": 15,
+  "elapsed_seconds": 4016.6,
+  "attempts": [
+    {
+      "id": "45ffcf64-d4d5-4172-86b2-12de686d8112",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Setting up x11-common (1:7.7+23ubuntu3) ...\ninvoke-rc.d: could not determine current runlevel\ninvoke-rc.d: policy-rc.d denied execution of start.\ntime=\"2026-06-16T17:15:09Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& r",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781630110.6932368
+    },
+    {
+      "id": "dcc81631-c9e0-43d8-bc01-900f14bb03f2",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Setting up x11-common (1:7.7+23ubuntu3) ...\ninvoke-rc.d: could not determine current runlevel\ninvoke-rc.d: policy-rc.d denied execution of start.\ndebconf: delaying package configuration, since apt-utils is not installed\nError: building at STEP \"RUN apt-get update &&     apt-get install -y --no-install-recommends wget &&     wget -q https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_linux-x64_bin.tar.gz -O /tmp/jdk.tar.gz &&     mkdir -p /usr/lib/jv",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781630273.7658803
+    },
+    {
+      "id": "c8259fc2-ae1c-4067-b2ab-e78190ed0574",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Setting up x11-common (1:7.7+23ubuntu2) ...\ninvoke-rc.d: could not determine current runlevel\ninvoke-rc.d: policy-rc.d denied execution of start.\nBUILD FAILED in 23s\nError: building at STEP \"RUN ./gradlew :junit-jupiter-api:publishToMavenLocal -x test\": while running runtime: exit status 1",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781630414.832576
+    },
+    {
+      "id": "1121f096-0530-4267-b6e9-36633db98aaf",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "plugin/gpg_error",
+      "build_log_summary": "Setting up x11-common (1:7.7+23ubuntu2) ...\ninvoke-rc.d: could not determine current runlevel\ninvoke-rc.d: policy-rc.d denied execution of start.\nCould not write standard input to command 'gpg'.\njava.io.IOException: Broken pipe\nBUILD FAILED in 1m 58s\nError: building at STEP \"RUN ./gradlew :junit-jupiter-api:publishToMavenLocal -x test\": while running runtime: exit status 1",
+      "diff_summary": "",
+      "fix_applied": "refine: Add -Dgpg.skip=true to the build command.\n\nConsider adding these Maven flags to skip optional phases",
+      "timestamp": 1781630662.9344175
+    },
+    {
+      "id": "f075e721-05fa-45a5-b1cf-068893289804",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781630924.1778166
+    },
+    {
+      "id": "e5371939-e240-4c45-bf93-52b881af5dc4",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781631125.6296551
+    },
+    {
+      "id": "5a6790a8-1e47-4b86-a3fe-c1e2a1b5a74d",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781631507.0965884
+    },
+    {
+      "id": "12143288-87da-4519-85a6-32e26d830b55",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781631735.1701307
+    },
+    {
+      "id": "b6d791aa-1140-40ba-a175-77178deb6058",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781632001.2598433
+    },
+    {
+      "id": "c8f77b4a-572d-437f-9909-0498b1cbcab3",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781632238.987409
+    },
+    {
+      "id": "7b8c67bd-4ec1-4d4f-a19b-46c0b3e11097",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781632464.102067
+    },
+    {
+      "id": "bd33d637-be4e-456c-8d36-ef99ef4220e3",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781632699.8372264
+    },
+    {
+      "id": "4260d793-49da-43d0-b281-36a71ab2fa97",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781632925.2300584
+    },
+    {
+      "id": "d9d6aa5a-ef6d-495c-b96a-495260c415d3",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781633175.106832
+    },
+    {
+      "id": "b277db5f-af32-46e9-985d-ddd58d5d18b0",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "",
+      "timestamp": 1781633399.858316
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "unknown",
+      "approach": "FROM ubuntu:24.04 | RUN ./gradlew :junit-jupiter-api:publishToMavenLocal -x test",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "Setting up x11-common (1:7.7+23ubuntu3) ...\ninvoke-rc.d: could not determine current runlevel\ninvoke-rc.d: policy-rc.d denied execution of start.\ntime=\"2026-06-16T17:15:09Z\" level=error msg=\"+(UNHANDL",
+        "Setting up x11-common (1:7.7+23ubuntu3) ...\ninvoke-rc.d: could not determine current runlevel\ninvoke-rc.d: policy-rc.d denied execution of start.\ndebconf: delaying package configuration, since apt-uti"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:21-jdk-jammy | RUN ./gradlew :junit-jupiter-api:publishToMavenLocal -x test",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "Setting up x11-common (1:7.7+23ubuntu2) ...\ninvoke-rc.d: could not determine current runlevel\ninvoke-rc.d: policy-rc.d denied execution of start.\nBUILD FAILED in 23s\nError: building at STEP \"RUN ./gra"
+      ]
+    },
+    {
+      "error_class": "plugin/gpg_error",
+      "approach": "FROM docker.io/library/eclipse-temurin:17-jdk-jammy | RUN ./gradlew :junit-jupiter-api:publishToMavenLocal -x test",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "Setting up x11-common (1:7.7+23ubuntu2) ...\ninvoke-rc.d: could not determine current runlevel\ninvoke-rc.d: policy-rc.d denied execution of start.\nCould not write standard input to command 'gpg'.\njava."
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:17-jdk-jammy | RUN ./gradlew :junit-jupiter-api:publishToMavenLocal -x test",
+      "failure_count": 10,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    }
+  ]
+}

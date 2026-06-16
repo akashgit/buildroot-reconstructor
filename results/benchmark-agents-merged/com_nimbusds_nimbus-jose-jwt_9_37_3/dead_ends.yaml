@@ -1,0 +1,38 @@
+- error_class: unknown
+  approach: FROM eclipse-temurin:11-jdk | RUN mvn clean install -B -DskipTests 
+    -Dgpg.skip=true
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-11 | RUN mvn clean 
+    install -B -DskipTests -Dgpg.skip=true -Dmaven.javadoc.skip=true
+  failure_count: 3
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-17 | RUN mvn clean 
+    install -B -DskipTests -Dgpg.skip=true -Dmaven.javadoc.skip=true -
+  failure_count: 7
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.8-eclipse-temurin-11 | RUN mvn clean 
+    install -B \
+  failure_count: 3
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+  - ''

@@ -1,0 +1,31 @@
+- error_class: unknown
+  approach: FROM docker.io/library/eclipse-temurin:11-jdk | RUN mvn clean 
+    install -B -DskipTests
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "STEP 1/6: FROM eclipse-temurin:11-jdk\nError: creating build container: short-name
+    resolution enforced but cannot prompt without a TTY"
+  - "Trying to pull docker.io/library/eclipse-temurin:11-jdk...\nError: creating build
+    container: initializing source docker://eclipse-temurin:11-jdk: getting username
+    and password: reading JSON file \"/home"
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-11 | RUN mvn clean 
+    install -B -DskipTests
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-11...\nError: creating
+    build container: initializing source docker://maven:3.9-eclipse-temurin-11: getting
+    username and password: reading JSON"
+- error_class: compilation/syntax_error
+  approach: FROM docker.io/library/ubuntu:latest | RUN mvn clean install -B 
+    -DskipTests
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "[INFO] -------------------------------------------------------------\n[ERROR]
+    COMPILATION ERROR :\n[ERROR] /build/src/test/java/org/yaml/snakeyaml/issues/issue67/NonAsciiCharsInClassNameTest.java:[58,17"

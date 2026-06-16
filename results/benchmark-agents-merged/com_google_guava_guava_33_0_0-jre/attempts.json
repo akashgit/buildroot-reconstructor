@@ -1,0 +1,230 @@
+{
+  "coordinate": "com.google.guava:guava:33.0.0-jre",
+  "status": "budget_exhausted",
+  "best_reward": 0.15000000000000002,
+  "iterations": 15,
+  "elapsed_seconds": 3108.4,
+  "attempts": [
+    {
+      "id": "1e6e525a-8845-481b-a35f-29517a75a3e0",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "/bin/sh: 1: ./mvnw: not found\nError: building at STEP \"RUN ./mvnw -B -ntp -Dtoolchain.skip install -U -DskipTests=true -f $ROOT_POM\": while running runtime: exit status 127",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781628318.7247624
+    },
+    {
+      "id": "a8302b33-83d8-40c2-bf6f-81843d33ff22",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781628574.7478395
+    },
+    {
+      "id": "7f918564-0bd8-4cbd-bc9c-535f674ac14d",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781628948.9943318
+    },
+    {
+      "id": "610609d1-05d6-470c-bd14-74f6f513b0a3",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "dependency_resolution/missing_artifact",
+      "build_log_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] Failed to execute goal on project guava-gwt: Could not resolve dependencies for project com.google.guava:guava-gwt:jar:33.0.0-jre\n[ERROR] dependency: com.google.guava:guava-tests:jar:tests:33.0.0-jre (test)\n[ERROR] \tCould not find artifact com.google.guava:guava-tests:jar:tests:33.0.0-jre in sonatype-google-snapshots (https://oss.sonatype.org/content/repositories/google-snapshots/)\n[ERROR] \tCould not find art",
+      "diff_summary": "",
+      "fix_applied": "refine: Try a different Maven repository or check if the dependency version exists. Consider adding -U to fo",
+      "timestamp": 1781629078.839647
+    },
+    {
+      "id": "3056f33c-6d0f-4eb4-985e-09d9124fa8e0",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781629133.4342024
+    },
+    {
+      "id": "b07c5b4e-d5cf-4085-9f76-7201677becd0",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781629351.3827462
+    },
+    {
+      "id": "2d36635c-b774-4577-925c-23c75a8c145a",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781629495.325138
+    },
+    {
+      "id": "22bda10d-d73c-4691-80ca-656503281cc8",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781629696.9154835
+    },
+    {
+      "id": "ae906f00-0252-4d49-baea-126a07127d73",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781629867.1364942
+    },
+    {
+      "id": "79add7b5-6f59-499b-aa88-d6dbabc1b716",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781629984.696535
+    },
+    {
+      "id": "4a3ddf56-8539-4d03-92c0-1244646cb3f3",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781630189.9433954
+    },
+    {
+      "id": "be39d7a1-b5e3-491e-94af-05548b02bbd8",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781630469.0132551
+    },
+    {
+      "id": "5d653464-86c7-4a57-8e52-1bec5b50d24d",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781630679.3749666
+    },
+    {
+      "id": "2b4a924c-d521-443a-bcbf-09a522f359dc",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781630814.4517953
+    },
+    {
+      "id": "22640b29-8b36-4ae2-9a90-5c74177d38d2",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "",
+      "timestamp": 1781630922.2555566
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "unknown",
+      "approach": "FROM eclipse-temurin:11-jdk | ",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "/bin/sh: 1: ./mvnw: not found\nError: building at STEP \"RUN ./mvnw -B -ntp -Dtoolchain.skip install -U -DskipTests=true -f $ROOT_POM\": while running runtime: exit status 127"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:11-jdk | ",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    },
+    {
+      "error_class": "dependency_resolution/missing_artifact",
+      "approach": "FROM docker.io/library/maven:3.9-eclipse-temurin-17 | RUN mvn -B -ntp install -U \\",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "[INFO] ------------------------------------------------------------------------\n[ERROR] Failed to execute goal on project guava-gwt: Could not resolve dependencies for project com.google.guava:guava-g"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-eclipse-temurin-17 | RUN mvn -B -ntp install -U \\",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-eclipse-temurin-11 | RUN mvn -B -ntp package -U \\",
+      "failure_count": 8,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    }
+  ]
+}

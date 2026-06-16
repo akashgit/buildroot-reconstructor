@@ -1,0 +1,82 @@
+- error_class: unknown
+  approach: FROM docker.io/azul/zulu-openjdk:11 | RUN mvn -B -U -C -V clean 
+    verify org.glassfish.copyright:glassfish-copyright-mav
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "STEP 1/6: FROM azul/zulu-openjdk:11\nError: creating build container: short-name
+    resolution enforced but cannot prompt without a TTY"
+  - "Trying to pull docker.io/azul/zulu-openjdk:11...\nError: creating build container:
+    initializing source docker://azul/zulu-openjdk:11: getting username and password:
+    reading JSON file \"/home/lab/.docker"
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-11 | RUN mvn -B -U 
+    -C -V clean verify org.glassfish.copyright:glassfish-copyright-mav
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-11...\nError: creating
+    build container: initializing source docker://maven:3.9-eclipse-temurin-11: getting
+    username and password: reading JSON"
+- error_class: plugin/configuration_error
+  approach: FROM docker.io/library/eclipse-temurin:11-jdk-focal | RUN mvn -B -U 
+    -C -V clean verify org.glassfish.copyright:glassfish-copyright-mav
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "[INFO] Compiling 241 source files to /build/mail/target/classes\n[WARNING] Cannot
+    find annotation method 'value()' in type 'jdk.Profile+Annotation': class file
+    for jdk.Profile+Annotation not found\n[WAR"
+- error_class: unknown
+  approach: FROM docker.io/library/eclipse-temurin:11-jdk-focal | RUN mvn -B -U 
+    -C -V clean verify -Poss-release,staging -Dcopyright.ignoreyear=tr
+  failure_count: 3
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-11 | RUN mvn -B -U 
+    clean install -DskipTests -Dgpg.skip=true -Dmaven.javadoc.skip=tru
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-11...\nError: creating
+    build container: initializing source docker://maven:3.9-eclipse-temurin-11: getting
+    username and password: reading JSON"
+- error_class: plugin/configuration_error
+  approach: FROM docker.io/library/eclipse-temurin:11-jdk-focal | RUN mvn -B -U 
+    clean install -DskipTests -Dgpg.skip=true -Dmaven.javadoc.skip=tru
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "[INFO] Compiling 241 source files to /build/mail/target/classes\n[WARNING] Cannot
+    find annotation method 'value()' in type 'jdk.Profile+Annotation': class file
+    for jdk.Profile+Annotation not found\n[WAR"
+- error_class: unknown
+  approach: FROM docker.io/library/eclipse-temurin:11-jdk-focal | RUN mvn -B -U 
+    clean install -P!build-only -DskipTests -Dgpg.skip=true -Dmaven.ja
+  failure_count: 4
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+  - BUILD_FAILED
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-11 | RUN mvn -B -U 
+    -ntp clean package -DskipTests -Dgpg.skip=true -Dmaven.javadoc.ski
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-11...\nError: creating
+    build container: initializing source docker://maven:3.9-eclipse-temurin-11: getting
+    username and password: reading JSON"
