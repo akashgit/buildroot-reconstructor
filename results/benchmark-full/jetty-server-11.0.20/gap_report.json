@@ -1,0 +1,30 @@
+{
+  "entries": [
+    {
+      "field": "property:localRepoPath",
+      "status": "unresolved",
+      "reason": "Property localRepoPath still contains placeholder: ${project.build.directory}/local-repo",
+      "source": "defaulted"
+    },
+    {
+      "field": "maven_version",
+      "status": "defaulted",
+      "reason": "No Maven wrapper or explicit version found; using system default",
+      "source": "defaulted"
+    },
+    {
+      "field": "system_packages",
+      "status": "unknown",
+      "reason": "No CI data available to detect system packages",
+      "source": "defaulted"
+    },
+    {
+      "field": "project.build.directory",
+      "status": "unresolved",
+      "reason": "Project property ${project.build.directory} not found in POM",
+      "source": "defaulted"
+    }
+  ],
+  "overall_confidence": "LOW",
+  "summary": "4 defaulted"
+}

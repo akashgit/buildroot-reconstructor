@@ -1,0 +1,10 @@
+{
+  "l1_parse": true,
+  "l2_build": false,
+  "l3_command": false,
+  "l4_match": false,
+  "reward": 0.05,
+  "level_reached": 1,
+  "error_summary": "/bin/sh: 1: ./mvnw: not found\nError: building at STEP \"RUN ./mvnw -q clean install -DskipTests\": while running runtime: exit status 127",
+  "diff_summary": ""
+}

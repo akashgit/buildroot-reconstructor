@@ -1,0 +1,72 @@
+{
+  "entries": [
+    {
+      "field": "runner_os",
+      "status": "mapped",
+      "reason": "ubuntu-latest mapped to ubuntu:24.04; this mapping may become stale",
+      "source": "inferred"
+    },
+    {
+      "field": "property:generatedSourcesDir",
+      "status": "unresolved",
+      "reason": "Property generatedSourcesDir still contains placeholder: ${project.build.directory}/generated-sources",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:osgi.versionpolicy",
+      "status": "unresolved",
+      "reason": "Property osgi.versionpolicy still contains placeholder: ${range;[===,=+);${@}}",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:packageVersion.template.input",
+      "status": "unresolved",
+      "reason": "Property packageVersion.template.input still contains placeholder: ${basedir}/src/main/java/com/fasterxml/jackson/core/json/PackageVersion.java.in",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:packageVersion.template.output",
+      "status": "unresolved",
+      "reason": "Property packageVersion.template.output still contains placeholder: ${project.build.directory}/generated-sources/com/fasterxml/jackson/core/json/PackageVersion.java",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:jackson-bom.version",
+      "status": "unresolved",
+      "reason": "Property jackson-bom.version still contains placeholder: ${project.parent.version}",
+      "source": "defaulted"
+    },
+    {
+      "field": "project.build.directory",
+      "status": "unresolved",
+      "reason": "Project property ${project.build.directory} not found in POM",
+      "source": "defaulted"
+    },
+    {
+      "field": "range;[===,=+);${@",
+      "status": "unresolved",
+      "reason": "Property ${range;[===,=+);${@} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "basedir",
+      "status": "unresolved",
+      "reason": "Property ${basedir} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "project.build.directory",
+      "status": "unresolved",
+      "reason": "Project property ${project.build.directory} not found in POM",
+      "source": "defaulted"
+    },
+    {
+      "field": "project.parent.version",
+      "status": "unresolved",
+      "reason": "Project property ${project.parent.version} not found in POM",
+      "source": "defaulted"
+    }
+  ],
+  "overall_confidence": "LOW",
+  "summary": "1 inferred, 10 defaulted"
+}

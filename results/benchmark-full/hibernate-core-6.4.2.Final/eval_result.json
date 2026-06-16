@@ -1,0 +1,10 @@
+{
+  "l1_parse": true,
+  "l2_build": false,
+  "l3_command": false,
+  "l4_match": false,
+  "reward": 0.05,
+  "level_reached": 1,
+  "error_summary": "Error: parsing main Dockerfile: Containerfile: Syntax error - can't find = in \"-Xmx4g\". Must be of the form: name=value",
+  "diff_summary": ""
+}

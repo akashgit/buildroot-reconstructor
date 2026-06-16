@@ -1,0 +1,30 @@
+{
+  "entries": [
+    {
+      "field": "runner_os",
+      "status": "mapped",
+      "reason": "ubuntu-latest mapped to ubuntu:24.04; this mapping may become stale",
+      "source": "inferred"
+    },
+    {
+      "field": "property:main.basedir",
+      "status": "unresolved",
+      "reason": "Property main.basedir still contains placeholder: ${project.parent.parent.basedir}",
+      "source": "defaulted"
+    },
+    {
+      "field": "maven_version",
+      "status": "defaulted",
+      "reason": "No Maven wrapper or explicit version found; using system default",
+      "source": "defaulted"
+    },
+    {
+      "field": "project.parent.parent.basedir",
+      "status": "unresolved",
+      "reason": "Project property ${project.parent.parent.basedir} not found in POM",
+      "source": "defaulted"
+    }
+  ],
+  "overall_confidence": "LOW",
+  "summary": "1 inferred, 3 defaulted"
+}

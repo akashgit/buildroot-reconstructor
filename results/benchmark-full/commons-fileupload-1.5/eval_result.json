@@ -1,0 +1,10 @@
+{
+  "l1_parse": true,
+  "l2_build": false,
+  "l3_command": false,
+  "l4_match": false,
+  "reward": 0.05,
+  "level_reached": 1,
+  "error_summary": "[WARNING] Cannot get the branch information from the git repository:\nDetecting the current branch failed: fatal: ref HEAD is not a symbolic ref\n[INFO] CycloneDX: Resolving Dependencies\n[ERROR] An error occurred attempting to read POM\norg.codehaus.plexus.util.xml.pull.XmlPullParserException: UTF-8 BOM plus xml decl of ISO-8859-1 is incompatible (position: START_DOCUMENT seen <?xml version=\"1.0\" encoding=\"ISO-8859-1\"... @1:42)\n[INFO] ----------------------------------------------------------------",
+  "diff_summary": ""
+}

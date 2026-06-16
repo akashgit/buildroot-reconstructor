@@ -1,0 +1,42 @@
+{
+  "source_repo": "",
+  "git_tag": "v9.37.3",
+  "jdk_version": {
+    "value": "11",
+    "source": "observed",
+    "confidence": "JDK version from Build-Jdk-Spec in published JAR manifest"
+  },
+  "jdk_distribution": {
+    "value": "temurin",
+    "source": "observed"
+  },
+  "maven_version": {
+    "value": "system-default",
+    "source": "defaulted"
+  },
+  "build_command": {
+    "value": "mvn clean install -B -DskipTests -Dgpg.skip=true",
+    "source": "observed",
+    "confidence": "OBSERVED"
+  },
+  "base_image": {
+    "value": "eclipse-temurin:11",
+    "source": "observed"
+  },
+  "system_packages": [],
+  "dependencies": [],
+  "gap_report": [
+    {
+      "field": "maven_version",
+      "status": "defaulted",
+      "reason": "No Maven wrapper or explicit version found; using system default",
+      "source": "defaulted"
+    },
+    {
+      "field": "system_packages",
+      "status": "unknown",
+      "reason": "No CI data available to detect system packages",
+      "source": "defaulted"
+    }
+  ]
+}

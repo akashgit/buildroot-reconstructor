@@ -1,0 +1,10 @@
+{
+  "l1_parse": true,
+  "l2_build": false,
+  "l3_command": false,
+  "l4_match": false,
+  "reward": 0.05,
+  "level_reached": 1,
+  "error_summary": "Trying to pull docker.io/library/eclipse-temurin:6-jdk...\nError: creating build container: unable to copy from source docker://eclipse-temurin:6-jdk: initializing source docker://eclipse-temurin:6-jdk: reading manifest 6-jdk in docker.io/library/eclipse-temurin: manifest unknown",
+  "diff_summary": ""
+}

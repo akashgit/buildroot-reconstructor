@@ -1,0 +1,114 @@
+{
+  "source_repo": "https://github.com/apache/commons-fileupload",
+  "git_tag": "commons-fileupload-1.5",
+  "jdk_version": {
+    "value": "1.8",
+    "source": "observed",
+    "confidence": "JDK version from Build-Jdk-Spec in published JAR manifest"
+  },
+  "jdk_distribution": {
+    "value": "temurin",
+    "source": "observed"
+  },
+  "maven_version": {
+    "value": "system-default",
+    "source": "defaulted"
+  },
+  "build_command": {
+    "value": "mvn --errors --show-version --batch-mode --no-transfer-progress -DskipTests -Dgpg.skip=true -Drat.skip=true",
+    "source": "observed",
+    "confidence": "OBSERVED"
+  },
+  "base_image": {
+    "value": "eclipse-temurin:8",
+    "source": "observed"
+  },
+  "system_packages": [],
+  "dependencies": [],
+  "gap_report": [
+    {
+      "field": "runner_os",
+      "status": "mapped",
+      "reason": "ubuntu-latest mapped to ubuntu:24.04; this mapping may become stale",
+      "source": "inferred"
+    },
+    {
+      "field": "property:commons.release.2.name",
+      "status": "unresolved",
+      "reason": "Property commons.release.2.name still contains placeholder: commons-fileupload-${commons.release.2.version}",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:commons.release.3.name",
+      "status": "unresolved",
+      "reason": "Property commons.release.3.name still contains placeholder: commons-fileupload-${commons.release.3.version}",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:commons.manifestfile",
+      "status": "unresolved",
+      "reason": "Property commons.manifestfile still contains placeholder: ${project.build.directory}/osgi/MANIFEST.MF",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:implementation.build",
+      "status": "unresolved",
+      "reason": "Property implementation.build still contains placeholder: ${scmBranch}@r${buildNumber}; ${maven.build.timestamp}",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:commons.site.cache",
+      "status": "unresolved",
+      "reason": "Property commons.site.cache still contains placeholder: ${user.home}/commons-sites",
+      "source": "defaulted"
+    },
+    {
+      "field": "maven_version",
+      "status": "defaulted",
+      "reason": "No Maven wrapper or explicit version found; using system default",
+      "source": "defaulted"
+    },
+    {
+      "field": "commons.release.2.version",
+      "status": "unresolved",
+      "reason": "Property ${commons.release.2.version} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "commons.release.3.version",
+      "status": "unresolved",
+      "reason": "Property ${commons.release.3.version} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "project.build.directory",
+      "status": "unresolved",
+      "reason": "Project property ${project.build.directory} not found in POM",
+      "source": "defaulted"
+    },
+    {
+      "field": "scmBranch",
+      "status": "unresolved",
+      "reason": "Property ${scmBranch} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "buildNumber",
+      "status": "unresolved",
+      "reason": "Property ${buildNumber} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "maven.build.timestamp",
+      "status": "unresolved",
+      "reason": "Property ${maven.build.timestamp} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "user.home",
+      "status": "unresolved",
+      "reason": "Property ${user.home} not defined in POM or parent chain",
+      "source": "defaulted"
+    }
+  ]
+}

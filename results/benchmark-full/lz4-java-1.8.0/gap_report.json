@@ -1,0 +1,24 @@
+{
+  "entries": [
+    {
+      "field": "jdk_version",
+      "status": "defaulted",
+      "reason": "No JDK version signal found; defaulting to JDK 17",
+      "source": "defaulted"
+    },
+    {
+      "field": "maven_version",
+      "status": "defaulted",
+      "reason": "No Maven wrapper or explicit version found; using system default",
+      "source": "defaulted"
+    },
+    {
+      "field": "system_packages",
+      "status": "unknown",
+      "reason": "No CI data available to detect system packages",
+      "source": "defaulted"
+    }
+  ],
+  "overall_confidence": "LOW",
+  "summary": "3 defaulted"
+}

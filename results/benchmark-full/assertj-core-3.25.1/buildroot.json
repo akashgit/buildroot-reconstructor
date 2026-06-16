@@ -1,0 +1,36 @@
+{
+  "source_repo": "https://github.com/assertj/assertj",
+  "git_tag": "assertj-build-3.25.1",
+  "jdk_version": {
+    "value": "25",
+    "source": "observed",
+    "confidence": "JDK version from CI setup-java action"
+  },
+  "jdk_distribution": {
+    "value": "zulu",
+    "source": "observed"
+  },
+  "maven_version": {
+    "value": "3.9.12",
+    "source": "observed"
+  },
+  "build_command": {
+    "value": "./mvnw $MAVEN_ARGS -f ${{ github.run_id }}.${{ github.base_ref }}/assertj-core/pom.xml package -DskipTests",
+    "source": "observed",
+    "confidence": "OBSERVED"
+  },
+  "base_image": {
+    "value": "azul/zulu-openjdk:25",
+    "source": "observed"
+  },
+  "system_packages": [],
+  "dependencies": [],
+  "gap_report": [
+    {
+      "field": "runner_os",
+      "status": "mapped",
+      "reason": "ubuntu-latest mapped to ubuntu:24.04; this mapping may become stale",
+      "source": "inferred"
+    }
+  ]
+}

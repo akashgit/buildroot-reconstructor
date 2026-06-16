@@ -1,0 +1,12 @@
+{
+  "entries": [
+    {
+      "field": "runner_os",
+      "status": "mapped",
+      "reason": "ubuntu-latest mapped to ubuntu:24.04; this mapping may become stale",
+      "source": "inferred"
+    }
+  ],
+  "overall_confidence": "MEDIUM",
+  "summary": "1 inferred"
+}

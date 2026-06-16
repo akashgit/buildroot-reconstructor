@@ -1,0 +1,10 @@
+{
+  "l1_parse": true,
+  "l2_build": false,
+  "l3_command": false,
+  "l4_match": false,
+  "reward": 0.05,
+  "level_reached": 1,
+  "error_summary": "Trying to pull docker.io/bellsoft/liberica-openjdk-debian:8-jdk...\nError: creating build container: unable to copy from source docker://bellsoft/liberica-openjdk-debian:8-jdk: initializing source docker://bellsoft/liberica-openjdk-debian:8-jdk: reading manifest 8-jdk in docker.io/bellsoft/liberica-openjdk-debian: manifest unknown",
+  "diff_summary": ""
+}

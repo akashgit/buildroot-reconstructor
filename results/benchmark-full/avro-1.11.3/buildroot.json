@@ -1,0 +1,94 @@
+{
+  "source_repo": "https://github.com/apache/avro",
+  "git_tag": "release-1.11.3",
+  "jdk_version": {
+    "value": "1.8",
+    "source": "observed",
+    "confidence": "JDK version from Build-Jdk-Spec in published JAR manifest"
+  },
+  "jdk_distribution": {
+    "value": "temurin",
+    "source": "observed"
+  },
+  "maven_version": {
+    "value": "system-default",
+    "source": "defaulted"
+  },
+  "build_command": {
+    "value": "mvn clean test -DskipTests -Dgpg.skip=true -Drat.skip=true -Papache-release",
+    "source": "observed",
+    "confidence": "OBSERVED"
+  },
+  "base_image": {
+    "value": "eclipse-temurin:8",
+    "source": "observed"
+  },
+  "system_packages": [
+    "cmake",
+    "liblzma-dev",
+    "libsnappy-dev",
+    "libjansson-dev",
+    "zlib1g-dev",
+    "pkg-config",
+    "asciidoc",
+    "source-highlight",
+    "libsource-highlight-dev",
+    "gcc",
+    "g++",
+    "libboost-all-dev",
+    "cmake",
+    "doxygen",
+    "wget",
+    "libzstd-dev",
+    "libicu-dev",
+    "doxygen",
+    "subversion",
+    "cppcheck",
+    "libboost-all-dev",
+    "libsnappy-dev",
+    "zlib1g-dev",
+    "libzstd-dev",
+    "cmake",
+    "libjansson-dev",
+    "libsnappy-dev",
+    "libbz2-dev",
+    "libzstd-dev",
+    "libzstd-dev",
+    "libbz2-dev",
+    "libbz2-dev",
+    "libzstd-dev",
+    "libbz2-dev",
+    "libsnappy-dev",
+    "libbz2-dev",
+    "libbz2-dev",
+    "libsnappy-dev",
+    "libsnappy-dev"
+  ],
+  "dependencies": [],
+  "gap_report": [
+    {
+      "field": "runner_os",
+      "status": "mapped",
+      "reason": "ubuntu-latest mapped to ubuntu:24.04; this mapping may become stale",
+      "source": "inferred"
+    },
+    {
+      "field": "property:main.basedir",
+      "status": "unresolved",
+      "reason": "Property main.basedir still contains placeholder: ${project.parent.parent.basedir}",
+      "source": "defaulted"
+    },
+    {
+      "field": "maven_version",
+      "status": "defaulted",
+      "reason": "No Maven wrapper or explicit version found; using system default",
+      "source": "defaulted"
+    },
+    {
+      "field": "project.parent.parent.basedir",
+      "status": "unresolved",
+      "reason": "Project property ${project.parent.parent.basedir} not found in POM",
+      "source": "defaulted"
+    }
+  ]
+}

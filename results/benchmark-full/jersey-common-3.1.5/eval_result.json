@@ -1,0 +1,10 @@
+{
+  "l1_parse": true,
+  "l2_build": false,
+  "l3_command": false,
+  "l4_match": false,
+  "reward": 0.05,
+  "level_reached": 1,
+  "error_summary": "Cloning into '/build'...\nfatal: Remote branch v3.1.5 not found in upstream origin\nError: building at STEP \"RUN git clone --depth 1 --branch 'v3.1.5' 'https://github.com/jersey/jersey' /build\": while running runtime: exit status 128",
+  "diff_summary": ""
+}

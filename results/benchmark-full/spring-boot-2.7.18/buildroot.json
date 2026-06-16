@@ -1,0 +1,36 @@
+{
+  "source_repo": "https://github.com/spring-projects/spring-boot",
+  "git_tag": "v2.7.18",
+  "jdk_version": {
+    "value": "1.8",
+    "source": "observed",
+    "confidence": "JDK version from Build-Jdk-Spec in published JAR manifest"
+  },
+  "jdk_distribution": {
+    "value": "liberica",
+    "source": "observed"
+  },
+  "maven_version": {
+    "value": "system-default",
+    "source": "defaulted"
+  },
+  "build_command": {
+    "value": "gradle systemTest -DskipTests",
+    "source": "observed",
+    "confidence": "OBSERVED"
+  },
+  "base_image": {
+    "value": "bellsoft/liberica-openjdk-debian:8",
+    "source": "observed"
+  },
+  "system_packages": [],
+  "dependencies": [],
+  "gap_report": [
+    {
+      "field": "maven_version",
+      "status": "defaulted",
+      "reason": "No Maven wrapper or explicit version found; using system default",
+      "source": "defaulted"
+    }
+  ]
+}

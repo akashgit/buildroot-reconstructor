@@ -1,0 +1,84 @@
+{
+  "entries": [
+    {
+      "field": "runner_os",
+      "status": "mapped",
+      "reason": "ubuntu-latest mapped to ubuntu:24.04; this mapping may become stale",
+      "source": "inferred"
+    },
+    {
+      "field": "property:mail.packages.export",
+      "status": "unresolved",
+      "reason": "Property mail.packages.export still contains placeholder: jakarta.mail.*; version=2.0,\n\t    com.sun.mail.imap; version=${mail.osgiversion},\n\t    com.sun.mail.imap.protocol; version=${mail.osgiversion},\n\t    com.sun.mail.iap; version=${mail.osgiversion},\n\t    com.sun.mail.pop3; version=${mail.osgiversion},\n\t    com.sun.mail.smtp; version=${mail.osgiversion},\n\t    com.sun.mail.util; version=${mail.osgiversion},\n\t    com.sun.mail.util.logging; version=${mail.osgiversion},\n\t    com.sun.mail.handlers; version=${mail.osgiversion}",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:findbugs.exclude",
+      "status": "unresolved",
+      "reason": "Property findbugs.exclude still contains placeholder: ${project.basedir}/exclude.xml",
+      "source": "defaulted"
+    },
+    {
+      "field": "maven_version",
+      "status": "defaulted",
+      "reason": "No Maven wrapper or explicit version found; using system default",
+      "source": "defaulted"
+    },
+    {
+      "field": "mail.osgiversion",
+      "status": "unresolved",
+      "reason": "Property ${mail.osgiversion} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "mail.osgiversion",
+      "status": "unresolved",
+      "reason": "Property ${mail.osgiversion} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "mail.osgiversion",
+      "status": "unresolved",
+      "reason": "Property ${mail.osgiversion} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "mail.osgiversion",
+      "status": "unresolved",
+      "reason": "Property ${mail.osgiversion} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "mail.osgiversion",
+      "status": "unresolved",
+      "reason": "Property ${mail.osgiversion} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "mail.osgiversion",
+      "status": "unresolved",
+      "reason": "Property ${mail.osgiversion} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "mail.osgiversion",
+      "status": "unresolved",
+      "reason": "Property ${mail.osgiversion} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "mail.osgiversion",
+      "status": "unresolved",
+      "reason": "Property ${mail.osgiversion} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "project.basedir",
+      "status": "unresolved",
+      "reason": "Project property ${project.basedir} not found in POM",
+      "source": "defaulted"
+    }
+  ],
+  "overall_confidence": "LOW",
+  "summary": "1 inferred, 12 defaulted"
+}

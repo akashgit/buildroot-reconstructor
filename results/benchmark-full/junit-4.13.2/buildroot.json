@@ -1,0 +1,36 @@
+{
+  "source_repo": "https://github.com/junit-team/junit4",
+  "git_tag": "r4.13.2",
+  "jdk_version": {
+    "value": "6",
+    "source": "observed",
+    "confidence": "JDK version from Build-Jdk-Spec in published JAR manifest"
+  },
+  "jdk_distribution": {
+    "value": "temurin",
+    "source": "observed"
+  },
+  "maven_version": {
+    "value": "3.9.6",
+    "source": "observed"
+  },
+  "build_command": {
+    "value": "./mvnw --version -DskipTests",
+    "source": "observed",
+    "confidence": "OBSERVED"
+  },
+  "base_image": {
+    "value": "eclipse-temurin:6",
+    "source": "observed"
+  },
+  "system_packages": [],
+  "dependencies": [],
+  "gap_report": [
+    {
+      "field": "runner_os",
+      "status": "mapped",
+      "reason": "ubuntu-latest mapped to ubuntu:24.04; this mapping may become stale",
+      "source": "inferred"
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "l1_parse": true,
+  "l2_build": false,
+  "l3_command": false,
+  "l4_match": false,
+  "reward": 0.05,
+  "level_reached": 1,
+  "error_summary": "Setting up x11-common (1:7.7+23ubuntu3) ...\ninvoke-rc.d: could not determine current runlevel\ninvoke-rc.d: policy-rc.d denied execution of start.\ntime=\"2026-06-15T02:38:49Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& r",
+  "diff_summary": ""
+}

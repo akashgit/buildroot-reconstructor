@@ -1,0 +1,96 @@
+{
+  "source_repo": "https://github.com/protocolbuffers/protobuf",
+  "git_tag": "v3.25.2",
+  "jdk_version": {
+    "value": "11",
+    "source": "observed",
+    "confidence": "JDK version from CI setup-java action"
+  },
+  "jdk_distribution": {
+    "value": "temurin",
+    "source": "observed"
+  },
+  "maven_version": {
+    "value": "system-default",
+    "source": "defaulted"
+  },
+  "build_command": {
+    "value": "mvn clean install -B -DskipTests",
+    "source": "observed",
+    "confidence": "OBSERVED"
+  },
+  "base_image": {
+    "value": "eclipse-temurin:11",
+    "source": "observed"
+  },
+  "system_packages": [],
+  "dependencies": [],
+  "gap_report": [
+    {
+      "field": "property:protobuf.basedir",
+      "status": "unresolved",
+      "reason": "Property protobuf.basedir still contains placeholder: ${project.basedir}/../..",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:protobuf.source.dir",
+      "status": "unresolved",
+      "reason": "Property protobuf.source.dir still contains placeholder: ${project.basedir}/../../src",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:protoc",
+      "status": "unresolved",
+      "reason": "Property protoc still contains placeholder: ${project.basedir}/../../protoc",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:generated.sources.dir",
+      "status": "unresolved",
+      "reason": "Property generated.sources.dir still contains placeholder: ${project.build.directory}/generated-sources",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:generated.testsources.dir",
+      "status": "unresolved",
+      "reason": "Property generated.testsources.dir still contains placeholder: ${project.build.directory}/generated-test-sources",
+      "source": "defaulted"
+    },
+    {
+      "field": "maven_version",
+      "status": "defaulted",
+      "reason": "No Maven wrapper or explicit version found; using system default",
+      "source": "defaulted"
+    },
+    {
+      "field": "project.basedir",
+      "status": "unresolved",
+      "reason": "Project property ${project.basedir} not found in POM",
+      "source": "defaulted"
+    },
+    {
+      "field": "project.basedir",
+      "status": "unresolved",
+      "reason": "Project property ${project.basedir} not found in POM",
+      "source": "defaulted"
+    },
+    {
+      "field": "project.basedir",
+      "status": "unresolved",
+      "reason": "Project property ${project.basedir} not found in POM",
+      "source": "defaulted"
+    },
+    {
+      "field": "project.build.directory",
+      "status": "unresolved",
+      "reason": "Project property ${project.build.directory} not found in POM",
+      "source": "defaulted"
+    },
+    {
+      "field": "project.build.directory",
+      "status": "unresolved",
+      "reason": "Project property ${project.build.directory} not found in POM",
+      "source": "defaulted"
+    }
+  ]
+}

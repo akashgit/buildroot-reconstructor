@@ -1,0 +1,203 @@
+2026-06-14 22:00:04,966 [INFO] benchmark: === Package 1/31: com.fasterxml.jackson.core:jackson-core:2.15.3 ===
+2026-06-14 22:00:04,966 [INFO] buildroot.pipeline.orchestrator: Fetching POM for com.fasterxml.jackson.core:jackson-core:2.15.3
+2026-06-14 22:00:04,970 [INFO] buildroot.pipeline.orchestrator: Discovered source repo: https://github.com/FasterXML/jackson-core
+2026-06-14 22:00:07,727 [INFO] buildroot.utils.github_api: Matched git tag: jackson-core-2.15.3
+2026-06-14 22:00:07,930 [INFO] buildroot.generators.containerfile: Generated results/benchmark-full/jackson-core-2.15.3/Containerfile using template jdk_base.j2
+2026-06-14 22:00:07,931 [INFO] benchmark: com.fasterxml.jackson.core:jackson-core:2.15.3: reconstructed (confidence=LOW, 11 gaps)
+2026-06-14 22:02:16,853 [INFO] benchmark: com.fasterxml.jackson.core:jackson-core:2.15.3: L1=True L2=True L3=True L4=False reward=0.50
+2026-06-14 22:02:16,853 [INFO] benchmark: === Package 2/31: com.fasterxml.jackson.core:jackson-databind:2.15.3 ===
+2026-06-14 22:02:16,853 [INFO] buildroot.pipeline.orchestrator: Fetching POM for com.fasterxml.jackson.core:jackson-databind:2.15.3
+2026-06-14 22:02:17,038 [INFO] buildroot.pipeline.orchestrator: Discovered source repo: https://github.com/FasterXML/jackson-databind
+2026-06-14 22:02:19,994 [INFO] buildroot.utils.github_api: Matched git tag: jackson-databind-2.15.3
+2026-06-14 22:02:20,293 [INFO] buildroot.generators.containerfile: Generated results/benchmark-full/jackson-databind-2.15.3/Containerfile using template jdk_base.j2
+2026-06-14 22:02:20,295 [INFO] benchmark: com.fasterxml.jackson.core:jackson-databind:2.15.3: reconstructed (confidence=LOW, 11 gaps)
+2026-06-14 22:04:17,625 [INFO] benchmark: com.fasterxml.jackson.core:jackson-databind:2.15.3: L1=True L2=True L3=True L4=True reward=1.00
+2026-06-14 22:04:17,627 [INFO] benchmark: === Package 3/31: org.springframework.boot:spring-boot:2.7.18 ===
+2026-06-14 22:04:17,628 [INFO] buildroot.pipeline.orchestrator: Fetching POM for org.springframework.boot:spring-boot:2.7.18
+2026-06-14 22:04:17,630 [INFO] buildroot.pipeline.orchestrator: Discovered source repo: https://github.com/spring-projects/spring-boot
+2026-06-14 22:04:21,442 [INFO] buildroot.utils.github_api: Matched git tag: v2.7.18
+2026-06-14 22:04:21,639 [INFO] buildroot.generators.containerfile: Generated results/benchmark-full/spring-boot-2.7.18/Containerfile using template jdk_base.j2
+2026-06-14 22:04:21,639 [INFO] benchmark: org.springframework.boot:spring-boot:2.7.18: reconstructed (confidence=LOW, 1 gaps)
+2026-06-14 22:04:39,392 [INFO] benchmark: org.springframework.boot:spring-boot:2.7.18: L1=True L2=False L3=False L4=False reward=0.05
+2026-06-14 22:04:39,394 [INFO] benchmark: === Package 4/31: org.apache.tomcat:tomcat-catalina:10.1.18 ===
+2026-06-14 22:04:39,395 [INFO] buildroot.pipeline.orchestrator: Fetching POM for org.apache.tomcat:tomcat-catalina:10.1.18
+2026-06-14 22:04:39,863 [INFO] buildroot.generators.containerfile: Generated results/benchmark-full/tomcat-catalina-10.1.18/Containerfile using template jdk_base.j2
+2026-06-14 22:04:39,863 [INFO] benchmark: org.apache.tomcat:tomcat-catalina:10.1.18: reconstructed (confidence=LOW, 3 gaps)
+2026-06-14 22:05:14,993 [INFO] benchmark: org.apache.tomcat:tomcat-catalina:10.1.18: L1=True L2=False L3=False L4=False reward=0.05
+2026-06-14 22:05:14,994 [INFO] benchmark: === Package 5/31: org.apache.commons:commons-lang3:3.14.0 ===
+2026-06-14 22:05:14,994 [INFO] buildroot.pipeline.orchestrator: Fetching POM for org.apache.commons:commons-lang3:3.14.0
+2026-06-14 22:05:15,004 [INFO] buildroot.pipeline.orchestrator: Discovered source repo: https://github.com/apache/commons-lang
+2026-06-14 22:05:16,902 [INFO] buildroot.utils.github_api: Fuzzy-matched git tag: rel/commons-lang-3.14.0
+2026-06-14 22:05:17,111 [INFO] buildroot.generators.containerfile: Generated results/benchmark-full/commons-lang3-3.14.0/Containerfile using template jdk_base.j2
+2026-06-14 22:05:17,111 [INFO] benchmark: org.apache.commons:commons-lang3:3.14.0: reconstructed (confidence=LOW, 8 gaps)
+2026-06-14 22:13:12,919 [INFO] benchmark: org.apache.commons:commons-lang3:3.14.0: L1=True L2=True L3=True L4=True reward=1.00
+2026-06-14 22:13:12,920 [INFO] benchmark: === Package 6/31: ch.qos.logback:logback-classic:1.4.14 ===
+2026-06-14 22:13:12,920 [INFO] buildroot.pipeline.orchestrator: Fetching POM for ch.qos.logback:logback-classic:1.4.14
+2026-06-14 22:13:13,197 [INFO] buildroot.pipeline.orchestrator: Discovered source repo: https://github.com/qos-ch/logback
+2026-06-14 22:13:14,158 [INFO] buildroot.utils.github_api: Fuzzy-matched git tag: v_1.4.14
+2026-06-14 22:13:14,375 [INFO] buildroot.generators.containerfile: Generated results/benchmark-full/logback-classic-1.4.14/Containerfile using template jdk_base.j2
+2026-06-14 22:13:14,375 [INFO] benchmark: ch.qos.logback:logback-classic:1.4.14: reconstructed (confidence=LOW, 1 gaps)
+2026-06-14 22:15:16,951 [INFO] benchmark: ch.qos.logback:logback-classic:1.4.14: L1=True L2=True L3=False L4=False reward=0.15
+2026-06-14 22:15:16,953 [INFO] benchmark: === Package 7/31: io.netty:netty-buffer:4.1.104.Final ===
+2026-06-14 22:15:16,953 [INFO] buildroot.pipeline.orchestrator: Fetching POM for io.netty:netty-buffer:4.1.104.Final
+2026-06-14 22:15:17,374 [INFO] buildroot.pipeline.orchestrator: Discovered source repo: https://github.com/netty/netty
+2026-06-14 22:15:21,883 [INFO] buildroot.utils.github_api: Fuzzy-matched git tag: netty-4.1.104.Final
+2026-06-14 22:15:22,108 [INFO] buildroot.generators.containerfile: Generated results/benchmark-full/netty-buffer-4.1.104.Final/Containerfile using template jdk_base.j2
+2026-06-14 22:15:22,109 [INFO] benchmark: io.netty:netty-buffer:4.1.104.Final: reconstructed (confidence=LOW, 19 gaps)
+2026-06-14 22:15:39,930 [INFO] benchmark: io.netty:netty-buffer:4.1.104.Final: L1=True L2=False L3=False L4=False reward=0.05
+2026-06-14 22:15:39,933 [INFO] benchmark: === Package 8/31: com.nimbusds:nimbus-jose-jwt:9.37.3 ===
+2026-06-14 22:15:39,933 [INFO] buildroot.pipeline.orchestrator: Fetching POM for com.nimbusds:nimbus-jose-jwt:9.37.3
+2026-06-14 22:15:40,297 [INFO] buildroot.generators.containerfile: Generated results/benchmark-full/nimbus-jose-jwt-9.37.3/Containerfile using template jdk_base.j2
+2026-06-14 22:15:40,297 [INFO] benchmark: com.nimbusds:nimbus-jose-jwt:9.37.3: reconstructed (confidence=LOW, 2 gaps)
+2026-06-14 22:16:14,902 [INFO] benchmark: com.nimbusds:nimbus-jose-jwt:9.37.3: L1=True L2=False L3=False L4=False reward=0.05
+2026-06-14 22:16:14,903 [INFO] benchmark: === Package 9/31: org.eclipse.jetty:jetty-server:11.0.20 ===
+2026-06-14 22:16:14,903 [INFO] buildroot.pipeline.orchestrator: Fetching POM for org.eclipse.jetty:jetty-server:11.0.20
+2026-06-14 22:16:15,411 [INFO] buildroot.generators.containerfile: Generated results/benchmark-full/jetty-server-11.0.20/Containerfile using template jdk_base.j2
+2026-06-14 22:16:15,411 [INFO] benchmark: org.eclipse.jetty:jetty-server:11.0.20: reconstructed (confidence=LOW, 4 gaps)
+2026-06-14 22:16:55,916 [INFO] benchmark: org.eclipse.jetty:jetty-server:11.0.20: L1=True L2=False L3=False L4=False reward=0.05
+2026-06-14 22:16:55,919 [INFO] benchmark: === Package 10/31: org.apache.avro:avro:1.11.3 ===
+2026-06-14 22:16:55,919 [INFO] buildroot.pipeline.orchestrator: Fetching POM for org.apache.avro:avro:1.11.3
+2026-06-14 22:16:56,425 [INFO] buildroot.pipeline.orchestrator: Discovered source repo: https://github.com/apache/avro
+2026-06-14 22:17:02,516 [INFO] buildroot.utils.github_api: Fuzzy-matched git tag: release-1.11.3
+2026-06-14 22:17:02,733 [INFO] buildroot.generators.containerfile: Generated results/benchmark-full/avro-1.11.3/Containerfile using template jdk_on_ubuntu.j2
+2026-06-14 22:17:02,733 [INFO] benchmark: org.apache.avro:avro:1.11.3: reconstructed (confidence=LOW, 4 gaps)
+2026-06-14 22:17:58,359 [INFO] benchmark: org.apache.avro:avro:1.11.3: L1=True L2=False L3=False L4=False reward=0.05
+2026-06-14 22:17:58,362 [INFO] benchmark: === Package 11/31: org.lz4:lz4-java:1.8.0 ===
+2026-06-14 22:17:58,362 [INFO] buildroot.pipeline.orchestrator: Fetching POM for org.lz4:lz4-java:1.8.0
+2026-06-14 22:17:58,495 [INFO] buildroot.pipeline.orchestrator: Discovered source repo: https://github.com/lz4/lz4-java
+2026-06-14 22:17:59,513 [INFO] buildroot.utils.github_api: Matched git tag: 1.8.0
+2026-06-14 22:17:59,760 [INFO] buildroot.generators.containerfile: Generated results/benchmark-full/lz4-java-1.8.0/Containerfile using template jdk_base.j2
+2026-06-14 22:17:59,760 [INFO] benchmark: org.lz4:lz4-java:1.8.0: reconstructed (confidence=LOW, 3 gaps)
+2026-06-14 22:19:14,857 [INFO] benchmark: org.lz4:lz4-java:1.8.0: L1=True L2=False L3=False L4=False reward=0.05
+2026-06-14 22:19:14,859 [INFO] benchmark: === Package 12/31: com.google.guava:guava:33.0.0-jre ===
+2026-06-14 22:19:14,859 [INFO] buildroot.pipeline.orchestrator: Fetching POM for com.google.guava:guava:33.0.0-jre
+2026-06-14 22:19:15,171 [INFO] buildroot.pipeline.orchestrator: Discovered source repo: https://github.com/google/guava
+2026-06-14 22:19:17,051 [INFO] buildroot.generators.containerfile: Generated results/benchmark-full/guava-33.0.0-jre/Containerfile using template jdk_base.j2
+2026-06-14 22:19:17,051 [INFO] benchmark: com.google.guava:guava:33.0.0-jre: reconstructed (confidence=MEDIUM, 1 gaps)
+2026-06-14 22:20:22,498 [INFO] benchmark: com.google.guava:guava:33.0.0-jre: L1=True L2=False L3=False L4=False reward=0.05
+2026-06-14 22:20:22,501 [INFO] benchmark: === Package 13/31: org.apache.kafka:kafka-clients:3.6.1 ===
+2026-06-14 22:20:22,502 [INFO] buildroot.pipeline.orchestrator: Fetching POM for org.apache.kafka:kafka-clients:3.6.1
+2026-06-14 22:20:22,943 [INFO] buildroot.generators.containerfile: Generated results/benchmark-full/kafka-clients-3.6.1/Containerfile using template jdk_base.j2
+2026-06-14 22:20:22,943 [INFO] benchmark: org.apache.kafka:kafka-clients:3.6.1: reconstructed (confidence=LOW, 3 gaps)
+2026-06-14 22:20:56,581 [INFO] benchmark: org.apache.kafka:kafka-clients:3.6.1: L1=True L2=False L3=False L4=False reward=0.05
+2026-06-14 22:20:56,584 [INFO] benchmark: === Package 14/31: org.yaml:snakeyaml:2.2 ===
+2026-06-14 22:20:56,584 [INFO] buildroot.pipeline.orchestrator: Fetching POM for org.yaml:snakeyaml:2.2
+2026-06-14 22:20:57,424 [INFO] buildroot.generators.containerfile: Generated results/benchmark-full/snakeyaml-2.2/Containerfile using template jdk_base.j2
+2026-06-14 22:20:57,424 [INFO] benchmark: org.yaml:snakeyaml:2.2: reconstructed (confidence=LOW, 2 gaps)
+2026-06-14 22:21:30,864 [INFO] benchmark: org.yaml:snakeyaml:2.2: L1=True L2=False L3=False L4=False reward=0.05
+2026-06-14 22:21:30,865 [INFO] benchmark: === Package 15/31: com.sun.mail:jakarta.mail:2.0.1 ===
+2026-06-14 22:21:30,865 [INFO] buildroot.pipeline.orchestrator: Fetching POM for com.sun.mail:jakarta.mail:2.0.1
+2026-06-14 22:21:31,597 [INFO] buildroot.pipeline.orchestrator: Discovered source repo: https://github.com/eclipse-ee4j/mail
+2026-06-14 22:21:33,590 [INFO] buildroot.utils.github_api: Matched git tag: 2.0.1
+2026-06-14 22:21:33,877 [INFO] buildroot.generators.containerfile: Generated results/benchmark-full/jakarta.mail-2.0.1/Containerfile using template jdk_base.j2
+2026-06-14 22:21:33,878 [INFO] benchmark: com.sun.mail:jakarta.mail:2.0.1: reconstructed (confidence=LOW, 13 gaps)
+2026-06-14 22:21:51,695 [INFO] benchmark: com.sun.mail:jakarta.mail:2.0.1: L1=True L2=False L3=False L4=False reward=0.05
+2026-06-14 22:21:51,697 [INFO] benchmark: === Package 16/31: org.hibernate.orm:hibernate-core:6.4.2.Final ===
+2026-06-14 22:21:51,697 [INFO] buildroot.pipeline.orchestrator: Fetching POM for org.hibernate.orm:hibernate-core:6.4.2.Final
+2026-06-14 22:21:52,045 [INFO] buildroot.pipeline.orchestrator: Discovered source repo: https://github.com/hibernate/hibernate-orm
+2026-06-14 22:21:55,810 [INFO] buildroot.generators.containerfile: Generated results/benchmark-full/hibernate-core-6.4.2.Final/Containerfile using template jdk_base.j2
+2026-06-14 22:21:55,810 [INFO] benchmark: org.hibernate.orm:hibernate-core:6.4.2.Final: reconstructed (confidence=LOW, 1 gaps)
+2026-06-14 22:21:58,556 [INFO] benchmark: org.hibernate.orm:hibernate-core:6.4.2.Final: L1=True L2=False L3=False L4=False reward=0.05
+2026-06-14 22:21:58,558 [INFO] benchmark: === Package 17/31: org.assertj:assertj-core:3.25.1 ===
+2026-06-14 22:21:58,558 [INFO] buildroot.pipeline.orchestrator: Fetching POM for org.assertj:assertj-core:3.25.1
+2026-06-14 22:21:58,757 [INFO] buildroot.pipeline.orchestrator: Discovered source repo: https://github.com/assertj/assertj
+2026-06-14 22:22:01,193 [INFO] buildroot.utils.github_api: Fuzzy-matched git tag: assertj-build-3.25.1
+2026-06-14 22:22:01,393 [INFO] buildroot.generators.containerfile: Generated results/benchmark-full/assertj-core-3.25.1/Containerfile using template jdk_base.j2
+2026-06-14 22:22:01,393 [INFO] benchmark: org.assertj:assertj-core:3.25.1: reconstructed (confidence=MEDIUM, 1 gaps)
+2026-06-14 22:22:19,411 [INFO] benchmark: org.assertj:assertj-core:3.25.1: L1=True L2=False L3=False L4=False reward=0.05
+2026-06-14 22:22:19,413 [INFO] benchmark: === Package 18/31: net.minidev:json-smart:2.5.0 ===
+2026-06-14 22:22:19,413 [INFO] buildroot.pipeline.orchestrator: Fetching POM for net.minidev:json-smart:2.5.0
+2026-06-14 22:22:19,530 [INFO] buildroot.pipeline.orchestrator: Discovered source repo: https://github.com/netplex/json-smart-v2
+2026-06-14 22:22:21,479 [INFO] buildroot.utils.github_api: Matched git tag: 2.5.0
+2026-06-14 22:22:21,680 [INFO] buildroot.generators.containerfile: Generated results/benchmark-full/json-smart-2.5.0/Containerfile using template jdk_base.j2
+2026-06-14 22:22:21,681 [INFO] benchmark: net.minidev:json-smart:2.5.0: reconstructed (confidence=MEDIUM, 2 gaps)
+2026-06-14 22:23:42,814 [INFO] benchmark: net.minidev:json-smart:2.5.0: L1=True L2=False L3=False L4=False reward=0.05
+2026-06-14 22:23:42,816 [INFO] benchmark: === Package 19/31: org.glassfish.jersey.core:jersey-common:3.1.5 ===
+2026-06-14 22:23:42,816 [INFO] buildroot.pipeline.orchestrator: Fetching POM for org.glassfish.jersey.core:jersey-common:3.1.5
+2026-06-14 22:23:43,305 [INFO] buildroot.pipeline.orchestrator: Discovered source repo: https://github.com/jersey/jersey
+2026-06-14 22:23:44,541 [INFO] buildroot.generators.containerfile: Generated results/benchmark-full/jersey-common-3.1.5/Containerfile using template jdk_base.j2
+2026-06-14 22:23:44,542 [INFO] benchmark: org.glassfish.jersey.core:jersey-common:3.1.5: reconstructed (confidence=LOW, 6 gaps)
+2026-06-14 22:24:46,936 [INFO] benchmark: org.glassfish.jersey.core:jersey-common:3.1.5: L1=True L2=False L3=False L4=False reward=0.05
+2026-06-14 22:24:46,939 [INFO] benchmark: === Package 20/31: org.codehaus.plexus:plexus-utils:4.0.0 ===
+2026-06-14 22:24:46,940 [INFO] buildroot.pipeline.orchestrator: Fetching POM for org.codehaus.plexus:plexus-utils:4.0.0
+2026-06-14 22:24:47,216 [INFO] buildroot.pipeline.orchestrator: Discovered source repo: https://github.com/codehaus-plexus/plexus-utils
+2026-06-14 22:24:48,506 [INFO] buildroot.utils.github_api: Matched git tag: plexus-utils-4.0.0
+2026-06-14 22:24:48,685 [INFO] buildroot.generators.containerfile: Generated results/benchmark-full/plexus-utils-4.0.0/Containerfile using template jdk_base.j2
+2026-06-14 22:24:48,686 [INFO] benchmark: org.codehaus.plexus:plexus-utils:4.0.0: reconstructed (confidence=LOW, 1 gaps)
+2026-06-14 22:26:29,933 [INFO] benchmark: org.codehaus.plexus:plexus-utils:4.0.0: L1=True L2=True L3=True L4=True reward=1.00
+2026-06-14 22:26:29,937 [INFO] benchmark: === Package 21/31: commons-beanutils:commons-beanutils:1.9.4 ===
+2026-06-14 22:26:29,937 [INFO] buildroot.pipeline.orchestrator: Fetching POM for commons-beanutils:commons-beanutils:1.9.4
+2026-06-14 22:26:30,487 [INFO] buildroot.generators.containerfile: Generated results/benchmark-full/commons-beanutils-1.9.4/Containerfile using template jdk_base.j2
+2026-06-14 22:26:30,487 [INFO] benchmark: commons-beanutils:commons-beanutils:1.9.4: reconstructed (confidence=LOW, 14 gaps)
+2026-06-14 22:27:04,212 [INFO] benchmark: commons-beanutils:commons-beanutils:1.9.4: L1=True L2=False L3=False L4=False reward=0.05
+2026-06-14 22:27:04,213 [INFO] benchmark: === Package 22/31: org.json:json:20231013 ===
+2026-06-14 22:27:04,214 [INFO] buildroot.pipeline.orchestrator: Fetching POM for org.json:json:20231013
+2026-06-14 22:27:04,385 [INFO] buildroot.pipeline.orchestrator: Discovered source repo: https://github.com/douglascrockford/JSON-java
+2026-06-14 22:27:06,056 [INFO] buildroot.utils.github_api: Matched git tag: 20231013
+2026-06-14 22:27:06,418 [INFO] buildroot.generators.containerfile: Generated results/benchmark-full/json-20231013/Containerfile using template jdk_base.j2
+2026-06-14 22:27:06,418 [INFO] benchmark: org.json:json:20231013: reconstructed (confidence=MEDIUM, 2 gaps)
+2026-06-14 22:28:58,615 [INFO] benchmark: org.json:json:20231013: L1=True L2=True L3=False L4=False reward=0.15
+2026-06-14 22:28:58,616 [INFO] benchmark: === Package 23/31: org.postgresql:postgresql:42.7.1 ===
+2026-06-14 22:28:58,616 [INFO] buildroot.pipeline.orchestrator: Fetching POM for org.postgresql:postgresql:42.7.1
+2026-06-14 22:28:58,745 [INFO] buildroot.pipeline.orchestrator: Discovered source repo: https://github.com/pgjdbc/pgjdbc
+2026-06-14 22:29:03,339 [INFO] buildroot.utils.github_api: Fuzzy-matched git tag: REL42.7.1
+2026-06-14 22:29:03,530 [INFO] buildroot.generators.containerfile: Generated results/benchmark-full/postgresql-42.7.1/Containerfile using template jdk_base.j2
+2026-06-14 22:29:03,530 [INFO] benchmark: org.postgresql:postgresql:42.7.1: reconstructed (confidence=LOW, 1 gaps)
+2026-06-14 22:29:06,183 [INFO] benchmark: org.postgresql:postgresql:42.7.1: L1=True L2=False L3=False L4=False reward=0.05
+2026-06-14 22:29:06,187 [INFO] benchmark: === Package 24/31: commons-fileupload:commons-fileupload:1.5 ===
+2026-06-14 22:29:06,187 [INFO] buildroot.pipeline.orchestrator: Fetching POM for commons-fileupload:commons-fileupload:1.5
+2026-06-14 22:29:06,513 [INFO] buildroot.pipeline.orchestrator: Discovered source repo: https://github.com/apache/commons-fileupload
+2026-06-14 22:29:08,197 [INFO] buildroot.utils.github_api: Matched git tag: commons-fileupload-1.5
+2026-06-14 22:29:08,402 [INFO] buildroot.generators.containerfile: Generated results/benchmark-full/commons-fileupload-1.5/Containerfile using template jdk_base.j2
+2026-06-14 22:29:08,402 [INFO] benchmark: commons-fileupload:commons-fileupload:1.5: reconstructed (confidence=LOW, 14 gaps)
+2026-06-14 22:31:18,351 [INFO] benchmark: commons-fileupload:commons-fileupload:1.5: L1=True L2=False L3=False L4=False reward=0.05
+2026-06-14 22:31:18,353 [INFO] benchmark: === Package 25/31: com.google.protobuf:protobuf-java:3.25.2 ===
+2026-06-14 22:31:18,353 [INFO] buildroot.pipeline.orchestrator: Fetching POM for com.google.protobuf:protobuf-java:3.25.2
+2026-06-14 22:31:18,876 [INFO] buildroot.pipeline.orchestrator: Discovered source repo: https://github.com/protocolbuffers/protobuf
+2026-06-14 22:31:26,799 [INFO] buildroot.utils.github_api: Matched git tag: v3.25.2
+2026-06-14 22:31:27,045 [INFO] buildroot.generators.containerfile: Generated results/benchmark-full/protobuf-java-3.25.2/Containerfile using template jdk_base.j2
+2026-06-14 22:31:27,045 [INFO] benchmark: com.google.protobuf:protobuf-java:3.25.2: reconstructed (confidence=LOW, 11 gaps)
+2026-06-14 22:32:47,336 [INFO] benchmark: com.google.protobuf:protobuf-java:3.25.2: L1=True L2=False L3=False L4=False reward=0.05
+2026-06-14 22:32:47,338 [INFO] benchmark: === Package 26/31: org.xerial.snappy:snappy-java:1.1.10.5 ===
+2026-06-14 22:32:47,338 [INFO] buildroot.pipeline.orchestrator: Fetching POM for org.xerial.snappy:snappy-java:1.1.10.5
+2026-06-14 22:32:47,478 [INFO] buildroot.pipeline.orchestrator: Discovered source repo: https://github.com/xerial/snappy-java
+2026-06-14 22:32:49,850 [INFO] buildroot.utils.github_api: Matched git tag: v1.1.10.5
+2026-06-14 22:32:50,050 [INFO] buildroot.generators.containerfile: Generated results/benchmark-full/snappy-java-1.1.10.5/Containerfile using template jdk_base.j2
+2026-06-14 22:32:50,051 [INFO] benchmark: org.xerial.snappy:snappy-java:1.1.10.5: reconstructed (confidence=MEDIUM, 2 gaps)
+2026-06-14 22:33:07,771 [INFO] benchmark: org.xerial.snappy:snappy-java:1.1.10.5: L1=True L2=False L3=False L4=False reward=0.05
+2026-06-14 22:33:07,777 [INFO] benchmark: === Package 27/31: org.codehaus.jettison:jettison:1.5.4 ===
+2026-06-14 22:33:07,778 [INFO] buildroot.pipeline.orchestrator: Fetching POM for org.codehaus.jettison:jettison:1.5.4
+2026-06-14 22:33:07,887 [INFO] buildroot.pipeline.orchestrator: Discovered source repo: https://github.com/jettison-json/jettison
+2026-06-14 22:33:09,250 [INFO] buildroot.utils.github_api: Matched git tag: jettison-1.5.4
+2026-06-14 22:33:09,448 [INFO] buildroot.generators.containerfile: Generated results/benchmark-full/jettison-1.5.4/Containerfile using template jdk_base.j2
+2026-06-14 22:33:09,449 [INFO] benchmark: org.codehaus.jettison:jettison:1.5.4: reconstructed (confidence=MEDIUM, 2 gaps)
+2026-06-14 22:35:13,492 [INFO] benchmark: org.codehaus.jettison:jettison:1.5.4: L1=True L2=True L3=True L4=True reward=1.00
+2026-06-14 22:35:13,496 [INFO] benchmark: === Package 28/31: org.hibernate.validator:hibernate-validator:8.0.1.Final ===
+2026-06-14 22:35:13,496 [INFO] buildroot.pipeline.orchestrator: Fetching POM for org.hibernate.validator:hibernate-validator:8.0.1.Final
+2026-06-14 22:35:13,745 [INFO] buildroot.pipeline.orchestrator: Discovered source repo: https://github.com/hibernate/hibernate-validator
+2026-06-14 22:35:15,780 [INFO] buildroot.utils.github_api: Matched git tag: 8.0.1.Final
+2026-06-14 22:35:16,113 [INFO] buildroot.generators.containerfile: Generated results/benchmark-full/hibernate-validator-8.0.1.Final/Containerfile using template jdk_base.j2
+2026-06-14 22:35:16,114 [INFO] benchmark: org.hibernate.validator:hibernate-validator:8.0.1.Final: reconstructed (confidence=LOW, 37 gaps)
+2026-06-14 22:36:24,244 [INFO] benchmark: org.hibernate.validator:hibernate-validator:8.0.1.Final: L1=True L2=False L3=False L4=False reward=0.05
+2026-06-14 22:36:24,248 [INFO] benchmark: === Package 29/31: com.jayway.jsonpath:json-path:2.9.0 ===
+2026-06-14 22:36:24,249 [INFO] buildroot.pipeline.orchestrator: Fetching POM for com.jayway.jsonpath:json-path:2.9.0
+2026-06-14 22:36:24,386 [INFO] buildroot.pipeline.orchestrator: Discovered source repo: https://github.com/jayway/JsonPath
+2026-06-14 22:36:25,889 [INFO] buildroot.utils.github_api: Matched git tag: json-path-2.9.0
+2026-06-14 22:36:26,150 [INFO] buildroot.generators.containerfile: Generated results/benchmark-full/json-path-2.9.0/Containerfile using template jdk_base.j2
+2026-06-14 22:36:26,150 [INFO] benchmark: com.jayway.jsonpath:json-path:2.9.0: reconstructed (confidence=MEDIUM, 2 gaps)
+2026-06-14 22:37:41,276 [INFO] benchmark: com.jayway.jsonpath:json-path:2.9.0: L1=True L2=False L3=False L4=False reward=0.05
+2026-06-14 22:37:41,281 [INFO] benchmark: === Package 30/31: junit:junit:4.13.2 ===
+2026-06-14 22:37:41,281 [INFO] buildroot.pipeline.orchestrator: Fetching POM for junit:junit:4.13.2
+2026-06-14 22:37:41,441 [INFO] buildroot.pipeline.orchestrator: Discovered source repo: https://github.com/junit-team/junit4
+2026-06-14 22:37:42,538 [INFO] buildroot.utils.github_api: Fuzzy-matched git tag: r4.13.2
+2026-06-14 22:37:42,831 [INFO] buildroot.generators.containerfile: Generated results/benchmark-full/junit-4.13.2/Containerfile using template jdk_base.j2
+2026-06-14 22:37:42,832 [INFO] benchmark: junit:junit:4.13.2: reconstructed (confidence=MEDIUM, 1 gaps)
+2026-06-14 22:38:00,728 [INFO] benchmark: junit:junit:4.13.2: L1=True L2=False L3=False L4=False reward=0.05
+2026-06-14 22:38:00,730 [INFO] benchmark: === Package 31/31: org.junit.jupiter:junit-jupiter-api:5.10.1 ===
+2026-06-14 22:38:00,730 [INFO] buildroot.pipeline.orchestrator: Fetching POM for org.junit.jupiter:junit-jupiter-api:5.10.1
+2026-06-14 22:38:00,813 [INFO] buildroot.pipeline.orchestrator: Discovered source repo: https://github.com/junit-team/junit5
+2026-06-14 22:38:07,683 [INFO] buildroot.utils.github_api: Fuzzy-matched git tag: r5.10.1
+2026-06-14 22:38:08,002 [INFO] buildroot.generators.containerfile: Generated results/benchmark-full/junit-jupiter-api-5.10.1/Containerfile using template jdk_on_ubuntu.j2
+2026-06-14 22:38:08,002 [INFO] benchmark: org.junit.jupiter:junit-jupiter-api:5.10.1: reconstructed (confidence=MEDIUM, 2 gaps)
+2026-06-14 22:38:50,615 [INFO] benchmark: org.junit.jupiter:junit-jupiter-api:5.10.1: L1=True L2=False L3=False L4=False reward=0.05
+2026-06-14 22:38:50,622 [INFO] benchmark: Benchmark complete: 2326s total

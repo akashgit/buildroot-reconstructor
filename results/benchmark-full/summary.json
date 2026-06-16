@@ -1,0 +1,1772 @@
+{
+  "total_packages": 31,
+  "reconstructed": 31,
+  "l1_parse": 31,
+  "l2_build": 7,
+  "l3_command": 5,
+  "l4_match": 4,
+  "total_elapsed_seconds": 2325.7,
+  "packages": [
+    {
+      "coordinate": "com.fasterxml.jackson.core:jackson-core:2.15.3",
+      "reconstruct": "success",
+      "gap_report": {
+        "entries": [
+          {
+            "field": "runner_os",
+            "status": "mapped",
+            "reason": "ubuntu-latest mapped to ubuntu:24.04; this mapping may become stale",
+            "source": "inferred"
+          },
+          {
+            "field": "property:generatedSourcesDir",
+            "status": "unresolved",
+            "reason": "Property generatedSourcesDir still contains placeholder: ${project.build.directory}/generated-sources",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:osgi.versionpolicy",
+            "status": "unresolved",
+            "reason": "Property osgi.versionpolicy still contains placeholder: ${range;[===,=+);${@}}",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:packageVersion.template.input",
+            "status": "unresolved",
+            "reason": "Property packageVersion.template.input still contains placeholder: ${basedir}/src/main/java/com/fasterxml/jackson/core/json/PackageVersion.java.in",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:packageVersion.template.output",
+            "status": "unresolved",
+            "reason": "Property packageVersion.template.output still contains placeholder: ${project.build.directory}/generated-sources/com/fasterxml/jackson/core/json/PackageVersion.java",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:jackson-bom.version",
+            "status": "unresolved",
+            "reason": "Property jackson-bom.version still contains placeholder: ${project.parent.version}",
+            "source": "defaulted"
+          },
+          {
+            "field": "project.build.directory",
+            "status": "unresolved",
+            "reason": "Project property ${project.build.directory} not found in POM",
+            "source": "defaulted"
+          },
+          {
+            "field": "range;[===,=+);${@",
+            "status": "unresolved",
+            "reason": "Property ${range;[===,=+);${@} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "basedir",
+            "status": "unresolved",
+            "reason": "Property ${basedir} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "project.build.directory",
+            "status": "unresolved",
+            "reason": "Project property ${project.build.directory} not found in POM",
+            "source": "defaulted"
+          },
+          {
+            "field": "project.parent.version",
+            "status": "unresolved",
+            "reason": "Project property ${project.parent.version} not found in POM",
+            "source": "defaulted"
+          }
+        ],
+        "overall_confidence": "LOW",
+        "summary": "1 inferred, 10 defaulted"
+      },
+      "eval": {
+        "l1_parse": true,
+        "l2_build": true,
+        "l3_command": true,
+        "l4_match": false,
+        "reward": 0.5,
+        "level_reached": 3,
+        "error_summary": "",
+        "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False"
+      },
+      "elapsed_seconds": 131.9
+    },
+    {
+      "coordinate": "com.fasterxml.jackson.core:jackson-databind:2.15.3",
+      "reconstruct": "success",
+      "gap_report": {
+        "entries": [
+          {
+            "field": "runner_os",
+            "status": "mapped",
+            "reason": "ubuntu-latest mapped to ubuntu:24.04; this mapping may become stale",
+            "source": "inferred"
+          },
+          {
+            "field": "property:generatedSourcesDir",
+            "status": "unresolved",
+            "reason": "Property generatedSourcesDir still contains placeholder: ${project.build.directory}/generated-sources",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:osgi.versionpolicy",
+            "status": "unresolved",
+            "reason": "Property osgi.versionpolicy still contains placeholder: ${range;[===,=+);${@}}",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:packageVersion.template.input",
+            "status": "unresolved",
+            "reason": "Property packageVersion.template.input still contains placeholder: ${basedir}/src/main/java/com/fasterxml/jackson/databind/cfg/PackageVersion.java.in",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:packageVersion.template.output",
+            "status": "unresolved",
+            "reason": "Property packageVersion.template.output still contains placeholder: ${project.build.directory}/generated-sources/com/fasterxml/jackson/databind/cfg/PackageVersion.java",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:jackson-bom.version",
+            "status": "unresolved",
+            "reason": "Property jackson-bom.version still contains placeholder: ${project.parent.version}",
+            "source": "defaulted"
+          },
+          {
+            "field": "project.build.directory",
+            "status": "unresolved",
+            "reason": "Project property ${project.build.directory} not found in POM",
+            "source": "defaulted"
+          },
+          {
+            "field": "range;[===,=+);${@",
+            "status": "unresolved",
+            "reason": "Property ${range;[===,=+);${@} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "basedir",
+            "status": "unresolved",
+            "reason": "Property ${basedir} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "project.build.directory",
+            "status": "unresolved",
+            "reason": "Project property ${project.build.directory} not found in POM",
+            "source": "defaulted"
+          },
+          {
+            "field": "project.parent.version",
+            "status": "unresolved",
+            "reason": "Project property ${project.parent.version} not found in POM",
+            "source": "defaulted"
+          }
+        ],
+        "overall_confidence": "LOW",
+        "summary": "1 inferred, 10 defaulted"
+      },
+      "eval": {
+        "l1_parse": true,
+        "l2_build": true,
+        "l3_command": true,
+        "l4_match": true,
+        "reward": 1.0,
+        "level_reached": 4,
+        "error_summary": "",
+        "diff_summary": ""
+      },
+      "elapsed_seconds": 120.8
+    },
+    {
+      "coordinate": "org.springframework.boot:spring-boot:2.7.18",
+      "reconstruct": "success",
+      "gap_report": {
+        "entries": [
+          {
+            "field": "maven_version",
+            "status": "defaulted",
+            "reason": "No Maven wrapper or explicit version found; using system default",
+            "source": "defaulted"
+          }
+        ],
+        "overall_confidence": "LOW",
+        "summary": "1 defaulted"
+      },
+      "eval": {
+        "l1_parse": true,
+        "l2_build": false,
+        "l3_command": false,
+        "l4_match": false,
+        "reward": 0.05,
+        "level_reached": 1,
+        "error_summary": "Trying to pull docker.io/bellsoft/liberica-openjdk-debian:8-jdk...\nError: creating build container: unable to copy from source docker://bellsoft/liberica-openjdk-debian:8-jdk: initializing source docker://bellsoft/liberica-openjdk-debian:8-jdk: reading manifest 8-jdk in docker.io/bellsoft/liberica-openjdk-debian: manifest unknown",
+        "diff_summary": ""
+      },
+      "elapsed_seconds": 21.8
+    },
+    {
+      "coordinate": "org.apache.tomcat:tomcat-catalina:10.1.18",
+      "reconstruct": "success",
+      "gap_report": {
+        "entries": [
+          {
+            "field": "jdk_version",
+            "status": "defaulted",
+            "reason": "No JDK version signal found; defaulting to JDK 17",
+            "source": "defaulted"
+          },
+          {
+            "field": "maven_version",
+            "status": "defaulted",
+            "reason": "No Maven wrapper or explicit version found; using system default",
+            "source": "defaulted"
+          },
+          {
+            "field": "system_packages",
+            "status": "unknown",
+            "reason": "No CI data available to detect system packages",
+            "source": "defaulted"
+          }
+        ],
+        "overall_confidence": "LOW",
+        "summary": "3 defaulted"
+      },
+      "eval": {
+        "l1_parse": true,
+        "l2_build": false,
+        "l3_command": false,
+        "l4_match": false,
+        "reward": 0.05,
+        "level_reached": 1,
+        "error_summary": "[INFO] Scanning for projects...\n[WARNING] The requested profile \"apache-release\" could not be activated because it does not exist.\n[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please verify you invoked Maven from the correct directory. -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR] Re-run M",
+        "diff_summary": ""
+      },
+      "elapsed_seconds": 35.6
+    },
+    {
+      "coordinate": "org.apache.commons:commons-lang3:3.14.0",
+      "reconstruct": "success",
+      "gap_report": {
+        "entries": [
+          {
+            "field": "runner_os",
+            "status": "mapped",
+            "reason": "ubuntu-latest mapped to ubuntu:24.04; this mapping may become stale",
+            "source": "inferred"
+          },
+          {
+            "field": "property:commons.release.3.name",
+            "status": "unresolved",
+            "reason": "Property commons.release.3.name still contains placeholder: commons-lang3-${commons.release.3.version}",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:commons.manifestfile",
+            "status": "unresolved",
+            "reason": "Property commons.manifestfile still contains placeholder: ${project.build.directory}/osgi/MANIFEST.MF",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:commons.site.cache",
+            "status": "unresolved",
+            "reason": "Property commons.site.cache still contains placeholder: ${user.home}/commons-sites",
+            "source": "defaulted"
+          },
+          {
+            "field": "maven_version",
+            "status": "defaulted",
+            "reason": "No Maven wrapper or explicit version found; using system default",
+            "source": "defaulted"
+          },
+          {
+            "field": "commons.release.3.version",
+            "status": "unresolved",
+            "reason": "Property ${commons.release.3.version} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "project.build.directory",
+            "status": "unresolved",
+            "reason": "Project property ${project.build.directory} not found in POM",
+            "source": "defaulted"
+          },
+          {
+            "field": "user.home",
+            "status": "unresolved",
+            "reason": "Property ${user.home} not defined in POM or parent chain",
+            "source": "defaulted"
+          }
+        ],
+        "overall_confidence": "LOW",
+        "summary": "1 inferred, 7 defaulted"
+      },
+      "eval": {
+        "l1_parse": true,
+        "l2_build": true,
+        "l3_command": true,
+        "l4_match": true,
+        "reward": 1.0,
+        "level_reached": 4,
+        "error_summary": "",
+        "diff_summary": ""
+      },
+      "elapsed_seconds": 477.9
+    },
+    {
+      "coordinate": "ch.qos.logback:logback-classic:1.4.14",
+      "reconstruct": "success",
+      "gap_report": {
+        "entries": [
+          {
+            "field": "maven_version",
+            "status": "defaulted",
+            "reason": "No Maven wrapper or explicit version found; using system default",
+            "source": "defaulted"
+          }
+        ],
+        "overall_confidence": "LOW",
+        "summary": "1 defaulted"
+      },
+      "eval": {
+        "l1_parse": true,
+        "l2_build": true,
+        "l3_command": false,
+        "l4_match": false,
+        "reward": 0.15000000000000002,
+        "level_reached": 2,
+        "error_summary": "BUILD_FAILED",
+        "diff_summary": ""
+      },
+      "elapsed_seconds": 124.0
+    },
+    {
+      "coordinate": "io.netty:netty-buffer:4.1.104.Final",
+      "reconstruct": "success",
+      "gap_report": {
+        "entries": [
+          {
+            "field": "runner_os",
+            "status": "mapped",
+            "reason": "ubuntu-latest mapped to ubuntu:24.04; this mapping may become stale",
+            "source": "inferred"
+          },
+          {
+            "field": "property:netty.dev.tools.directory",
+            "status": "unresolved",
+            "reason": "Property netty.dev.tools.directory still contains placeholder: ${project.build.directory}/dev-tools",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:jetty.alpnAgent.path",
+            "status": "unresolved",
+            "reason": "Property jetty.alpnAgent.path still contains placeholder: \"${settings.localRepository}\"/org/mortbay/jetty/alpn/jetty-alpn-agent/2.0.10/jetty-alpn-agent-2.0.10.jar",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:argLine.alpnAgent",
+            "status": "unresolved",
+            "reason": "Property argLine.alpnAgent still contains placeholder: -javaagent:\"${settings.localRepository}\"/org/mortbay/jetty/alpn/jetty-alpn-agent/2.0.10/jetty-alpn-agent-2.0.10.jar=${jetty.alpnAgent.option}",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:tcnative.classifier",
+            "status": "unresolved",
+            "reason": "Property tcnative.classifier still contains placeholder: ${os.detected.classifier}",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:jni.classifier",
+            "status": "unresolved",
+            "reason": "Property jni.classifier still contains placeholder: ${os.detected.name}-${os.detected.arch}",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:logging.config",
+            "status": "unresolved",
+            "reason": "Property logging.config still contains placeholder: ${project.basedir}/../common/src/test/resources/logback-test.xml",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:testJavaHome",
+            "status": "unresolved",
+            "reason": "Property testJavaHome still contains placeholder: ${java.home}",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:testJvm",
+            "status": "unresolved",
+            "reason": "Property testJvm still contains placeholder: ${java.home}/bin/java",
+            "source": "defaulted"
+          },
+          {
+            "field": "project.build.directory",
+            "status": "unresolved",
+            "reason": "Project property ${project.build.directory} not found in POM",
+            "source": "defaulted"
+          },
+          {
+            "field": "settings.localRepository",
+            "status": "unresolved",
+            "reason": "Settings property ${settings.localRepository} not available from POM",
+            "source": "defaulted"
+          },
+          {
+            "field": "settings.localRepository",
+            "status": "unresolved",
+            "reason": "Settings property ${settings.localRepository} not available from POM",
+            "source": "defaulted"
+          },
+          {
+            "field": "jetty.alpnAgent.option",
+            "status": "unresolved",
+            "reason": "Property ${jetty.alpnAgent.option} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "os.detected.classifier",
+            "status": "unresolved",
+            "reason": "Property ${os.detected.classifier} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "os.detected.name",
+            "status": "unresolved",
+            "reason": "Property ${os.detected.name} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "os.detected.arch",
+            "status": "unresolved",
+            "reason": "Property ${os.detected.arch} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "project.basedir",
+            "status": "unresolved",
+            "reason": "Project property ${project.basedir} not found in POM",
+            "source": "defaulted"
+          },
+          {
+            "field": "java.home",
+            "status": "unresolved",
+            "reason": "Property ${java.home} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "java.home",
+            "status": "unresolved",
+            "reason": "Property ${java.home} not defined in POM or parent chain",
+            "source": "defaulted"
+          }
+        ],
+        "overall_confidence": "LOW",
+        "summary": "1 inferred, 18 defaulted"
+      },
+      "eval": {
+        "l1_parse": true,
+        "l2_build": false,
+        "l3_command": false,
+        "l4_match": false,
+        "reward": 0.05,
+        "level_reached": 1,
+        "error_summary": "Trying to pull docker.io/azul/zulu-openjdk:8-jdk...\nError: creating build container: unable to copy from source docker://azul/zulu-openjdk:8-jdk: initializing source docker://azul/zulu-openjdk:8-jdk: reading manifest 8-jdk in docker.io/azul/zulu-openjdk: manifest unknown",
+        "diff_summary": ""
+      },
+      "elapsed_seconds": 23.0
+    },
+    {
+      "coordinate": "com.nimbusds:nimbus-jose-jwt:9.37.3",
+      "reconstruct": "success",
+      "gap_report": {
+        "entries": [
+          {
+            "field": "maven_version",
+            "status": "defaulted",
+            "reason": "No Maven wrapper or explicit version found; using system default",
+            "source": "defaulted"
+          },
+          {
+            "field": "system_packages",
+            "status": "unknown",
+            "reason": "No CI data available to detect system packages",
+            "source": "defaulted"
+          }
+        ],
+        "overall_confidence": "LOW",
+        "summary": "2 defaulted"
+      },
+      "eval": {
+        "l1_parse": true,
+        "l2_build": false,
+        "l3_command": false,
+        "l4_match": false,
+        "reward": 0.05,
+        "level_reached": 1,
+        "error_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please verify you invoked Maven from the correct directory. -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR] Re-run Maven using the -X switch to enable full debug logging.\n[ERROR] For more information about the errors and possible solutions, please",
+        "diff_summary": ""
+      },
+      "elapsed_seconds": 35.0
+    },
+    {
+      "coordinate": "org.eclipse.jetty:jetty-server:11.0.20",
+      "reconstruct": "success",
+      "gap_report": {
+        "entries": [
+          {
+            "field": "property:localRepoPath",
+            "status": "unresolved",
+            "reason": "Property localRepoPath still contains placeholder: ${project.build.directory}/local-repo",
+            "source": "defaulted"
+          },
+          {
+            "field": "maven_version",
+            "status": "defaulted",
+            "reason": "No Maven wrapper or explicit version found; using system default",
+            "source": "defaulted"
+          },
+          {
+            "field": "system_packages",
+            "status": "unknown",
+            "reason": "No CI data available to detect system packages",
+            "source": "defaulted"
+          },
+          {
+            "field": "project.build.directory",
+            "status": "unresolved",
+            "reason": "Project property ${project.build.directory} not found in POM",
+            "source": "defaulted"
+          }
+        ],
+        "overall_confidence": "LOW",
+        "summary": "4 defaulted"
+      },
+      "eval": {
+        "l1_parse": true,
+        "l2_build": false,
+        "l3_command": false,
+        "l4_match": false,
+        "reward": 0.05,
+        "level_reached": 1,
+        "error_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please verify you invoked Maven from the correct directory. -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR] Re-run Maven using the -X switch to enable full debug logging.\n[ERROR] For more information about the errors and possible solutions, please",
+        "diff_summary": ""
+      },
+      "elapsed_seconds": 41.0
+    },
+    {
+      "coordinate": "org.apache.avro:avro:1.11.3",
+      "reconstruct": "success",
+      "gap_report": {
+        "entries": [
+          {
+            "field": "runner_os",
+            "status": "mapped",
+            "reason": "ubuntu-latest mapped to ubuntu:24.04; this mapping may become stale",
+            "source": "inferred"
+          },
+          {
+            "field": "property:main.basedir",
+            "status": "unresolved",
+            "reason": "Property main.basedir still contains placeholder: ${project.parent.parent.basedir}",
+            "source": "defaulted"
+          },
+          {
+            "field": "maven_version",
+            "status": "defaulted",
+            "reason": "No Maven wrapper or explicit version found; using system default",
+            "source": "defaulted"
+          },
+          {
+            "field": "project.parent.parent.basedir",
+            "status": "unresolved",
+            "reason": "Project property ${project.parent.parent.basedir} not found in POM",
+            "source": "defaulted"
+          }
+        ],
+        "overall_confidence": "LOW",
+        "summary": "1 inferred, 3 defaulted"
+      },
+      "eval": {
+        "l1_parse": true,
+        "l2_build": false,
+        "l3_command": false,
+        "l4_match": false,
+        "reward": 0.05,
+        "level_reached": 1,
+        "error_summary": "time=\"2026-06-15T02:17:56Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+        "diff_summary": ""
+      },
+      "elapsed_seconds": 62.4
+    },
+    {
+      "coordinate": "org.lz4:lz4-java:1.8.0",
+      "reconstruct": "success",
+      "gap_report": {
+        "entries": [
+          {
+            "field": "jdk_version",
+            "status": "defaulted",
+            "reason": "No JDK version signal found; defaulting to JDK 17",
+            "source": "defaulted"
+          },
+          {
+            "field": "maven_version",
+            "status": "defaulted",
+            "reason": "No Maven wrapper or explicit version found; using system default",
+            "source": "defaulted"
+          },
+          {
+            "field": "system_packages",
+            "status": "unknown",
+            "reason": "No CI data available to detect system packages",
+            "source": "defaulted"
+          }
+        ],
+        "overall_confidence": "LOW",
+        "summary": "3 defaulted"
+      },
+      "eval": {
+        "l1_parse": true,
+        "l2_build": false,
+        "l3_command": false,
+        "l4_match": false,
+        "reward": 0.05,
+        "level_reached": 1,
+        "error_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please verify you invoked Maven from the correct directory. -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR] Re-run Maven using the -X switch to enable full debug logging.\n[ERROR] For more information about the errors and possible solutions, please",
+        "diff_summary": ""
+      },
+      "elapsed_seconds": 76.5
+    },
+    {
+      "coordinate": "com.google.guava:guava:33.0.0-jre",
+      "reconstruct": "success",
+      "gap_report": {
+        "entries": [
+          {
+            "field": "runner_os",
+            "status": "mapped",
+            "reason": "ubuntu-latest mapped to ubuntu:24.04; this mapping may become stale",
+            "source": "inferred"
+          }
+        ],
+        "overall_confidence": "MEDIUM",
+        "summary": "1 inferred"
+      },
+      "eval": {
+        "l1_parse": true,
+        "l2_build": false,
+        "l3_command": false,
+        "l4_match": false,
+        "reward": 0.05,
+        "level_reached": 1,
+        "error_summary": "Cloning into '/build'...\nfatal: Remote branch v33.0.0-jre not found in upstream origin\nError: building at STEP \"RUN git clone --depth 1 --branch 'v33.0.0-jre' 'https://github.com/google/guava' /build\": while running runtime: exit status 128",
+        "diff_summary": ""
+      },
+      "elapsed_seconds": 67.6
+    },
+    {
+      "coordinate": "org.apache.kafka:kafka-clients:3.6.1",
+      "reconstruct": "success",
+      "gap_report": {
+        "entries": [
+          {
+            "field": "jdk_version",
+            "status": "defaulted",
+            "reason": "No JDK version signal found; defaulting to JDK 17",
+            "source": "defaulted"
+          },
+          {
+            "field": "maven_version",
+            "status": "defaulted",
+            "reason": "No Maven wrapper or explicit version found; using system default",
+            "source": "defaulted"
+          },
+          {
+            "field": "system_packages",
+            "status": "unknown",
+            "reason": "No CI data available to detect system packages",
+            "source": "defaulted"
+          }
+        ],
+        "overall_confidence": "LOW",
+        "summary": "3 defaulted"
+      },
+      "eval": {
+        "l1_parse": true,
+        "l2_build": false,
+        "l3_command": false,
+        "l4_match": false,
+        "reward": 0.05,
+        "level_reached": 1,
+        "error_summary": "[INFO] Scanning for projects...\n[WARNING] The requested profile \"apache-release\" could not be activated because it does not exist.\n[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please verify you invoked Maven from the correct directory. -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR] Re-run M",
+        "diff_summary": ""
+      },
+      "elapsed_seconds": 34.1
+    },
+    {
+      "coordinate": "org.yaml:snakeyaml:2.2",
+      "reconstruct": "success",
+      "gap_report": {
+        "entries": [
+          {
+            "field": "maven_version",
+            "status": "defaulted",
+            "reason": "No Maven wrapper or explicit version found; using system default",
+            "source": "defaulted"
+          },
+          {
+            "field": "system_packages",
+            "status": "unknown",
+            "reason": "No CI data available to detect system packages",
+            "source": "defaulted"
+          }
+        ],
+        "overall_confidence": "LOW",
+        "summary": "2 defaulted"
+      },
+      "eval": {
+        "l1_parse": true,
+        "l2_build": false,
+        "l3_command": false,
+        "l4_match": false,
+        "reward": 0.05,
+        "level_reached": 1,
+        "error_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please verify you invoked Maven from the correct directory. -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR] Re-run Maven using the -X switch to enable full debug logging.\n[ERROR] For more information about the errors and possible solutions, please",
+        "diff_summary": ""
+      },
+      "elapsed_seconds": 34.3
+    },
+    {
+      "coordinate": "com.sun.mail:jakarta.mail:2.0.1",
+      "reconstruct": "success",
+      "gap_report": {
+        "entries": [
+          {
+            "field": "runner_os",
+            "status": "mapped",
+            "reason": "ubuntu-latest mapped to ubuntu:24.04; this mapping may become stale",
+            "source": "inferred"
+          },
+          {
+            "field": "property:mail.packages.export",
+            "status": "unresolved",
+            "reason": "Property mail.packages.export still contains placeholder: jakarta.mail.*; version=2.0,\n\t    com.sun.mail.imap; version=${mail.osgiversion},\n\t    com.sun.mail.imap.protocol; version=${mail.osgiversion},\n\t    com.sun.mail.iap; version=${mail.osgiversion},\n\t    com.sun.mail.pop3; version=${mail.osgiversion},\n\t    com.sun.mail.smtp; version=${mail.osgiversion},\n\t    com.sun.mail.util; version=${mail.osgiversion},\n\t    com.sun.mail.util.logging; version=${mail.osgiversion},\n\t    com.sun.mail.handlers; version=${mail.osgiversion}",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:findbugs.exclude",
+            "status": "unresolved",
+            "reason": "Property findbugs.exclude still contains placeholder: ${project.basedir}/exclude.xml",
+            "source": "defaulted"
+          },
+          {
+            "field": "maven_version",
+            "status": "defaulted",
+            "reason": "No Maven wrapper or explicit version found; using system default",
+            "source": "defaulted"
+          },
+          {
+            "field": "mail.osgiversion",
+            "status": "unresolved",
+            "reason": "Property ${mail.osgiversion} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "mail.osgiversion",
+            "status": "unresolved",
+            "reason": "Property ${mail.osgiversion} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "mail.osgiversion",
+            "status": "unresolved",
+            "reason": "Property ${mail.osgiversion} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "mail.osgiversion",
+            "status": "unresolved",
+            "reason": "Property ${mail.osgiversion} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "mail.osgiversion",
+            "status": "unresolved",
+            "reason": "Property ${mail.osgiversion} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "mail.osgiversion",
+            "status": "unresolved",
+            "reason": "Property ${mail.osgiversion} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "mail.osgiversion",
+            "status": "unresolved",
+            "reason": "Property ${mail.osgiversion} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "mail.osgiversion",
+            "status": "unresolved",
+            "reason": "Property ${mail.osgiversion} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "project.basedir",
+            "status": "unresolved",
+            "reason": "Project property ${project.basedir} not found in POM",
+            "source": "defaulted"
+          }
+        ],
+        "overall_confidence": "LOW",
+        "summary": "1 inferred, 12 defaulted"
+      },
+      "eval": {
+        "l1_parse": true,
+        "l2_build": false,
+        "l3_command": false,
+        "l4_match": false,
+        "reward": 0.05,
+        "level_reached": 1,
+        "error_summary": "Trying to pull docker.io/azul/zulu-openjdk:11-jdk...\nError: creating build container: unable to copy from source docker://azul/zulu-openjdk:11-jdk: initializing source docker://azul/zulu-openjdk:11-jdk: reading manifest 11-jdk in docker.io/azul/zulu-openjdk: manifest unknown",
+        "diff_summary": ""
+      },
+      "elapsed_seconds": 20.8
+    },
+    {
+      "coordinate": "org.hibernate.orm:hibernate-core:6.4.2.Final",
+      "reconstruct": "success",
+      "gap_report": {
+        "entries": [
+          {
+            "field": "maven_version",
+            "status": "defaulted",
+            "reason": "No Maven wrapper or explicit version found; using system default",
+            "source": "defaulted"
+          }
+        ],
+        "overall_confidence": "LOW",
+        "summary": "1 defaulted"
+      },
+      "eval": {
+        "l1_parse": true,
+        "l2_build": false,
+        "l3_command": false,
+        "l4_match": false,
+        "reward": 0.05,
+        "level_reached": 1,
+        "error_summary": "Error: parsing main Dockerfile: Containerfile: Syntax error - can't find = in \"-Xmx4g\". Must be of the form: name=value",
+        "diff_summary": ""
+      },
+      "elapsed_seconds": 6.9
+    },
+    {
+      "coordinate": "org.assertj:assertj-core:3.25.1",
+      "reconstruct": "success",
+      "gap_report": {
+        "entries": [
+          {
+            "field": "runner_os",
+            "status": "mapped",
+            "reason": "ubuntu-latest mapped to ubuntu:24.04; this mapping may become stale",
+            "source": "inferred"
+          }
+        ],
+        "overall_confidence": "MEDIUM",
+        "summary": "1 inferred"
+      },
+      "eval": {
+        "l1_parse": true,
+        "l2_build": false,
+        "l3_command": false,
+        "l4_match": false,
+        "reward": 0.05,
+        "level_reached": 1,
+        "error_summary": "Trying to pull docker.io/azul/zulu-openjdk:25-jdk...\nError: creating build container: unable to copy from source docker://azul/zulu-openjdk:25-jdk: initializing source docker://azul/zulu-openjdk:25-jdk: reading manifest 25-jdk in docker.io/azul/zulu-openjdk: manifest unknown",
+        "diff_summary": ""
+      },
+      "elapsed_seconds": 20.9
+    },
+    {
+      "coordinate": "net.minidev:json-smart:2.5.0",
+      "reconstruct": "success",
+      "gap_report": {
+        "entries": [
+          {
+            "field": "runner_os",
+            "status": "mapped",
+            "reason": "ubuntu-latest mapped to ubuntu:24.04; this mapping may become stale",
+            "source": "inferred"
+          },
+          {
+            "field": "maven_version",
+            "status": "defaulted",
+            "reason": "No Maven wrapper or explicit version found; using system default",
+            "source": "defaulted"
+          }
+        ],
+        "overall_confidence": "MEDIUM",
+        "summary": "1 inferred, 1 defaulted"
+      },
+      "eval": {
+        "l1_parse": true,
+        "l2_build": false,
+        "l3_command": false,
+        "l4_match": false,
+        "reward": 0.05,
+        "level_reached": 1,
+        "error_summary": "/bin/sh: 1: ./mvnw: not found\nError: building at STEP \"RUN ./mvnw -q clean install -DskipTests\": while running runtime: exit status 127",
+        "diff_summary": ""
+      },
+      "elapsed_seconds": 83.4
+    },
+    {
+      "coordinate": "org.glassfish.jersey.core:jersey-common:3.1.5",
+      "reconstruct": "success",
+      "gap_report": {
+        "entries": [
+          {
+            "field": "property:server.coverage.argline",
+            "status": "unresolved",
+            "reason": "Property server.coverage.argline still contains placeholder: ${failsafe.coverage.argline}",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:surefire.security.argline",
+            "status": "unresolved",
+            "reason": "Property surefire.security.argline still contains placeholder: -Djava.security.manager -Djava.security.policy=${project.build.directory}/test-classes/surefire.policy",
+            "source": "defaulted"
+          },
+          {
+            "field": "maven_version",
+            "status": "defaulted",
+            "reason": "No Maven wrapper or explicit version found; using system default",
+            "source": "defaulted"
+          },
+          {
+            "field": "system_packages",
+            "status": "unknown",
+            "reason": "No CI data available to detect system packages",
+            "source": "defaulted"
+          },
+          {
+            "field": "failsafe.coverage.argline",
+            "status": "unresolved",
+            "reason": "Property ${failsafe.coverage.argline} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "project.build.directory",
+            "status": "unresolved",
+            "reason": "Project property ${project.build.directory} not found in POM",
+            "source": "defaulted"
+          }
+        ],
+        "overall_confidence": "LOW",
+        "summary": "6 defaulted"
+      },
+      "eval": {
+        "l1_parse": true,
+        "l2_build": false,
+        "l3_command": false,
+        "l4_match": false,
+        "reward": 0.05,
+        "level_reached": 1,
+        "error_summary": "Cloning into '/build'...\nfatal: Remote branch v3.1.5 not found in upstream origin\nError: building at STEP \"RUN git clone --depth 1 --branch 'v3.1.5' 'https://github.com/jersey/jersey' /build\": while running runtime: exit status 128",
+        "diff_summary": ""
+      },
+      "elapsed_seconds": 64.1
+    },
+    {
+      "coordinate": "org.codehaus.plexus:plexus-utils:4.0.0",
+      "reconstruct": "success",
+      "gap_report": {
+        "entries": [
+          {
+            "field": "maven_version",
+            "status": "defaulted",
+            "reason": "No Maven wrapper or explicit version found; using system default",
+            "source": "defaulted"
+          }
+        ],
+        "overall_confidence": "LOW",
+        "summary": "1 defaulted"
+      },
+      "eval": {
+        "l1_parse": true,
+        "l2_build": true,
+        "l3_command": true,
+        "l4_match": true,
+        "reward": 1.0,
+        "level_reached": 4,
+        "error_summary": "",
+        "diff_summary": ""
+      },
+      "elapsed_seconds": 103.0
+    },
+    {
+      "coordinate": "commons-beanutils:commons-beanutils:1.9.4",
+      "reconstruct": "success",
+      "gap_report": {
+        "entries": [
+          {
+            "field": "property:commons.release.2.name",
+            "status": "unresolved",
+            "reason": "Property commons.release.2.name still contains placeholder: commons-beanutils-${commons.release.2.version}",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:commons.release.3.name",
+            "status": "unresolved",
+            "reason": "Property commons.release.3.name still contains placeholder: commons-beanutils-${commons.release.3.version}",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:commons.manifestfile",
+            "status": "unresolved",
+            "reason": "Property commons.manifestfile still contains placeholder: ${project.build.directory}/osgi/MANIFEST.MF",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:implementation.build",
+            "status": "unresolved",
+            "reason": "Property implementation.build still contains placeholder: ${scmBranch}@r${buildNumber}; ${maven.build.timestamp}",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:commons.site.cache",
+            "status": "unresolved",
+            "reason": "Property commons.site.cache still contains placeholder: ${user.home}/commons-sites",
+            "source": "defaulted"
+          },
+          {
+            "field": "maven_version",
+            "status": "defaulted",
+            "reason": "No Maven wrapper or explicit version found; using system default",
+            "source": "defaulted"
+          },
+          {
+            "field": "system_packages",
+            "status": "unknown",
+            "reason": "No CI data available to detect system packages",
+            "source": "defaulted"
+          },
+          {
+            "field": "commons.release.2.version",
+            "status": "unresolved",
+            "reason": "Property ${commons.release.2.version} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "commons.release.3.version",
+            "status": "unresolved",
+            "reason": "Property ${commons.release.3.version} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "project.build.directory",
+            "status": "unresolved",
+            "reason": "Project property ${project.build.directory} not found in POM",
+            "source": "defaulted"
+          },
+          {
+            "field": "scmBranch",
+            "status": "unresolved",
+            "reason": "Property ${scmBranch} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "buildNumber",
+            "status": "unresolved",
+            "reason": "Property ${buildNumber} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "maven.build.timestamp",
+            "status": "unresolved",
+            "reason": "Property ${maven.build.timestamp} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "user.home",
+            "status": "unresolved",
+            "reason": "Property ${user.home} not defined in POM or parent chain",
+            "source": "defaulted"
+          }
+        ],
+        "overall_confidence": "LOW",
+        "summary": "14 defaulted"
+      },
+      "eval": {
+        "l1_parse": true,
+        "l2_build": false,
+        "l3_command": false,
+        "l4_match": false,
+        "reward": 0.05,
+        "level_reached": 1,
+        "error_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please verify you invoked Maven from the correct directory. -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR] Re-run Maven using the -X switch to enable full debug logging.\n[ERROR] For more information about the errors and possible solutions, please",
+        "diff_summary": ""
+      },
+      "elapsed_seconds": 34.3
+    },
+    {
+      "coordinate": "org.json:json:20231013",
+      "reconstruct": "success",
+      "gap_report": {
+        "entries": [
+          {
+            "field": "runner_os",
+            "status": "mapped",
+            "reason": "ubuntu-latest mapped to ubuntu:24.04; this mapping may become stale",
+            "source": "inferred"
+          },
+          {
+            "field": "maven_version",
+            "status": "defaulted",
+            "reason": "No Maven wrapper or explicit version found; using system default",
+            "source": "defaulted"
+          }
+        ],
+        "overall_confidence": "MEDIUM",
+        "summary": "1 inferred, 1 defaulted"
+      },
+      "eval": {
+        "l1_parse": true,
+        "l2_build": true,
+        "l3_command": false,
+        "l4_match": false,
+        "reward": 0.15000000000000002,
+        "level_reached": 2,
+        "error_summary": "BUILD_FAILED",
+        "diff_summary": ""
+      },
+      "elapsed_seconds": 114.4
+    },
+    {
+      "coordinate": "org.postgresql:postgresql:42.7.1",
+      "reconstruct": "success",
+      "gap_report": {
+        "entries": [
+          {
+            "field": "maven_version",
+            "status": "defaulted",
+            "reason": "No Maven wrapper or explicit version found; using system default",
+            "source": "defaulted"
+          }
+        ],
+        "overall_confidence": "LOW",
+        "summary": "1 defaulted"
+      },
+      "eval": {
+        "l1_parse": true,
+        "l2_build": false,
+        "l3_command": false,
+        "l4_match": false,
+        "reward": 0.05,
+        "level_reached": 1,
+        "error_summary": "Error: parsing main Dockerfile: Containerfile: Syntax error - can't find = in \"fs\". Must be of the form: name=value",
+        "diff_summary": ""
+      },
+      "elapsed_seconds": 7.6
+    },
+    {
+      "coordinate": "commons-fileupload:commons-fileupload:1.5",
+      "reconstruct": "success",
+      "gap_report": {
+        "entries": [
+          {
+            "field": "runner_os",
+            "status": "mapped",
+            "reason": "ubuntu-latest mapped to ubuntu:24.04; this mapping may become stale",
+            "source": "inferred"
+          },
+          {
+            "field": "property:commons.release.2.name",
+            "status": "unresolved",
+            "reason": "Property commons.release.2.name still contains placeholder: commons-fileupload-${commons.release.2.version}",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:commons.release.3.name",
+            "status": "unresolved",
+            "reason": "Property commons.release.3.name still contains placeholder: commons-fileupload-${commons.release.3.version}",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:commons.manifestfile",
+            "status": "unresolved",
+            "reason": "Property commons.manifestfile still contains placeholder: ${project.build.directory}/osgi/MANIFEST.MF",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:implementation.build",
+            "status": "unresolved",
+            "reason": "Property implementation.build still contains placeholder: ${scmBranch}@r${buildNumber}; ${maven.build.timestamp}",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:commons.site.cache",
+            "status": "unresolved",
+            "reason": "Property commons.site.cache still contains placeholder: ${user.home}/commons-sites",
+            "source": "defaulted"
+          },
+          {
+            "field": "maven_version",
+            "status": "defaulted",
+            "reason": "No Maven wrapper or explicit version found; using system default",
+            "source": "defaulted"
+          },
+          {
+            "field": "commons.release.2.version",
+            "status": "unresolved",
+            "reason": "Property ${commons.release.2.version} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "commons.release.3.version",
+            "status": "unresolved",
+            "reason": "Property ${commons.release.3.version} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "project.build.directory",
+            "status": "unresolved",
+            "reason": "Project property ${project.build.directory} not found in POM",
+            "source": "defaulted"
+          },
+          {
+            "field": "scmBranch",
+            "status": "unresolved",
+            "reason": "Property ${scmBranch} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "buildNumber",
+            "status": "unresolved",
+            "reason": "Property ${buildNumber} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "maven.build.timestamp",
+            "status": "unresolved",
+            "reason": "Property ${maven.build.timestamp} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "user.home",
+            "status": "unresolved",
+            "reason": "Property ${user.home} not defined in POM or parent chain",
+            "source": "defaulted"
+          }
+        ],
+        "overall_confidence": "LOW",
+        "summary": "1 inferred, 13 defaulted"
+      },
+      "eval": {
+        "l1_parse": true,
+        "l2_build": false,
+        "l3_command": false,
+        "l4_match": false,
+        "reward": 0.05,
+        "level_reached": 1,
+        "error_summary": "[WARNING] Cannot get the branch information from the git repository:\nDetecting the current branch failed: fatal: ref HEAD is not a symbolic ref\n[INFO] CycloneDX: Resolving Dependencies\n[ERROR] An error occurred attempting to read POM\norg.codehaus.plexus.util.xml.pull.XmlPullParserException: UTF-8 BOM plus xml decl of ISO-8859-1 is incompatible (position: START_DOCUMENT seen <?xml version=\"1.0\" encoding=\"ISO-8859-1\"... @1:42)\n[INFO] ----------------------------------------------------------------",
+        "diff_summary": ""
+      },
+      "elapsed_seconds": 132.2
+    },
+    {
+      "coordinate": "com.google.protobuf:protobuf-java:3.25.2",
+      "reconstruct": "success",
+      "gap_report": {
+        "entries": [
+          {
+            "field": "property:protobuf.basedir",
+            "status": "unresolved",
+            "reason": "Property protobuf.basedir still contains placeholder: ${project.basedir}/../..",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:protobuf.source.dir",
+            "status": "unresolved",
+            "reason": "Property protobuf.source.dir still contains placeholder: ${project.basedir}/../../src",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:protoc",
+            "status": "unresolved",
+            "reason": "Property protoc still contains placeholder: ${project.basedir}/../../protoc",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:generated.sources.dir",
+            "status": "unresolved",
+            "reason": "Property generated.sources.dir still contains placeholder: ${project.build.directory}/generated-sources",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:generated.testsources.dir",
+            "status": "unresolved",
+            "reason": "Property generated.testsources.dir still contains placeholder: ${project.build.directory}/generated-test-sources",
+            "source": "defaulted"
+          },
+          {
+            "field": "maven_version",
+            "status": "defaulted",
+            "reason": "No Maven wrapper or explicit version found; using system default",
+            "source": "defaulted"
+          },
+          {
+            "field": "project.basedir",
+            "status": "unresolved",
+            "reason": "Project property ${project.basedir} not found in POM",
+            "source": "defaulted"
+          },
+          {
+            "field": "project.basedir",
+            "status": "unresolved",
+            "reason": "Project property ${project.basedir} not found in POM",
+            "source": "defaulted"
+          },
+          {
+            "field": "project.basedir",
+            "status": "unresolved",
+            "reason": "Project property ${project.basedir} not found in POM",
+            "source": "defaulted"
+          },
+          {
+            "field": "project.build.directory",
+            "status": "unresolved",
+            "reason": "Project property ${project.build.directory} not found in POM",
+            "source": "defaulted"
+          },
+          {
+            "field": "project.build.directory",
+            "status": "unresolved",
+            "reason": "Project property ${project.build.directory} not found in POM",
+            "source": "defaulted"
+          }
+        ],
+        "overall_confidence": "LOW",
+        "summary": "11 defaulted"
+      },
+      "eval": {
+        "l1_parse": true,
+        "l2_build": false,
+        "l3_command": false,
+        "l4_match": false,
+        "reward": 0.05,
+        "level_reached": 1,
+        "error_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please verify you invoked Maven from the correct directory. -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR] Re-run Maven using the -X switch to enable full debug logging.\n[ERROR] For more information about the errors and possible solutions, please",
+        "diff_summary": ""
+      },
+      "elapsed_seconds": 89.0
+    },
+    {
+      "coordinate": "org.xerial.snappy:snappy-java:1.1.10.5",
+      "reconstruct": "success",
+      "gap_report": {
+        "entries": [
+          {
+            "field": "runner_os",
+            "status": "mapped",
+            "reason": "ubuntu-latest mapped to ubuntu:24.04; this mapping may become stale",
+            "source": "inferred"
+          },
+          {
+            "field": "maven_version",
+            "status": "defaulted",
+            "reason": "No Maven wrapper or explicit version found; using system default",
+            "source": "defaulted"
+          }
+        ],
+        "overall_confidence": "MEDIUM",
+        "summary": "1 inferred, 1 defaulted"
+      },
+      "eval": {
+        "l1_parse": true,
+        "l2_build": false,
+        "l3_command": false,
+        "l4_match": false,
+        "reward": 0.05,
+        "level_reached": 1,
+        "error_summary": "Trying to pull docker.io/azul/zulu-openjdk:21-jdk...\nError: creating build container: unable to copy from source docker://azul/zulu-openjdk:21-jdk: initializing source docker://azul/zulu-openjdk:21-jdk: reading manifest 21-jdk in docker.io/azul/zulu-openjdk: manifest unknown",
+        "diff_summary": ""
+      },
+      "elapsed_seconds": 20.4
+    },
+    {
+      "coordinate": "org.codehaus.jettison:jettison:1.5.4",
+      "reconstruct": "success",
+      "gap_report": {
+        "entries": [
+          {
+            "field": "runner_os",
+            "status": "mapped",
+            "reason": "ubuntu-latest mapped to ubuntu:24.04; this mapping may become stale",
+            "source": "inferred"
+          },
+          {
+            "field": "maven_version",
+            "status": "defaulted",
+            "reason": "No Maven wrapper or explicit version found; using system default",
+            "source": "defaulted"
+          }
+        ],
+        "overall_confidence": "MEDIUM",
+        "summary": "1 inferred, 1 defaulted"
+      },
+      "eval": {
+        "l1_parse": true,
+        "l2_build": true,
+        "l3_command": true,
+        "l4_match": true,
+        "reward": 1.0,
+        "level_reached": 4,
+        "error_summary": "",
+        "diff_summary": ""
+      },
+      "elapsed_seconds": 125.7
+    },
+    {
+      "coordinate": "org.hibernate.validator:hibernate-validator:8.0.1.Final",
+      "reconstruct": "success",
+      "gap_report": {
+        "entries": [
+          {
+            "field": "property:java-version.main.compiler.java_home",
+            "status": "unresolved",
+            "reason": "Property java-version.main.compiler.java_home still contains placeholder: ${java.home}",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:java-version.main.compiler",
+            "status": "unresolved",
+            "reason": "Property java-version.main.compiler still contains placeholder: ${java.home}/bin/javac",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:java-version.test.release",
+            "status": "unresolved",
+            "reason": "Property java-version.test.release still contains placeholder: ${java.specification.version}",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:java-version.test.compiler.java_home",
+            "status": "unresolved",
+            "reason": "Property java-version.test.compiler.java_home still contains placeholder: ${java.home}",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:java-version.test.compiler",
+            "status": "unresolved",
+            "reason": "Property java-version.test.compiler still contains placeholder: ${java.home}/bin/javac",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:java-version.test.launcher.java_home",
+            "status": "unresolved",
+            "reason": "Property java-version.test.launcher.java_home still contains placeholder: ${java.home}",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:java-version.test.launcher",
+            "status": "unresolved",
+            "reason": "Property java-version.test.launcher still contains placeholder: ${java.home}/bin/java",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:maven.compiler.testSource",
+            "status": "unresolved",
+            "reason": "Property maven.compiler.testSource still contains placeholder: ${java.specification.version}",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:maven.compiler.testTarget",
+            "status": "unresolved",
+            "reason": "Property maven.compiler.testTarget still contains placeholder: ${java.specification.version}",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:maven.compiler.testRelease",
+            "status": "unresolved",
+            "reason": "Property maven.compiler.testRelease still contains placeholder: ${java.specification.version}",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:surefire.jvm.args.shrinkwrap",
+            "status": "unresolved",
+            "reason": "Property surefire.jvm.args.shrinkwrap still contains placeholder: -Dmaven.repo.local=${settings.localRepository}",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:surefire.jvm.args",
+            "status": "unresolved",
+            "reason": "Property surefire.jvm.args still contains placeholder: -Duser.language=en ${surefire.jvm.args.add-opens} ${surefire.jvm.args.illegal-access} -Dmaven.repo.local=${settings.localRepository} ${surefire.jvm.args.java-version} ${surefire.jvm.args.commandline}",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:failsafe.jvm.args",
+            "status": "unresolved",
+            "reason": "Property failsafe.jvm.args still contains placeholder: -Duser.language=en ${surefire.jvm.args.add-opens} ${surefire.jvm.args.illegal-access} -Dmaven.repo.local=${settings.localRepository} ${surefire.jvm.args.java-version} ${surefire.jvm.args.commandline}",
+            "source": "defaulted"
+          },
+          {
+            "field": "property:arquillian.wildfly.jvm.args",
+            "status": "unresolved",
+            "reason": "Property arquillian.wildfly.jvm.args still contains placeholder: -Duser.language=en ${arquillian.wildfly.jvm.args.add-opens} ${arquillian.wildfly.jvm.args.add-modules}",
+            "source": "defaulted"
+          },
+          {
+            "field": "java.home",
+            "status": "unresolved",
+            "reason": "Property ${java.home} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "java.home",
+            "status": "unresolved",
+            "reason": "Property ${java.home} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "java.specification.version",
+            "status": "unresolved",
+            "reason": "Property ${java.specification.version} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "java.home",
+            "status": "unresolved",
+            "reason": "Property ${java.home} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "java.home",
+            "status": "unresolved",
+            "reason": "Property ${java.home} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "java.home",
+            "status": "unresolved",
+            "reason": "Property ${java.home} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "java.home",
+            "status": "unresolved",
+            "reason": "Property ${java.home} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "java.specification.version",
+            "status": "unresolved",
+            "reason": "Property ${java.specification.version} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "java.specification.version",
+            "status": "unresolved",
+            "reason": "Property ${java.specification.version} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "java.specification.version",
+            "status": "unresolved",
+            "reason": "Property ${java.specification.version} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "settings.localRepository",
+            "status": "unresolved",
+            "reason": "Settings property ${settings.localRepository} not available from POM",
+            "source": "defaulted"
+          },
+          {
+            "field": "surefire.jvm.args.add-opens",
+            "status": "unresolved",
+            "reason": "Property ${surefire.jvm.args.add-opens} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "surefire.jvm.args.illegal-access",
+            "status": "unresolved",
+            "reason": "Property ${surefire.jvm.args.illegal-access} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "settings.localRepository",
+            "status": "unresolved",
+            "reason": "Settings property ${settings.localRepository} not available from POM",
+            "source": "defaulted"
+          },
+          {
+            "field": "surefire.jvm.args.java-version",
+            "status": "unresolved",
+            "reason": "Property ${surefire.jvm.args.java-version} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "surefire.jvm.args.commandline",
+            "status": "unresolved",
+            "reason": "Property ${surefire.jvm.args.commandline} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "surefire.jvm.args.add-opens",
+            "status": "unresolved",
+            "reason": "Property ${surefire.jvm.args.add-opens} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "surefire.jvm.args.illegal-access",
+            "status": "unresolved",
+            "reason": "Property ${surefire.jvm.args.illegal-access} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "settings.localRepository",
+            "status": "unresolved",
+            "reason": "Settings property ${settings.localRepository} not available from POM",
+            "source": "defaulted"
+          },
+          {
+            "field": "surefire.jvm.args.java-version",
+            "status": "unresolved",
+            "reason": "Property ${surefire.jvm.args.java-version} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "surefire.jvm.args.commandline",
+            "status": "unresolved",
+            "reason": "Property ${surefire.jvm.args.commandline} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "arquillian.wildfly.jvm.args.add-opens",
+            "status": "unresolved",
+            "reason": "Property ${arquillian.wildfly.jvm.args.add-opens} not defined in POM or parent chain",
+            "source": "defaulted"
+          },
+          {
+            "field": "arquillian.wildfly.jvm.args.add-modules",
+            "status": "unresolved",
+            "reason": "Property ${arquillian.wildfly.jvm.args.add-modules} not defined in POM or parent chain",
+            "source": "defaulted"
+          }
+        ],
+        "overall_confidence": "LOW",
+        "summary": "37 defaulted"
+      },
+      "eval": {
+        "l1_parse": true,
+        "l2_build": false,
+        "l3_command": false,
+        "l4_match": false,
+        "reward": 0.05,
+        "level_reached": 1,
+        "error_summary": "/bin/sh: 1: ./mvnw: not found\nError: building at STEP \"RUN ./mvnw -v -DskipTests -Dgpg.skip=true\": while running runtime: exit status 127",
+        "diff_summary": ""
+      },
+      "elapsed_seconds": 70.7
+    },
+    {
+      "coordinate": "com.jayway.jsonpath:json-path:2.9.0",
+      "reconstruct": "success",
+      "gap_report": {
+        "entries": [
+          {
+            "field": "runner_os",
+            "status": "mapped",
+            "reason": "ubuntu-latest mapped to ubuntu:24.04; this mapping may become stale",
+            "source": "inferred"
+          },
+          {
+            "field": "maven_version",
+            "status": "defaulted",
+            "reason": "No Maven wrapper or explicit version found; using system default",
+            "source": "defaulted"
+          }
+        ],
+        "overall_confidence": "MEDIUM",
+        "summary": "1 inferred, 1 defaulted"
+      },
+      "eval": {
+        "l1_parse": true,
+        "l2_build": false,
+        "l3_command": false,
+        "l4_match": false,
+        "reward": 0.05,
+        "level_reached": 1,
+        "error_summary": "/bin/sh: 1: gradle: not found\nError: building at STEP \"RUN gradle build --warning-mode all -DskipTests\": while running runtime: exit status 127",
+        "diff_summary": ""
+      },
+      "elapsed_seconds": 77.0
+    },
+    {
+      "coordinate": "junit:junit:4.13.2",
+      "reconstruct": "success",
+      "gap_report": {
+        "entries": [
+          {
+            "field": "runner_os",
+            "status": "mapped",
+            "reason": "ubuntu-latest mapped to ubuntu:24.04; this mapping may become stale",
+            "source": "inferred"
+          }
+        ],
+        "overall_confidence": "MEDIUM",
+        "summary": "1 inferred"
+      },
+      "eval": {
+        "l1_parse": true,
+        "l2_build": false,
+        "l3_command": false,
+        "l4_match": false,
+        "reward": 0.05,
+        "level_reached": 1,
+        "error_summary": "Trying to pull docker.io/library/eclipse-temurin:6-jdk...\nError: creating build container: unable to copy from source docker://eclipse-temurin:6-jdk: initializing source docker://eclipse-temurin:6-jdk: reading manifest 6-jdk in docker.io/library/eclipse-temurin: manifest unknown",
+        "diff_summary": ""
+      },
+      "elapsed_seconds": 19.4
+    },
+    {
+      "coordinate": "org.junit.jupiter:junit-jupiter-api:5.10.1",
+      "reconstruct": "success",
+      "gap_report": {
+        "entries": [
+          {
+            "field": "runner_os",
+            "status": "mapped",
+            "reason": "ubuntu-latest mapped to ubuntu:24.04; this mapping may become stale",
+            "source": "inferred"
+          },
+          {
+            "field": "maven_version",
+            "status": "defaulted",
+            "reason": "No Maven wrapper or explicit version found; using system default",
+            "source": "defaulted"
+          }
+        ],
+        "overall_confidence": "MEDIUM",
+        "summary": "1 inferred, 1 defaulted"
+      },
+      "eval": {
+        "l1_parse": true,
+        "l2_build": false,
+        "l3_command": false,
+        "l4_match": false,
+        "reward": 0.05,
+        "level_reached": 1,
+        "error_summary": "Setting up x11-common (1:7.7+23ubuntu3) ...\ninvoke-rc.d: could not determine current runlevel\ninvoke-rc.d: policy-rc.d denied execution of start.\ntime=\"2026-06-15T02:38:49Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& r",
+        "diff_summary": ""
+      },
+      "elapsed_seconds": 49.9
+    }
+  ]
+}

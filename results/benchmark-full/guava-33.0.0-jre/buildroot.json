@@ -1,0 +1,36 @@
+{
+  "source_repo": "https://github.com/google/guava",
+  "git_tag": "v33.0.0-jre",
+  "jdk_version": {
+    "value": "11",
+    "source": "observed",
+    "confidence": "JDK version from Build-Jdk-Spec in published JAR manifest"
+  },
+  "jdk_distribution": {
+    "value": "temurin",
+    "source": "observed"
+  },
+  "maven_version": {
+    "value": "3.9.12",
+    "source": "observed"
+  },
+  "build_command": {
+    "value": "./mvnw -B -ntp -Dtoolchain.skip install -U -DskipTests=true -f $ROOT_POM",
+    "source": "observed",
+    "confidence": "OBSERVED"
+  },
+  "base_image": {
+    "value": "eclipse-temurin:11",
+    "source": "observed"
+  },
+  "system_packages": [],
+  "dependencies": [],
+  "gap_report": [
+    {
+      "field": "runner_os",
+      "status": "mapped",
+      "reason": "ubuntu-latest mapped to ubuntu:24.04; this mapping may become stale",
+      "source": "inferred"
+    }
+  ]
+}

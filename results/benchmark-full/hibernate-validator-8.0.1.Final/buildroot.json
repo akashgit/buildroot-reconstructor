@@ -1,0 +1,252 @@
+{
+  "source_repo": "https://github.com/hibernate/hibernate-validator",
+  "git_tag": "8.0.1.Final",
+  "jdk_version": {
+    "value": "17",
+    "source": "observed",
+    "confidence": "JDK version from Build-Jdk-Spec in published JAR manifest"
+  },
+  "jdk_distribution": {
+    "value": "temurin",
+    "source": "observed"
+  },
+  "maven_version": {
+    "value": "3.9.16",
+    "source": "observed"
+  },
+  "build_command": {
+    "value": "./mvnw -v -DskipTests -Dgpg.skip=true",
+    "source": "observed",
+    "confidence": "OBSERVED"
+  },
+  "base_image": {
+    "value": "eclipse-temurin:17",
+    "source": "observed"
+  },
+  "system_packages": [],
+  "dependencies": [],
+  "gap_report": [
+    {
+      "field": "property:java-version.main.compiler.java_home",
+      "status": "unresolved",
+      "reason": "Property java-version.main.compiler.java_home still contains placeholder: ${java.home}",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:java-version.main.compiler",
+      "status": "unresolved",
+      "reason": "Property java-version.main.compiler still contains placeholder: ${java.home}/bin/javac",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:java-version.test.release",
+      "status": "unresolved",
+      "reason": "Property java-version.test.release still contains placeholder: ${java.specification.version}",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:java-version.test.compiler.java_home",
+      "status": "unresolved",
+      "reason": "Property java-version.test.compiler.java_home still contains placeholder: ${java.home}",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:java-version.test.compiler",
+      "status": "unresolved",
+      "reason": "Property java-version.test.compiler still contains placeholder: ${java.home}/bin/javac",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:java-version.test.launcher.java_home",
+      "status": "unresolved",
+      "reason": "Property java-version.test.launcher.java_home still contains placeholder: ${java.home}",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:java-version.test.launcher",
+      "status": "unresolved",
+      "reason": "Property java-version.test.launcher still contains placeholder: ${java.home}/bin/java",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:maven.compiler.testSource",
+      "status": "unresolved",
+      "reason": "Property maven.compiler.testSource still contains placeholder: ${java.specification.version}",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:maven.compiler.testTarget",
+      "status": "unresolved",
+      "reason": "Property maven.compiler.testTarget still contains placeholder: ${java.specification.version}",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:maven.compiler.testRelease",
+      "status": "unresolved",
+      "reason": "Property maven.compiler.testRelease still contains placeholder: ${java.specification.version}",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:surefire.jvm.args.shrinkwrap",
+      "status": "unresolved",
+      "reason": "Property surefire.jvm.args.shrinkwrap still contains placeholder: -Dmaven.repo.local=${settings.localRepository}",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:surefire.jvm.args",
+      "status": "unresolved",
+      "reason": "Property surefire.jvm.args still contains placeholder: -Duser.language=en ${surefire.jvm.args.add-opens} ${surefire.jvm.args.illegal-access} -Dmaven.repo.local=${settings.localRepository} ${surefire.jvm.args.java-version} ${surefire.jvm.args.commandline}",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:failsafe.jvm.args",
+      "status": "unresolved",
+      "reason": "Property failsafe.jvm.args still contains placeholder: -Duser.language=en ${surefire.jvm.args.add-opens} ${surefire.jvm.args.illegal-access} -Dmaven.repo.local=${settings.localRepository} ${surefire.jvm.args.java-version} ${surefire.jvm.args.commandline}",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:arquillian.wildfly.jvm.args",
+      "status": "unresolved",
+      "reason": "Property arquillian.wildfly.jvm.args still contains placeholder: -Duser.language=en ${arquillian.wildfly.jvm.args.add-opens} ${arquillian.wildfly.jvm.args.add-modules}",
+      "source": "defaulted"
+    },
+    {
+      "field": "java.home",
+      "status": "unresolved",
+      "reason": "Property ${java.home} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "java.home",
+      "status": "unresolved",
+      "reason": "Property ${java.home} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "java.specification.version",
+      "status": "unresolved",
+      "reason": "Property ${java.specification.version} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "java.home",
+      "status": "unresolved",
+      "reason": "Property ${java.home} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "java.home",
+      "status": "unresolved",
+      "reason": "Property ${java.home} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "java.home",
+      "status": "unresolved",
+      "reason": "Property ${java.home} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "java.home",
+      "status": "unresolved",
+      "reason": "Property ${java.home} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "java.specification.version",
+      "status": "unresolved",
+      "reason": "Property ${java.specification.version} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "java.specification.version",
+      "status": "unresolved",
+      "reason": "Property ${java.specification.version} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "java.specification.version",
+      "status": "unresolved",
+      "reason": "Property ${java.specification.version} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "settings.localRepository",
+      "status": "unresolved",
+      "reason": "Settings property ${settings.localRepository} not available from POM",
+      "source": "defaulted"
+    },
+    {
+      "field": "surefire.jvm.args.add-opens",
+      "status": "unresolved",
+      "reason": "Property ${surefire.jvm.args.add-opens} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "surefire.jvm.args.illegal-access",
+      "status": "unresolved",
+      "reason": "Property ${surefire.jvm.args.illegal-access} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "settings.localRepository",
+      "status": "unresolved",
+      "reason": "Settings property ${settings.localRepository} not available from POM",
+      "source": "defaulted"
+    },
+    {
+      "field": "surefire.jvm.args.java-version",
+      "status": "unresolved",
+      "reason": "Property ${surefire.jvm.args.java-version} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "surefire.jvm.args.commandline",
+      "status": "unresolved",
+      "reason": "Property ${surefire.jvm.args.commandline} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "surefire.jvm.args.add-opens",
+      "status": "unresolved",
+      "reason": "Property ${surefire.jvm.args.add-opens} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "surefire.jvm.args.illegal-access",
+      "status": "unresolved",
+      "reason": "Property ${surefire.jvm.args.illegal-access} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "settings.localRepository",
+      "status": "unresolved",
+      "reason": "Settings property ${settings.localRepository} not available from POM",
+      "source": "defaulted"
+    },
+    {
+      "field": "surefire.jvm.args.java-version",
+      "status": "unresolved",
+      "reason": "Property ${surefire.jvm.args.java-version} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "surefire.jvm.args.commandline",
+      "status": "unresolved",
+      "reason": "Property ${surefire.jvm.args.commandline} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "arquillian.wildfly.jvm.args.add-opens",
+      "status": "unresolved",
+      "reason": "Property ${arquillian.wildfly.jvm.args.add-opens} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "arquillian.wildfly.jvm.args.add-modules",
+      "status": "unresolved",
+      "reason": "Property ${arquillian.wildfly.jvm.args.add-modules} not defined in POM or parent chain",
+      "source": "defaulted"
+    }
+  ]
+}

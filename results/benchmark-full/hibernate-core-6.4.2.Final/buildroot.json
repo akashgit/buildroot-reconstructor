@@ -1,0 +1,36 @@
+{
+  "source_repo": "https://github.com/hibernate/hibernate-orm",
+  "git_tag": "v6.4.2.Final",
+  "jdk_version": {
+    "value": "25",
+    "source": "observed",
+    "confidence": "JDK version from CI setup-java action"
+  },
+  "jdk_distribution": {
+    "value": "temurin",
+    "source": "observed"
+  },
+  "maven_version": {
+    "value": "system-default",
+    "source": "defaulted"
+  },
+  "build_command": {
+    "value": "gradle --no-build-cache buildScanPublishPrevious || status=1 -DskipTests",
+    "source": "observed",
+    "confidence": "OBSERVED"
+  },
+  "base_image": {
+    "value": "eclipse-temurin:25",
+    "source": "observed"
+  },
+  "system_packages": [],
+  "dependencies": [],
+  "gap_report": [
+    {
+      "field": "maven_version",
+      "status": "defaulted",
+      "reason": "No Maven wrapper or explicit version found; using system default",
+      "source": "defaulted"
+    }
+  ]
+}

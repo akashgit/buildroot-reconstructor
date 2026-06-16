@@ -1,0 +1,120 @@
+{
+  "entries": [
+    {
+      "field": "runner_os",
+      "status": "mapped",
+      "reason": "ubuntu-latest mapped to ubuntu:24.04; this mapping may become stale",
+      "source": "inferred"
+    },
+    {
+      "field": "property:netty.dev.tools.directory",
+      "status": "unresolved",
+      "reason": "Property netty.dev.tools.directory still contains placeholder: ${project.build.directory}/dev-tools",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:jetty.alpnAgent.path",
+      "status": "unresolved",
+      "reason": "Property jetty.alpnAgent.path still contains placeholder: \"${settings.localRepository}\"/org/mortbay/jetty/alpn/jetty-alpn-agent/2.0.10/jetty-alpn-agent-2.0.10.jar",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:argLine.alpnAgent",
+      "status": "unresolved",
+      "reason": "Property argLine.alpnAgent still contains placeholder: -javaagent:\"${settings.localRepository}\"/org/mortbay/jetty/alpn/jetty-alpn-agent/2.0.10/jetty-alpn-agent-2.0.10.jar=${jetty.alpnAgent.option}",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:tcnative.classifier",
+      "status": "unresolved",
+      "reason": "Property tcnative.classifier still contains placeholder: ${os.detected.classifier}",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:jni.classifier",
+      "status": "unresolved",
+      "reason": "Property jni.classifier still contains placeholder: ${os.detected.name}-${os.detected.arch}",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:logging.config",
+      "status": "unresolved",
+      "reason": "Property logging.config still contains placeholder: ${project.basedir}/../common/src/test/resources/logback-test.xml",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:testJavaHome",
+      "status": "unresolved",
+      "reason": "Property testJavaHome still contains placeholder: ${java.home}",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:testJvm",
+      "status": "unresolved",
+      "reason": "Property testJvm still contains placeholder: ${java.home}/bin/java",
+      "source": "defaulted"
+    },
+    {
+      "field": "project.build.directory",
+      "status": "unresolved",
+      "reason": "Project property ${project.build.directory} not found in POM",
+      "source": "defaulted"
+    },
+    {
+      "field": "settings.localRepository",
+      "status": "unresolved",
+      "reason": "Settings property ${settings.localRepository} not available from POM",
+      "source": "defaulted"
+    },
+    {
+      "field": "settings.localRepository",
+      "status": "unresolved",
+      "reason": "Settings property ${settings.localRepository} not available from POM",
+      "source": "defaulted"
+    },
+    {
+      "field": "jetty.alpnAgent.option",
+      "status": "unresolved",
+      "reason": "Property ${jetty.alpnAgent.option} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "os.detected.classifier",
+      "status": "unresolved",
+      "reason": "Property ${os.detected.classifier} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "os.detected.name",
+      "status": "unresolved",
+      "reason": "Property ${os.detected.name} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "os.detected.arch",
+      "status": "unresolved",
+      "reason": "Property ${os.detected.arch} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "project.basedir",
+      "status": "unresolved",
+      "reason": "Project property ${project.basedir} not found in POM",
+      "source": "defaulted"
+    },
+    {
+      "field": "java.home",
+      "status": "unresolved",
+      "reason": "Property ${java.home} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "java.home",
+      "status": "unresolved",
+      "reason": "Property ${java.home} not defined in POM or parent chain",
+      "source": "defaulted"
+    }
+  ],
+  "overall_confidence": "LOW",
+  "summary": "1 inferred, 18 defaulted"
+}

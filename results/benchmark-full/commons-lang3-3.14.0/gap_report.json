@@ -1,0 +1,54 @@
+{
+  "entries": [
+    {
+      "field": "runner_os",
+      "status": "mapped",
+      "reason": "ubuntu-latest mapped to ubuntu:24.04; this mapping may become stale",
+      "source": "inferred"
+    },
+    {
+      "field": "property:commons.release.3.name",
+      "status": "unresolved",
+      "reason": "Property commons.release.3.name still contains placeholder: commons-lang3-${commons.release.3.version}",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:commons.manifestfile",
+      "status": "unresolved",
+      "reason": "Property commons.manifestfile still contains placeholder: ${project.build.directory}/osgi/MANIFEST.MF",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:commons.site.cache",
+      "status": "unresolved",
+      "reason": "Property commons.site.cache still contains placeholder: ${user.home}/commons-sites",
+      "source": "defaulted"
+    },
+    {
+      "field": "maven_version",
+      "status": "defaulted",
+      "reason": "No Maven wrapper or explicit version found; using system default",
+      "source": "defaulted"
+    },
+    {
+      "field": "commons.release.3.version",
+      "status": "unresolved",
+      "reason": "Property ${commons.release.3.version} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "project.build.directory",
+      "status": "unresolved",
+      "reason": "Project property ${project.build.directory} not found in POM",
+      "source": "defaulted"
+    },
+    {
+      "field": "user.home",
+      "status": "unresolved",
+      "reason": "Property ${user.home} not defined in POM or parent chain",
+      "source": "defaulted"
+    }
+  ],
+  "overall_confidence": "LOW",
+  "summary": "1 inferred, 7 defaulted"
+}

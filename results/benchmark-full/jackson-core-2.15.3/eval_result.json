@@ -1,0 +1,10 @@
+{
+  "l1_parse": true,
+  "l2_build": true,
+  "l3_command": true,
+  "l4_match": false,
+  "reward": 0.5,
+  "level_reached": 3,
+  "error_summary": "",
+  "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False"
+}

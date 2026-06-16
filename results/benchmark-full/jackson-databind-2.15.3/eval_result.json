@@ -1,0 +1,10 @@
+{
+  "l1_parse": true,
+  "l2_build": true,
+  "l3_command": true,
+  "l4_match": true,
+  "reward": 1.0,
+  "level_reached": 4,
+  "error_summary": "",
+  "diff_summary": ""
+}

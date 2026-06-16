@@ -1,0 +1,48 @@
+{
+  "source_repo": "",
+  "git_tag": "v10.1.18",
+  "jdk_version": {
+    "value": "17",
+    "source": "defaulted",
+    "confidence": "No JDK version signal found; defaulting to JDK 17"
+  },
+  "jdk_distribution": {
+    "value": "temurin",
+    "source": "defaulted"
+  },
+  "maven_version": {
+    "value": "system-default",
+    "source": "defaulted"
+  },
+  "build_command": {
+    "value": "mvn clean install -B -DskipTests -Papache-release",
+    "source": "observed",
+    "confidence": "OBSERVED"
+  },
+  "base_image": {
+    "value": "eclipse-temurin:17",
+    "source": "defaulted"
+  },
+  "system_packages": [],
+  "dependencies": [],
+  "gap_report": [
+    {
+      "field": "jdk_version",
+      "status": "defaulted",
+      "reason": "No JDK version signal found; defaulting to JDK 17",
+      "source": "defaulted"
+    },
+    {
+      "field": "maven_version",
+      "status": "defaulted",
+      "reason": "No Maven wrapper or explicit version found; using system default",
+      "source": "defaulted"
+    },
+    {
+      "field": "system_packages",
+      "status": "unknown",
+      "reason": "No CI data available to detect system packages",
+      "source": "defaulted"
+    }
+  ]
+}

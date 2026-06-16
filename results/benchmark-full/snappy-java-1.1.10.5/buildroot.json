@@ -1,0 +1,42 @@
+{
+  "source_repo": "https://github.com/xerial/snappy-java",
+  "git_tag": "v1.1.10.5",
+  "jdk_version": {
+    "value": "21",
+    "source": "observed",
+    "confidence": "JDK version from CI setup-java action"
+  },
+  "jdk_distribution": {
+    "value": "zulu",
+    "source": "observed"
+  },
+  "maven_version": {
+    "value": "system-default",
+    "source": "defaulted"
+  },
+  "build_command": {
+    "value": "mvn clean install -B -DskipTests",
+    "source": "observed",
+    "confidence": "OBSERVED"
+  },
+  "base_image": {
+    "value": "azul/zulu-openjdk:21",
+    "source": "observed"
+  },
+  "system_packages": [],
+  "dependencies": [],
+  "gap_report": [
+    {
+      "field": "runner_os",
+      "status": "mapped",
+      "reason": "ubuntu-latest mapped to ubuntu:24.04; this mapping may become stale",
+      "source": "inferred"
+    },
+    {
+      "field": "maven_version",
+      "status": "defaulted",
+      "reason": "No Maven wrapper or explicit version found; using system default",
+      "source": "defaulted"
+    }
+  ]
+}

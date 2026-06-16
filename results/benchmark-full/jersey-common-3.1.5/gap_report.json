@@ -1,0 +1,42 @@
+{
+  "entries": [
+    {
+      "field": "property:server.coverage.argline",
+      "status": "unresolved",
+      "reason": "Property server.coverage.argline still contains placeholder: ${failsafe.coverage.argline}",
+      "source": "defaulted"
+    },
+    {
+      "field": "property:surefire.security.argline",
+      "status": "unresolved",
+      "reason": "Property surefire.security.argline still contains placeholder: -Djava.security.manager -Djava.security.policy=${project.build.directory}/test-classes/surefire.policy",
+      "source": "defaulted"
+    },
+    {
+      "field": "maven_version",
+      "status": "defaulted",
+      "reason": "No Maven wrapper or explicit version found; using system default",
+      "source": "defaulted"
+    },
+    {
+      "field": "system_packages",
+      "status": "unknown",
+      "reason": "No CI data available to detect system packages",
+      "source": "defaulted"
+    },
+    {
+      "field": "failsafe.coverage.argline",
+      "status": "unresolved",
+      "reason": "Property ${failsafe.coverage.argline} not defined in POM or parent chain",
+      "source": "defaulted"
+    },
+    {
+      "field": "project.build.directory",
+      "status": "unresolved",
+      "reason": "Project property ${project.build.directory} not found in POM",
+      "source": "defaulted"
+    }
+  ],
+  "overall_confidence": "LOW",
+  "summary": "6 defaulted"
+}

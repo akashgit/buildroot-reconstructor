@@ -1,0 +1,10 @@
+{
+  "l1_parse": true,
+  "l2_build": false,
+  "l3_command": false,
+  "l4_match": false,
+  "reward": 0.05,
+  "level_reached": 1,
+  "error_summary": "time=\"2026-06-15T02:17:56Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+  "diff_summary": ""
+}
