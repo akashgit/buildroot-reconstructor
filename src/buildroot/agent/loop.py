@@ -263,10 +263,6 @@ def _run_agent_loop(
     spec, containerfile = _evaluate_candidates(variants, evaluator, coordinate, result, dead_ends)
     logger.info("Initial observation produced %d variants, best selected", len(variants))
 
-    # Early termination tracking
-    consecutive_no_improvement = 0
-    last_best_level = 0
-
     for t in range(max_iterations):
         logger.info("Iteration %d/%d for %s", t + 1, max_iterations, coordinate)
 
@@ -296,23 +292,6 @@ def _run_agent_loop(
         # P3: Save recipe at each level reached
         if eval_result.level_reached > 0:
             recipe_store.save(coordinate, eval_result.level_reached, containerfile, eval_result.reward)
-
-        # Early termination check
-        if eval_result.level_reached > last_best_level:
-            last_best_level = eval_result.level_reached
-            consecutive_no_improvement = 0
-        else:
-            consecutive_no_improvement += 1
-
-        if consecutive_no_improvement >= 3:
-            logger.info(
-                "Early termination: %d consecutive iterations with no level improvement for %s",
-                consecutive_no_improvement, coordinate,
-            )
-            result.status = "early_termination"
-            result.elapsed_seconds = time.time() - start_time
-            result.dead_ends = dead_ends
-            return result
 
         if eval_result.reward >= 0.98:
             logger.info("  Reward >= 0.98, running confirmation build...")
