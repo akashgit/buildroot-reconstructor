@@ -321,7 +321,7 @@ def _run_agent_loop(
                 result.status = "success"
                 result.elapsed_seconds = time.time() - start_time
                 result.dead_ends = dead_ends
-                recipe_store.save(coordinate, 4, containerfile, confirm.reward)
+                recipe_store.save(coordinate, confirm.level_reached, containerfile, confirm.reward)
                 logger.info("Confirmed success for %s in %d iterations", coordinate, t + 1)
                 return result
             else:
