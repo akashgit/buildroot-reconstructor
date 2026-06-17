@@ -351,7 +351,7 @@ def _run_agent_loop(
             return result
 
         # Re-observe with accumulated spec_overrides on each iteration
-        if spec_overrides and mode in ("explore", "meta_shift"):
+        if spec_overrides:
             try:
                 variants = observer.observe_top_k(coordinate, k=3, spec_overrides=spec_overrides)
                 if variants and variants[0][1]:
@@ -379,6 +379,10 @@ def _run_agent_loop(
                 continue
 
         logger.info("  mode=%s, fix_suggestion=%s", mode, analysis.fix_suggestion[:80])
+
+        if spec_overrides:
+            spec.update(spec_overrides)
+            logger.info("Applied %d spec_overrides to spec for Builder", len(spec_overrides))
 
         try:
             if mode == "exploit":
