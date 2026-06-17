@@ -5,6 +5,7 @@ from __future__ import annotations
 import logging
 import tempfile
 from pathlib import Path
+from typing import Any
 
 from buildroot.agent.node_agents import ALL_NODE_AGENTS
 from buildroot.agent.node_agents.failure_agents import (
@@ -37,10 +38,17 @@ class AgentAugmentedObserver(Observer):
         self._generator = ContainerfileGenerator()
         self._node_agents = [AgentCls() for AgentCls in ALL_NODE_AGENTS]
 
-    def observe(self, coordinate: str) -> tuple[BuildrootSpec, str]:
+    def observe(
+        self,
+        coordinate: str,
+        spec_overrides: dict[str, Any] | None = None,
+    ) -> tuple[BuildrootSpec, str]:
         spec, draft_containerfile = super().observe(coordinate)
         if not draft_containerfile:
             return spec, draft_containerfile
+
+        if spec_overrides:
+            self._apply_spec_overrides(spec, spec_overrides)
 
         gap_report = self._gap_detector.analyze(spec)
         spec.gaps = gap_report
@@ -52,7 +60,7 @@ class AgentAugmentedObserver(Observer):
 
         activated = 0
         for agent in self._node_agents:
-            if agent.should_activate(gap_report):
+            if agent.should_activate(gap_report, spec_overrides):
                 logger.info("  Activating %s for field=%s", agent.node_name, agent.field_name)
                 try:
                     candidates = agent.review(
@@ -70,6 +78,58 @@ class AgentAugmentedObserver(Observer):
         containerfile = self._apply_subdir(spec, containerfile)
 
         return spec, containerfile
+
+    def observe_top_k(
+        self,
+        coordinate: str,
+        k: int = 3,
+        spec_overrides: dict[str, Any] | None = None,
+    ) -> list[tuple[BuildrootSpec, str]]:
+        """Produce up to K (spec, containerfile) variants via top-K candidate forking."""
+        spec, draft_containerfile = super().observe(coordinate)
+        if not draft_containerfile:
+            return [(spec, draft_containerfile)]
+
+        if spec_overrides:
+            self._apply_spec_overrides(spec, spec_overrides)
+
+        gap_report = self._gap_detector.analyze(spec)
+        spec.gaps = gap_report
+
+        forked_specs: list[BuildrootSpec] = []
+        for agent in self._node_agents:
+            if agent.should_activate(gap_report, spec_overrides):
+                try:
+                    candidates = agent.review(
+                        spec, context={"containerfile": draft_containerfile},
+                    )
+                    variants = agent.apply_top_k(spec, candidates, k=k)
+                    if variants:
+                        forked_specs.extend(variants)
+                except Exception:
+                    logger.exception("Node agent %s failed in top-K", agent.node_name)
+
+        if not forked_specs:
+            for agent in self._node_agents:
+                if agent.should_activate(gap_report, spec_overrides):
+                    try:
+                        candidates = agent.review(
+                            spec, context={"containerfile": draft_containerfile},
+                        )
+                        agent.apply_best(spec, candidates)
+                    except Exception:
+                        logger.exception("Node agent %s failed", agent.node_name)
+            cf = self._re_render(spec)
+            cf = self._apply_subdir(spec, cf)
+            return [(spec, cf)]
+
+        results: list[tuple[BuildrootSpec, str]] = []
+        for variant_spec in forked_specs[:k]:
+            cf = self._re_render(variant_spec)
+            cf = self._apply_subdir(variant_spec, cf)
+            results.append((variant_spec, cf))
+
+        return results
 
     def _re_render(self, spec: BuildrootSpec) -> str:
         with tempfile.TemporaryDirectory(prefix="buildroot-rerender-") as tmpdir:
@@ -96,6 +156,27 @@ class AgentAugmentedObserver(Observer):
                 result.append(line)
 
         return "\n".join(result) + "\n"
+
+    @staticmethod
+    def _apply_spec_overrides(spec: BuildrootSpec, overrides: dict[str, Any]) -> None:
+        """Apply spec_overrides dict to the spec, mapping field names to values."""
+        for field_name, value in overrides.items():
+            if field_name == "base_image":
+                spec.jdk_spec.base_image = value
+            elif field_name == "jdk_version":
+                spec.jdk_spec.version = value
+            elif field_name == "jdk_distribution":
+                spec.jdk_spec.distribution = value
+            elif field_name == "build_command":
+                spec.build_commands = [value] if isinstance(value, str) else value
+            elif field_name == "maven_version":
+                spec.maven_version = value
+            elif field_name == "git_tag":
+                spec.git_tag = value
+            elif field_name == "source_repo":
+                spec.source_repo = value
+            else:
+                logger.warning("Unknown spec_override field: %s", field_name)
 
     def run_failure_agents(
         self,

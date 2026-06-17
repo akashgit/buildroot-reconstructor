@@ -2,9 +2,14 @@
 
 from __future__ import annotations
 
+import json
+import logging
 import uuid
 import time
 from dataclasses import dataclass, field
+from pathlib import Path
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -110,6 +115,75 @@ class EvalResult:
             "error_summary": self.error_summary,
             "comparison_verdict": self.comparison_verdict,
         }
+
+
+RECIPE_DIR = Path(".factory/recipes")
+
+
+class RecipeStore:
+    """Tiered recipe store — saves recipes at each successful level."""
+
+    def __init__(self, recipe_dir: Path | None = None) -> None:
+        self._dir = recipe_dir or RECIPE_DIR
+
+    def _coordinate_path(self, coordinate: str) -> Path:
+        safe = coordinate.replace(":", "_").replace(".", "_")
+        return self._dir / f"{safe}.json"
+
+    def load(self, coordinate: str) -> dict | None:
+        path = self._coordinate_path(coordinate)
+        if path.exists():
+            try:
+                return json.loads(path.read_text())
+            except (json.JSONDecodeError, OSError):
+                return None
+        return None
+
+    def save(
+        self,
+        coordinate: str,
+        level: int,
+        containerfile: str,
+        reward: float,
+    ) -> None:
+        self._dir.mkdir(parents=True, exist_ok=True)
+        path = self._coordinate_path(coordinate)
+
+        existing = self.load(coordinate) or {"coordinate": coordinate, "levels": {}}
+        level_key = f"l{level}"
+
+        if level_key not in existing["levels"] or existing["levels"][level_key].get("reward", 0) < reward:
+            existing["levels"][level_key] = {
+                "containerfile": containerfile,
+                "reward": reward,
+                "timestamp": time.time(),
+            }
+            path.write_text(json.dumps(existing, indent=2) + "\n")
+            logger.info("Recipe saved for %s at L%d (reward=%.2f)", coordinate, level, reward)
+
+    def best_level(self, coordinate: str) -> int:
+        recipe = self.load(coordinate)
+        if not recipe:
+            return 0
+        levels = recipe.get("levels", {})
+        best = 0
+        for key in levels:
+            try:
+                lvl = int(key[1:])
+                if lvl > best:
+                    best = lvl
+            except (ValueError, IndexError):
+                pass
+        return best
+
+    def get_containerfile(self, coordinate: str, level: int) -> str | None:
+        recipe = self.load(coordinate)
+        if not recipe:
+            return None
+        level_data = recipe.get("levels", {}).get(f"l{level}")
+        if level_data:
+            return level_data.get("containerfile")
+        return None
 
 
 class ProgressSignal:

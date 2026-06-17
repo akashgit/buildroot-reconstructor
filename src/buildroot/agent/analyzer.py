@@ -2,10 +2,14 @@
 
 from __future__ import annotations
 
+import json
 import logging
 import re
 from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any
 
+from buildroot.agent.claude_runner import spawn_claude_agent
 from buildroot.agent.models import DeadEndEntry, EvalResult
 
 logger = logging.getLogger(__name__)
@@ -520,6 +524,154 @@ def all_exhausted(dead_ends: list[DeadEndEntry]) -> bool:
     if not dead_ends:
         return False
     return all(de.is_exhausted for de in dead_ends)
+
+
+ANALYZE_AGENT_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "root_cause": {"type": "string"},
+        "responsible_agent": {"type": "string"},
+        "playbook_updates": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "rule_type": {"type": "string", "enum": ["DO", "DONT"]},
+                    "rule": {"type": "string"},
+                    "reasoning": {"type": "string"},
+                },
+                "required": ["rule_type", "rule", "reasoning"],
+            },
+        },
+        "spec_overrides": {"type": "object"},
+        "is_systemic": {"type": "boolean"},
+    },
+    "required": ["root_cause", "responsible_agent", "playbook_updates", "spec_overrides", "is_systemic"],
+}
+
+ANALYZE_AGENT_SYSTEM = """\
+You are the AnalyzeAgent for the buildroot reconstruction pipeline. After each failed \
+build iteration, you receive the build logs from all candidate builds and must:
+
+1. Diagnose the root cause of the failure
+2. Identify which node agent (jdk, image, tag, build_cmd, repo, etc.) is responsible
+3. Write playbook rules (DO/DON'T) for future iterations
+4. Suggest spec_overrides — field-level overrides for the next observe() cycle
+5. Flag systemic issues that won't be fixed by iterating
+
+Output structured JSON with root_cause, responsible_agent, playbook_updates, \
+spec_overrides (field_name -> value), and is_systemic flag.
+"""
+
+
+@dataclass
+class AnalyzeAgentResult:
+    root_cause: str = ""
+    responsible_agent: str = ""
+    playbook_updates: list[dict[str, str]] = field(default_factory=list)
+    spec_overrides: dict[str, Any] = field(default_factory=dict)
+    is_systemic: bool = False
+
+
+class AnalyzeAgent:
+    """Per-cycle analysis agent — Claude Code subprocess that diagnoses failures."""
+
+    def __init__(self, playbook_dir: str = ".factory/playbooks/node_agents") -> None:
+        self._playbook_dir = Path(playbook_dir)
+
+    def analyze_cycle(
+        self,
+        coordinate: str,
+        build_results: list[dict[str, Any]],
+        iteration: int,
+        dead_ends: list[DeadEndEntry],
+    ) -> AnalyzeAgentResult:
+        results_summary = json.dumps(build_results[:5], indent=2, default=str)[:4000]
+        dead_end_summary = "\n".join(
+            f"- [{de.error_class}] {de.approach} (failed {de.failure_count}x)"
+            for de in dead_ends if de.is_exhausted
+        ) or "None exhausted."
+
+        task = f"""\
+Analyze the failed build iteration {iteration} for {coordinate}.
+
+## Build Results (up to K candidates)
+{results_summary}
+
+## Dead-End Registry
+{dead_end_summary}
+
+Diagnose the root cause, identify the responsible node agent, and propose:
+1. Playbook DO/DON'T rules for future iterations
+2. spec_overrides (field_name -> new_value) to try in the next observe() cycle
+3. Whether this is a systemic issue that won't improve with iteration
+"""
+
+        agent_result = spawn_claude_agent(
+            task=task,
+            system_prompt=ANALYZE_AGENT_SYSTEM,
+            model="claude-sonnet-4-6",
+            json_schema=ANALYZE_AGENT_SCHEMA,
+            max_turns=5,
+            max_budget_usd=2.0,
+            timeout=300,
+        )
+
+        if agent_result.is_error:
+            logger.warning("AnalyzeAgent failed: %s", agent_result.error_message)
+            return AnalyzeAgentResult()
+
+        return self._parse_result(agent_result)
+
+    def _parse_result(self, agent_result) -> AnalyzeAgentResult:
+        output = agent_result.structured_output
+        if not output:
+            return AnalyzeAgentResult()
+
+        result = AnalyzeAgentResult(
+            root_cause=output.get("root_cause", ""),
+            responsible_agent=output.get("responsible_agent", ""),
+            playbook_updates=output.get("playbook_updates", []),
+            spec_overrides=output.get("spec_overrides", {}),
+            is_systemic=output.get("is_systemic", False),
+        )
+
+        if result.playbook_updates:
+            self._update_playbook(result.responsible_agent, result.playbook_updates)
+
+        return result
+
+    def _update_playbook(self, agent_name: str, updates: list[dict[str, str]]) -> None:
+        self._playbook_dir.mkdir(parents=True, exist_ok=True)
+        playbook_path = self._playbook_dir / f"{agent_name}.md"
+
+        existing = ""
+        if playbook_path.exists():
+            existing = playbook_path.read_text()
+
+        new_entries = []
+        for update in updates:
+            rule_type = update.get("rule_type", "DO")
+            rule = update.get("rule", "")
+            reasoning = update.get("reasoning", "")
+            entry = f"- [{rule_type}] {rule} — {reasoning} (helpful=0, harmful=0)"
+            if entry not in existing:
+                new_entries.append(entry)
+
+        if new_entries:
+            with open(playbook_path, "a") as f:
+                for entry in new_entries:
+                    f.write(entry + "\n")
+            logger.info(
+                "AnalyzeAgent wrote %d playbook entries for %s",
+                len(new_entries), agent_name,
+            )
+
+    def read_playbook(self, agent_name: str) -> str:
+        playbook_path = self._playbook_dir / f"{agent_name}.md"
+        if playbook_path.exists():
+            return playbook_path.read_text()
+        return ""
 
 
 def _suggest_fix(error_class: str, error_summary: str) -> str:

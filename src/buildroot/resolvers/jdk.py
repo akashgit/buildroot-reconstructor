@@ -301,7 +301,10 @@ class JdkResolver:
         image_base = DISTRIBUTION_IMAGE_MAP.get(dist_lower, DEFAULT_IMAGE_BASE)
         tag_version = self._normalize_version_for_tag(version)
         suffix = IMAGE_TAG_SUFFIX.get(image_base, "")
-        return f"{image_base}:{tag_version}{suffix}"
+        image = f"{image_base}:{tag_version}{suffix}"
+        if "." not in image_base.split("/")[0]:
+            image = f"docker.io/{'library/' if '/' not in image_base else ''}{image}"
+        return image
 
     @staticmethod
     def _normalize_version_for_tag(version: str) -> str:

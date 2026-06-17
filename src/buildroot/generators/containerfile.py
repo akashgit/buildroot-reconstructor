@@ -24,6 +24,10 @@ RUNNER_IMAGE_MAP = {
 
 DEFAULT_BUILD_COMMAND = "mvn clean install -B"
 
+REPRODUCIBLE_FLAGS = [
+    "-Dproject.build.outputTimestamp=1",
+]
+
 
 class ContainerfileGenerator:
     """Generate Containerfile and buildroot.json from a BuildrootSpec."""
@@ -174,9 +178,18 @@ class ContainerfileGenerator:
         }
 
     def _resolve_build_command(self, spec: BuildrootSpec) -> str:
-        if spec.build_commands:
-            return spec.build_commands[0]
-        return DEFAULT_BUILD_COMMAND
+        cmd = spec.build_commands[0] if spec.build_commands else DEFAULT_BUILD_COMMAND
+        return self._add_reproducible_flags(cmd)
+
+    @staticmethod
+    def _add_reproducible_flags(cmd: str) -> str:
+        if "mvn " not in cmd and not cmd.startswith("mvn"):
+            return cmd
+        for flag in REPRODUCIBLE_FLAGS:
+            key = flag.split("=")[0]
+            if key not in cmd:
+                cmd = cmd + " " + flag
+        return cmd
 
     def _build_command_provenance(self, spec: BuildrootSpec) -> tuple[str, str]:
         if spec.build_commands:

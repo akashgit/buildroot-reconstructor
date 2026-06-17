@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import copy
 import logging
 from dataclasses import dataclass, field
 from typing import Any
@@ -90,7 +91,11 @@ class NodeAgent:
     system_prompt: str = ""
     allowed_tools: tuple[str, ...] = ("Read", "Bash", "WebSearch")
 
-    def should_activate(self, gap_report: GapReport) -> bool:
+    def should_activate(
+        self, gap_report: GapReport, spec_overrides: dict[str, Any] | None = None,
+    ) -> bool:
+        if spec_overrides and self.field_name in spec_overrides:
+            return True
         for entry in gap_report.entries:
             if entry.field == self.field_name or entry.field.startswith(self.field_name):
                 if entry.source in (Source.DEFAULTED, Source.INFERRED):
@@ -124,6 +129,24 @@ class NodeAgent:
         )
         self._apply_candidate(spec, best)
         return True
+
+    def apply_top_k(
+        self, spec: BuildrootSpec, candidates: list[Candidate], k: int = 3,
+    ) -> list[BuildrootSpec]:
+        """Fork spec K times, one per top-K candidate. Returns K spec variants."""
+        if not candidates:
+            return []
+        ranked = sorted(candidates, key=lambda c: c.rank)[:k]
+        specs: list[BuildrootSpec] = []
+        for candidate in ranked:
+            forked = copy.deepcopy(spec)
+            self._apply_candidate(forked, candidate)
+            logger.info(
+                "Node %s forked spec with candidate: value=%s evidence=%s",
+                self.node_name, candidate.value[:80], candidate.evidence_type,
+            )
+            specs.append(forked)
+        return specs
 
     def _build_task(self, spec: BuildrootSpec, context: dict[str, Any]) -> str:
         raise NotImplementedError
