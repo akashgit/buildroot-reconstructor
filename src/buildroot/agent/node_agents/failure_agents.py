@@ -11,8 +11,8 @@ from buildroot.pipeline.models import BuildrootSpec
 
 logger = logging.getLogger(__name__)
 
-FAILURE_MODEL = "claude-opus-4-6"
-FAILURE_MAX_TURNS = 10
+FAILURE_MODEL = "claude-sonnet-4-6"
+FAILURE_MAX_TURNS = 15
 FAILURE_BUDGET_USD = 3.0
 FAILURE_TIMEOUT = 300
 

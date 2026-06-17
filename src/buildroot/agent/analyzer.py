@@ -612,9 +612,10 @@ Diagnose the root cause, identify the responsible node agent, and propose:
             system_prompt=ANALYZE_AGENT_SYSTEM,
             model="claude-sonnet-4-6",
             json_schema=ANALYZE_AGENT_SCHEMA,
-            max_turns=5,
+            max_turns=3,
             max_budget_usd=2.0,
             timeout=300,
+            disallowed_tools=["Bash", "Read", "Edit", "Write", "WebSearch", "WebFetch", "Agent"],
         )
 
         if agent_result.is_error:
