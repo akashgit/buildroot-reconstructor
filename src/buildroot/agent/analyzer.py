@@ -559,6 +559,23 @@ build iteration, you receive the build logs from all candidate builds and must:
 4. Suggest spec_overrides — field-level overrides for the next observe() cycle
 5. Flag systemic issues that won't be fixed by iterating
 
+## Valid spec_overrides field names
+
+You MUST use ONLY these exact field names in spec_overrides. Do NOT invent field names \
+like 'jdk_image', 'repo_url', 'repo_tag', 'pre_build_steps', or 'source_setup'.
+
+- base_image (or image): Docker base image, e.g. 'eclipse-temurin:17-jdk'
+- jdk_version: JDK version string, e.g. '17', '11', '8'
+- jdk_distribution: JDK distribution, e.g. 'temurin', 'openjdk'
+- build_command (or build_cmd): main build command, e.g. 'mvn clean install -B', 'ant jar', 'gradle build'
+- maven_version: Maven version string, e.g. '3.9.6'
+- git_tag (or tag, source_tag): git tag to clone
+- source_repo: git repository URL
+- system_package: space-separated apt packages to install (replaces existing list)
+- extra_packages (or apt_packages): additional apt packages to append
+- image_setup_cmds (or pre_build_cmds): list of commands to run before the main build
+- pre_build_cmd: single command to prepend before the main build
+
 Output structured JSON with root_cause, responsible_agent, playbook_updates, \
 spec_overrides (field_name -> value), and is_systemic flag.
 """

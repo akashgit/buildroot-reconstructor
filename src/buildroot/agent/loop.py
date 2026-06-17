@@ -368,7 +368,6 @@ def _run_agent_loop(
                         variants, evaluator, coordinate, result, dead_ends,
                     )
                     logger.info("Re-observed with spec_overrides, %d variants", len(variants))
-                    continue
             except Exception as e:
                 logger.warning("Re-observe with spec_overrides failed: %s", e)
 
@@ -385,7 +384,6 @@ def _run_agent_loop(
                 spec, containerfile = failure_result
                 attempt.fix_applied = "failure_agent_fix"
                 logger.info("Failure agent applied fix at level %d", eval_result.level_reached)
-                continue
 
         logger.info("  mode=%s, fix_suggestion=%s", mode, analysis.fix_suggestion[:80])
 
