@@ -363,6 +363,7 @@ def _run_agent_loop(
             try:
                 variants = observer.observe_top_k(coordinate, k=3, spec_overrides=spec_overrides)
                 if variants and variants[0][1]:
+                    variants.append((spec, containerfile))
                     spec, containerfile = _evaluate_candidates(
                         variants, evaluator, coordinate, result, dead_ends,
                     )
