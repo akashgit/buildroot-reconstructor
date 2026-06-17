@@ -1,0 +1,221 @@
+{
+  "coordinate": "org.apache.avro:avro:1.11.3",
+  "status": "budget_exhausted",
+  "best_reward": 0.15000000000000002,
+  "iterations": 15,
+  "elapsed_seconds": 3389.6,
+  "attempts": [
+    {
+      "id": "3ffe02af-72ab-4b3e-af2c-b5cec36f222b",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-16T09:43:36Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "failure_agent_fix",
+      "timestamp": 1781603018.9315698
+    },
+    {
+      "id": "d93fc8be-5d63-4fa7-8b5b-9776a4cc0845",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-16T09:45:08Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781603110.199166
+    },
+    {
+      "id": "4057cdc4-f71d-4c42-9364-8bab1d57e0f4",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781603339.163769
+    },
+    {
+      "id": "c5975f4d-2165-4333-b2d7-c54e7d3c144e",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781603598.975599
+    },
+    {
+      "id": "1cd0c418-d4e4-4366-8eb3-8eb3445f69da",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781603783.8454258
+    },
+    {
+      "id": "5235862e-2878-4869-bc6c-06391f6527b8",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781603983.904874
+    },
+    {
+      "id": "b1e7a197-6faa-48d5-b7c6-54213270f5ea",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781604144.874499
+    },
+    {
+      "id": "4e1e49ff-2538-44a0-a112-0095c37c16a3",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781604353.9252968
+    },
+    {
+      "id": "6335c7f6-3bcf-4df1-b0ce-cb12f68bfbef",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781604515.893589
+    },
+    {
+      "id": "4ed6ffe7-1e03-4697-ab7f-51d765be6fa8",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781604752.327898
+    },
+    {
+      "id": "8ebb9596-adaf-42f4-8dfc-0d7c442ec669",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781604953.019964
+    },
+    {
+      "id": "860a1cc1-cf04-4a21-89f4-0542c63c8fba",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781605120.7718039
+    },
+    {
+      "id": "478173aa-02c1-439d-84ac-d7f814c6436d",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781605306.340837
+    },
+    {
+      "id": "fa1b90f6-7ce8-494a-988c-aa296e9d73c2",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781605465.764263
+    },
+    {
+      "id": "107e2ad5-e52a-4e52-8748-f6b56b752081",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "",
+      "timestamp": 1781605624.217397
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "unknown",
+      "approach": "FROM ubuntu:24.04 | RUN mvn -B clean install -DskipTests -Dgpg.skip=true -Drat.skip=true",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "time=\"2026-06-16T09:45:08Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteracti"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/ubuntu:24.04 | RUN mvn -B clean install -DskipTests -Dgpg.skip=true -Drat.skip=true -Dmaven.jav",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-eclipse-temurin-8 | RUN mvn -B -ntp clean install \\",
+      "failure_count": 6,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-eclipse-temurin-11 | RUN mvn -B clean install \\",
+      "failure_count": 4,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    }
+  ]
+}

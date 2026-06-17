@@ -1,0 +1,250 @@
+{
+  "coordinate": "org.assertj:assertj-core:3.25.1",
+  "status": "budget_exhausted",
+  "best_reward": 0.15000000000000002,
+  "iterations": 15,
+  "elapsed_seconds": 2708.2,
+  "attempts": [
+    {
+      "id": "d2e090e1-ad01-4a49-9c33-f333a97dea70",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/13: FROM azul/zulu-openjdk:25\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781624160.9249947
+    },
+    {
+      "id": "20f8b0ae-0be8-4dd2-9fbb-a93df8029940",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Trying to pull docker.io/azul/zulu-openjdk:25...\nError: creating build container: initializing source docker://azul/zulu-openjdk:25: getting username and password: reading JSON file \"/home/lab/.docker/config.json\": open /home/lab/.docker/config.json: permission denied",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781624301.0545695
+    },
+    {
+      "id": "ee27149c-be4e-4950-9e75-f219547a8675",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Trying to pull docker.io/azul/zulu-openjdk:21...\nError: creating build container: initializing source docker://azul/zulu-openjdk:21: getting username and password: reading JSON file \"/home/lab/.docker/config.json\": open /home/lab/.docker/config.json: permission denied",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781624376.0568726
+    },
+    {
+      "id": "079e6890-69e7-4b71-b7fd-2c97a89ab9fb",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Trying to pull docker.io/library/eclipse-temurin:21-jdk...\nError: creating build container: initializing source docker://eclipse-temurin:21-jdk: getting username and password: reading JSON file \"/home/lab/.docker/config.json\": open /home/lab/.docker/config.json: permission denied",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781624452.334705
+    },
+    {
+      "id": "8490b3e0-8f40-4519-9276-57e360e250b9",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Trying to pull docker.io/library/ubuntu:22.04...\nError: creating build container: initializing source docker://ubuntu:22.04: getting username and password: reading JSON file \"/home/lab/.docker/config.json\": open /home/lab/.docker/config.json: permission denied",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781624521.0703576
+    },
+    {
+      "id": "710e15f3-2a4f-40ea-9ffb-1efb94814ab5",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Trying to pull docker.io/library/ubuntu:22.04...\nError: creating build container: initializing source docker://ubuntu:22.04: getting username and password: reading JSON file \"/home/lab/.docker/config.json\": open /home/lab/.docker/config.json: permission denied",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781624593.8667028
+    },
+    {
+      "id": "d210b7b3-36f7-4c42-89b4-24e0d9f87bab",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-21...\nError: creating build container: initializing source docker://maven:3.9-eclipse-temurin-21: getting username and password: reading JSON file \"/home/lab/.docker/config.json\": open /home/lab/.docker/config.json: permission denied",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781624675.3100145
+    },
+    {
+      "id": "c7520edb-9d14-485a-a374-7f46cd02f3d6",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-21...\nError: creating build container: initializing source docker://maven:3.9-eclipse-temurin-21: getting username and password: reading JSON file \"/home/lab/.docker/config.json\": open /home/lab/.docker/config.json: permission denied",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781624772.0936208
+    },
+    {
+      "id": "3ed0374b-6ced-47cc-9b36-8dbf7b4d2c7d",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Trying to pull docker.io/azul/zulu-openjdk:21-jdk...\nError: creating build container: initializing source docker://azul/zulu-openjdk:21-jdk: getting username and password: reading JSON file \"/home/lab/.docker/config.json\": open /home/lab/.docker/config.json: permission denied",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781624842.3983693
+    },
+    {
+      "id": "eb416666-88b2-4019-9318-1d72964882ff",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781625274.5968537
+    },
+    {
+      "id": "e798393f-b72e-4b5e-9578-f443c4fa76c3",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781625485.0606906
+    },
+    {
+      "id": "03d42c4e-5a05-481b-a2fa-3fe544fb1ff7",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781625729.4793444
+    },
+    {
+      "id": "8e9201cb-5c10-493e-ac79-50fc07b8f92c",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781625938.8770082
+    },
+    {
+      "id": "587dddd2-8a34-4c18-9ce3-7966fe401ae8",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781626134.303717
+    },
+    {
+      "id": "ee8f59fd-a764-427f-992b-d7e92c155c92",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "",
+      "timestamp": 1781626339.6729875
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/azul/zulu-openjdk:25 | RUN ./mvnw $MAVEN_ARGS -f assertj-core/pom.xml package -DskipTests",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "STEP 1/13: FROM azul/zulu-openjdk:25\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/azul/zulu-openjdk:25 | RUN ./mvnw -f assertj-core/pom.xml package -DskipTests -Dgpg.skip=true -Dcheckst",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "Trying to pull docker.io/azul/zulu-openjdk:25...\nError: creating build container: initializing source docker://azul/zulu-openjdk:25: getting username and password: reading JSON file \"/home/lab/.docker"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/azul/zulu-openjdk:21 | RUN ./mvnw -B -V -ntp -e -f assertj-core/pom.xml package -DskipTests -Dgpg.skip=",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "Trying to pull docker.io/azul/zulu-openjdk:21...\nError: creating build container: initializing source docker://azul/zulu-openjdk:21: getting username and password: reading JSON file \"/home/lab/.docker"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:21-jdk | ",
+      "failure_count": 6,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "Trying to pull docker.io/library/eclipse-temurin:21-jdk...\nError: creating build container: initializing source docker://eclipse-temurin:21-jdk: getting username and password: reading JSON file \"/home",
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/ubuntu:22.04 | ",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "Trying to pull docker.io/library/ubuntu:22.04...\nError: creating build container: initializing source docker://ubuntu:22.04: getting username and password: reading JSON file \"/home/lab/.docker/config.",
+        "Trying to pull docker.io/library/ubuntu:22.04...\nError: creating build container: initializing source docker://ubuntu:22.04: getting username and password: reading JSON file \"/home/lab/.docker/config."
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-eclipse-temurin-21 | ",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-21...\nError: creating build container: initializing source docker://maven:3.9-eclipse-temurin-21: getting username and password: reading JSON",
+        "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-21...\nError: creating build container: initializing source docker://maven:3.9-eclipse-temurin-21: getting username and password: reading JSON"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/azul/zulu-openjdk:21-jdk | ",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "Trying to pull docker.io/azul/zulu-openjdk:21-jdk...\nError: creating build container: initializing source docker://azul/zulu-openjdk:21-jdk: getting username and password: reading JSON file \"/home/lab"
+      ]
+    }
+  ]
+}

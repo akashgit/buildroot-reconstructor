@@ -1,0 +1,188 @@
+{
+  "coordinate": "org.springframework.boot:spring-boot:2.7.18",
+  "status": "budget_exhausted",
+  "best_reward": 0.15000000000000002,
+  "iterations": 15,
+  "elapsed_seconds": 4186.4,
+  "attempts": [
+    {
+      "id": "4e64bf32-aec9-4d47-8638-3c563b774556",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/16: FROM bellsoft/liberica-openjdk-debian:8\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781630967.206159
+    },
+    {
+      "id": "a773bd4c-41ad-438e-9487-1fa6ed043641",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781631238.2631047
+    },
+    {
+      "id": "cadbb728-cf51-4a6e-92c1-10e8fad06ae5",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781631483.8738246
+    },
+    {
+      "id": "3e5da6d7-cedc-4fe8-a556-c1c028dd1b42",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781631707.0708945
+    },
+    {
+      "id": "f040d728-6f46-47a1-8493-b8945e8a50ab",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781631940.3058252
+    },
+    {
+      "id": "2fbb2927-02de-40a4-879a-f3b5b7c38ea3",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781632191.4505153
+    },
+    {
+      "id": "8e1e3c0f-d68b-4265-83a2-4eeb977b1704",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781632459.6440878
+    },
+    {
+      "id": "a5a6bafc-30cc-43a1-9155-53c6c875c52c",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781632708.7442305
+    },
+    {
+      "id": "197e9ed1-6fa1-44f4-92bb-09a3e244a9e0",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781632952.5482595
+    },
+    {
+      "id": "d37ab49c-2b99-4ace-8652-ecf541ab8d5e",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781633189.8660834
+    },
+    {
+      "id": "914b062a-7418-47f6-8670-4f1c25971d97",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781633468.6004026
+    },
+    {
+      "id": "cc198f39-19cc-4c92-bead-37d7bbed03d6",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781633726.602761
+    },
+    {
+      "id": "5392cd3b-58c7-4a4a-bea4-2918bc307c31",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781633975.0382922
+    },
+    {
+      "id": "dad26d1f-ad84-4e8f-baf8-9b0e9df0bec8",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781634226.599408
+    },
+    {
+      "id": "9f27a317-9327-4e99-9309-eac6874bc5de",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "",
+      "timestamp": 1781634529.6513326
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/bellsoft/liberica-openjdk-debian:8 | ",
+      "failure_count": 14,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "STEP 1/16: FROM bellsoft/liberica-openjdk-debian:8\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    }
+  ]
+}

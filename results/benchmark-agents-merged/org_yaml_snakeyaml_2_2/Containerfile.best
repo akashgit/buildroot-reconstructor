@@ -1,0 +1,12 @@
+FROM docker.io/library/ubuntu:latest
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends git ca-certificates openjdk-11-jdk-headless maven && \
+    rm -rf /var/lib/apt/lists/*
+
+ENV JAVA_HOME=/usr/lib/jvm/java-11-openjdk-amd64
+
+RUN git clone --depth 1 --branch 'snakeyaml-2.2' 'https://bitbucket.org/snakeyaml/snakeyaml' /build
+WORKDIR /build
+
+RUN mvn clean install -B -Dmaven.test.skip=true

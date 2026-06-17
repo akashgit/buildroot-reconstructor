@@ -1,0 +1,131 @@
+{
+  "coordinate": "org.xerial.snappy:snappy-java:1.1.10.5",
+  "status": "success",
+  "best_reward": 1.0,
+  "iterations": 8,
+  "elapsed_seconds": 1149.7,
+  "attempts": [
+    {
+      "id": "26e10d3d-8a96-4305-9ca2-ad9b03d66415",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/12: FROM azul/zulu-openjdk:21\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781628948.2538114
+    },
+    {
+      "id": "6fa75ff9-c4c9-48b2-a3c8-4d760765db6a",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "build_tool/wrong_build_system",
+      "build_log_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please verify you invoked Maven from the correct directory. -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR] Re-run Maven using the -X switch to enable full debug logging.\n[ERROR] For more information about the errors and possible solutions, please",
+      "diff_summary": "",
+      "fix_applied": "refine: This project uses Gradle, not Maven. Switch the build command to use './gradlew build' or install Gr",
+      "timestamp": 1781629018.1601102
+    },
+    {
+      "id": "1e31aff3-f20b-464e-847b-f2017663d2b8",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781629110.823761
+    },
+    {
+      "id": "5ecf3881-c34a-4801-972a-830eaef6277f",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781629219.0018446
+    },
+    {
+      "id": "62c60d4d-93b4-46cd-a0bd-612b033b9334",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781629335.9211433
+    },
+    {
+      "id": "a731d38d-b976-4e09-b727-bc9405ce5755",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781629448.3511782
+    },
+    {
+      "id": "cd6137de-68e7-4a3a-8b9e-2dffe460cae5",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781629548.683424
+    },
+    {
+      "id": "07662839-d519-4109-8fe6-9104b48e580e",
+      "parent_id": null,
+      "reward": 1.0,
+      "level_reached": 4,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "",
+      "timestamp": 1781629662.5556843
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/azul/zulu-openjdk:21 | RUN mvn clean install -B -DskipTests",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "STEP 1/12: FROM azul/zulu-openjdk:21\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY"
+      ]
+    },
+    {
+      "error_class": "build_tool/wrong_build_system",
+      "approach": "FROM docker.io/azul/zulu-openjdk:21 | RUN mvn clean install -B -DskipTests",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please veri"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/azul/zulu-openjdk:21 | ",
+      "failure_count": 5,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        "",
+        ""
+      ]
+    }
+  ]
+}

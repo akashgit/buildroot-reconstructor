@@ -1,0 +1,261 @@
+{
+  "coordinate": "com.sun.mail:jakarta.mail:2.0.1",
+  "status": "budget_exhausted",
+  "best_reward": 0.5,
+  "iterations": 15,
+  "elapsed_seconds": 2858.0,
+  "attempts": [
+    {
+      "id": "0d253646-85fc-4b6f-8865-91d2f06854ec",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/6: FROM azul/zulu-openjdk:11\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781619430.508019
+    },
+    {
+      "id": "a40afe1b-74ff-41f9-af48-6e1a28793aca",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Trying to pull docker.io/azul/zulu-openjdk:11...\nError: creating build container: initializing source docker://azul/zulu-openjdk:11: getting username and password: reading JSON file \"/home/lab/.docker/config.json\": open /home/lab/.docker/config.json: permission denied",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781619500.4952579
+    },
+    {
+      "id": "689d376d-ce1e-47de-89f6-db69030ca776",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-11...\nError: creating build container: initializing source docker://maven:3.9-eclipse-temurin-11: getting username and password: reading JSON file \"/home/lab/.docker/config.json\": open /home/lab/.docker/config.json: permission denied",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781619557.9246576
+    },
+    {
+      "id": "6ec2c9a4-f5fa-458c-97b6-540bcd738107",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "plugin/configuration_error",
+      "build_log_summary": "[INFO] Compiling 241 source files to /build/mail/target/classes\n[WARNING] Cannot find annotation method 'value()' in type 'jdk.Profile+Annotation': class file for jdk.Profile+Annotation not found\n[WARNING] Cannot find annotation method 'value()' in type 'jdk.Profile+Annotation'\n[WARNING] /build/mail/src/main/java/jakarta/mail/Folder.java:[1635,20] finalize() in java.lang.Object has been deprecated\n[WARNING] /build/mail/src/main/java/jakarta/mail/util/SharedFileInputStream.java:[536,14] finalize(",
+      "diff_summary": "",
+      "fix_applied": "refine: Try skipping the failing plugin with -Dplugin.skip=true or updating the plugin version.\n\nSpecific en",
+      "timestamp": 1781619742.7992682
+    },
+    {
+      "id": "5b8a1123-21a1-44ba-a968-bcf0191ebed2",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781619907.2230234
+    },
+    {
+      "id": "3789776e-dbf2-4d2f-977e-7d49042f061b",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781620075.7431927
+    },
+    {
+      "id": "9c0a3329-a0ff-4fee-ae67-64b4a301e4da",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781620253.8671558
+    },
+    {
+      "id": "cc778134-d376-4b9d-ae45-e96c73a01d14",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-11...\nError: creating build container: initializing source docker://maven:3.9-eclipse-temurin-11: getting username and password: reading JSON file \"/home/lab/.docker/config.json\": open /home/lab/.docker/config.json: permission denied",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781620356.3893695
+    },
+    {
+      "id": "fc73eb6e-7e6c-4db4-9ee1-5e8124c67ff5",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "plugin/configuration_error",
+      "build_log_summary": "[INFO] Compiling 241 source files to /build/mail/target/classes\n[WARNING] Cannot find annotation method 'value()' in type 'jdk.Profile+Annotation': class file for jdk.Profile+Annotation not found\n[WARNING] Cannot find annotation method 'value()' in type 'jdk.Profile+Annotation'\n[WARNING] /build/mail/src/main/java/jakarta/mail/Folder.java:[1635,20] finalize() in java.lang.Object has been deprecated\n[WARNING] /build/mail/src/main/java/jakarta/mail/util/SharedFileInputStream.java:[536,14] finalize(",
+      "diff_summary": "",
+      "fix_applied": "refine: Try skipping the failing plugin with -Dplugin.skip=true or updating the plugin version.\n\nSpecific en",
+      "timestamp": 1781620540.5143604
+    },
+    {
+      "id": "3b35cc08-b82e-40b5-ac5c-bce961fe4f1f",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781620751.7843614
+    },
+    {
+      "id": "5f36997a-194c-451f-9794-858fb9430444",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781620897.650777
+    },
+    {
+      "id": "47eb745d-a1ec-4154-98b0-3b54a5f95fe0",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781621087.6328614
+    },
+    {
+      "id": "2203642e-ab56-46d0-aa4a-d0c2dbb34611",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781621227.360086
+    },
+    {
+      "id": "9251c37f-35a7-40fe-b7c9-855e03f10c27",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-11...\nError: creating build container: initializing source docker://maven:3.9-eclipse-temurin-11: getting username and password: reading JSON file \"/home/lab/.docker/config.json\": open /home/lab/.docker/config.json: permission denied",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781621319.7243726
+    },
+    {
+      "id": "ddca3f0d-d97f-4c85-a68e-2cc4c1fd6875",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-11...\nError: creating build container: initializing source docker://maven:3.9-eclipse-temurin-11: getting username and password: reading JSON file \"/home/lab/.docker/config.json\": open /home/lab/.docker/config.json: permission denied",
+      "diff_summary": "",
+      "fix_applied": "",
+      "timestamp": 1781621508.9799054
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/azul/zulu-openjdk:11 | RUN mvn -B -U -C -V clean verify org.glassfish.copyright:glassfish-copyright-mav",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "STEP 1/6: FROM azul/zulu-openjdk:11\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+        "Trying to pull docker.io/azul/zulu-openjdk:11...\nError: creating build container: initializing source docker://azul/zulu-openjdk:11: getting username and password: reading JSON file \"/home/lab/.docker"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-eclipse-temurin-11 | RUN mvn -B -U -C -V clean verify org.glassfish.copyright:glassfish-copyright-mav",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-11...\nError: creating build container: initializing source docker://maven:3.9-eclipse-temurin-11: getting username and password: reading JSON"
+      ]
+    },
+    {
+      "error_class": "plugin/configuration_error",
+      "approach": "FROM docker.io/library/eclipse-temurin:11-jdk-focal | RUN mvn -B -U -C -V clean verify org.glassfish.copyright:glassfish-copyright-mav",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "[INFO] Compiling 241 source files to /build/mail/target/classes\n[WARNING] Cannot find annotation method 'value()' in type 'jdk.Profile+Annotation': class file for jdk.Profile+Annotation not found\n[WAR"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:11-jdk-focal | RUN mvn -B -U -C -V clean verify -Poss-release,staging -Dcopyright.ignoreyear=tr",
+      "failure_count": 3,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-eclipse-temurin-11 | RUN mvn -B -U clean install -DskipTests -Dgpg.skip=true -Dmaven.javadoc.skip=tru",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-11...\nError: creating build container: initializing source docker://maven:3.9-eclipse-temurin-11: getting username and password: reading JSON"
+      ]
+    },
+    {
+      "error_class": "plugin/configuration_error",
+      "approach": "FROM docker.io/library/eclipse-temurin:11-jdk-focal | RUN mvn -B -U clean install -DskipTests -Dgpg.skip=true -Dmaven.javadoc.skip=tru",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "[INFO] Compiling 241 source files to /build/mail/target/classes\n[WARNING] Cannot find annotation method 'value()' in type 'jdk.Profile+Annotation': class file for jdk.Profile+Annotation not found\n[WAR"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:11-jdk-focal | RUN mvn -B -U clean install -P!build-only -DskipTests -Dgpg.skip=true -Dmaven.ja",
+      "failure_count": 4,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-eclipse-temurin-11 | RUN mvn -B -U -ntp clean package -DskipTests -Dgpg.skip=true -Dmaven.javadoc.ski",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-11...\nError: creating build container: initializing source docker://maven:3.9-eclipse-temurin-11: getting username and password: reading JSON"
+      ]
+    }
+  ]
+}

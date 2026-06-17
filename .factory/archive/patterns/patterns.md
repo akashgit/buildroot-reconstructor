@@ -4,7 +4,7 @@ tags:
   - patterns
 source: factory-archivist
 date: 2026-06-07
-updated: 2026-06-14T00:00
+updated: 2026-06-15T23:35
 ---
 
 # Cross-Project Patterns
@@ -132,3 +132,19 @@ Migrating from raw API calls to Claude Code subprocess agents produced a +0.0014
 ## 8/8 Keep Streak with Tool Restriction Guards Validates the Guard-Chain Safety Model
 Discovered in buildroot-reconstructor experiment #008 (8th consecutive KEEP, zero reverts).
 The project added `allowed_tools` restrictions to subprocess agents (e.g., Inner Builder gets Read/Edit/Bash but not WebSearch; Outer Researcher gets WebSearch but not Edit) alongside the existing 4-guard safety chain. After 8 experiments with zero reverts, the evidence strongly supports that the combination of (1) per-agent tool restrictions, (2) mutable surface guards, (3) CEO code review, and (4) eval scoring produces reliable quality gating. Pattern: for agentic systems that spawn sub-agents, restrict each agent's tool surface to the minimum needed for its task. This is defense-in-depth — even if the agent's prompt is wrong, tool restrictions bound the blast radius. Combined with file-level guards and code review, this produces a keep streak that validates the safety model.
+
+## Node-Scoped Agent Pipelines: Constrain LLM to Structured Data, Not Free-Form Output
+Discovered in buildroot-reconstructor experiment #009 (KEEP, 13 agents).
+When an LLM agent has full control over a complex artifact (e.g., an entire Containerfile), prose contamination and hallucination degrade output quality — the 33.3% solve rate ceiling. Decomposing the pipeline into node-scoped agents that each review ONE structured field (JDK version, repo URL, git tag) with evidence-ranked candidates produces more reliable results than a single agent rewriting the whole artifact. Each agent uses a JSON schema for structured output and ranks candidates by evidence type (`direct_observation > ci_inference > cross_reference > historical_pattern > ecosystem_heuristic > default`). Pattern: for pipelines where an LLM augments a deterministic process, scope each agent to one decision point with structured output rather than giving it broad generative control. This is analogous to tool-use decomposition in agentic systems — many small, constrained tool calls outperform one large generative step.
+
+## Failure Recovery Agents Should Be Tiered by Build Verification Level
+Discovered in buildroot-reconstructor experiment #009 (3 failure agents: L2/L3/L4).
+Post-build failure diagnosis requires different reasoning depth depending on which verification level failed. L2 failures (container build) are usually syntax/dependency issues diagnosable from build logs. L3 failures (source compilation) require understanding build tool configuration. L4 failures (artifact comparison) require deep bytecode/metadata analysis. Using a single failure agent for all levels wastes tokens on easy failures and lacks depth for hard ones. Pattern: tier failure recovery agents by severity/complexity level. Use cheaper models (Sonnet) for L2 failures where build logs are sufficient, and more capable models (Opus) for L3/L4 failures requiring cross-referencing multiple sources. Fire failure agents conservatively (iteration 0 only) to avoid cascading diagnosis loops.
+
+## Multi-Round Code Review Catches Subtle Interaction Bugs That Single-Pass Misses
+Discovered in buildroot-reconstructor experiment #009 (5 bugs across 3 review iterations).
+The 5 bugs caught across 3 review rounds fell into distinct categories: (1) state bugs (stale reward signal, mutable class variable) caught in round 1, (2) output corruption (WORKDIR duplication, image tag doubling) caught in round 2 via partial benchmark, (3) control flow bugs (failure agent loop re-entry, false-positive logging) caught in round 3. No single review pass would have caught all 5 because rounds 2-3 were informed by running the code. Pattern: for agent-heavy code changes, plan at least 3 review iterations: (1) static code review for logic/state bugs, (2) run partial benchmark to surface output corruption, (3) re-review with runtime observations to catch control flow issues. The image agent `-jdk-jdk` suffix bug exemplifies defects only visible in actual agent output.
+
+## 9/9 Keep Streak Validates Incremental Agent Layering as a Development Strategy
+Discovered in buildroot-reconstructor experiment #009 (9th consecutive KEEP, zero reverts).
+The project has maintained a perfect keep streak across 9 experiments spanning: core pipeline (#001-#003) → external validation (#004-#005) → agentic inner loop (#006) → intelligent outer loop (#007) → agent subprocess migration (#008) → node-scoped agents (#009). Each layer builds on the previous. The compound score trajectory (0.6433 → 0.845) with zero reverts validates that the combination of: (1) one-layer-per-experiment discipline, (2) 4-guard safety chain, (3) multi-round CEO code review, and (4) real E2E validation before verdict produces reliable quality gating at scale. The -0.001 noise in #009 demonstrates that KEEP decisions can correctly be made on code quality + partial validation even when full benchmark is incomplete.

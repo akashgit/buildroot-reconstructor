@@ -1,0 +1,16 @@
+FROM docker.io/library/eclipse-temurin:11-jdk
+
+# Maven version:  (source: defaulted, confidence: DEFAULTED)
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends maven && \
+    rm -rf /var/lib/apt/lists/*
+
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends git ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+RUN git clone --depth 1 --branch '9.37.3' 'https://bitbucket.org/connect2id/nimbus-jose-jwt' /build
+WORKDIR /build
+
+# Build command: mvn clean install -B -DskipTests -Dgpg.skip=true (source: observed, confidence: OBSERVED)
+RUN mvn clean install -B -DskipTests -Dgpg.skip=true

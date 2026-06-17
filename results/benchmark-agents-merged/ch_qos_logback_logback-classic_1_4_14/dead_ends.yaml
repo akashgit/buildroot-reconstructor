@@ -1,0 +1,51 @@
+- error_class: unknown
+  approach: FROM eclipse-temurin:21-jdk | RUN mvn -B install -DskipTests -pl 
+    logback-core,logback-classic -am
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+- error_class: unknown
+  approach: FROM docker.io/library/eclipse-temurin:21-jdk | RUN mvn -B install 
+    -DskipTests -pl logback-core,logback-classic -am \
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-17 | RUN mvn -B 
+    install -DskipTests -pl logback-core,logback-classic -am \
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+- error_class: unknown
+  approach: 'FROM docker.io/library/maven:3.9-eclipse-temurin-17 | '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+- error_class: unknown
+  approach: 'FROM docker.io/library/maven:3.9-eclipse-temurin-21 | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-11 | RUN mvn -B 
+    install -DskipTests -pl logback-core,logback-classic -am \
+  failure_count: 6
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'

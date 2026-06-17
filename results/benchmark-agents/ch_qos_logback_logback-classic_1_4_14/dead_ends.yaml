@@ -1,0 +1,27 @@
+- error_class: environment/image_resolution
+  approach: FROM eclipse-temurin:21-jdk-jdk | RUN mvn -B install -DskipTests
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "Trying to pull docker.io/library/eclipse-temurin:21-jdk-jdk...\nError: creating
+    build container: unable to copy from source docker://eclipse-temurin:21-jdk-jdk:
+    initializing source docker://eclipse-tem"
+- error_class: unknown
+  approach: FROM docker.io/library/eclipse-temurin:21-jdk | RUN mvn -B install 
+    -DskipTests
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - BUILD_FAILED
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-17 | RUN mvn -B 
+    install -DskipTests \
+  failure_count: 11
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+  - BUILD_FAILED

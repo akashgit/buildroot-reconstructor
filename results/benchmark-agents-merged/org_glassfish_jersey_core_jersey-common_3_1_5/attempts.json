@@ -1,0 +1,188 @@
+{
+  "coordinate": "org.glassfish.jersey.core:jersey-common:3.1.5",
+  "status": "budget_exhausted",
+  "best_reward": 0.5,
+  "iterations": 15,
+  "elapsed_seconds": 2759.0,
+  "attempts": [
+    {
+      "id": "5f410b7a-f42f-4e80-9d8b-162ca15dd0b4",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781616413.3632116
+    },
+    {
+      "id": "90fbc665-113f-4d5d-bacc-d124bcc54d02",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781616593.2587717
+    },
+    {
+      "id": "c0f6f66f-8a1a-4476-b6b9-0117f88ae638",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781616721.7647307
+    },
+    {
+      "id": "4a22846d-dc89-4d6e-a994-84e43d1c735b",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781616862.310809
+    },
+    {
+      "id": "3f9da558-4421-453b-bd04-f20bac75112a",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781617005.16613
+    },
+    {
+      "id": "0c588622-67c5-435e-9b6f-47d1c15fd2a4",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781617126.1141741
+    },
+    {
+      "id": "e5d656ef-d007-4d38-9a75-ad669d93bd98",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781617258.6535504
+    },
+    {
+      "id": "c7b6b4e9-e7e7-46e8-b6fb-a28be1b370de",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781617394.3448339
+    },
+    {
+      "id": "a1ed2137-2cb7-4246-a2cd-0b97d4dea4b9",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781617530.6550035
+    },
+    {
+      "id": "69c707cc-a903-4aa8-bf8c-3280b299c9de",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781617689.1367514
+    },
+    {
+      "id": "06264cbc-cafb-43fe-8abf-28060e05056f",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781617826.3598034
+    },
+    {
+      "id": "54cf2e81-9022-4d29-baf7-4ecfd410aee3",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781617963.4177232
+    },
+    {
+      "id": "7a162c23-b27b-40e5-9b80-928499484429",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781618094.2159827
+    },
+    {
+      "id": "f7fc1d46-3d39-42f9-a5d4-92a306ca56a3",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781618222.3728383
+    },
+    {
+      "id": "43fa7f39-bb1b-4bcb-b87e-56f11e14da57",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "",
+      "timestamp": 1781618358.95628
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "unknown",
+      "approach": "FROM eclipse-temurin:11-jdk | RUN mvn clean install -B -DskipTests -Dgpg.skip=true",
+      "failure_count": 14,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        "",
+        ""
+      ]
+    }
+  ]
+}

@@ -59,6 +59,7 @@ def run_outer_loop(
     model: str = "claude-opus-4-6",
     max_iterations: int = 15,
     output_dir: str = "results/agent-smoke",
+    node_agents: bool = False,
 ) -> dict:
     """Run the batch inner loop for each package and aggregate results (legacy API)."""
     return run_batch(
@@ -67,6 +68,7 @@ def run_outer_loop(
         model=model,
         max_iterations=max_iterations,
         output_dir=output_dir,
+        node_agents=node_agents,
     )
 
 
@@ -78,6 +80,7 @@ def run_batch(
     max_iterations: int = 15,
     output_dir: str = "results/agent-smoke",
     meta_guidance: str | None = None,
+    node_agents: bool = False,
 ) -> dict:
     """Run the inner loop for each package in the list and aggregate results."""
     packages = _load_packages(packages_file)
@@ -102,6 +105,7 @@ def run_batch(
                 host=host,
                 model=model,
                 meta_guidance=meta_guidance,
+                node_agents=node_agents,
             )
         except Exception as e:
             logger.error("Inner loop failed for %s: %s", coordinate, e)
@@ -129,10 +133,24 @@ def run_batch(
     solved = sum(1 for r in results if r["best_reward"] >= 0.98)
     solve_rate = round(solved / total, 4) if total > 0 else 0.0
 
+    def _best_level(r: dict) -> int:
+        for a in reversed(r.get("attempts", [])):
+            if a.get("level_reached", 0) > 0:
+                return a["level_reached"]
+        return 0
+
+    level_counts = {f"l{lvl}": 0 for lvl in range(1, 5)}
+    for r in results:
+        best = _best_level(r)
+        for lvl in range(1, 5):
+            if best >= lvl:
+                level_counts[f"l{lvl}"] += 1
+
     summary: dict = {
         "total_packages": total,
         "solved": solved,
         "solve_rate": solve_rate,
+        "level_counts": level_counts,
         "total_elapsed_seconds": round(elapsed, 1),
         "packages": results,
     }

@@ -1,0 +1,220 @@
+{
+  "coordinate": "net.minidev:json-smart:2.5.0",
+  "status": "budget_exhausted",
+  "best_reward": 0.15000000000000002,
+  "iterations": 15,
+  "elapsed_seconds": 2222.5,
+  "attempts": [
+    {
+      "id": "ee3505ab-5d1c-4577-8baf-f8f28b3ed56f",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/9: FROM eclipse-temurin:11-jdk\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781626821.247474
+    },
+    {
+      "id": "4ab3a7d5-d0a1-49d3-91c3-e29c69d47004",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Trying to pull docker.io/library/eclipse-temurin:17-jdk...\nError: creating build container: initializing source docker://eclipse-temurin:17-jdk: getting username and password: reading JSON file \"/home/lab/.docker/config.json\": open /home/lab/.docker/config.json: permission denied",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781626909.263894
+    },
+    {
+      "id": "2aa4f61d-0e34-45b9-8993-b7ede9fad1d5",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-17...\nError: creating build container: initializing source docker://maven:3.9-eclipse-temurin-17: getting username and password: reading JSON file \"/home/lab/.docker/config.json\": open /home/lab/.docker/config.json: permission denied",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781626985.6892483
+    },
+    {
+      "id": "425827f6-a006-4536-b751-a3107d400f1b",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-17...\nError: creating build container: initializing source docker://maven:3.9-eclipse-temurin-17: getting username and password: reading JSON file \"/home/lab/.docker/config.json\": open /home/lab/.docker/config.json: permission denied",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781627055.728096
+    },
+    {
+      "id": "01b2095b-24a7-448c-994e-469810e88921",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-17...\nError: creating build container: initializing source docker://maven:3.9-eclipse-temurin-17: getting username and password: reading JSON file \"/home/lab/.docker/config.json\": open /home/lab/.docker/config.json: permission denied",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781627139.1783702
+    },
+    {
+      "id": "ffc7400c-556a-47ec-ba49-261fcb62c2ec",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-17...\nError: creating build container: initializing source docker://maven:3.9-eclipse-temurin-17: getting username and password: reading JSON file \"/home/lab/.docker/config.json\": open /home/lab/.docker/config.json: permission denied",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781627229.7176445
+    },
+    {
+      "id": "f6cc63f0-1246-4861-8c41-c3ecc83e05e4",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-17...\nError: creating build container: initializing source docker://maven:3.9-eclipse-temurin-17: getting username and password: reading JSON file \"/home/lab/.docker/config.json\": open /home/lab/.docker/config.json: permission denied",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781627305.5228126
+    },
+    {
+      "id": "7a3bf5a0-e64c-43dc-8f74-aac08eede910",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-17...\nError: creating build container: initializing source docker://maven:3.9-eclipse-temurin-17: getting username and password: reading JSON file \"/home/lab/.docker/config.json\": open /home/lab/.docker/config.json: permission denied",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781627375.2726445
+    },
+    {
+      "id": "32aa5785-366f-4096-bc86-01700ea09f27",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781627536.563682
+    },
+    {
+      "id": "7f206c7d-f694-43a9-bb06-d7d2e149b791",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781627692.8343408
+    },
+    {
+      "id": "eef0d8d2-4454-4218-91bd-0b4485077054",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781627886.1092494
+    },
+    {
+      "id": "1b7fc9c9-eab4-4cc6-b51c-a6774cfbec37",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781628007.9886823
+    },
+    {
+      "id": "ac998678-668b-46c0-91fa-04792b84f063",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781628164.0841997
+    },
+    {
+      "id": "1ed468c7-d23a-46c9-91ea-3c9927f1147a",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781628416.715603
+    },
+    {
+      "id": "c81d6ea8-fa8c-42b9-84d5-ca93dd123237",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "",
+      "timestamp": 1781628562.1879
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:11-jdk | ",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "STEP 1/9: FROM eclipse-temurin:11-jdk\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:17-jdk | RUN cd json-smart && mvn -B clean install -DskipTests",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "Trying to pull docker.io/library/eclipse-temurin:17-jdk...\nError: creating build container: initializing source docker://eclipse-temurin:17-jdk: getting username and password: reading JSON file \"/home"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-eclipse-temurin-17 | RUN cd json-smart && mvn -B clean install -DskipTests",
+      "failure_count": 6,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-17...\nError: creating build container: initializing source docker://maven:3.9-eclipse-temurin-17: getting username and password: reading JSON",
+        "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-17...\nError: creating build container: initializing source docker://maven:3.9-eclipse-temurin-17: getting username and password: reading JSON",
+        "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-17...\nError: creating build container: initializing source docker://maven:3.9-eclipse-temurin-17: getting username and password: reading JSON"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:11-jdk | RUN cd json-smart && mvn -B clean install -DskipTests",
+      "failure_count": 6,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    }
+  ]
+}

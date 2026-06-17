@@ -1,0 +1,54 @@
+{
+  "coordinate": "org.apache.commons:commons-lang3:3.14.0",
+  "status": "success",
+  "best_reward": 1.0,
+  "iterations": 3,
+  "elapsed_seconds": 863.5,
+  "attempts": [
+    {
+      "id": "c61e471c-be99-433f-826b-8542635f38f8",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "environment/image_resolution",
+      "build_log_summary": "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-21-jdk...\nError: creating build container: unable to copy from source docker://maven:3.9-eclipse-temurin-21-jdk: initializing source docker://maven:3.9-eclipse-temurin-21-jdk: reading manifest 3.9-eclipse-temurin-21-jdk in docker.io/library/maven: manifest unknown",
+      "diff_summary": "",
+      "fix_applied": "failure_agent_fix",
+      "timestamp": 1781587778.9799669
+    },
+    {
+      "id": "f1f5fca6-0a66-448c-93f0-8245569b7693",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "environment/image_resolution",
+      "build_log_summary": "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-21-jdk...\nError: creating build container: unable to copy from source docker://maven:3.9-eclipse-temurin-21-jdk: initializing source docker://maven:3.9-eclipse-temurin-21-jdk: reading manifest 3.9-eclipse-temurin-21-jdk in docker.io/library/maven: manifest unknown",
+      "diff_summary": "",
+      "fix_applied": "refine: Use fully-qualified image names with docker.io/ prefix.",
+      "timestamp": 1781587812.539646
+    },
+    {
+      "id": "8b5d9fe2-0ae8-4396-8c5f-8228638e9993",
+      "parent_id": null,
+      "reward": 1.0,
+      "level_reached": 4,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "",
+      "timestamp": 1781587937.027551
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "environment/image_resolution",
+      "approach": "FROM maven:3.9-eclipse-temurin-21-jdk | RUN mvn --errors --show-version --batch-mode --no-transfer-progress -Ddoclint=al",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-21-jdk...\nError: creating build container: unable to copy from source docker://maven:3.9-eclipse-temurin-21-jdk: initializing source docker:/"
+      ]
+    }
+  ]
+}

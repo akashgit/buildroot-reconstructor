@@ -1,0 +1,74 @@
+- error_class: environment/image_resolution
+  approach: FROM eclipse-temurin:11-jdk-jdk | RUN mvn clean install -B 
+    -DskipTests -Dgpg.skip=true
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "Trying to pull docker.io/library/eclipse-temurin:11-jdk-jdk...\nError: creating
+    build container: unable to copy from source docker://eclipse-temurin:11-jdk-jdk:
+    initializing source docker://eclipse-tem"
+- error_class: unknown
+  approach: FROM docker.io/library/eclipse-temurin:11-jdk | RUN mvn clean 
+    install -B -DskipTests -Dgpg.skip=true
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-11 | RUN mvn clean 
+    install -B -DskipTests -Dgpg.skip=true -Dmaven.javadoc.skip=true -
+  failure_count: 3
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.8-eclipse-temurin-11 | RUN mvn clean 
+    install -B \
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "fatal: unable to auto-detect email address (got 'root@cd1555809f45.(none)')\n\
+    Error: building at STEP \"RUN git init && git add -A && git commit -m \"init\"\
+    \ --allow-empty\": while running runtime: exit stat"
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.8-amazoncorretto-11 | RUN mvn clean 
+    install -B \
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+- error_class: unknown
+  approach: 'FROM docker.io/library/maven:3.9-amazoncorretto-11-al2023 | '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - 'Error: parsing main Dockerfile: Containerfile: PYEOF: unterminated heredoc'
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-amazoncorretto-11-al2023 | RUN mvn 
+    clean package -B -e \
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - ''
+- error_class: plugin/configuration_error
+  approach: FROM docker.io/library/maven:3.9-amazoncorretto-11-al2023 | RUN mvn 
+    clean package -B -e \
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "[INFO] ------------------------------------------------------------------------\n\
+    [ERROR] Plugin org.apache.maven.plugins:maven-source-plugin:3.0.0 or one of its
+    dependencies could not be resolved:\n[ERR"

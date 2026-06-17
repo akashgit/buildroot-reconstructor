@@ -1,0 +1,95 @@
+- error_class: unknown
+  approach: 'FROM eclipse-temurin:8-jdk | '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+- error_class: unknown
+  approach: 'FROM docker.io/library/eclipse-temurin:8-jdk | '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+- error_class: unknown
+  approach: FROM docker.io/library/eclipse-temurin:8-jdk | RUN mvn package 
+    --batch-mode --errors -DskipTests -Dgpg.skip=true -Danimal-sniff
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+- error_class: unknown
+  approach: FROM docker.io/library/eclipse-temurin:8-jdk | RUN mvn package 
+    --batch-mode --errors -DskipTests \
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9.6-eclipse-temurin-8 | RUN mvn 
+    package --batch-mode --errors -DskipTests \
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+- error_class: unknown
+  approach: FROM docker.io/library/eclipse-temurin:8-jdk-jammy | RUN mvn package
+    --batch-mode --errors -DskipTests \
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-8 | RUN mvn package
+    --batch-mode --errors -DskipTests \
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+- error_class: unknown
+  approach: FROM docker.io/library/amazoncorretto:8-al2023 | RUN mvn package 
+    --batch-mode --errors -DskipTests \
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+- error_class: unknown
+  approach: 'FROM docker.io/library/eclipse-temurin:11-jdk | '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-11 | RUN mvn 
+    package --batch-mode --errors -DskipTests \
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+- error_class: unknown
+  approach: FROM docker.io/library/amazoncorretto:11-al2023 | RUN mvn package 
+    --batch-mode --errors -DskipTests \
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'
+- error_class: unknown
+  approach: FROM docker.io/library/eclipse-temurin:11-jdk-jammy | RUN mvn 
+    package --batch-mode --errors -DskipTests \
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - 'lab@localhost: Permission denied (publickey,gssapi-keyex,gssapi-with-mic).'

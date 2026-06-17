@@ -19,3 +19,4 @@
 - Multi-Release JAR support — detect Multi-Release: true in published manifest and configure maven-jar-plugin with multi-release profile so module-info.class is generated for Java 9+
 - Execute Level 3 container builds for all 10 test packages — code fixes complete (PR #3), Containerfiles generate correctly, but actual podman/docker build and artifact comparison not yet verified for each package
 - Level 4: Re-run artifact comparison on rh-h100 nodes — comparison pipeline code is complete (PR #7), but 0/10 builds succeeded due to upstream Containerfile issues (secrets in ARGs, wrong git tags, multi-module builds, podman short-name resolution). Fix Containerfile generation for these 5 failure classes, then re-run comparison. GitHub issue #5.
+- Node-scoped agents: Claude Code reviewer at every pipeline step (issue #24)

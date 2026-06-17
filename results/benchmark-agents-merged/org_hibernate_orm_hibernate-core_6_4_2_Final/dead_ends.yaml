@@ -1,0 +1,63 @@
+- error_class: unknown
+  approach: 'FROM eclipse-temurin:25-jdk | '
+  failure_count: 4
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "Error: parsing main Dockerfile: Containerfile: Syntax error - can't find = in
+    \"-Xmx4g\". Must be of the form: name=value"
+  - "Error: parsing main Dockerfile: Containerfile: Syntax error - can't find = in
+    \"-Xmx4g\". Must be of the form: name=value"
+  - "Error: parsing main Dockerfile: Containerfile: Syntax error - can't find = in
+    \"-Xmx4g\". Must be of the form: name=value"
+- error_class: unknown
+  approach: 'FROM docker.io/library/eclipse-temurin:17-jdk | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "Trying to pull docker.io/library/eclipse-temurin:17-jdk...\nError: creating build
+    container: initializing source docker://eclipse-temurin:17-jdk: getting username
+    and password: reading JSON file \"/home"
+  - "Trying to pull docker.io/library/eclipse-temurin:17-jdk...\nError: creating build
+    container: initializing source docker://eclipse-temurin:17-jdk: getting username
+    and password: reading JSON file \"/home"
+- error_class: unknown
+  approach: 'FROM docker.io/library/ubuntu:22.04 | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "Trying to pull docker.io/library/ubuntu:22.04...\nError: creating build container:
+    initializing source docker://ubuntu:22.04: getting username and password: reading
+    JSON file \"/home/lab/.docker/config."
+  - "Trying to pull docker.io/library/ubuntu:22.04...\nError: creating build container:
+    initializing source docker://ubuntu:22.04: getting username and password: reading
+    JSON file \"/home/lab/.docker/config."
+- error_class: unknown
+  approach: 'FROM docker.io/library/gradle:8-jdk17 | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "Trying to pull docker.io/library/gradle:8-jdk17...\nError: creating build container:
+    initializing source docker://gradle:8-jdk17: getting username and password: reading
+    JSON file \"/home/lab/.docker/con"
+  - "Trying to pull docker.io/library/gradle:8-jdk17...\nError: creating build container:
+    initializing source docker://gradle:8-jdk17: getting username and password: reading
+    JSON file \"/home/lab/.docker/con"
+- error_class: unknown
+  approach: 'FROM docker.io/library/eclipse-temurin:17-jdk-jammy | '
+  failure_count: 4
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "A problem occurred configuring project ':documentation'.\n> Could not resolve
+    all files for configuration ':documentation:classpath'.\n> Could not find com.burgstaller:okhttp-digest:1.10.\n\
+    Searched in th"
+  - "A problem occurred configuring project ':documentation'.\n> Could not resolve
+    all files for configuration ':documentation:classpath'.\n> Could not find com.burgstaller:okhttp-digest:1.10.\n\
+    Searched in th"
+  - "A problem occurred configuring project ':documentation'.\n> Could not resolve
+    all files for configuration ':documentation:classpath'.\n> Could not find com.burgstaller:okhttp-digest:1.10.\n\
+    Searched in th"

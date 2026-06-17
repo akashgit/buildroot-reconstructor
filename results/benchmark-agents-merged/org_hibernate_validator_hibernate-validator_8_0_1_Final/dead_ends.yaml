@@ -1,0 +1,28 @@
+- error_class: unknown
+  approach: 'FROM docker.io/library/eclipse-temurin:17-jdk | '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "STEP 1/19: FROM eclipse-temurin:17-jdk\nError: creating build container: short-name
+    resolution enforced but cannot prompt without a TTY"
+- error_class: unknown
+  approach: FROM docker.io/library/eclipse-temurin:17-jdk | RUN mvn -v && mvn 
+    clean install -pl engine -am -DskipTests -Dgpg.skip=true -Denf
+  failure_count: 10
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+  - BUILD_FAILED
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-17 | RUN mvn -v && 
+    mvn clean install -pl engine -am \
+  failure_count: 3
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+  - BUILD_FAILED

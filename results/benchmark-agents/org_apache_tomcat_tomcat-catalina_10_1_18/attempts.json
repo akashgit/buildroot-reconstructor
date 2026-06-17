@@ -1,0 +1,211 @@
+{
+  "coordinate": "org.apache.tomcat:tomcat-catalina:10.1.18",
+  "status": "budget_exhausted",
+  "best_reward": 0.15000000000000002,
+  "iterations": 15,
+  "elapsed_seconds": 1891.9,
+  "attempts": [
+    {
+      "id": "ba1d01af-fd05-4d82-b47c-089b57af4af1",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "environment/image_resolution",
+      "build_log_summary": "Trying to pull docker.io/library/eclipse-temurin:17-jdk-jdk...\nError: creating build container: unable to copy from source docker://eclipse-temurin:17-jdk-jdk: initializing source docker://eclipse-temurin:17-jdk-jdk: reading manifest 17-jdk-jdk in docker.io/library/eclipse-temurin: manifest unknown",
+      "diff_summary": "",
+      "fix_applied": "failure_agent_fix",
+      "timestamp": 1781585791.600666
+    },
+    {
+      "id": "5b28b45c-f0b2-439f-b9a4-12d2412b2d8a",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "environment/image_resolution",
+      "build_log_summary": "Trying to pull docker.io/library/eclipse-temurin:17-jdk-jdk...\nError: creating build container: unable to copy from source docker://eclipse-temurin:17-jdk-jdk: initializing source docker://eclipse-temurin:17-jdk-jdk: reading manifest 17-jdk-jdk in docker.io/library/eclipse-temurin: manifest unknown",
+      "diff_summary": "",
+      "fix_applied": "refine: Use fully-qualified image names with docker.io/ prefix.",
+      "timestamp": 1781585843.4479659
+    },
+    {
+      "id": "50c77b44-ed4f-4b79-8872-2cd2db528ab0",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "environment/image_resolution",
+      "build_log_summary": "Trying to pull docker.io/library/eclipse-temurin:17-jdk-jdk...\nError: creating build container: unable to copy from source docker://eclipse-temurin:17-jdk-jdk: initializing source docker://eclipse-temurin:17-jdk-jdk: reading manifest 17-jdk-jdk in docker.io/library/eclipse-temurin: manifest unknown",
+      "diff_summary": "",
+      "fix_applied": "refine: Use fully-qualified image names with docker.io/ prefix.",
+      "timestamp": 1781585886.436556
+    },
+    {
+      "id": "fd669c8b-8580-477c-8b2c-a9599de41f9f",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781585994.1388412
+    },
+    {
+      "id": "ce6fefca-3ad5-45da-8156-af1f7d2a8383",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781586065.788438
+    },
+    {
+      "id": "651c14d9-fc07-45b1-9c8e-4f634282910d",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781586170.085359
+    },
+    {
+      "id": "21892e0b-aaa3-4029-bc1f-cadfa2a5f85a",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781586279.318381
+    },
+    {
+      "id": "274c6871-e8ea-4538-86b3-cff5c5cf9e86",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781586386.027126
+    },
+    {
+      "id": "60218a15-f38c-47e9-ae43-82bafa29b635",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781586486.711284
+    },
+    {
+      "id": "d20f0c4c-7305-4406-912a-5c34a8f703d0",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781586596.547286
+    },
+    {
+      "id": "6e87f670-0ed6-4c9c-85b3-3819dd86f40f",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781586736.2131488
+    },
+    {
+      "id": "271495bd-54a3-4702-aea5-af983ac0a57b",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781586852.925629
+    },
+    {
+      "id": "92105d8e-2834-4555-bbd6-080a9ce4fe6f",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781586956.7080598
+    },
+    {
+      "id": "23e6838a-0c48-44f4-97a8-a2d203741d72",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781587052.130344
+    },
+    {
+      "id": "06d81bc6-539e-43bb-8fa8-a6d42ad8e3a0",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "",
+      "timestamp": 1781587173.296185
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "environment/image_resolution",
+      "approach": "FROM eclipse-temurin:17-jdk-jdk | RUN mvn clean install -B -DskipTests -Papache-release",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "Trying to pull docker.io/library/eclipse-temurin:17-jdk-jdk...\nError: creating build container: unable to copy from source docker://eclipse-temurin:17-jdk-jdk: initializing source docker://eclipse-tem",
+        "Trying to pull docker.io/library/eclipse-temurin:17-jdk-jdk...\nError: creating build container: unable to copy from source docker://eclipse-temurin:17-jdk-jdk: initializing source docker://eclipse-tem"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:17-jdk | ",
+      "failure_count": 7,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/amazoncorretto:17 | ",
+      "failure_count": 4,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    }
+  ]
+}

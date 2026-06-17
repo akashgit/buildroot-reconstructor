@@ -1,0 +1,199 @@
+{
+  "coordinate": "org.postgresql:postgresql:42.7.1",
+  "status": "budget_exhausted",
+  "best_reward": 0.15000000000000002,
+  "iterations": 15,
+  "elapsed_seconds": 3747.3,
+  "attempts": [
+    {
+      "id": "b99af35d-99a0-4701-aaea-1ccad5c44689",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Error: parsing main Dockerfile: Containerfile: Syntax error - can't find = in \"fs\". Must be of the form: name=value",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781623753.139771
+    },
+    {
+      "id": "a742f8b4-062c-47c6-8c07-bd3cc60ba960",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "\u001b[0m        \u001b[0;0;90mat org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)\n\u001b[0m        org.gradle.api.internal.provider.AbstractProperty$PropertyQueryException: Failed to query the value of task ':postgresql:compileJava' property 'options.release'.\n\u001b[0;0;90mat org.gradle.api.internal.provider.AbstractProperty.calculatePresence(AbstractProperty.java:70)\n\u001b[0m\u001b[0;0;90m            ... 151 more\n\u001b[0m            Caused by: org.gradle.api.internal.provider.Abst",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781623999.354804
+    },
+    {
+      "id": "52a30454-981f-4435-9496-38e6829a35d9",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781624224.858819
+    },
+    {
+      "id": "c31f134d-7e01-4499-8bee-d3f3b44ccfeb",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781624441.7101781
+    },
+    {
+      "id": "362065c9-41ab-477b-808e-6d626b741442",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781624653.5409157
+    },
+    {
+      "id": "5e43cdfc-1c70-4225-b370-1aa044c45c17",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781624895.8095891
+    },
+    {
+      "id": "d9ea09eb-e617-498b-8f22-186768a5bd44",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781625087.1508107
+    },
+    {
+      "id": "8fc35122-e58c-4daf-a952-cbfe714665d6",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781625296.4324496
+    },
+    {
+      "id": "e9c595ee-a8e5-4901-8475-168178fbf117",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781625549.6949239
+    },
+    {
+      "id": "06075bf1-1fb2-4cf8-90b4-9ea5da8c0b7a",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781625802.2559118
+    },
+    {
+      "id": "dd155829-95e4-44ba-99d6-7105364a2d67",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781626076.0191493
+    },
+    {
+      "id": "8d83586a-3669-41a0-9ca4-5fc2fe1e55ad",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781626349.4771059
+    },
+    {
+      "id": "6ae8f223-9952-41d0-8755-ff9992c4f5d2",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781626552.366702
+    },
+    {
+      "id": "e75476ad-5e9a-4ab3-8f82-c2dbdb6c995e",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781626750.0469778
+    },
+    {
+      "id": "349f73d0-360e-47cb-a048-2daa1acafdb1",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "",
+      "timestamp": 1781626984.8638937
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "unknown",
+      "approach": "FROM ubuntu:24.04 | ",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "Error: parsing main Dockerfile: Containerfile: Syntax error - can't find = in \"fs\". Must be of the form: name=value",
+        "\u001b[0m        \u001b[0;0;90mat org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)\n\u001b[0m        org.gradle.api.internal.provider.AbstractProperty$PropertyQueryExcepti"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/debian:bookworm-slim | ",
+      "failure_count": 12,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    }
+  ]
+}

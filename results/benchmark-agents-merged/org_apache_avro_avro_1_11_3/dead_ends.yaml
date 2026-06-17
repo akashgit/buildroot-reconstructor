@@ -1,0 +1,22 @@
+- error_class: unknown
+  approach: FROM ubuntu:24.04 | RUN mvn clean test -DskipTests -Dgpg.skip=true 
+    -Drat.skip=true -Papache-release
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - time="2026-06-16T15:39:55Z" level=error msg="+(UNHANDLED LOGLEVEL) 
+    &imagebuilder.Step{Env:[]string{\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\",
+    \"DEBIAN_FRONTEND=noninteracti
+- error_class: unknown
+  approach: FROM docker.io/library/ubuntu:24.04 | RUN mvn -B clean install 
+    -DskipTests -Dgpg.skip=true -Drat.skip=true -Dspotless.
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "gpg: no valid OpenPGP data found.\nError: building at STEP \"RUN apt-get update
+    &&     apt-get install -y --no-install-recommends wget apt-transport-https gpg
+    &&     wget -qO - https://packages.adoptium"
+  - "debconf: delaying package configuration, since apt-utils is not installed\nError:
+    building at STEP \"RUN wget -qO /tmp/jdk8.tar.gz \"https://api.adoptium.net/v3/binary/latest/8/ga/linux/x64/jdk/hotspot/n"

@@ -1,0 +1,52 @@
+- error_class: environment/image_resolution
+  approach: 'FROM eclipse-temurin:8-jdk-jdk | '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "Trying to pull docker.io/library/eclipse-temurin:8-jdk-jdk...\nError: creating
+    build container: unable to copy from source docker://eclipse-temurin:8-jdk-jdk:
+    initializing source docker://eclipse-temur"
+- error_class: unknown
+  approach: 'FROM docker.io/library/eclipse-temurin:8-jdk | '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/eclipse-temurin:8-jdk | RUN mvn -B -ff -ntp 
+    verify -DskipTests -Dgpg.skip=true
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-11 | RUN mvn -B -ff
+    package -DskipTests -Dgpg.skip=true -Danimal-sniffer.skip=true -D
+  failure_count: 5
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+  - ''
+- error_class: unknown
+  approach: 'FROM docker.io/library/eclipse-temurin:17-jdk | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-17 | RUN mvn -B -ff
+    -ntp package -DskipTests \
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''

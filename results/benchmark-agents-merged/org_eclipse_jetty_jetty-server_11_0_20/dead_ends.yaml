@@ -1,0 +1,47 @@
+- error_class: dependency_resolution/missing_artifact
+  approach: FROM eclipse-temurin:21-jdk | RUN mvn clean install -B -DskipTests 
+    -pl jetty-server -am
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "[INFO] ------------------------------------------------------------------------\n\
+    [ERROR] Failed to execute goal on project jetty-server: Could not resolve dependencies
+    for project org.eclipse.jetty:jet"
+- error_class: unknown
+  approach: FROM eclipse-temurin:21-jdk | RUN mvn clean install -B -DskipTests 
+    -pl jetty-server,tests/jetty-http-tools -am
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - BUILD_FAILED
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-21 | RUN mvn clean 
+    install -B -DskipTests -pl jetty-server,tests/jetty-http-tools -am
+  failure_count: 3
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+  - BUILD_FAILED
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-17 | RUN mvn clean 
+    install -B -DskipTests -pl jetty-server -am \
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-11 | RUN mvn clean 
+    install -B -ntp -DskipTests -pl jetty-server -am \
+  failure_count: 7
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+  - BUILD_FAILED

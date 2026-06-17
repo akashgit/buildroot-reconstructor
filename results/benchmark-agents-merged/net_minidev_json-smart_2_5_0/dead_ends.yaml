@@ -1,0 +1,44 @@
+- error_class: unknown
+  approach: 'FROM docker.io/library/eclipse-temurin:11-jdk | '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "STEP 1/9: FROM eclipse-temurin:11-jdk\nError: creating build container: short-name
+    resolution enforced but cannot prompt without a TTY"
+- error_class: unknown
+  approach: FROM docker.io/library/eclipse-temurin:17-jdk | RUN cd json-smart &&
+    mvn -B clean install -DskipTests
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "Trying to pull docker.io/library/eclipse-temurin:17-jdk...\nError: creating build
+    container: initializing source docker://eclipse-temurin:17-jdk: getting username
+    and password: reading JSON file \"/home"
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-17 | RUN cd 
+    json-smart && mvn -B clean install -DskipTests
+  failure_count: 6
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-17...\nError: creating
+    build container: initializing source docker://maven:3.9-eclipse-temurin-17: getting
+    username and password: reading JSON"
+  - "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-17...\nError: creating
+    build container: initializing source docker://maven:3.9-eclipse-temurin-17: getting
+    username and password: reading JSON"
+  - "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-17...\nError: creating
+    build container: initializing source docker://maven:3.9-eclipse-temurin-17: getting
+    username and password: reading JSON"
+- error_class: unknown
+  approach: FROM docker.io/library/eclipse-temurin:11-jdk | RUN cd json-smart &&
+    mvn -B clean install -DskipTests
+  failure_count: 6
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+  - BUILD_FAILED

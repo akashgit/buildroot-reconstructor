@@ -1,0 +1,16 @@
+FROM docker.io/library/eclipse-temurin:21-jdk
+
+# Maven version:  (source: defaulted, confidence: DEFAULTED)
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends maven && \
+    rm -rf /var/lib/apt/lists/*
+
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends git ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+RUN git clone --depth 1 --branch 'v_1.4.14' 'https://github.com/qos-ch/logback' /build
+WORKDIR /build
+
+# Build command: mvn -B install -DskipTests (source: observed, confidence: OBSERVED)
+RUN mvn -B install -DskipTests

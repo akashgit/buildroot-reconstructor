@@ -1,0 +1,27 @@
+FROM docker.io/library/eclipse-temurin:11-jdk-focal
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+      git perl ca-certificates curl unzip && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+ENV JAVA_HOME=/opt/java/openjdk
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
+
+RUN git clone --branch '3.6.1' --depth 1 'https://github.com/apache/kafka.git' /build
+WORKDIR /build
+
+# Rewrite settings.gradle to remove Gradle Enterprise plugins, gradleEnterprise block, and buildCache block
+RUN sed -n '/^include /,$p' settings.gradle > settings.gradle.tmp && \
+    mv settings.gradle.tmp settings.gradle
+
+# Remove retry { ... } blocks injected by the Gradle Enterprise test-retry plugin
+RUN perl -0777 -i -pe 's/\n\s*retry\s*\{[^}]*\}//gs' build.gradle
+
+RUN chmod +x gradlew && \
+    ./gradlew :clients:jar \
+      -x test -x integrationTest -x unitTest \
+      -x rat -x checkstyleMain -x checkstyleTest \
+      -x spotbugsMain -x spotbugsTest -x javadoc \
+      --no-daemon --no-scan --no-build-cache \
+      -PskipSigning=true -PcommitId=unknown

@@ -1,0 +1,23 @@
+FROM docker.io/library/eclipse-temurin:8-jdk
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# System packages (source: CI workflow apt-get steps, confidence: OBSERVED)
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    subversion \
+    && rm -rf /var/lib/apt/lists/*
+
+# Maven version:  (source: defaulted, confidence: DEFAULTED)
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends maven && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends git ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+RUN git clone --depth 1 --branch 'commons-fileupload-1.5' 'https://github.com/apache/commons-fileupload' /build
+WORKDIR /build
+
+# Build command: mvn --errors --show-version --batch-mode --no-transfer-progress -DskipTests -Dgpg.skip=true -Drat.skip=true (source: observed, confidence: OBSERVED)
+RUN mvn --errors --show-version --batch-mode --no-transfer-progress -DskipTests -Dgpg.skip=true -Drat.skip=true -Dantrun.skip=true -Dcheckstyle.skip=true -Denforcer.skip=true -Danimal.sniffer.skip=true -Dmaven.javadoc.skip=true -Dpmd.skip=true -Dspotbugs.skip=true -Djacoco.skip=true

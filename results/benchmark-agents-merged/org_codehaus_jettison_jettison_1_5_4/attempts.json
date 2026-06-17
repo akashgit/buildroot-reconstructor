@@ -1,0 +1,43 @@
+{
+  "coordinate": "org.codehaus.jettison:jettison:1.5.4",
+  "status": "success",
+  "best_reward": 1.0,
+  "iterations": 2,
+  "elapsed_seconds": 545.6,
+  "attempts": [
+    {
+      "id": "d0a89972-c20b-4560-bf51-e2de620105e4",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/7: FROM eclipse-temurin:8-jdk\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781630094.5734787
+    },
+    {
+      "id": "bfd69a7c-62bd-4417-b2ec-71b9024853af",
+      "parent_id": null,
+      "reward": 1.0,
+      "level_reached": 4,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "",
+      "timestamp": 1781630178.568036
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:8-jdk | RUN mvn -U clean install -Djava.awt.headless=true -fae -B -DskipTests",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "STEP 1/7: FROM eclipse-temurin:8-jdk\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY"
+      ]
+    }
+  ]
+}

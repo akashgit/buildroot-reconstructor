@@ -1,26 +1,19 @@
 # Researcher Agent Output
 
-- **timestamp:** 2026-06-14T00:36:01Z
+- **timestamp:** 2026-06-16T02:03:44Z
 - **exit_code:** 0
 
 ---
 
-Research complete. Written to `.factory/strategy/research-external.md` with 15 sections covering:
+Research report written to `.factory/strategy/research-external.md`. It covers 7 sections:
 
-1. **Core `claude -p` pattern** — exact flags, behaviors, startup overhead (3-5s)
-2. **System prompt customization** — recommends `--append-system-prompt-file` to preserve default tool guidance
-3. **Structured output** — `--json-schema` for the Outer Strategist's `CodeChangeHypothesis`; plain `--output-format json` for Builder/Researcher
-4. **Bare mode** — `--bare` reduces token overhead from ~50K to ~10-15K per invocation
-5. **Python subprocess pattern** — complete `spawn_claude_agent()` reference implementation with timeout, error handling, temp file management
-6. **Permission modes** — `--dangerously-skip-permissions` with deny-rule safety net
-7. **Cost/turn limits** — per-agent recommended settings (Inner Builder: 30 turns/$5, Strategist: 10 turns/$2)
-8. **Vertex AI integration** — env vars (`CLAUDE_CODE_USE_VERTEX`, `ANTHROPIC_VERTEX_REGION`, etc.)
-9. **Agent SDK vs subprocess** — recommends subprocess for debuggability and structured output support
-10. **Error handling patterns** — exit codes, JSON-level errors, timeout handling, common failure modes
-11. **Prior archive knowledge** — 6 relevant papers/sources already in the archive that validate the approach
-12. **Per-agent implementation specs** — exact configurations for all 4 agents
-
-Key finding: a shared `claude_runner.py` utility module should handle subprocess lifecycle for all agents, with per-agent configuration for system prompts, schemas, turn limits, and budgets.
+1. **Multi-agent pipeline patterns** — recommends 4-5 reviewer agents at error-prone nodes (not all 13 steps), based on Anthropic's own multi-agent architecture and production pipeline patterns
+2. **Claude Code subprocess scoping** — node reviewers should use Sonnet, 5-10 turns, $0.25-0.50 budget, structured JSON output via `--json-schema`
+3. **Docker Hub tag verification** — HEAD request to `/v2/<name>/manifests/<tag>` with bearer token auth; includes Python implementation
+4. **Git tag discovery** — `git ls-remote --tags --refs` patterns, covering the 5 common tag naming conventions across Maven projects
+5. **Maven POM edge cases** — property inheritance chains, BOM import ordering, relocated artifacts, circular import prohibition
+6. **Container image tag conventions** — Temurin (`{ver}-jdk[-os]`), Liberica (OS in repo name), Corretto, Zulu patterns + a concrete bug found in `_map_distribution_to_image()` (missing `-jdk` suffix for Temurin tags)
+7. **Implementation roadmap** — phased approach: deterministic verification functions first, then 4 reviewer agents, then pipeline integration. Cost estimate: ~$0.04 per package, ~$1.24 for full benchmark.
 ---
 
 > **⚠ CEO IDENTITY RE-ANCHOR (Sacred Rule 8)**

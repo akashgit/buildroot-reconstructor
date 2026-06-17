@@ -1,0 +1,21 @@
+FROM docker.io/library/eclipse-temurin:11-jdk-focal
+
+ENV MAVEN_VERSION=3.9.6
+ENV MAVEN_HOME=/opt/maven
+ENV PATH="${MAVEN_HOME}/bin:${PATH}"
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends git ca-certificates curl && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN curl -fsSL https://archive.apache.org/dist/maven/maven-3/${MAVEN_VERSION}/binaries/apache-maven-${MAVEN_VERSION}-bin.tar.gz | tar xzf - -C /opt && \
+    mv /opt/apache-maven-${MAVEN_VERSION} ${MAVEN_HOME}
+
+RUN git clone --depth 1 --branch '2.0.1' 'https://github.com/jakartaee/mail-api' /build
+WORKDIR /build
+
+RUN mvn -B -U -N install
+
+WORKDIR /build/mail
+
+RUN mvn -B -U -C -V clean verify -Poss-release,staging -Dcopyright.ignoreyear=true -Dgpg.skip=true -DskipTests -Dcheckstyle.skip=true -Denforcer.skip=true -Danimal.sniffer.skip=true -Dmaven.javadoc.skip=true -Dpmd.skip=true -Dspotbugs.skip=true -Drat.skip=true -Djacoco.skip=true

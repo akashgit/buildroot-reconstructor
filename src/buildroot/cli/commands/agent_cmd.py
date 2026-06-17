@@ -19,8 +19,9 @@ import click
 @click.option("--outer-loop", "outer_loop", is_flag=True, help="Run intelligent outer loop with self-improvement")
 @click.option("--target-solve-rate", default=1.0, type=float, help="Target solve rate for outer loop (0.0-1.0)")
 @click.option("--max-cycles", default=5, type=int, help="Max outer loop cycles")
+@click.option("--node-agents", "node_agents", is_flag=True, help="Enable node-scoped Claude Code reviewer agents at each pipeline step")
 @click.option("-v", "--verbose", is_flag=True, help="Enable debug logging")
-def agent_cmd(coordinate, host, max_iterations, model, batch, output, outer_loop, target_solve_rate, max_cycles, verbose):
+def agent_cmd(coordinate, host, max_iterations, model, batch, output, outer_loop, target_solve_rate, max_cycles, node_agents, verbose):
     """Run agentic reconstruction loop for a Maven COORDINATE.
 
     Single package: buildroot agent org.apache.commons:commons-lang3:3.14.0
@@ -60,6 +61,7 @@ def agent_cmd(coordinate, host, max_iterations, model, batch, output, outer_loop
             model=model,
             max_iterations=max_iterations,
             output_dir=output,
+            node_agents=node_agents,
         )
         click.echo(json.dumps(summary, indent=2))
         sys.exit(0 if summary.get("solve_rate", 0) > 0 else 1)
@@ -74,6 +76,7 @@ def agent_cmd(coordinate, host, max_iterations, model, batch, output, outer_loop
         max_iterations=max_iterations,
         host=host,
         model=model,
+        node_agents=node_agents,
     )
     click.echo(json.dumps(result.to_dict(), indent=2))
     sys.exit(0 if result.status == "success" else 1)

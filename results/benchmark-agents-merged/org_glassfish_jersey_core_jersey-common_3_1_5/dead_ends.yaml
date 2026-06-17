@@ -1,0 +1,10 @@
+- error_class: unknown
+  approach: FROM eclipse-temurin:11-jdk | RUN mvn clean install -B -DskipTests 
+    -Dgpg.skip=true
+  failure_count: 14
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+  - ''

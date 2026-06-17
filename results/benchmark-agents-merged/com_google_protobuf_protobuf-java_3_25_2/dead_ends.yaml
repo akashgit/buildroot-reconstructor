@@ -1,0 +1,74 @@
+- error_class: unknown
+  approach: FROM docker.io/library/eclipse-temurin:11-jdk | RUN mvn clean 
+    install -B -DskipTests
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "STEP 1/14: FROM eclipse-temurin:11-jdk\nError: creating build container: short-name
+    resolution enforced but cannot prompt without a TTY"
+- error_class: plugin/configuration_error
+  approach: FROM docker.io/library/eclipse-temurin:11-jdk | RUN mvn clean 
+    install -B -DskipTests
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "[INFO] ------------------------------------------------------------------------\n\
+    [ERROR] Failed to execute goal org.apache.maven.plugins:maven-antrun-plugin:3.0.0:run
+    (generate-sources) on project prot"
+- error_class: compilation/syntax_error
+  approach: FROM docker.io/library/eclipse-temurin:11-jdk | RUN mvn clean 
+    install -B -DskipTests \
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "[INFO] -------------------------------------------------------------\n[ERROR]
+    COMPILATION ERROR :\n[ERROR] /build/java/core/src/test/java/com/google/protobuf/TypeRegistryTest.java:[26,12]
+    lambda express"
+- error_class: unknown
+  approach: FROM docker.io/library/eclipse-temurin:11-jdk | RUN mvn clean 
+    install -B -Dmaven.test.skip=true \
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-17 | RUN mvn clean 
+    install -B -Dmaven.test.skip=true \
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - BUILD_FAILED
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-11 | RUN mvn clean 
+    install -B -Dmaven.test.skip=true \
+  failure_count: 4
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+  - BUILD_FAILED
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-17 | RUN mvn 
+    install -B -ntp -pl kotlin,kotlin-lite -Dmaven.test.skip=true \
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+- error_class: unknown
+  approach: 'FROM docker.io/library/maven:3.9-eclipse-temurin-17 | RUN mvn clean install
+    -B -ntp -pl bom,core,lite,util -am -Dmaven.test.skip=true '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED

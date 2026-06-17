@@ -1,8 +1,8 @@
 {
   "project_name": "buildroot-reconstructor",
-  "generated_at": "2026-06-13 21:55:37.969296",
-  "total_experiments": 8,
-  "keep_count": 8,
+  "generated_at": "2026-06-15 23:35:42.104927",
+  "total_experiments": 9,
+  "keep_count": 9,
   "revert_count": 0,
   "error_count": 0,
   "keep_rate": 1.0,
@@ -35,46 +35,33 @@
     {
       "role": "researcher",
       "verdict": "PROCEED",
-      "rationale": "All 3 researchers delivered comprehensive, complementary analysis with zero overlap waste.",
-      "issues": [
-        "none",
-        "### Assessment"
-      ],
-      "experiment_id": 7
+      "rationale": "All 3 researchers completed with substantive, complementary findings. Local researcher mapped the full pipeline architecture (13 steps \u2192 10 node agents), identified the GapDetector integration pattern, and confirmed claude_runner.py infrastructure is ready. External researcher found best practices for multi-agent pipelines, Docker Hub API patterns, git tag discovery, and Maven POM edge cases. Context researcher traced experiment history and confirmed the failure category mapping.",
+      "issues": [],
+      "experiment_id": 8
     },
     {
       "role": "reviewer",
       "verdict": "PROCEED",
-      "rationale": "Reviewer performed substantive review with guard checks, fixed surface verification, and code quality assessment. All guards pass. No critical, important, or minor issues found.",
+      "rationale": "Reviewer substantively assessed the PR. Guards pass (dirty .factory/ files are false positives from factory operations). Code quality is good with 0 critical issues. The important issue (misleading function name) is minor and non-blocking.",
       "issues": [
-        "none",
-        "### Assessment",
-        "The Reviewer correctly:",
-        "1. Ran factory guard --check-scope \u2014 PASS",
-        "2. Verified all fixed surfaces untouched (eval/score.py, evaluator.py, packages_smoke.txt, jar_comparator.py, maven_central.py)",
-        "3. Performed code quality review \u2014 0 issues across all severity levels",
-        "4. Confirmed 29 new tests cover all error paths",
-        "5. Noted the eval score issue is environmental (buildroot not installed in system Python, not a code issue)",
-        "The Reviewer's eval score comparison (0.2789) reflects running eval without the venv \u2014 using .venv/bin/python, tests pass and score is 0.8442. This is expected and not a concern."
+        "1 important (naming), 2 minor \u2014 none blocking",
+        "**Instructions for next step:** Proceed to post-change eval. The benchmark execution (operational requirement) needs a separate Builder invocation after eval."
       ],
       "experiment_id": null
     },
     {
       "role": "strategist",
       "verdict": "PROCEED",
-      "rationale": "Single hypothesis correctly targets issue #19 with full coverage of all 4 deliverables. Growth dimension (capability_surface) tagged. No scope creep, no extra hypotheses, no new backlog items.",
-      "issues": [
-        "none",
-        "### Assessment"
-      ],
+      "rationale": "Exactly 1 hypothesis generated per targeted mode. Hypothesis is well-scoped, research-grounded, and covers all acceptance criteria from issue #24.",
+      "issues": [],
       "experiment_id": null
     }
   ],
   "observations": [
     {
       "source": "observations.md",
-      "content": "# Interaction Study \u2014 buildroot-reconstructor: Analyzed 16 conversation log(s), 63 relevant messages.",
-      "timestamp": "2026-06-13 21:55:37.961503",
+      "content": "# Interaction Study \u2014 buildroot-reconstructor: Analyzed 249 conversation log(s), 451 relevant messages.",
+      "timestamp": "2026-06-15 23:35:42.098472",
       "project": "buildroot-reconstructor",
       "tags": [
         "observation"
@@ -82,8 +69,8 @@
     },
     {
       "source": "observations.md",
-      "content": "User Messages (13): - Fix 2 failing tests on PR #18 in akashgit/buildroot-reconstructor.\n\nThe J-score formula was changed to use log(1 + s_start + 0.01) instead of log(1 + s_start), but the tests weren't updated:\n\n1. tests\n- Final archive for this factory cycle on /Users/akash/factory-projects/buildroot-reconstructor.\n1. Read full experiment history: factory history /Users/akash/factory-projects/buildroot-reconstructor\n2.\n- Fix code review issues on PR #18 in akashgit/buildroot-reconstructor.\nThe CEO found the foll",
-      "timestamp": "2026-06-13 21:55:37.961515",
+      "content": "User Messages (108): - Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098478",
       "project": "buildroot-reconstructor",
       "tags": [
         "observation"
@@ -91,8 +78,602 @@
     },
     {
       "source": "observations.md",
-      "content": "Errors and Issues (50): - I'll read the current formula and failing tests, then fix the assertions.\n- Clear. Two fixes needed:\n- Let me check existing tests and verify the current ruff/mypy errors.\n- Now I have the full picture. Let me create tasks and implement all 5 phases. The key constraint: evaluator.py and jar_comparator.py are FIXED surfaces \u2014 I can only fix ruff/mypy errors in modifiable f\n- Phase 5: CLI flags, hygiene fixes, and comprehensive tests. Starting with CLI updates.\n- Now fixing ruff errors in modifi",
-      "timestamp": "2026-06-13 21:55:37.961528",
+      "content": "Current Containerfile: Looking at the error `stage 1 requires a FROM instruction (\"\")`, the problem is that extraneous content (the markdown explanati\n- Research solutions for Maven build failures, focusing on the dominant error pattern: unknown. Use web search to find relevant solutions, best practices, and debugging techniques. Produce a concise res\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098481",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Here is the corrected Containerfile:\n\n```\nFROM docker.io/library/gradle:8-jdk17\n\nWORKDIR /build\n\nRUN git clone --depth 1 --bran\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098484",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Looking at the error and dead-end registry:\n\n1. **Error**: \"stage 1 requires a FROM instruction\" \u2014 likely the file has invisibl\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098489",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Looking at the errors:\n\n1. **No POM found**: Micrometer is a **Gradle** project, not Maven. The repo has `build.gradle` and a G\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098491",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Now I understand the full picture. The \"stage 1 requires a FROM instruction\" is a persistent parsing issue across multiple base\n- Fix 2 failing tests on PR #18 in akashgit/buildroot-reconstructor.\n\nThe J-score formula was changed to use log(1 + s_start + 0.01) instead of log(1 + s_start), but the tests weren't updated:\n\n1. tests\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098494",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Looking at the error and constraints:\n\n1. **Error**: \"stage 1 requires a FROM instruction\" \u2014 caused by non-Dockerfile text befo\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098496",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: The file is now clean \u2014 starts with `FROM` at byte 0, no BOM, no markdown prose, no code fences. Here's the corrected Container\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098499",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Looking at this, the issue is clear:\n\n1. **\"stage 1 requires a FROM instruction\"** \u2014 the Containerfile likely has markdown code\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098501",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Now I have all the information I need. The key issues are:\n\n1. The error \"stage 1 requires a FROM instruction\" means the file h\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098503",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: The error `stage 1 requires a FROM instruction (\"\")` means there are invisible/non-printable characters before the `FROM` line \n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098505",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Looking at the error and the dead-end registry, the issue is twofold:\n1. The original file had a preamble text line before the \n- Final archive for this factory cycle on /Users/akash/factory-projects/buildroot-reconstructor.\n1. Read full experiment history: factory history /Users/akash/factory-projects/buildroot-reconstructor\n2.\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098506",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Looking at the error, \"stage 1 requires a FROM instruction\" is caused by trailing content being parsed as a second build stage.\n- Fix code review issues on PR #18 in akashgit/buildroot-reconstructor.\nThe CEO found the following issues in the final review:\n\n1. [Bug] src/buildroot/agent/outer_loop.py:~499 \u2014 _get_git_diff() uses 'g\n- Context analysis for /Users/akash/factory-projects/buildroot-reconstructor focused on the Claude Code agent migration (issue #19).\n\nRead backlog at .factory/strategy/b",
+      "timestamp": "2026-06-15 23:35:42.098510",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: The corrected Containerfile is now in place. Here's the summary of the fix:\n\n**Root cause:** The previous Containerfile contain\n- Record successful E2E validation for experiment 8.\n\nThe agentic reconstructor was run end-to-end on rh-h100-01 for org.apache.commons:commons-lang3:3.14.0 after the Claude Code agent migration (exp 8)\n- Analyze the failure patterns and propose a CodeChangeHypothesis. Return a JSON object with: target_error_class, files_to_modify, expected_impact, rationale, and priori",
+      "timestamp": "2026-06-15 23:35:42.098513",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Now I understand the full picture. The Dockerfile on disk literally contains the markdown explanation and code fences \u2014 the ext\n- Fix 1 code review issue on PR #21 in akashgit/buildroot-reconstructor.\n\nThe final review found an issue in _outer_builder_implement():\n\n1. [Bug] src/buildroot/agent/outer_loop.py:384-453 \u2014 Untracked f\n- Record experiment 8 outcome (verdict: keep) for /Users/akash/factory-projects/buildroot-reconstructor.\n1. Read experiment history: factory history /Users/akash/factory",
+      "timestamp": "2026-06-15 23:35:42.098516",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Looking at the error, the issue is that prose/explanatory text before the `FROM` instruction got included in the Containerfile.\n- Record the Researcher's findings for the outer loop research at /Users/akash/factory-projects/buildroot-reconstructor.\nRead .factory/strategy/research.md and .factory/reviews/ceo-verdict-researcher.md\n- Implement this code change hypothesis: Error-class fixes have stagnated. Shifting to structural changes. Previously tried: none\n\nTarget error class: architectural\nFile",
+      "timestamp": "2026-06-15 23:35:42.098519",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: The error `stage 1 requires a FROM instruction (\"\")` means there are invisible/non-printable characters before the `FROM` line \n- Fix 2 code review issues on PR #18 in akashgit/buildroot-reconstructor.\nThe CEO found the following issues in iteration 1:\n\n1. [scope] packages_smoke.txt:1 \u2014 Root-level packages_smoke.txt is a duplica\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098521",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: FROM docker.io/library/eclipse-temurin:17-jdk-jammy\n\nRUN apt-get update && \\\n    apt-get install -y --no-install-recommends git\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098523",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: The error `stage 1 requires a FROM instruction (\"\")` means there are invisible/non-printable characters before the `FROM` line \n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098525",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Confirmed: Gradle project using Gradle 8.4 wrapper. Now here's the corrected Containerfile:\n\n```\n# ============================\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098526",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Now I understand the problem. Micrometer is a **Gradle** project (not Maven). There's no `pom.xml` \u2014 it has `build.gradle`, `gr\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098528",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Looking at the error, the problem is clear: the previous Containerfile had non-Dockerfile prose text before the `FROM` instruct\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098530",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Looking at the error and the dead-end registry, the root problem is **not** the base image \u2014 the same \"stage 1 requires a FROM \n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098531",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: The error `stage 1 requires a FROM instruction (\"\")` means the Containerfile on disk contains the markdown prose/code fences fr\n- Run the FULL intelligent outer loop on all 3 test packages. This is the real deal \u2014 let the system self-improve.\n\nThis is an OPERATIONAL task. You are EXECUTING the self-improving pipeline, not writin\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098533",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: FROM docker.io/library/eclipse-temurin:17-jdk-jammy\n\nRUN apt-get update && \\\n    apt-get install -y --no-install-recommends git\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098535",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Now I have a clear picture of all the issues. Here's the corrected Containerfile:\n\n1. **Root cause of parse error**: `` \u2014 GHA e\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098537",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Confirmed \u2014 this is a Gradle project. Here's the corrected Containerfile:\n\n```\n# ==============================================\n- Record the Strategist's decisions and CEO approval. Read .factory/strategy/current.md and .factory/reviews/ceo-verdict-strategist.md. Write a strategy snapshot to .factory/archive/strategies/. Update \n- Resolve merge conflicts in /Users/akash/factory-projects/buildroot-reconstructor.\n\nThe branch feat/outer-loop-17 (PR #21 \u2014 Claude Code agent migration) has merge confl",
+      "timestamp": "2026-06-15 23:35:42.098539",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Here's the corrected Containerfile with three fixes:\n\n1. **Wrong build tool \u2192 Gradle**: Micrometer is a Gradle project (has `bu\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098541",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: The error `stage 1 requires a FROM instruction (\"\")` means there's non-Dockerfile content (prose text) before the `FROM` line. \n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098542",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: FROM docker.io/library/eclipse-temurin:17-jdk-jammy\n\nRUN apt-get update && \\\n    apt-get install -y --no-install-recommends git\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098544",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: The corrected Containerfile is:\n\n```\nFROM docker.io/library/gradle:8-jdk17\n\nWORKDIR /build\n\nRUN git clone --depth 1 --branch v1\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098546",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Now I have a clear picture. Here's the corrected Containerfile:\n\n```\nFROM docker.io/library/amazoncorretto:17\n\nRUN yum install \n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098547",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Here is the corrected Containerfile:\n\n```\nFROM docker.io/library/eclipse-temurin:17-jdk-jammy\n\nRUN apt-get update && \\\n    apt-\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098549",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: The error `stage 1 requires a FROM instruction (\"\")` means the Containerfile literally contains markdown code fences (`` ``` ``\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098550",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Looking at the error and dead-end registry, the issue is twofold: (1) extra prose/text was contaminating the Containerfile, and\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098552",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: FROM docker.io/library/eclipse-temurin:17-jdk-jammy\n\nRUN apt-get update && \\\n    apt-get install -y --no-install-recommends git\n- Fix 2 remaining code review issues on PR #18 in akashgit/buildroot-reconstructor.\n\n1. [Logic error] src/buildroot/agent/outer_loop.py around line 295 \u2014 After the _get_git_diff() fix, check_all() recei\n- Analyze the failure patterns and propose a CodeChangeHypothesis. Return a JSON object with: target_error_class, files_to_modify, expected_impact, rationale, and priori",
+      "timestamp": "2026-06-15 23:35:42.098555",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: The error `stage 1 requires a FROM instruction` means the Containerfile contained non-Dockerfile content (markdown prose, code \n- Research solutions for Maven build failures, focusing on the dominant error pattern: unknown. Use web search to find relevant solutions, best practices, and debugging techniques. Produce a concise res\n- Generate prioritized hypotheses for /Users/akash/factory-projects/buildroot-reconstructor.\n\nRead the backlog at .factory/strategy/backlog.md \u2014 clear as many items as p",
+      "timestamp": "2026-06-15 23:35:42.098557",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: FROM docker.io/library/eclipse-temurin:21-jdk\n\nRUN apt-get update && \\\n    apt-get install -y --no-install-recommends git ca-ce\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098559",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: The problem is that the \"Containerfile\" contains prose/explanatory text before the `FROM` instruction, causing the parser to fa\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098560",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: The corrected Containerfile is now in place. Here's what was fixed:\n\n1. **Root cause**: The file contained markdown prose and c\n- Run a REAL end-to-end agentic reconstruction test on rh-h100-01 using the MERGED main branch.\n\nThis is an OPERATIONAL task \u2014 you are EXECUTING the pipeline, not writing code.\n\n1. cd /Users/akash/facto\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098562",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: The problem is clear: the `Dockerfile` on disk contains markdown prose wrapping the actual instructions, so the Docker parser n\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098564",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Now I have a clear picture. Micrometer is a **Gradle** project (not Maven). The fix is:\n\n1. Remove the invalid `` GHA expressio\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098565",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Good, the tag exists. Here is the corrected Containerfile:\n\n```\nFROM docker.io/library/amazoncorretto:17\n\nRUN yum install -y gi\n- Review the Builder's changes for experiment 7.\nRead the CEO's preliminary review at .factory/reviews/ceo-verdict-builder.md.\n1. Run guard check: factory guard /Users/akash/factory-projects/buildroot-r\n- Research solutions for Maven build failures, focusing on the dominant error pattern: unknown. Use web search to find relevant solutions, best practices, and debugging ",
+      "timestamp": "2026-06-15 23:35:42.098568",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: The error `stage 1 requires a FROM instruction` means prose text leaked into the Containerfile before the `FROM` line. The fix \n- Mode 2 research for /Users/akash/factory-projects/buildroot-reconstructor. Read observations at .factory/strategy/observations.md if it exists.\n\nFOCUS: Issue #16 \u2014 Outer Loop: Cross-Package Improvemen\n- Review the Builder's changes for experiment 8.\nRead the CEO's preliminary review at .factory/reviews/ceo-verdict-builder.md.\n1. Run guard check: factory guard /Users/a",
+      "timestamp": "2026-06-15 23:35:42.098571",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Looking at this, the error \"stage 1 requires a FROM instruction\" means the Containerfile on disk has prose/markdown text before\n- Run baseline eval for /Users/akash/factory-projects/buildroot-reconstructor. Execute: factory eval /Users/akash/factory-projects/buildroot-reconstructor. Parse and report composite score and per-dimen\n- Record the Builder's work for experiment 8.\nRead .factory/reviews/ceo-verdict-builder.md and the PR diff (gh pr diff 21).\nWrite implementation notes to .factory/archiv",
+      "timestamp": "2026-06-15 23:35:42.098574",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Confirmed \u2014 the file has prose and markdown code fences wrapping the actual Containerfile. Here's the corrected Containerfile:\n\n- Run the eval command for /Users/akash/factory-projects/buildroot-reconstructor.\n\nExecute this exact command:\ncd /Users/akash/factory-projects/buildroot-reconstructor && python eval/score.py\n\nPrint the\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098576",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Confirmed: `gradle.properties` has `-XX:MaxPermSize=2048m` which is invalid on JDK 9+. Gradle 7.5.1 works fine with JDK 11. Her\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098577",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: The error is clear: the Containerfile contains prose/markdown text (the \"**Key fixes:**\" section) after the Dockerfile instruct\n- Analyze the failure patterns and propose a CodeChangeHypothesis. Return a JSON object with: target_error_class, files_to_modify, expected_impact, rationale, and priority (integer).\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098580",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Looking at the error and the dead-end registry, both `eclipse-temurin:17-jdk` and `amazoncorretto:17` are banned. The \"stage 1 \n- Analyze the failure patterns and propose a CodeChangeHypothesis. Return a JSON object with: target_error_class, files_to_modify, expected_impact, rationale, and priority (integer).\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098581",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Looking at the error, the issue is that prose text is being included before the `FROM` instruction. The dead-end registry forbi\n- Local analysis for /Users/akash/factory-projects/buildroot-reconstructor focused on replacing raw API calls with Claude Code agents (issue #19).\n\nRead observations at .factory/strategy/observations.md\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098583",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: The error `stage 1 requires a FROM instruction` is caused by the preamble text line `Confirmed: Gradle project using Gradle 8.4\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098585",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Looking at the issue:\n1. The immediate error is markdown wrapping around the Containerfile\n2. Both `eclipse-temurin:17-jdk` and\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098586",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Looking at the error and dead-end registry:\n\n1. The error `stage 1 requires a FROM instruction (\"\")` means markdown code fences\n- Run a REAL end-to-end agentic reconstruction test on rh-h100-01.\n\nThis is an OPERATIONAL task \u2014 you are EXECUTING the pipeline, not writing code.\n\n1. cd /Users/akash/factory-projects/buildroot-reconst\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098589",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Here is the corrected Containerfile:\n\n```\nFROM docker.io/library/eclipse-temurin:17-jdk\nRUN apt-get update && \\\n    apt-get ins\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098590",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: FROM docker.io/library/eclipse-temurin:17-jdk-jammy\n\nRUN apt-get update && \\\n    apt-get install -y --no-install-recommends git\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098592",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Looking at the error, the issue is clear: the \"Current Containerfile\" contains markdown explanation text (the \"**Key fixes:**\" \n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098593",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Here's the corrected Containerfile:\n\n```\nFROM docker.io/library/eclipse-temurin:17-jdk\n\nRUN apt-get update && apt-get install -\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098595",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Looking at this, there are two issues:\n\n1. The `stage 1 requires a FROM instruction` error means the Containerfile has invisibl\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098597",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: FROM docker.io/library/eclipse-temurin:17-jdk-jammy\n\nRUN apt-get update && \\\n    apt-get install -y --no-install-recommends git\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098598",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: FROM docker.io/library/eclipse-temurin:17-jdk-jammy\n\nRUN apt-get update && \\\n    apt-get install -y --no-install-recommends git\n- Run baseline eval for /Users/akash/factory-projects/buildroot-reconstructor. Execute: factory eval /Users/akash/factory-projects/buildroot-reconstructor. Parse and report composite score and per-dimen\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098601",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: The error `stage 1 requires a FROM instruction` means the Containerfile has non-Dockerfile preamble text (the line \"Confirmed \u2014\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098603",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Looking at the error, the Containerfile content contains prose/markdown text before the `FROM` instruction, causing the parser \n- Record the Strategist's decisions and CEO approval. Read .factory/strategy/current.md and .factory/reviews/ceo-verdict-strategist.md. Write a strategy snapshot to .factory/archive/strategies/. Update \n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098605",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Looking at the error, the issue is clear: the Containerfile contains prose text (\"Good, the tag exists. Here is the corrected C\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098606",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: The error indicates there's non-Dockerfile preamble text before the `FROM` instruction in the actual file on disk. I'll produce\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098608",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: FROM docker.io/library/eclipse-temurin:17-jdk-jammy\n\nRUN apt-get update && \\\n    apt-get install -y --no-install-recommends git\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098609",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: Here is the corrected Containerfile:\n\n```\nFROM docker.io/library/eclipse-temurin:17-jdk-jammy\n\nRUN apt-get update && \\\n    apt-\n- Research solutions for Maven build failures, focusing on the dominant error pattern: unknown. Use web search to find relevant solutions, best practices, and debugging techniques. Produce a concise res\n- Fix the following Containerfile build failure.",
+      "timestamp": "2026-06-15 23:35:42.098611",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Current Containerfile: The error \"stage 1 requires a FROM instruction\" means the Containerfile contained non-Dockerfile content (the markdown code fen\n- Final archive for this factory cycle on /Users/akash/factory-projects/buildroot-reconstructor.\n1. Read full experiment history: factory history /Users/akash/factory-projects/buildroot-reconstructor\n2.\n- Record experiment 7 outcome (verdict: keep) for buildroot-reconstructor.\n1. Read experiment history: factory history /Users/akash/factory-projects/buildroot-reconstruc",
+      "timestamp": "2026-06-15 23:35:42.098613",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "observation"
+      ]
+    },
+    {
+      "source": "observations.md",
+      "content": "Errors and Issues (343): - Looking at the error, the Containerfile was corrupted with non-Dockerfile text before the `FROM` line. The dead-end registry also forbids `./gradlew build publishToMavenLocal -x test --no-daemon` and \n- The current Containerfile content looks correct but the dead-end shows it failed 2x with this exact base image + empty content (i.e., the content wasn't actually written). Let me check the actual file\n- Now I understand the full picture. The Dockerfile on disk literally contains the markdown ex",
+      "timestamp": "2026-06-15 23:35:42.098681",
       "project": "buildroot-reconstructor",
       "tags": [
         "observation"
@@ -101,7 +682,7 @@
     {
       "source": "observations.md",
       "content": "Similar Projects: No similar projects found.",
-      "timestamp": "2026-06-13 21:55:37.961531",
+      "timestamp": "2026-06-15 23:35:42.098687",
       "project": "buildroot-reconstructor",
       "tags": [
         "observation"
@@ -109,8 +690,8 @@
     },
     {
       "source": "observations.md",
-      "content": "Open GitHub Issues: ### Your Issues (7) \u2014 actionable, may generate fix hypotheses\n\n- **#19** Replace raw API calls with Claude Code agents across inner and outer loops [implementation] (by @akashgit)\n  > ## Problem  Every agent in the system that needs to write code, research, or reason currently calls the Anthropic API directly via `AnthropicVertex` \u2014 a single-shot text completion with no tools. This is fundamentally wrong. The factory pattern spawns Claude Code as a full subprocess (`claude --appe\n- **#13** Desig",
-      "timestamp": "2026-06-13 21:55:37.961537",
+      "content": "Open GitHub Issues: ### Your Issues (10) \u2014 actionable, may generate fix hypotheses\n\n- **#24** Node-scoped agents: Claude Code reviewer at every pipeline step [enhancement] (by @akashgit)\n  > ## Summary  Attach a scoped Claude Code agent at every node of the deterministic pipeline. Each agent reviews and improves the node's output before passing it downstream. The deterministic pipeline produces a draft; the agents gate and refine it. This replaces the current approach where failures are\n- **#23** Add buildroot benc",
+      "timestamp": "2026-06-15 23:35:42.098694",
       "project": "buildroot-reconstructor",
       "tags": [
         "observation"
@@ -118,8 +699,8 @@
     },
     {
       "source": "observations.md",
-      "content": "Backlog: **TARGETED MODE** \u2014 building exactly one item: Replace raw API calls with Claude Code agents across inner and outer loops (issue #19)\n\n- Replace raw API calls with Claude Code agents across inner and outer loops (issue #19)",
-      "timestamp": "2026-06-13 21:55:37.961540",
+      "content": "Backlog: **TARGETED MODE** \u2014 building exactly one item: Node-scoped agents: Claude Code reviewer at every pipeline step (issue #24)\n\n- Node-scoped agents: Claude Code reviewer at every pipeline step (issue #24)",
+      "timestamp": "2026-06-15 23:35:42.098696",
       "project": "buildroot-reconstructor",
       "tags": [
         "observation"
@@ -127,8 +708,8 @@
     },
     {
       "source": "observations.md",
-      "content": "Observability Coverage: - **Score:** 58.0%\n- **Function coverage:** 34/220 functions have logging (16%)\n- **Total log statements:** 100\n- **Structured logging:** Yes\n- **Request tracing:** Yes\n\n### Uninstrumented Files\n- src/buildroot/agent/models.py (8 functions, 0 log statements)\n- src/buildroot/cli/main.py (1 functions, 0 log statements)\n- src/buildroot/cli/commands/validate.py (2 functions, 0 log statements)\n- src/buildroot/cli/commands/inspect_cmd.py (1 functions, 0 log statements)\n- src/buildroot/cli/commands/rec",
-      "timestamp": "2026-06-13 21:55:37.961543",
+      "content": "Observability Coverage: - **Score:** 61.2%\n- **Function coverage:** 44/238 functions have logging (18%)\n- **Total log statements:** 140\n- **Structured logging:** Yes\n- **Request tracing:** Yes\n\n### Uninstrumented Files\n- src/buildroot/agent/models.py (8 functions, 0 log statements)\n- src/buildroot/cli/main.py (1 functions, 0 log statements)\n- src/buildroot/cli/commands/validate.py (2 functions, 0 log statements)\n- src/buildroot/cli/commands/inspect_cmd.py (1 functions, 0 log statements)\n- src/buildroot/cli/commands/rec",
+      "timestamp": "2026-06-15 23:35:42.098699",
       "project": "buildroot-reconstructor",
       "tags": [
         "observation"
@@ -137,7 +718,7 @@
     {
       "source": "observations.md",
       "content": "Prior Knowledge (Obsidian): No prior notes found.",
-      "timestamp": "2026-06-13 21:55:37.961544",
+      "timestamp": "2026-06-15 23:35:42.098701",
       "project": "buildroot-reconstructor",
       "tags": [
         "observation"
@@ -146,7 +727,7 @@
     {
       "source": "observations.md",
       "content": "Hypothesis Budget: **TARGETED MODE \u2014 single-item budget**\n\n**Backlog items: 1** (the focus target only)\n**New items: at most 0** (do not add new items)\n**Growth minimum: 0** (growth constraints suspended for targeted mode)\n\n### Rules\n\n- Generate exactly ONE hypothesis for the focus target.\n- Do NOT clear other backlog items this cycle.\n- Do NOT add new items.\n- FEEC category still applies for classifying the single hypothesis.",
-      "timestamp": "2026-06-13 21:55:37.961547",
+      "timestamp": "2026-06-15 23:35:42.098703",
       "project": "buildroot-reconstructor",
       "tags": [
         "observation"
@@ -154,8 +735,8 @@
     },
     {
       "source": ".factory/archive/buildroot-reconstructor.md",
-      "content": "---\ntags:\n  - factory\n  - project\n  - buildroot-reconstructor\nsource: factory-archivist\ndate: 2026-06-07\nupdated: 2026-06-14T00:00\n---\n\n\n# Factory: Buildroot Reconstructor\n\n## Status\n- **State**: EXPERIMENT #008 KEEP \u2014 PR #21 open for human review, Claude Code agent migration complete\n- **Active Issue**: #19/#20 \u2014 Replace raw AnthropicVertex API calls with Claude Code agent subprocess spawning (DONE)\n- **Current Score**: 0.8456 (post experiment #008 KEEP)\n- **Agentic Solve Rate**: 1/3 (33.3%) \u2014 ",
-      "timestamp": "2026-06-13 21:55:37.962275",
+      "content": "---\ntags:\n  - factory\n  - project\n  - buildroot-reconstructor\nsource: factory-archivist\ndate: 2026-06-07\nupdated: 2026-06-15T23:35\n---\n\n\n# Factory: Buildroot Reconstructor\n\n## Status\n- **State**: CYCLE 9 COMPLETE \u2014 node-scoped agents KEEP, 9/9 perfect keep streak. Full benchmark pending.\n- **Active Issue**: #24 \u2014 Node-scoped pipeline agents (KEEP, benchmark incomplete \u2014 2/31 packages)\n- **Cycle**: 9 \u2014 targeted single-item cycle for issue #24\n- **Current Score**: ~0.845 (post experiment #009 KEEP",
+      "timestamp": "2026-06-15 23:35:42.099291",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -164,7 +745,7 @@
     {
       "source": ".factory/archive/experiments/buildroot-reconstructor-001.md",
       "content": "---\ntags:\n  - factory\n  - experiment\n  - buildroot-reconstructor\nproject: buildroot-reconstructor\nexperiment_id: 001\nverdict: KEEP\nscore_delta: +0.2066\ndate: 2026-06-08\nsource: factory-archivist\n---\n\n# Experiment #001: Fix all 6 Level 3 rebuild gaps for full source reconstruction\n\n## Hypothesis\nBundle all 6 research-identified Level 3 gaps into a single PR so that the 10 test packages can be rebuilt from source inside their reconstructed containers. The gaps are: dead SCM extraction, hardcoded g",
-      "timestamp": "2026-06-13 21:55:37.962448",
+      "timestamp": "2026-06-15 23:35:42.099496",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -173,7 +754,7 @@
     {
       "source": ".factory/archive/experiments/buildroot-reconstructor-002.md",
       "content": "---\ntags:\n  - factory\n  - experiment\n  - buildroot-reconstructor\nproject: buildroot-reconstructor\nexperiment_id: 002\nverdict: KEEP\nscore_delta: n/a\ndate: 2026-06-08\nsource: factory-archivist\n---\n\n# Experiment #002: Level 3 build verification refinement \u2014 10/10 builds passing\n\n## Hypothesis\nRefine Level 3 full rebuild for all 10 test packages \u2014 fix JDK inference, Gradle build support, template generation, and build command detection to achieve 100% build pass rate.\n\n## Context\nAfter experiment #0",
-      "timestamp": "2026-06-13 21:55:37.962609",
+      "timestamp": "2026-06-15 23:35:42.099619",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -182,7 +763,7 @@
     {
       "source": ".factory/archive/experiments/buildroot-reconstructor-003.md",
       "content": "---\ntags:\n  - factory\n  - experiment\n  - buildroot-reconstructor\nproject: buildroot-reconstructor\nexperiment_id: 003\nverdict: KEEP\nscore_delta: \"+0.5418\"\nscore_before: 0.3082\nscore_after: 0.8500\ndate: 2026-06-09\nsource: factory-archivist\n---\n\n# Experiment #003: Level 4 artifact comparison \u2014 multi-layer JAR comparison pipeline\n\n## Hypothesis\nImplement a multi-layer JAR comparison pipeline (structural, metadata, bytecode) and run rebuilt artifacts against Maven Central originals on rh-h100 nodes, ",
-      "timestamp": "2026-06-13 21:55:37.962771",
+      "timestamp": "2026-06-15 23:35:42.099827",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -191,7 +772,7 @@
     {
       "source": ".factory/archive/experiments/buildroot-reconstructor-004.md",
       "content": "---\ntags:\n  - factory\n  - experiment\n  - buildroot-reconstructor\nproject: buildroot-reconstructor\nexperiment_id: 4\nverdict: keep\nscore_delta: +0.2807\ndate: 2026-06-12\nsource: factory-archivist\n---\n\n# Experiment #004: PNC Ground-Truth Validation\n\n## Hypothesis\nParse PNC builders-image 2-layer Containerfile chains, build a 6-dimension weighted accuracy scorer, and validate buildroot reconstruction against independently known PNC build environments for 3 Maven packages.\n\n## Result\n**KEEP** \u2014 score ",
-      "timestamp": "2026-06-13 21:55:37.962924",
+      "timestamp": "2026-06-15 23:35:42.099981",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -200,7 +781,7 @@
     {
       "source": ".factory/archive/experiments/buildroot-reconstructor-005.md",
       "content": "---\ntags:\n  - factory\n  - experiment\n  - buildroot-reconstructor\nproject: buildroot-reconstructor\nexperiment_id: 5\nverdict: keep\nscore_delta: n/a\ndate: 2026-06-13\nsource: factory-archivist\ntype: refinement\nrefinement_tier: 1\n---\n\n# Experiment #005: Execute PNC ground-truth validation on rh-h100-01 for 3 packages\n\n## Hypothesis\nRun the PNC ground-truth validation pipeline (implemented in experiment #004) on rh-h100-01 against real PNC builders-image Containerfiles for 3 Maven packages: commons-la",
-      "timestamp": "2026-06-13 21:55:37.963078",
+      "timestamp": "2026-06-15 23:35:42.100067",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -209,7 +790,7 @@
     {
       "source": ".factory/archive/experiments/buildroot-reconstructor-006.md",
       "content": "---\ntags:\n  - factory\n  - experiment\n  - buildroot-reconstructor\nproject: buildroot-reconstructor\nexperiment_id: 6\nverdict: KEEP\nscore_delta: \"+0.0038\"\nscore_before: 0.5662\nscore_after: 0.5700\ndate: 2026-06-13\nsource: factory-archivist\n---\n\n# Experiment #006: Agentic Reconstructor Inner Loop MVP with Outer Loop Skeleton\n\n## Hypothesis\nImplement Phase 1 agentic reconstructor: an LLM-driven iterative Containerfile repair loop (inner loop) with batch processing scaffold (outer loop), targeting capa",
-      "timestamp": "2026-06-13 21:55:37.963238",
+      "timestamp": "2026-06-15 23:35:42.100146",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -218,7 +799,7 @@
     {
       "source": ".factory/archive/experiments/buildroot-reconstructor-007.md",
       "content": "---\ntags:\n  - factory\n  - experiment\n  - buildroot-reconstructor\nproject: buildroot-reconstructor\nexperiment_id: 7\nverdict: KEEP\nscore_delta: +0.0427\nscore_before: 0.8012\nscore_after: 0.8439\ndate: 2026-06-13\nsource: factory-archivist\n---\n\n# Experiment #007: Intelligent Outer Loop with Failure Analyst, Guards, and Strategy Archive\n\n## Hypothesis\nImplement the outer loop intelligence layer: failure analysis across batch results, cross-package knowledge base with inner loop injection, safety guards",
-      "timestamp": "2026-06-13 21:55:37.963398",
+      "timestamp": "2026-06-15 23:35:42.100218",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -227,7 +808,16 @@
     {
       "source": ".factory/archive/experiments/buildroot-reconstructor-008.md",
       "content": "---\ntags:\n  - factory\n  - experiment\n  - buildroot-reconstructor\nproject: buildroot-reconstructor\nexperiment_id: 8\nverdict: keep\nscore_before: 0.8442\nscore_after: 0.8456\nscore_delta: +0.0014\ndate: 2026-06-13\nsource: factory-archivist\n---\n\n# Experiment #008: Replace raw API calls with Claude Code subprocess agents\n\n## Hypothesis\nReplace all 3 raw `AnthropicVertex` single-shot API calls with Claude Code subprocess agents (`claude -p`) via a shared `claude_runner.py` utility, and add a new Outer Re",
-      "timestamp": "2026-06-13 21:55:37.963548",
+      "timestamp": "2026-06-15 23:35:42.100287",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "archive"
+      ]
+    },
+    {
+      "source": ".factory/archive/experiments/buildroot-reconstructor-009.md",
+      "content": "---\ntags:\n  - factory\n  - experiment\n  - buildroot-reconstructor\nproject: buildroot-reconstructor\nexperiment_id: 9\nverdict: KEEP\nscore_delta: -0.001\ndate: 2026-06-15\nsource: factory-archivist\n---\n\n# Experiment #009: Node-scoped Claude Code reviewer agents at every pipeline step\n\n## Hypothesis\nImplement 13 Claude Code reviewer agents (10 node agents + 3 failure agents) integrated into the deterministic pipeline, attacking the root cause of the 33.3% agentic solve rate ceiling: prose contamination",
+      "timestamp": "2026-06-15 23:35:42.100334",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -236,7 +826,7 @@
     {
       "source": ".factory/archive/experiments/buildroot-reconstructor-baseline.md",
       "content": "---\ntags:\n  - factory\n  - experiment\n  - buildroot-reconstructor\nproject: buildroot-reconstructor\nexperiment_id: baseline\nverdict: ESTABLISHED\nscore_delta: \"+0.586 (from 0)\"\ndate: 2026-06-08\nsource: factory-archivist\n---\n\n# Baseline: Buildroot Reconstructor \u2014 Initial Build\n\n## Hypothesis\nBuild all 9 core features from scratch (POM parsing, property resolution, CI parsing, JDK inference, image resolution, dependency tree, Containerfile generation, gap detection, pipeline/CLI) and establish a base",
-      "timestamp": "2026-06-13 21:55:37.963694",
+      "timestamp": "2026-06-15 23:35:42.100483",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -244,8 +834,8 @@
     },
     {
       "source": ".factory/archive/patterns/patterns.md",
-      "content": "---\ntags:\n  - factory\n  - patterns\nsource: factory-archivist\ndate: 2026-06-07\nupdated: 2026-06-14T00:00\n---\n\n# Cross-Project Patterns\n\n## Build-Mode Projects Should Include Type Checking in Build Phases\nDiscovered in buildroot-reconstructor baseline.\nThe baseline eval scored 0.0 on type_check (23 mypy errors) because type checking was not part of the build phases. For Python projects, add a final build phase that runs `mypy` and fixes errors before establishing baseline \u2014 this is easy to fix dur",
-      "timestamp": "2026-06-13 21:55:37.963881",
+      "content": "---\ntags:\n  - factory\n  - patterns\nsource: factory-archivist\ndate: 2026-06-07\nupdated: 2026-06-15T23:35\n---\n\n# Cross-Project Patterns\n\n## Build-Mode Projects Should Include Type Checking in Build Phases\nDiscovered in buildroot-reconstructor baseline.\nThe baseline eval scored 0.0 on type_check (23 mypy errors) because type checking was not part of the build phases. For Python projects, add a final build phase that runs `mypy` and fixes errors before establishing baseline \u2014 this is easy to fix dur",
+      "timestamp": "2026-06-15 23:35:42.100530",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -254,7 +844,7 @@
     {
       "source": ".factory/archive/sources/adaevolve-outer-loop-hierarchy.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - buildroot-reconstructor\n  - outer-loop\nsource: factory-archivist\ndate: 2026-06-13\n---\n\n# AdaEvolve: Hierarchical Adaptive Optimization for Outer Loop\n\n**Source**: [AdaEvolve: Adaptive LLM Driven Zeroth-Order Optimization](https://arxiv.org/abs/2602.20133)\n\n## Key Findings for Outer Loop\n\n### J(S) Strategy Scoring Formula\n`J = (s_end - s_start) \u00b7 log(1 + s_start) / \u221aW` \u2014 the log term upweights improvements from higher baselines (harder to improve when already ",
-      "timestamp": "2026-06-13 21:55:37.964013",
+      "timestamp": "2026-06-15 23:35:42.100689",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -263,7 +853,7 @@
     {
       "source": ".factory/archive/sources/agentic-codebase-mapping.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - agentic-design\n  - architecture\nsource: factory-archivist\ndate: 2026-06-13\n---\n\n# Agentic Reconstructor: Codebase Mapping\n\n**Source:** Internal research \u2014 mapping existing modules to agentic roles.\n\n## Findings\n\nThe existing buildroot-reconstructor codebase maps cleanly to the agentic architecture:\n\n| Module | Current Role | Agentic Role |\n|--------|-------------|--------------|\n| `pipeline/orchestrator.py` | Coordinates extraction -> generation | **Observer ",
-      "timestamp": "2026-06-13 21:55:37.964160",
+      "timestamp": "2026-06-15 23:35:42.101055",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -272,7 +862,7 @@
     {
       "source": ".factory/archive/sources/alphaevolve-llm-mutation-operator.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - buildroot-reconstructor\n  - outer-loop\nsource: factory-archivist\ndate: 2026-06-13\n---\n\n# AlphaEvolve: LLM as Mutation Operator (Google DeepMind)\n\n**Source**: [AlphaEvolve: A Gemini-powered coding agent for designing advanced algorithms](https://deepmind.google/blog/alphaevolve-a-gemini-powered-coding-agent-for-designing-advanced-algorithms/)\n\n## Key Findings for Outer Loop\n\n### LLM Ensemble as Mutation Operators\nUses an ensemble of LLMs (Flash for throughput,",
-      "timestamp": "2026-06-13 21:55:37.964286",
+      "timestamp": "2026-06-15 23:35:42.101119",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -281,7 +871,7 @@
     {
       "source": ".factory/archive/sources/aprmcts-mcts-repair.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - agentic-design\n  - mcts\nsource: factory-archivist\ndate: 2026-06-13\n---\n\n# AprMcts: MCTS for Program Repair (2025)\n\n**Paper:** [AprMcts](https://arxiv.org/html/2507.01827v2)\n\n## Findings\n\nMCTS applied to program repair with concrete implementation details:\n- UCT selection with C=0.7 exploration constant\n- Branch factor=1, max 3 expansions per node\n- Q-value backpropagation with beta=0.8 forgetting factor: Q'(a) = beta * [sum(Q_j * N_j) / sum(N_j)] + (1-beta) *",
-      "timestamp": "2026-06-13 21:55:37.964426",
+      "timestamp": "2026-06-15 23:35:42.101182",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -290,7 +880,7 @@
     {
       "source": ".factory/archive/sources/aroma-paper.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - buildroot-reconstructor\nsource: factory-archivist\ndate: 2026-06-08\n---\n\n# AROMA \u2014 Automatic Reproduction of Maven Artifacts (ACM 2024)\n\n## Summary\n\nAROMA heuristically recovers source repos, JDK versions, and build commands from POM metadata and published artifacts. Published at ACM 2024 (doi: 10.1145/3643764).\n\n## Relevance to Buildroot Reconstructor\n\nAROMA addresses the same problem space \u2014 reconstructing build environments from artifact metadata. Key techn",
-      "timestamp": "2026-06-13 21:55:37.964567",
+      "timestamp": "2026-06-15 23:35:42.101245",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -299,7 +889,7 @@
     {
       "source": ".factory/archive/sources/autoscientists-self-organizing-teams.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - buildroot-reconstructor\n  - outer-loop\nsource: factory-archivist\ndate: 2026-06-13\n---\n\n# AutoScientists: Self-Organizing Agent Teams for Long-Running Experimentation\n\n**Source**: [AutoScientists: Self-Organizing Agent Teams for Long-Running Scientific Experimentation](https://arxiv.org/abs/2605.28655)\n\n## Key Findings for Outer Loop\n\n### Stagnation Detection\n\"No improvement in the last 10 experiments\" triggers team reorganization. For our outer loop: if \u22653 cy",
-      "timestamp": "2026-06-13 21:55:37.964682",
+      "timestamp": "2026-06-15 23:35:42.101308",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -308,7 +898,7 @@
     {
       "source": ".factory/archive/sources/build-command-inference.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - buildroot-reconstructor\n  - level3\nsource: factory-archivist\ndate: 2026-06-08\n---\n\n# Build Command Inference from POM Plugins\n\n## Finding\n\nWhen no CI workflow is discovered (commons-lang3, thymeleaf), the build command defaults to `mvn clean install -B`. This naive default fails because projects require specific plugins, profiles, and skip flags.\n\n## Common Failure Modes\n\n- **Apache RAT** plugin: license header checks fail without `-Drat.skip=true`\n- **GPG pl",
-      "timestamp": "2026-06-13 21:55:37.964818",
+      "timestamp": "2026-06-15 23:35:42.101457",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -317,7 +907,7 @@
     {
       "source": ".factory/archive/sources/build-jdk-spec-vs-language-level.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - buildroot-reconstructor\n  - level3\nsource: factory-archivist\ndate: 2026-06-08\n---\n\n# Build-Jdk-Spec vs Language Level \u2014 JDK Inference Gap\n\n## Finding\n\nThe JDK resolver picks the *language level* (source/target) not the *actual build JDK*. These can differ significantly \u2014 a project can cross-compile to Java 8 bytecode using JDK 21.\n\n## Impact Table\n\n| Package | Inferred JDK (source/target) | Actual Build-Jdk-Spec | Would build? |\n|---------|-------------------",
-      "timestamp": "2026-06-13 21:55:37.964951",
+      "timestamp": "2026-06-15 23:35:42.101623",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -326,7 +916,7 @@
     {
       "source": ".factory/archive/sources/ci-repair-bench.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - build-repair\nsource: factory-archivist\ndate: 2026-06-13\n---\n\n# CI-Repair-Bench: Automated CI Build Repair\n\n**Paper:** [CI-Repair-Bench](https://arxiv.org/html/2604.27148)\n\n## Findings\n\nAutomated repair works best for localized, tool-enforced failures (linting, formatting) and worst for environment/dependency/configuration failures. Best LLM achieves only 18.9% repair success rate on CI failures.\n\nKey insight: Containerfile repair is harder than source code re",
-      "timestamp": "2026-06-13 21:55:37.965084",
+      "timestamp": "2026-06-15 23:35:42.102147",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -335,7 +925,7 @@
     {
       "source": ".factory/archive/sources/claude-code-migration-ceo-verdict.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - buildroot-reconstructor\n  - issue-19\nsource: factory-archivist\ndate: 2026-06-13\n---\n\n# CEO Verdict on Research Phase: Claude Code Agent Migration\n\n## Summary\n\nCEO reviewed all 3 parallel researcher outputs for issue #19 (Claude Code agent migration) and issued a **PROCEED** verdict with zero issues found.\n\n## Verdict Details\n\n- **Verdict**: PROCEED\n- **Issues found**: None\n- **Rationale**: All 3 researchers delivered comprehensive, complementary analysis with",
-      "timestamp": "2026-06-13 21:55:37.965219",
+      "timestamp": "2026-06-15 23:35:42.102251",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -344,7 +934,7 @@
     {
       "source": ".factory/archive/sources/claude-code-migration-context-analysis.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - buildroot-reconstructor\n  - issue-19\nsource: factory-archivist\ndate: 2026-06-13\n---\n\n# Context Analysis: Claude Code Agent Migration Architecture\n\n## Summary\n\nArchitectural analysis mapping what experiment #007 built vs what needs to change, covering all 8 agent modules, the 4 agents requiring migration, the new Outer Researcher agent, risk assessment, test strategy, and recommended implementation phasing.\n\n## Key Findings\n\n### Module Migration Map (8 modules",
-      "timestamp": "2026-06-13 21:55:37.965363",
+      "timestamp": "2026-06-15 23:35:42.102330",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -353,7 +943,7 @@
     {
       "source": ".factory/archive/sources/claude-code-migration-external-research.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - buildroot-reconstructor\n  - issue-19\nsource: factory-archivist\ndate: 2026-06-13\n---\n\n# External Research: Claude Code Subprocess Spawning Patterns\n\n## Summary\n\nComprehensive CLI reference and Python implementation patterns for spawning Claude Code agents via `claude -p` subprocess. Covers system prompt customization, structured output, permission modes, cost control, Vertex AI integration, and the Agent SDK alternative.\n\n## Key Findings\n\n### Core CLI Pattern\n",
-      "timestamp": "2026-06-13 21:55:37.965491",
+      "timestamp": "2026-06-15 23:35:42.102402",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -362,7 +952,7 @@
     {
       "source": ".factory/archive/sources/claude-code-migration-local-analysis.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - buildroot-reconstructor\n  - issue-19\nsource: factory-archivist\ndate: 2026-06-13\n---\n\n# Local Analysis: Claude Code Agent Migration (Issue #19)\n\n## Summary\n\nComprehensive local codebase analysis identifying all AnthropicVertex call sites, data flows, test coverage gaps, and mutable/fixed surface constraints for migrating 3 existing agents + 1 new agent to Claude Code subprocess spawning.\n\n## Key Findings\n\n### AnthropicVertex Call Sites (3 total)\n1. **Inner Bui",
-      "timestamp": "2026-06-13 21:55:37.965643",
+      "timestamp": "2026-06-15 23:35:42.102471",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -371,7 +961,7 @@
     {
       "source": ".factory/archive/sources/codex-iterative-repair.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - agentic-design\nsource: factory-archivist\ndate: 2026-06-13\n---\n\n# OpenAI Codex: Iterative Repair Loops\n\n**Source:** [OpenAI Codex Iterative Repair](https://developers.openai.com/cookbook/examples/codex/build_iterative_repair_loops_with_codex)\n\n## Findings\n\nSeparates judgment from proof: Review -> Repair -> Validation as distinct phases with structured outputs. Each phase has a clear contract \u2014 Review produces a diagnosis, Repair produces a patch, Validation pr",
-      "timestamp": "2026-06-13 21:55:37.965807",
+      "timestamp": "2026-06-15 23:35:42.102536",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -380,7 +970,16 @@
     {
       "source": ".factory/archive/sources/container-artifact-extraction.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - buildroot-reconstructor\n  - level4\nsource: factory-archivist\ndate: 2026-06-09\n---\n\n# Container Artifact Extraction for Level 4\n\nAfter `podman build` completes, the rebuilt JAR must be extracted from the container image for comparison against the Maven Central original. Three approaches researched.\n\n## Approach A: `podman create` + `podman cp` (RECOMMENDED)\n```bash\nCONTAINER=$(podman create <image>)\npodman cp $CONTAINER:/workspace/target/{artifactId}-{version}",
-      "timestamp": "2026-06-13 21:55:37.965975",
+      "timestamp": "2026-06-15 23:35:42.102603",
+      "project": "buildroot-reconstructor",
+      "tags": [
+        "archive"
+      ]
+    },
+    {
+      "source": ".factory/archive/sources/critical-lesson-e2e-after-infra-migration.md",
+      "content": "---\ntags:\n  - factory\n  - source\n  - critical-lesson\n  - buildroot-reconstructor\nsource: factory-archivist\ndate: 2026-06-14\nseverity: CRITICAL\nrelated_experiments: [8]\nrelated_playbook: [ceo-00005, ceo-00007]\n---\n\n# CRITICAL LESSON: Infrastructure Migrations MUST Include Real E2E Execution\n\n## The Failure\n\nExperiment #008 (Claude Code agent migration) was tested exclusively with mocked unit tests. 430 tests passed, including 29 new tests \u2014 all mocking `spawn_claude_agent()` and never invoking a ",
+      "timestamp": "2026-06-15 23:35:42.102756",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -389,7 +988,7 @@
     {
       "source": ".factory/archive/sources/dead-end-registries-failure-memory.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - agentic-design\n  - failure-memory\nsource: factory-archivist\ndate: 2026-06-13\n---\n\n# Dead-End Registries and Failure Memory Patterns\n\n**Sources:**\n- Reflexion, ExpeL (episodic memory for agents)\n- [DebounceHook Pattern (AWS)](https://dev.to/aws/why-ai-agents-fail-3-failure-modes-that-cost-you-tokens-and-time-1flb)\n- [Memory Pointer Pattern](https://towardsdatascience.com/a-practical-guide-to-memory-for-autonomous-llm-agents/)\n\n## Findings\n\nResearch consistentl",
-      "timestamp": "2026-06-13 21:55:37.966128",
+      "timestamp": "2026-06-15 23:35:42.102854",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -398,7 +997,7 @@
     {
       "source": ".factory/archive/sources/dockerfile-parse-for-pnc.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - buildroot-reconstructor\n  - pnc\n  - tooling\nsource: factory-archivist\ndate: 2026-06-12\n---\n\n# dockerfile-parse for PNC Containerfile Extraction\n\n## Library Selection\nTwo Python libraries exist for Containerfile/Dockerfile parsing:\n\n| Library | Approach | Modify? | Dependencies |\n|---------|----------|---------|-------------|\n| **`dockerfile-parse`** | Pure Python | Yes (read/write) | None extra |\n| `dockerfile` | Go wrapper | No (read-only) | Requires Go comp",
-      "timestamp": "2026-06-13 21:55:37.966258",
+      "timestamp": "2026-06-15 23:35:42.102918",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -407,7 +1006,7 @@
     {
       "source": ".factory/archive/sources/evox-meta-evolution-strategy.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - buildroot-reconstructor\n  - outer-loop\nsource: factory-archivist\ndate: 2026-06-13\n---\n\n# EvoX: Meta-Evolution for Automated Discovery\n\n**Source**: [EvoX: Meta-Evolution for Automated Discovery](https://arxiv.org/abs/2602.23413)\n\n## Key Findings for Outer Loop\n\n### Dual-Loop Architecture\nInner loop evolves solutions under a fixed strategy; outer loop evolves the strategy itself when the inner loop stagnates. This is exactly our architecture: inner loop evolves",
-      "timestamp": "2026-06-13 21:55:37.966400",
+      "timestamp": "2026-06-15 23:35:42.102981",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -416,7 +1015,7 @@
     {
       "source": ".factory/archive/sources/git-tag-format-discovery.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - buildroot-reconstructor\n  - level3\nsource: factory-archivist\ndate: 2026-06-08\n---\n\n# Git Tag Format Discovery\n\n## Finding\n\nThe orchestrator hardcodes `git_tag=f\"v{version}\"` (line 154 in `orchestrator.py`). Real tag formats vary wildly across Maven projects.\n\n## Tag Format Variation\n\n| Project | Actual tag format | v{version} guess | Correct? |\n|---------|------------------|-------------------|----------|\n| Apache Commons Lang | `rel/commons-lang-3.14.0` | `v",
-      "timestamp": "2026-06-13 21:55:37.966552",
+      "timestamp": "2026-06-15 23:35:42.103044",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -425,7 +1024,7 @@
     {
       "source": ".factory/archive/sources/jar-comparison-layered-strategy.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - buildroot-reconstructor\n  - level4\nsource: factory-archivist\ndate: 2026-06-09\n---\n\n# JAR Comparison Techniques \u2014 Four-Layer Strategy\n\nLevel 4 artifact comparison requires a layered approach because byte-for-byte JAR comparison will always fail due to well-documented non-deterministic elements in Java builds.\n\n## Layer 1: Structural (ZIP entry listing)\n- Use Python `zipfile.ZipFile` to list entries in both JARs\n- Compare entry names, counts, uncompressed sizes",
-      "timestamp": "2026-06-13 21:55:37.966692",
+      "timestamp": "2026-06-15 23:35:42.103109",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -434,7 +1033,7 @@
     {
       "source": ".factory/archive/sources/java-build-nondeterminism-taxonomy.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - buildroot-reconstructor\n  - level4\nsource: factory-archivist\ndate: 2026-06-09\n---\n\n# Non-Determinism Sources in Java Builds \u2014 Ranked by Frequency\n\nEssential reference for Level 4 comparison pipeline: which JAR elements produce false-positive diffs and how to handle each.\n\n## Ranked Sources\n\n| Rank | Source | Location | Handling |\n|------|--------|----------|----------|\n| 1 | ZIP entry timestamps | All entries | Compare entry names/sizes, ignore timestamps |\n|",
-      "timestamp": "2026-06-13 21:55:37.966843",
+      "timestamp": "2026-06-15 23:35:42.103172",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -443,7 +1042,7 @@
     {
       "source": ".factory/archive/sources/jdk-version-inference-heuristic.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - buildroot-reconstructor\nsource: factory-archivist\ndate: 2026-06-07\n---\n\n# JDK Version Inference \u2014 Priority Heuristic\n\n## Finding\n\nJDK version can appear in 12+ locations. A strict priority order is needed to pick the right one. CI workflow sources take priority over POM sources because `maven.compiler.source` specifies the **language level** (minimum), not the **actual JDK used**.\n\n## Priority Order (highest first)\n\n1. CI workflow: `setup-java` action `java-v",
-      "timestamp": "2026-06-13 21:55:37.966986",
+      "timestamp": "2026-06-15 23:35:42.103234",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -452,7 +1051,7 @@
     {
       "source": ".factory/archive/sources/jinja2-containerfile-templates.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - buildroot-reconstructor\nsource: factory-archivist\ndate: 2026-06-07\n---\n\n# Jinja2 Containerfile Templates \u2014 Two-Pattern Approach\n\n## Finding\n\nTwo Dockerfile/Containerfile template patterns are needed, selected based on whether system packages are required.\n\n## Pattern 1: JDK Base Image (`jdk_base.Containerfile.j2`)\n\nUsed when no OS-level system packages are needed. Uses vendor-specific JDK base images directly:\n\n| distribution | Container image pattern |\n|---|",
-      "timestamp": "2026-06-13 21:55:37.967186",
+      "timestamp": "2026-06-15 23:35:42.103292",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -461,7 +1060,7 @@
     {
       "source": ".factory/archive/sources/level3-gap-analysis.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - buildroot-reconstructor\n  - level3\nsource: factory-archivist\ndate: 2026-06-08\n---\n\n# Level 3 Full Rebuild \u2014 Gap Analysis\n\nResearch phase identified 7 critical gaps blocking Level 3 (full source rebuild inside container) for the 10 test packages. All 80 Level 1+2 tests pass (70 inference + 10 podman build), but Level 3 requires: source acquisition, correct tag checkout, correct build JDK, and correct build command.\n\n## Gap Taxonomy (by priority)\n\n| # | Gap | S",
-      "timestamp": "2026-06-13 21:55:37.967306",
+      "timestamp": "2026-06-15 23:35:42.103350",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -470,7 +1069,7 @@
     {
       "source": ".factory/archive/sources/level4-verdict-taxonomy.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - buildroot-reconstructor\n  - level4\nsource: factory-archivist\ndate: 2026-06-09\n---\n\n# Level 4 Verdict Taxonomy\n\nResearch-backed criteria for classifying artifact comparison results across the 10 test packages.\n\n## Verdict Definitions\n\n| Verdict | Criteria |\n|---------|----------|\n| **IDENTICAL** | SHA-256 of both JARs match byte-for-byte. Rare due to timestamps and compression. |\n| **EQUIVALENT** | Same file listing, all `.class` files produce identical CFR de",
-      "timestamp": "2026-06-13 21:55:37.967435",
+      "timestamp": "2026-06-15 23:35:42.103408",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -479,7 +1078,7 @@
     {
       "source": ".factory/archive/sources/llmloop-iterative-feedback.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - buildroot-reconstructor\n  - outer-loop\nsource: factory-archivist\ndate: 2026-06-13\n---\n\n# LLMLOOP: Iterative Feedback Loops for LLM-Generated Code\n\n**Source**: [LLMLOOP: Improving LLM-Generated Code and Tests](https://arxiv.org/html/2603.23613v1) (ICSME 2025)\n\n## Key Findings for Outer Loop\n\n### Per-Error-Type Feedback Loops\nFive dedicated feedback loops for different error types (compilation, static analysis, test failures, etc.), each with its own prompt tem",
-      "timestamp": "2026-06-13 21:55:37.967573",
+      "timestamp": "2026-06-15 23:35:42.103467",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -488,7 +1087,7 @@
     {
       "source": ".factory/archive/sources/macaron-buildgen.md",
       "content": "---\ntags:\n  - factory\n  - source\nsource: factory-archivist\ndate: 2026-06-07\n---\n\n# Macaron BuildGen (Oracle Labs)\n\n**Closest existing tool** to Buildroot Reconstructor.\n\n## Key Findings\n\n- Supply-chain security analysis framework from Oracle Labs\n- BuildGen extension automates generation of build specifications for Maven artifacts\n- Analyzes CI workflows (GitHub Actions) to detect `setup-java`, build commands, GPG signing\n- Extracts JDK version, build tool version, and build commands\n- Assigns c",
-      "timestamp": "2026-06-13 21:55:37.967712",
+      "timestamp": "2026-06-15 23:35:42.103599",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -497,7 +1096,7 @@
     {
       "source": ".factory/archive/sources/macaron-pom-parsing-patterns.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - buildroot-reconstructor\nsource: factory-archivist\ndate: 2026-06-07\n---\n\n# Macaron POM Parsing Patterns \u2014 Reusable Implementation Reference\n\n## Finding\n\nOracle's Macaron project (`src/macaron/parsers/pomparser.py`, UPL license) provides battle-tested patterns for POM parsing that our tool should adopt and extend.\n\n## Patterns to Reuse\n\n### Namespace-Agnostic Tag Matching\n```python\ndef _tag_matches(tag, local_name):\n    return tag == local_name or tag.endswith(",
-      "timestamp": "2026-06-13 21:55:37.967771",
+      "timestamp": "2026-06-15 23:35:42.103752",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -506,7 +1105,7 @@
     {
       "source": ".factory/archive/sources/macos-prerequisites.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - buildroot-reconstructor\nsource: factory-archivist\ndate: 2026-06-07\n---\n\n# macOS Installation Prerequisites\n\n## Finding\n\nInstall order matters on macOS. Maven requires a JDK installed first \u2014 it will fail otherwise.\n\n## Install Order\n\n1. Python: `brew install python@3.11` (may need PATH update to `/opt/homebrew/opt/python@3.11/libexec/bin`)\n2. JDK: `brew install --cask temurin@21` \u2014 cask method preferred (auto-configures `JAVA_HOME` and symlinks)\n3. Maven: `br",
-      "timestamp": "2026-06-13 21:55:37.967900",
+      "timestamp": "2026-06-15 23:35:42.104165",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -515,7 +1114,7 @@
     {
       "source": ".factory/archive/sources/maven-build-error-taxonomy.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - build-repair\n  - maven\nsource: factory-archivist\ndate: 2026-06-13\n---\n\n# Maven Build Error Taxonomy\n\n**Sources:**\n- [Practitioner taxonomy](https://reintech.io/blog/resolving-common-maven-build-errors)\n- [Hassan's CI failure taxonomy](https://foyzulhassan.github.io/files/DoctoralSymp_ASE.pdf)\n\n## Findings\n\nCommon Maven failure categories (ranked by frequency):\n1. Dependency resolution failures (most common)\n2. Plugin configuration issues\n3. Compilation errors",
-      "timestamp": "2026-06-13 21:55:37.968040",
+      "timestamp": "2026-06-15 23:35:42.104237",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -524,7 +1123,7 @@
     {
       "source": ".factory/archive/sources/maven-ci-coverage-ceiling.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - buildroot-reconstructor\nsource: factory-archivist\ndate: 2026-06-08\n---\n\n# Maven CI/CD Transparency Ceiling \u2014 84% Opaque\n\n## Finding\n\nApproximately 84% of the top 1,200 commonly used Maven artifacts are NOT built using a transparent CI/CD pipeline. This stat comes from the BuildGen/AROMA research ecosystem.\n\n## Implication for Buildroot Reconstructor\n\nCI workflow parsing (GitHub Actions, CircleCI) \u2014 currently our strongest signal source \u2014 has an inherent ceili",
-      "timestamp": "2026-06-13 21:55:37.968182",
+      "timestamp": "2026-06-15 23:35:42.104303",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -533,7 +1132,7 @@
     {
       "source": ".factory/archive/sources/maven-dependency-tree-json.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - buildroot-reconstructor\nsource: factory-archivist\ndate: 2026-06-07\n---\n\n# Maven `dependency:tree` JSON Output \u2014 Eliminates Text Parsing\n\n## Finding\n\nSince Maven Dependency Plugin 3.7.0, JSON output is natively supported:\n\n```bash\nmvn dependency:tree -DoutputType=json -DoutputFile=deps.json\n```\n\nThis eliminates the need for text-format tree parsing entirely.\n\n## JSON Structure\n\nNested tree with `groupId`, `artifactId`, `version`, `scope`, and `children` array ",
-      "timestamp": "2026-06-13 21:55:37.968308",
+      "timestamp": "2026-06-15 23:35:42.104368",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -542,7 +1141,7 @@
     {
       "source": ".factory/archive/sources/maven-property-resolution.md",
       "content": "---\ntags:\n  - factory\n  - source\nsource: factory-archivist\ndate: 2026-06-07\n---\n\n# Maven Property Resolution Challenges\n\n## Key Technical Findings\n\n### Property Resolution Order (precedence)\n1. System properties (`-Dkey=value`)\n2. Project properties (`${project.version}`, `${project.groupId}`)\n3. Settings properties (from `~/.m2/settings.xml`)\n4. Environment variables (`${env.JAVA_HOME}`)\n5. POM-defined properties (`<properties>` block)\n\n### Critical Complication\nProperties resolve **after** inh",
-      "timestamp": "2026-06-13 21:55:37.968492",
+      "timestamp": "2026-06-15 23:35:42.104429",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -551,7 +1150,7 @@
     {
       "source": ".factory/archive/sources/meta-harness-optimization.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - buildroot-reconstructor\n  - outer-loop\nsource: factory-archivist\ndate: 2026-06-13\n---\n\n# Meta-Harness: End-to-End Optimization of Model Harnesses\n\n**Source**: [Meta-Harness: End-to-End Optimization of Model Harnesses](https://arxiv.org/abs/2603.28052)\n\n## Key Findings for Outer Loop\n\n### Harness as Optimization Target\nThe performance of LLM systems depends not only on the model but on the *harness* \u2014 the code that determines what information to store, retriev",
-      "timestamp": "2026-06-13 21:55:37.968619",
+      "timestamp": "2026-06-15 23:35:42.104488",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
@@ -560,43 +1159,25 @@
     {
       "source": ".factory/archive/sources/mini-swe-agent-lightweight-repair.md",
       "content": "---\ntags:\n  - factory\n  - source\n  - agentic-design\nsource: factory-archivist\ndate: 2026-06-13\n---\n\n# Mini-SWE-Agent: Lightweight Code Repair\n\n**Source:** [Mini-SWE-Agent](https://www.emergentmind.com/topics/mini-swe-agent-27d26942-1f63-4337-bee8-576ebb1468c3)\n\n## Findings\n\nLightweight edit-test-fix loop in sandboxed Docker. Key practices:\n- Dynamic loop-breaking via tracking repeated command sequences\n- Pre-execution syntax checkers before running builds\n- Context selection to prevent prompt gr",
-      "timestamp": "2026-06-13 21:55:37.968730",
+      "timestamp": "2026-06-15 23:35:42.104549",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
       ]
     },
     {
-      "source": ".factory/archive/sources/oss-rebuild-google.md",
-      "content": "---\ntags:\n  - factory\n  - source\nsource: factory-archivist\ndate: 2026-06-07\n---\n\n# OSS-Rebuild (Google)\n\n## Key Findings\n\n- Reconstructs build environments using heuristics, performs hermetic rebuilds with semantic comparison (not bit-for-bit)\n- Emits Sigstore-backed SLSA attestations\n- Currently supports: PyPI, npm, Crates.io\n- **Maven Central on roadmap but not yet implemented** \u2014 our tool fills this gap\n- \"Stabilize\" tool strips non-deterministic metadata from packages for functional comparis",
-      "timestamp": "2026-06-13 21:55:37.968807",
+      "source": ".factory/archive/sources/node-agents-benchmark-failure-analysis.md",
+      "content": "---\ntags:\n  - factory\n  - source\n  - buildroot-reconstructor\n  - issue-24\n  - benchmark\nsource: factory-archivist\ndate: 2026-06-15\nresearch-type: context\n---\n\n# Benchmark Failure Analysis & Node Agent Impact Mapping\n\n## Finding\n\nContext research traced the full experiment history (experiments 6-8) and mapped the 31-package benchmark failure categories to specific node agents. The deterministic baseline is 4/31 L4 (13%), with 24 packages failing at L2 (container build).\n\n## Current Baseline\n\n| Le",
+      "timestamp": "2026-06-15 23:35:42.104684",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"
       ]
     },
     {
-      "source": ".factory/archive/sources/oss-rebuild-stabilize.md",
-      "content": "---\ntags:\n  - factory\n  - source\n  - buildroot-reconstructor\n  - level4\nsource: factory-archivist\ndate: 2026-06-09\n---\n\n# Google OSS-Rebuild's `stabilize` Tool\n\nGoogle's OSS-Rebuild project uses a `stabilize` command to normalize artifacts before comparison \u2014 semantic (not byte-for-byte) comparison philosophy.\n\n## What `stabilize` Does\n- Strips `jar-git-properties` and other build-specific metadata\n- Normalizes timestamps and compression artifacts\n- Produces a \"stabilized\" artifact for meaningfu",
-      "timestamp": "2026-06-13 21:55:37.968937",
-      "project": "buildroot-reconstructor",
-      "tags": [
-        "archive"
-      ]
-    },
-    {
-      "source": ".factory/archive/sources/pnc-build-system-architecture.md",
-      "content": "---\ntags:\n  - factory\n  - source\n  - buildroot-reconstructor\n  - pnc\nsource: factory-archivist\ndate: 2026-06-12\n---\n\n# PNC Build System Architecture\n\nPNC (Project Newcastle) is Red Hat's managed build system for productized Java artifacts. Key architectural properties relevant to ground-truth validation:\n\n## Environment Specification\n- Environments identified by `systemImageId` (e.g., `builder-rhel-7-j8-mvn3.6.0:1.0.0`)\n- Builder images run as OpenShift pods\n- The **builders-image** repo contain",
-      "timestamp": "2026-06-13 21:55:37.969058",
-      "project": "buildroot-reconstructor",
-      "tags": [
-        "archive"
-      ]
-    },
-    {
-      "source": ".factory/archive/sources/pnc-ground-truth-validation-approach.md",
-      "content": "---\ntags:\n  - factory\n  - source\n  - buildroot-reconstructor\n  - pnc\n  - ground-truth\nsource: factory-archivist\ndate: 2026-06-12\n---\n\n# PNC Ground-Truth Validation Approach\n\n## Concept\nPNC Containerfiles define the exact environment used to build productized Java artifacts. Comparing the reconstructor's inferred environment against PNC ground truth measures reconstruction accuracy against a known-correct reference \u2014 not just reproducibility against Maven Central.\n\n## Alignment with SLSA\nThis app",
-      "timestamp": "2026-06-13 21:55:37.969242",
+      "source": ".factory/archive/sources/node-agents-docker-git-verification.md",
+      "content": "---\ntags:\n  - factory\n  - source\n  - buildroot-reconstructor\n  - issue-24\n  - docker\n  - git\nsource: factory-archivist\ndate: 2026-06-15\nresearch-type: external\n---\n\n# Docker Hub Tag Verification & Git Tag Discovery Patterns\n\n## Docker Hub Registry API\n\n### Tag Verification\n\nFastest method: HEAD request to OCI Distribution Spec manifests endpoint.\n\n```\nHEAD /v2/<namespace>/<name>/manifests/<tag>\n```\n- 200 OK \u2192 tag exists\n- 404 \u2192 tag does not exist\n- Requires bearer token from `auth.docker.io/toke",
+      "timestamp": "2026-06-15 23:35:42.104861",
       "project": "buildroot-reconstructor",
       "tags": [
         "archive"

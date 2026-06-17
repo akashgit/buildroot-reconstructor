@@ -1,0 +1,97 @@
+{
+  "coordinate": "org.yaml:snakeyaml:2.2",
+  "status": "success",
+  "best_reward": 1.0,
+  "iterations": 5,
+  "elapsed_seconds": 989.5,
+  "attempts": [
+    {
+      "id": "6ba998c7-8320-40f0-8d72-e01f5f16050c",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/6: FROM eclipse-temurin:11-jdk\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781618196.5964184
+    },
+    {
+      "id": "7f20a972-9d17-4672-b850-c4efe010be79",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Trying to pull docker.io/library/eclipse-temurin:11-jdk...\nError: creating build container: initializing source docker://eclipse-temurin:11-jdk: getting username and password: reading JSON file \"/home/lab/.docker/config.json\": open /home/lab/.docker/config.json: permission denied",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781618239.1959333
+    },
+    {
+      "id": "22aa8aef-4a83-4c9d-b86e-2015a5be78a8",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-11...\nError: creating build container: initializing source docker://maven:3.9-eclipse-temurin-11: getting username and password: reading JSON file \"/home/lab/.docker/config.json\": open /home/lab/.docker/config.json: permission denied",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781618292.240907
+    },
+    {
+      "id": "2ad53619-7534-47b9-9c26-dc8cec51fbf7",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "compilation/syntax_error",
+      "build_log_summary": "[INFO] -------------------------------------------------------------\n[ERROR] COMPILATION ERROR :\n[ERROR] /build/src/test/java/org/yaml/snakeyaml/issues/issue67/NonAsciiCharsInClassNameTest.java:[58,17] error while writing org.yaml.snakeyaml.issues.issue67.NonAsciiCharsInClassNameTest.Acad?mico: bad filename RelativeFile[org/yaml/snakeyaml/issues/issue67/NonAsciiCharsInClassNameTest$Acad?mico.class]\n[INFO] 1 error\n[INFO] ------------------------------------------------------------------------\n[ER",
+      "diff_summary": "",
+      "fix_applied": "refine: This may indicate a generated-source issue. Check if annotation processors need to run first.\n\nSpeci",
+      "timestamp": 1781618458.9492283
+    },
+    {
+      "id": "dc194f6a-47b2-47d7-99ba-8d2193678115",
+      "parent_id": null,
+      "reward": 1.0,
+      "level_reached": 4,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "",
+      "timestamp": 1781618566.8636706
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:11-jdk | RUN mvn clean install -B -DskipTests",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "STEP 1/6: FROM eclipse-temurin:11-jdk\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+        "Trying to pull docker.io/library/eclipse-temurin:11-jdk...\nError: creating build container: initializing source docker://eclipse-temurin:11-jdk: getting username and password: reading JSON file \"/home"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-eclipse-temurin-11 | RUN mvn clean install -B -DskipTests",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-11...\nError: creating build container: initializing source docker://maven:3.9-eclipse-temurin-11: getting username and password: reading JSON"
+      ]
+    },
+    {
+      "error_class": "compilation/syntax_error",
+      "approach": "FROM docker.io/library/ubuntu:latest | RUN mvn clean install -B -DskipTests",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "[INFO] -------------------------------------------------------------\n[ERROR] COMPILATION ERROR :\n[ERROR] /build/src/test/java/org/yaml/snakeyaml/issues/issue67/NonAsciiCharsInClassNameTest.java:[58,17"
+      ]
+    }
+  ]
+}

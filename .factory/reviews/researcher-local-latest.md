@@ -1,27 +1,25 @@
 # Researcher Agent Output
 
-- **timestamp:** 2026-06-14T00:37:26Z
+- **timestamp:** 2026-06-16T02:03:34Z
 - **exit_code:** 0
 
 ---
 
-Research complete. Written to `.factory/strategy/research-local.md`.
+Local research complete. Written to `.factory/strategy/research-local.md`.
 
-**Key findings:**
+Key findings:
 
-1. **Three AnthropicVertex call sites** to replace: Inner Builder (`builder.py:92-111`), Outer Builder (`outer_loop.py:420-426`), and the Outer Strategist (`outer_strategist.py:148-183` — a hardcoded dict, not even an LLM call).
+1. **`claude_runner.py`** provides a proven `spawn_claude_agent()` infrastructure already used by 4 agents — all node agents will use this directly.
 
-2. **No existing tests mock AnthropicVertex** — all builder tests cover utility functions only (`sanitize_gha_expressions`, `_format_dead_ends`). The replacement should break zero tests.
+2. **The orchestrator** runs 13 sequential deterministic steps, each mapping cleanly to a node agent. The recommended integration is an **`AgentAugmentedObserver`** that runs the deterministic pipeline first, then fires node agents based on `GapDetector` gap classifications (DEFAULTED → always fire, INFERRED → standard, OBSERVED → skip/light).
 
-3. **Factory's Claude Code runner** (`factory/runners/claude.py`) provides the exact subprocess pattern: `claude --append-system-prompt-file <file> -p <task> --output-format json --dangerously-skip-permissions`.
+3. **The GapDetector** already classifies fields as OBSERVED/INFERRED/DEFAULTED but only covers 6 dimensions — needs expansion for repo, tag, and image checks.
 
-4. **meta_guidance flows** `read_patterns()` → `run_batch()` → `run_inner_loop()` → `Builder.__init__()` → prepended to SYSTEM_PROMPT. Must be preserved in the temp prompt file.
+4. **No benchmark script exists** — batch evaluation is done via `buildroot agent --batch`. Needs a `--node-agents` flag.
 
-5. **The 200-line file cap** in `_outer_builder_implement()` (line 456) is the most concrete limitation — Claude Code's Edit tool eliminates this entirely.
+5. **Benchmark failure mapping**: 24/27 failing packages (89%) are addressable by specific node agents — Repo Agent (8 packages, 26%), Image Agent (6, 19%), Build Cmd Agent (3-6, 10-19%), Tag Agent (2, 6%), Property Agent (2, 6%), plus failure agents for remaining L3/L4 issues.
 
-6. **New file needed:** `outer_researcher.py` — must be added to `MUTABLE_SURFACES` in `guards.py`.
-
-7. **Current eval baseline:** tests=1.0, lint=1.0, 401 tests pass, 73% coverage. No regression expected from this change.
+6. **Estimated benchmark cost**: $400-600 for all 31 packages with node agents enabled.
 ---
 
 > **⚠ CEO IDENTITY RE-ANCHOR (Sacred Rule 8)**

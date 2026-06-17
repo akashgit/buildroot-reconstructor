@@ -1,0 +1,212 @@
+{
+  "coordinate": "com.fasterxml.jackson.core:jackson-core:2.15.3",
+  "status": "budget_exhausted",
+  "best_reward": 0.5,
+  "iterations": 15,
+  "elapsed_seconds": 3176.4,
+  "attempts": [
+    {
+      "id": "2ce728e5-59c5-4cb6-8f83-61798242803a",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/13: FROM eclipse-temurin:8-jdk\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781626947.8127325
+    },
+    {
+      "id": "ab4502a9-5049-4f05-aa10-f4ab396d845c",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781627156.4414907
+    },
+    {
+      "id": "0d98b45b-714c-462c-bbbc-aad1ee067567",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781627362.6845021
+    },
+    {
+      "id": "8353ecc0-2a4e-476b-a152-6285c6068edc",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781627569.4679208
+    },
+    {
+      "id": "b9274bd7-d768-4fa6-8acc-8ec039296fdb",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781627726.635247
+    },
+    {
+      "id": "834dd8bf-1206-40c1-bbd2-8758ceafdd21",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781627925.7302558
+    },
+    {
+      "id": "a25595d1-4314-46a8-9184-db3e2204fe78",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781628063.3819818
+    },
+    {
+      "id": "1c20d894-11b6-469f-a7d7-658475668193",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781628211.1207182
+    },
+    {
+      "id": "3fcb642b-d891-4dbd-ab6b-875b409777e1",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781628364.6246037
+    },
+    {
+      "id": "373a65a1-def1-4f0c-9d89-69628e9a88f2",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781628514.34073
+    },
+    {
+      "id": "7efdf704-7507-4329-92d8-fd3f844a9795",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781628654.7513585
+    },
+    {
+      "id": "652511b6-7e60-4cb8-8d5b-9539dc07b1ec",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781628788.952385
+    },
+    {
+      "id": "2d085f10-be3d-43ca-a037-9f117010053a",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781628927.4934413
+    },
+    {
+      "id": "74c3f665-8e82-4f71-9ad9-77f834343870",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781629069.7727265
+    },
+    {
+      "id": "0f02a0e9-6aa3-4bd7-a4de-4eb69be1aee1",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=False",
+      "fix_applied": "",
+      "timestamp": 1781629211.2181475
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:8-jdk | ",
+      "failure_count": 5,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "STEP 1/13: FROM eclipse-temurin:8-jdk\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-amazoncorretto-8 | RUN mvn -B -ff -ntp verify -DskipTests -Dgpg.skip=true",
+      "failure_count": 3,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-eclipse-temurin-17 | RUN mvn -B -ff -ntp verify -DskipTests \\",
+      "failure_count": 6,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        "",
+        ""
+      ]
+    }
+  ]
+}

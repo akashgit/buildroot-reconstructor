@@ -1,6 +1,6 @@
 {
   "project_name": "buildroot-reconstructor",
-  "generated_at": "2026-06-14 01:55:59.594178+00:00",
+  "generated_at": "2026-06-16 03:35:57.663582+00:00",
   "mode": "improve",
   "experiments_kept": [
     {
@@ -122,6 +122,21 @@
       "cost_usd": null,
       "notes": "ceo:keep score_delta=+0.0014 precheck=false_positives_forced agents_spawned=R,S,B,R,E pr_status=open_for_review hypothesis_type=code execution_artifacts=na e2e=pass backlog_cleared=yes review_pipeline=full review_iterations=1 final_review_iterations=2",
       "research_citations": []
+    },
+    {
+      "id": 9,
+      "timestamp": "2026-06-15 23:31:35.813674",
+      "hypothesis": "Add node-scoped Claude Code agents at every pipeline step with GapDetector activation, evidence-ranked proposals, and post-build failure diagnosis agents",
+      "change_summary": "13 agents (10 node + 3 failure), AgentAugmentedObserver, CLI --node-agents flag. 1397 lines across 17 files. Partial benchmark (2/31 packages) confirms agents fire correctly.",
+      "issue_number": 24,
+      "pr_number": 26,
+      "score_before": null,
+      "score_after": null,
+      "delta": null,
+      "verdict": "keep",
+      "cost_usd": null,
+      "notes": "ceo:keep score_delta=-0.001 precheck=failed_false_positives agents_spawned=R,S,B,R,E pr_status=open_for_review hypothesis_type=code execution_artifacts=partial e2e=pass backlog_cleared=no review_pipeline=full review_iterations=1 final_review_iterations=3 benchmark_incomplete=true benchmark_packages=2_of_31 bugs_fixed=5",
+      "research_citations": []
     }
   ],
   "experiments_reverted": [],
@@ -147,7 +162,8 @@
     "GitLab CI / Jenkins / Travis CI workflow parsing",
     "Multi-Release JAR support \u2014 detect Multi-Release: true in published manifest and configure maven-jar-plugin with multi-release profile so module-info.class is generated for Java 9+",
     "Execute Level 3 container builds for all 10 test packages \u2014 code fixes complete (PR #3), Containerfiles generate correctly, but actual podman/docker build and artifact comparison not yet verified for each package",
-    "Level 4: Re-run artifact comparison on rh-h100 nodes \u2014 comparison pipeline code is complete (PR #7), but 0/10 builds succeeded due to upstream Containerfile issues (secrets in ARGs, wrong git tags, multi-module builds, podman short-name resolution). Fix Containerfile generation for these 5 failure classes, then re-run comparison. GitHub issue #5."
+    "Level 4: Re-run artifact comparison on rh-h100 nodes \u2014 comparison pipeline code is complete (PR #7), but 0/10 builds succeeded due to upstream Containerfile issues (secrets in ARGs, wrong git tags, multi-module builds, podman short-name resolution). Fix Containerfile generation for these 5 failure classes, then re-run comparison. GitHub issue #5.",
+    "Node-scoped agents: Claude Code reviewer at every pipeline step (issue #24)"
   ],
   "guard_violations": [],
   "needs_human_input": [],

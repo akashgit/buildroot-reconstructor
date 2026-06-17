@@ -1,0 +1,25 @@
+FROM docker.io/azul/zulu-openjdk:8
+
+# Maven version: 3.9.11 (source: observed, confidence: OBSERVED)
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends wget tar && \
+    wget -q https://archive.apache.org/dist/maven/maven-3/3.9.11/binaries/apache-maven-3.9.11-bin.tar.gz -O /tmp/maven.tar.gz && \
+    tar xzf /tmp/maven.tar.gz -C /opt && \
+    ln -s /opt/apache-maven-3.9.11/bin/mvn /usr/local/bin/mvn && \
+    rm /tmp/maven.tar.gz && \
+    apt-get purge -y wget && \
+    apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/*
+ENV MAVEN_HOME=/opt/apache-maven-3.9.11
+
+# Environment variables from CI
+ENV RUSTUP_UNPACK_RAM=134217728
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends git ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+RUN git clone --depth 1 --branch 'netty-4.1.104.Final' 'https://github.com/netty/netty' /build
+WORKDIR /build
+
+# Build command: build buffer module with dependencies, skip optional plugins
+RUN ./mvnw -B -ntp clean package -pl buffer -am -DskipTests=true -Dcheckstyle.skip=true -Denforcer.skip=true -Danimal.sniffer.skip=true -Dgpg.skip=true -Dmaven.javadoc.skip=true

@@ -1,0 +1,29 @@
+- error_class: environment/image_resolution
+  approach: FROM azul/zulu-openjdk:8-jdk | RUN ./mvnw -B -ntp clean package 
+    org.sonatype.plugins:nexus-staging-maven-plugin
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "Trying to pull docker.io/azul/zulu-openjdk:8-jdk...\nError: creating build container:
+    unable to copy from source docker://azul/zulu-openjdk:8-jdk: initializing source
+    docker://azul/zulu-openjdk:8-jdk: "
+- error_class: unknown
+  approach: FROM docker.io/azul/zulu-openjdk:8 | RUN ./mvnw -B -ntp clean 
+    package -pl buffer -am -DskipTests=true -Dcheckstyle.sk
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9.9-eclipse-temurin-8 | RUN mvn -B 
+    -ntp clean package -pl buffer -am -DskipTests=true -Dcheckstyle.skip=
+  failure_count: 10
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+  - BUILD_FAILED

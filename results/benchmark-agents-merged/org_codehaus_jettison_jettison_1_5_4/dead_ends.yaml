@@ -1,0 +1,9 @@
+- error_class: unknown
+  approach: FROM docker.io/library/eclipse-temurin:8-jdk | RUN mvn -U clean 
+    install -Djava.awt.headless=true -fae -B -DskipTests
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "STEP 1/7: FROM eclipse-temurin:8-jdk\nError: creating build container: short-name
+    resolution enforced but cannot prompt without a TTY"

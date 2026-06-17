@@ -1,0 +1,8 @@
+- error_class: unknown
+  approach: FROM eclipse-temurin:8-jdk | RUN mvn clean package 
+    -Dmaven.test.skip=true -Dmaven.site.skip=true -Dmaven.java
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - BUILD_FAILED

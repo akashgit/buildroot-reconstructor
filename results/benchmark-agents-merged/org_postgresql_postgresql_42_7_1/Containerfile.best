@@ -1,0 +1,25 @@
+FROM docker.io/library/debian:bookworm-slim
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    wget git ca-certificates unzip \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN wget -q https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-x64_bin.tar.gz -O /tmp/jdk17.tar.gz && \
+    mkdir -p /usr/lib/jvm && \
+    tar xzf /tmp/jdk17.tar.gz -C /usr/lib/jvm && \
+    rm /tmp/jdk17.tar.gz
+
+RUN wget -q https://download.java.net/java/GA/jdk21/fd2272bbf8e04c3dbaee13770090416c/35/GPL/openjdk-21_linux-x64_bin.tar.gz -O /tmp/jdk21.tar.gz && \
+    tar xzf /tmp/jdk21.tar.gz -C /usr/lib/jvm && \
+    rm /tmp/jdk21.tar.gz
+
+ENV JAVA_HOME=/usr/lib/jvm/jdk-21
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
+
+RUN git clone --depth 1 --branch 'REL42.7.1' 'https://github.com/pgjdbc/pgjdbc' /build
+WORKDIR /build
+
+RUN ./gradlew assemble -x test -PjdkBuildVersion=17 -Dorg.gradle.java.installations.paths=/usr/lib/jvm/jdk-17.0.2,/usr/lib/jvm/jdk-21

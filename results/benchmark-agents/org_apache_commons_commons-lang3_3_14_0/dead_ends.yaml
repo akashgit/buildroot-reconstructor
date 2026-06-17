@@ -1,0 +1,10 @@
+- error_class: environment/image_resolution
+  approach: FROM maven:3.9-eclipse-temurin-21-jdk | RUN mvn --errors 
+    --show-version --batch-mode --no-transfer-progress -Ddoclint=al
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "Trying to pull docker.io/library/maven:3.9-eclipse-temurin-21-jdk...\nError:
+    creating build container: unable to copy from source docker://maven:3.9-eclipse-temurin-21-jdk:
+    initializing source docker:/"

@@ -31,6 +31,10 @@ DEFAULT_DISTRIBUTION = "temurin"
 DEFAULT_IMAGE_BASE = "eclipse-temurin"
 DEFAULT_JDK_VERSION = "17"
 
+IMAGE_TAG_SUFFIX = {
+    "eclipse-temurin": "-jdk",
+}
+
 JAVA_HOME_VERSION_RE = re.compile(r"JAVA_HOME_(\d+)_")
 
 
@@ -296,7 +300,8 @@ class JdkResolver:
         dist_lower = distribution.lower()
         image_base = DISTRIBUTION_IMAGE_MAP.get(dist_lower, DEFAULT_IMAGE_BASE)
         tag_version = self._normalize_version_for_tag(version)
-        return f"{image_base}:{tag_version}"
+        suffix = IMAGE_TAG_SUFFIX.get(image_base, "")
+        return f"{image_base}:{tag_version}{suffix}"
 
     @staticmethod
     def _normalize_version_for_tag(version: str) -> str:

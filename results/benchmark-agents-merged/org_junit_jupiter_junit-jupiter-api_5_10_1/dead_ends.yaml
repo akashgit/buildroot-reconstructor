@@ -1,0 +1,43 @@
+- error_class: unknown
+  approach: FROM ubuntu:24.04 | RUN ./gradlew 
+    :junit-jupiter-api:publishToMavenLocal -x test
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "Setting up x11-common (1:7.7+23ubuntu3) ...\ninvoke-rc.d: could not determine
+    current runlevel\ninvoke-rc.d: policy-rc.d denied execution of start.\ntime=\"\
+    2026-06-16T17:15:09Z\" level=error msg=\"+(UNHANDL"
+  - "Setting up x11-common (1:7.7+23ubuntu3) ...\ninvoke-rc.d: could not determine
+    current runlevel\ninvoke-rc.d: policy-rc.d denied execution of start.\ndebconf:
+    delaying package configuration, since apt-uti"
+- error_class: unknown
+  approach: FROM docker.io/library/eclipse-temurin:21-jdk-jammy | RUN ./gradlew 
+    :junit-jupiter-api:publishToMavenLocal -x test
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "Setting up x11-common (1:7.7+23ubuntu2) ...\ninvoke-rc.d: could not determine
+    current runlevel\ninvoke-rc.d: policy-rc.d denied execution of start.\nBUILD FAILED
+    in 23s\nError: building at STEP \"RUN ./gra"
+- error_class: plugin/gpg_error
+  approach: FROM docker.io/library/eclipse-temurin:17-jdk-jammy | RUN ./gradlew 
+    :junit-jupiter-api:publishToMavenLocal -x test
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "Setting up x11-common (1:7.7+23ubuntu2) ...\ninvoke-rc.d: could not determine
+    current runlevel\ninvoke-rc.d: policy-rc.d denied execution of start.\nCould not
+    write standard input to command 'gpg'.\njava."
+- error_class: unknown
+  approach: FROM docker.io/library/eclipse-temurin:17-jdk-jammy | RUN ./gradlew 
+    :junit-jupiter-api:publishToMavenLocal -x test
+  failure_count: 10
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+  - BUILD_FAILED

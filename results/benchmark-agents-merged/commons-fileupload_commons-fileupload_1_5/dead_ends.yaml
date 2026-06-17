@@ -1,0 +1,97 @@
+- error_class: plugin/configuration_error
+  approach: 'FROM ubuntu:24.04 | RUN mvn --errors --show-version --batch-mode --no-transfer-progress
+    -DskipTests '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "[WARNING] Cannot get the branch information from the git repository:\nDetecting
+    the current branch failed: fatal: ref HEAD is not a symbolic ref\n[INFO] CycloneDX:
+    Resolving Dependencies\n[ERROR] An erro"
+- error_class: unknown
+  approach: 'FROM ubuntu:24.04 | RUN mvn --errors --show-version --batch-mode --no-transfer-progress
+    -DskipTests '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "gpg: no valid OpenPGP data found.\nError: building at STEP \"RUN apt-get update
+    &&     apt-get install -y --no-install-recommends wget apt-transport-https gpg
+    &&     wget -qO - https://packages.adoptium"
+- error_class: unknown
+  approach: 'FROM docker.io/library/eclipse-temurin:8-jdk | RUN mvn --errors --show-version
+    --batch-mode --no-transfer-progress -DskipTests '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-11 | RUN mvn 
+    --errors --show-version --batch-mode --no-transfer-progress package -Dsk
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.8-eclipse-temurin-8 | RUN mvn 
+    --errors --show-version --batch-mode package -DskipTests -Dgpg.skip=true
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-11 | RUN mvn 
+    --errors --show-version --batch-mode -DskipTests -Dgpg.skip=true -Drat.s
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-8 | RUN mvn 
+    --errors --show-version --batch-mode -DskipTests -Dgpg.skip=true -Drat.s
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.8-eclipse-temurin-11 | RUN mvn 
+    --errors --show-version --batch-mode -U \
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-8 | RUN mvn 
+    --errors --show-version --batch-mode --no-transfer-progress -U \
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.6.3-jdk-8 | RUN mvn --errors 
+    --show-version --batch-mode -U \
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "E: The repository 'http://deb.debian.org/debian buster-updates Release' does
+    not have a Release file.\nError: building at STEP \"RUN apt-get update &&    \
+    \ apt-get install -y --no-install-recommends git "
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-amazoncorretto-8 | RUN mvn --errors
+    --show-version --batch-mode -U \
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - ''

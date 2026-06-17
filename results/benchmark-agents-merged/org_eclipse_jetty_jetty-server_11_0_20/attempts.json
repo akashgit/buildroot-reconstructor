@@ -1,0 +1,231 @@
+{
+  "coordinate": "org.eclipse.jetty:jetty-server:11.0.20",
+  "status": "budget_exhausted",
+  "best_reward": 0.15000000000000002,
+  "iterations": 15,
+  "elapsed_seconds": 2557.5,
+  "attempts": [
+    {
+      "id": "68e60a3f-8bad-4aa4-acf0-209033c4601b",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "dependency_resolution/missing_artifact",
+      "build_log_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] Failed to execute goal on project jetty-server: Could not resolve dependencies for project org.eclipse.jetty:jetty-server:jar:11.0.20\n[ERROR] dependency: org.eclipse.jetty.tests:jetty-http-tools:jar:11.0.20 (test)\n[ERROR] \tCould not find artifact org.eclipse.jetty.tests:jetty-http-tools:jar:11.0.20 in central (https://repo.maven.apache.org/maven2)\n[ERROR] -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trac",
+      "diff_summary": "",
+      "fix_applied": "refine: Try a different Maven repository or check if the dependency version exists. Consider adding -U to fo",
+      "timestamp": 1781621838.5514424
+    },
+    {
+      "id": "cd189387-3c41-4811-b431-8ab10ca52c44",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781622042.7898893
+    },
+    {
+      "id": "83ef9464-91c0-46b1-bd01-445ef149312f",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781622149.83782
+    },
+    {
+      "id": "bb1c9d27-80d8-4335-aff4-56d8497ef7f8",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781622253.0563226
+    },
+    {
+      "id": "f20ba4ff-3f20-4427-a8df-061a43af7e10",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781622364.920339
+    },
+    {
+      "id": "cc7460f3-9c7a-4611-99c3-537c355efe3f",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781622478.1751628
+    },
+    {
+      "id": "4834a5e7-c6db-4635-a717-877d859e5031",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781622629.7538457
+    },
+    {
+      "id": "20fe2feb-3d91-4ea3-8fea-0070a2b65492",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781622813.4719162
+    },
+    {
+      "id": "54884710-c70e-4d92-a9ec-7039b310e3ff",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781622978.5207522
+    },
+    {
+      "id": "96de6853-20b3-408d-a1d1-391225faea7c",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781623084.0968502
+    },
+    {
+      "id": "4b75910b-904f-46e7-bc1a-7b9d550a6cd0",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781623188.544259
+    },
+    {
+      "id": "685ef4d2-9c81-4ce2-99a5-38674576693e",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781623290.5238945
+    },
+    {
+      "id": "a0de2e33-d14d-44cc-8b67-988135739cb7",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781623449.0193028
+    },
+    {
+      "id": "379edf9b-f6f1-4f83-ac2f-374ba3e408fe",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781623565.1607165
+    },
+    {
+      "id": "6c9b70fb-b54d-40e5-9984-450a60d5903a",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "",
+      "timestamp": 1781623671.850573
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "dependency_resolution/missing_artifact",
+      "approach": "FROM eclipse-temurin:21-jdk | RUN mvn clean install -B -DskipTests -pl jetty-server -am",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "[INFO] ------------------------------------------------------------------------\n[ERROR] Failed to execute goal on project jetty-server: Could not resolve dependencies for project org.eclipse.jetty:jet"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM eclipse-temurin:21-jdk | RUN mvn clean install -B -DskipTests -pl jetty-server,tests/jetty-http-tools -am",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "BUILD_FAILED"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-eclipse-temurin-21 | RUN mvn clean install -B -DskipTests -pl jetty-server,tests/jetty-http-tools -am",
+      "failure_count": 3,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-eclipse-temurin-17 | RUN mvn clean install -B -DskipTests -pl jetty-server -am \\",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-eclipse-temurin-11 | RUN mvn clean install -B -ntp -DskipTests -pl jetty-server -am \\",
+      "failure_count": 7,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    }
+  ]
+}

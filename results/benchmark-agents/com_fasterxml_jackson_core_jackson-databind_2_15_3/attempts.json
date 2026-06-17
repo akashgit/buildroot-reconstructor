@@ -1,0 +1,54 @@
+{
+  "coordinate": "com.fasterxml.jackson.core:jackson-databind:2.15.3",
+  "status": "success",
+  "best_reward": 1.0,
+  "iterations": 3,
+  "elapsed_seconds": 965.8,
+  "attempts": [
+    {
+      "id": "95b3a37a-ec5b-41e1-a84a-90b8a639f7e1",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "environment/image_resolution",
+      "build_log_summary": "Trying to pull docker.io/library/eclipse-temurin:8-jdk-jdk...\nError: creating build container: unable to copy from source docker://eclipse-temurin:8-jdk-jdk: initializing source docker://eclipse-temurin:8-jdk-jdk: reading manifest 8-jdk-jdk in docker.io/library/eclipse-temurin: manifest unknown",
+      "diff_summary": "",
+      "fix_applied": "failure_agent_fix",
+      "timestamp": 1781581554.395371
+    },
+    {
+      "id": "d6a85ecc-3196-4450-b5a8-48ee9b9116c5",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "environment/image_resolution",
+      "build_log_summary": "Trying to pull docker.io/library/eclipse-temurin:8-jdk-jdk...\nError: creating build container: unable to copy from source docker://eclipse-temurin:8-jdk-jdk: initializing source docker://eclipse-temurin:8-jdk-jdk: reading manifest 8-jdk-jdk in docker.io/library/eclipse-temurin: manifest unknown",
+      "diff_summary": "",
+      "fix_applied": "refine: Use fully-qualified image names with docker.io/ prefix.",
+      "timestamp": 1781581618.786064
+    },
+    {
+      "id": "ef7e0794-3005-4fc0-b004-b9a4e0357b44",
+      "parent_id": null,
+      "reward": 1.0,
+      "level_reached": 4,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "",
+      "timestamp": 1781581702.296067
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "environment/image_resolution",
+      "approach": "FROM eclipse-temurin:8-jdk-jdk | ",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "Trying to pull docker.io/library/eclipse-temurin:8-jdk-jdk...\nError: creating build container: unable to copy from source docker://eclipse-temurin:8-jdk-jdk: initializing source docker://eclipse-temur"
+      ]
+    }
+  ]
+}

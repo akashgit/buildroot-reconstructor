@@ -1,36 +1,26 @@
-## CEO Review: Researcher Agent (3 parallel)
+## CEO Review: Researcher Agents (3 parallel — local, external, context)
 
 - **Verdict:** PROCEED
-- **Rationale:** All 3 researchers delivered comprehensive, complementary analysis with zero overlap waste.
-- **Issues found:** none
+- **Rationale:** All 3 researchers completed with substantive, complementary findings. Local researcher mapped the full pipeline architecture (13 steps → 10 node agents), identified the GapDetector integration pattern, and confirmed claude_runner.py infrastructure is ready. External researcher found best practices for multi-agent pipelines, Docker Hub API patterns, git tag discovery, and Maven POM edge cases. Context researcher traced experiment history and confirmed the failure category mapping.
 
-### Assessment
+### Key CEO Observations
 
-**Local researcher (research-local.md, 310 lines):**
-- Correctly identified all 3 AnthropicVertex call sites: builder.py:92-111, outer_loop.py:420-426, outer_strategist.py:148-183
-- Confirmed no existing tests mock AnthropicVertex, so replacement breaks zero tests
-- Traced meta_guidance flow: read_patterns() → run_batch() → run_inner_loop() → Builder.__init__()
-- Identified the 200-line file cap in _outer_builder_implement() line 456
-- Flagged that outer_researcher.py needs to be added to MUTABLE_SURFACES in guards.py
-- Current baseline: tests=1.0, lint=1.0, 401 tests, 73% coverage
+1. **Infrastructure is ready.** `spawn_claude_agent()` from experiment 8 provides the foundation. No new infra needed — just node-specific system prompts and JSON schemas.
 
-**External researcher (research-external.md, 474 lines):**
-- Full CLI flag reference for claude -p subprocess pattern
-- --append-system-prompt-file recommendation (preserves default tool guidance)
-- --json-schema for Strategist's CodeChangeHypothesis structured output
-- --bare mode recommendation for faster startup, reduced token overhead
-- Complete spawn_claude_agent() reference implementation with error handling
-- Per-agent configuration specs (turn limits, budgets, allowed tools)
-- Vertex AI env var configuration
+2. **GapDetector integration strategy is sound.** Run full deterministic pipeline → gap analysis → fire node agents per gap classification. This avoids refactoring the pipeline itself.
 
-**Context researcher (research-context.md, 318 lines):**
-- Clear mapping of what experiment 7 built vs what needs to change
-- Risk assessment: subprocess reliability, structured output parsing, Outer Builder flow change
-- Test strategy: mock subprocess.run for unit tests, real subprocess for integration, mandatory E2E
-- All 481 existing tests must continue passing
+3. **External researcher recommends 4-5 agents, issue spec requires 10+3.** Issue spec takes precedence — but the builder should prioritize the high-impact agents (Repo=8 packages, Image=6, Build Cmd=3, Tag=2, Property=2).
 
-### Instructions for Strategist
-- Use the claude_runner.py shared utility recommendation from external research
-- Inner Builder must preserve the meta_guidance → system prompt flow
-- Outer Builder flow change is the riskiest part — must handle direct file edit vs return-content pattern
-- New outer_researcher.py must be added to guards.py MUTABLE_SURFACES
+4. **Cost and model considerations.** External researcher suggests Sonnet for node agents to reduce cost. This is practical — node agents are reviewers, not builders. Budget ~$0.25-0.50 per node agent, ~$1-4 per package total.
+
+5. **Benchmark run is the primary acceptance criterion.** The issue is NOT done until full 31-package L1-L4 results exist on rh-h100-01. This is an operational requirement.
+
+6. **Realistic L4 target: 8-15/31 (26-48%).** The 24 addressable failures map cleanly to specific node agents, but not all will be fully resolvable by a reviewer agent.
+
+### Issues Found
+- None — research coverage is adequate for this focused task.
+
+### Instructions for Next Step
+- Strategist: generate exactly 1 hypothesis for issue #24. Must be type: mixed/operational (requires code + benchmark execution).
+- Hypothesis must specify all 13 agent implementations as a single deliverable.
+- Include benchmark execution step on rh-h100-01 as acceptance criterion.
