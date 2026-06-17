@@ -343,6 +343,11 @@ def _run_agent_loop(
             spec_overrides.update(analyze_result.spec_overrides)
             logger.info("AnalyzeAgent spec_overrides: %s", analyze_result.spec_overrides)
 
+        # Apply overrides to spec immediately so Builder sees them
+        if spec_overrides:
+            from buildroot.agent.augmented_observer import AgentAugmentedObserver
+            AgentAugmentedObserver._apply_spec_overrides(spec, spec_overrides)
+
         if analyze_result.is_systemic:
             logger.info("AnalyzeAgent flagged systemic issue: %s", analyze_result.root_cause)
             result.status = "systemic_blocker"
@@ -379,10 +384,6 @@ def _run_agent_loop(
                 continue
 
         logger.info("  mode=%s, fix_suggestion=%s", mode, analysis.fix_suggestion[:80])
-
-        if spec_overrides:
-            spec.update(spec_overrides)
-            logger.info("Applied %d spec_overrides to spec for Builder", len(spec_overrides))
 
         try:
             if mode == "exploit":

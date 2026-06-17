@@ -157,24 +157,43 @@ class AgentAugmentedObserver(Observer):
 
         return "\n".join(result) + "\n"
 
+    _SILENTLY_SKIPPED_FIELDS = frozenset({
+        "build_tool", "workdir", "artifact_path", "maven_profile",
+        "extra_maven_args", "env", "env_vars",
+    })
+
     @staticmethod
     def _apply_spec_overrides(spec: BuildrootSpec, overrides: dict[str, Any]) -> None:
         """Apply spec_overrides dict to the spec, mapping field names to values."""
         for field_name, value in overrides.items():
-            if field_name == "base_image":
+            if field_name in ("base_image", "image"):
                 spec.jdk_spec.base_image = value
             elif field_name == "jdk_version":
                 spec.jdk_spec.version = value
             elif field_name == "jdk_distribution":
                 spec.jdk_spec.distribution = value
-            elif field_name == "build_command":
+            elif field_name in ("build_command", "build_cmd"):
                 spec.build_commands = [value] if isinstance(value, str) else value
             elif field_name == "maven_version":
                 spec.maven_version = value
-            elif field_name == "git_tag":
+            elif field_name in ("git_tag", "tag", "source_tag"):
                 spec.git_tag = value
             elif field_name == "source_repo":
                 spec.source_repo = value
+            elif field_name == "system_package":
+                spec.system_packages = value.split() if isinstance(value, str) else list(value)
+            elif field_name in ("extra_packages", "apt_packages"):
+                extras = value.split() if isinstance(value, str) else list(value)
+                spec.system_packages.extend(extras)
+            elif field_name in ("image_setup_cmds", "pre_build_cmds"):
+                cmds = [value] if isinstance(value, str) else list(value)
+                spec.build_commands = cmds + spec.build_commands
+            elif field_name == "pre_build_cmd":
+                spec.build_commands = [value] + spec.build_commands
+            elif field_name in AgentAugmentedObserver._SILENTLY_SKIPPED_FIELDS:
+                pass
+            elif field_name.startswith("dockerfile_"):
+                pass
             else:
                 logger.warning("Unknown spec_override field: %s", field_name)
 
