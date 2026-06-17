@@ -1,0 +1,45 @@
+- error_class: unknown
+  approach: FROM eclipse-temurin:25-jdk | RUN ./gradlew 
+    :hibernate-core:publishToMavenLocal -x test -x javadoc --no-build-
+  failure_count: 4
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "Error: parsing main Dockerfile: Containerfile: Syntax error - can't find = in
+    \"-Xmx4g\". Must be of the form: name=value"
+  - "Error: parsing main Dockerfile: Containerfile: Syntax error - can't find = in
+    \"-Xmx4g\". Must be of the form: name=value"
+  - "Error: parsing main Dockerfile: Containerfile: Syntax error - can't find = in
+    \"-Xmx4g\". Must be of the form: name=value"
+- error_class: unknown
+  approach: FROM eclipse-temurin:17-jdk-jammy | RUN ./gradlew 
+    :hibernate-core:publishToMavenLocal -x test -x javadoc --no-build-
+  failure_count: 3
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "A problem occurred configuring project ':documentation'.\n> Could not resolve
+    all files for configuration ':documentation:classpath'.\n> Could not find com.burgstaller:okhttp-digest:1.10.\n\
+    Searched in th"
+  - "A problem occurred configuring project ':documentation'.\n> Could not resolve
+    all files for configuration ':documentation:classpath'.\n> Could not find com.burgstaller:okhttp-digest:1.10.\n\
+    Searched in th"
+  - "A problem occurred configuring project ':documentation'.\n> Could not resolve
+    all files for configuration ':documentation:classpath'.\n> Could not find com.burgstaller:okhttp-digest:1.10.\n\
+    Searched in th"
+- error_class: unknown
+  approach: FROM docker.io/library/eclipse-temurin:17-jdk | RUN ./gradlew 
+    :hibernate-core:publishToMavenLocal -x test -x javadoc --no-build-
+  failure_count: 7
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "BUILD FAILED in 26s\nError: building at STEP \"RUN ./gradlew :hibernate-core:publishToMavenLocal
+    -x test -x javadoc --no-build-cache --no-daemon --configure-on-demand\": while
+    running runtime: exit statu"
+  - "BUILD FAILED in 27s\nError: building at STEP \"RUN ./gradlew :hibernate-core:publishToMavenLocal
+    -x test -x javadoc --no-build-cache --no-daemon --configure-on-demand\": while
+    running runtime: exit statu"
+  - "BUILD FAILED in 27s\nError: building at STEP \"RUN ./gradlew :hibernate-core:publishToMavenLocal
+    -x test -x javadoc --no-build-cache --no-daemon --configure-on-demand\": while
+    running runtime: exit statu"

@@ -1,0 +1,21 @@
+- error_class: build_tool/wrong_build_system
+  approach: 'FROM ubuntu:24.04 | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "/bin/sh: 1: ./gradlew: not found\nError: building at STEP \"RUN ./gradlew :clients:jar
+    -x test -x integrationTest -x unitTest -x rat -x checkstyleMain -x checkstyleTest
+    -x spotbugsMain -x spotbugsTest -"
+  - "Setting up x11-common (1:7.7+23ubuntu3) ...\ninvoke-rc.d: could not determine
+    current runlevel\ninvoke-rc.d: policy-rc.d denied execution of start.\n./gradlew:
+    118: curl: not found\nError: Could not find "
+- error_class: unknown
+  approach: 'FROM docker.io/library/eclipse-temurin:17-jdk-jammy | '
+  failure_count: 12
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+  - BUILD_FAILED

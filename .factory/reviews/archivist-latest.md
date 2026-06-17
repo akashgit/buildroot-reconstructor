@@ -1,17 +1,17 @@
 # Archivist Agent Output
 
-- **timestamp:** 2026-06-16T03:35:50Z
+- **timestamp:** 2026-06-17T09:26:25Z
 - **exit_code:** 0
 
 ---
 
-All archive tasks complete. Pre-flight checklist:
+All archival tasks complete. Pre-flight checklist:
 
-1. **Experiment note written** — `experiments/buildroot-reconstructor-009.md` exists with full detail (hypothesis, result, 15 new modules, 5 bugs fixed, architecture decisions, benchmark status)
-2. **Dashboard updated** — `buildroot-reconstructor.md` reflects CYCLE 9 COMPLETE state, strategy history updated with cycle summary link
-3. **Strategy snapshot** — `strategies/buildroot-reconstructor-2026-06-15-cycle-summary.md` written with full cycle 9 summary (targeted single-item cycle, KEEP verdict, 13 agents, benchmark status, outstanding work, key learnings)
-4. **Patterns updated** — `patterns/patterns.md` already had 3 experiment #009 patterns (node-scoped pipelines, failure agent tiering, multi-round review), timestamp updated
-5. **Performance report** — `factory report-update` executed successfully (9 experiments, 125 observations parsed)
+1. **Experiment note** — Already existed at `experiments/buildroot-reconstructor-010.md` with full root cause analysis, benchmark results, and recommendations
+2. **Dashboard updated** — `buildroot-reconstructor.md` already had the exp #010 post-mortem; added cycle summary to strategy history
+3. **Strategy snapshot** — Wrote `strategies/buildroot-reconstructor-2026-06-17-cycle-summary.md` covering the REVERT cycle
+4. **Patterns updated** — 3 new patterns already archived: early termination calibration, level-based tracking coarseness, keep-streak overconfidence
+5. **Performance report** — `factory report-update` ran successfully (10 experiments, 57 observations)
 ---
 
 > **⚠ CEO IDENTITY RE-ANCHOR (Sacred Rule 8)**

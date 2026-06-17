@@ -1,71 +1,66 @@
-## Strategy — 2026-06-15
+## Strategy — 2026-06-16
+
+### Design Space
+| Dimension | Score | Notes |
+|---|---|---|
+| Features | 4 | 9 kept experiments building pipeline from L1→L4, inner/outer loops, node agents |
+| Bug fixes | 3 | Podman prefix, JDK suffix doubling, ENV syntax — addressed incrementally |
+| Instrumentation | 2 | 60.6% observability score but only 19% function coverage; node agents uninstrumented |
+| Flow changes | 4 | Major arch rewrites: inner loop (exp 6), outer loop (exp 7), Claude Code migration (exp 8), node agents (exp 9) |
+| New agents | 5 | 13 agents now (10 node + 3 failure); heavily explored |
+| Prompt engineering | 2 | Agent prompts written once, not systematically tuned from failure data |
+| Eval improvements | 2 | L1-L4 scoring exists but error classifier produces only "unknown" classes |
+| Knowledge management | 1 | No playbooks, no recipe store, no cross-run learning persistence |
+| Infrastructure | 3 | rh-h100 multi-node benchmark infra works; SSH key issues on some nodes |
+| Operational execution | 3 | 31-package benchmark ran once (exp 9); need re-run after architecture changes |
+| Self-evolution | 1 | No feedback loops — agents can't learn from build outcomes |
+
+**Underserved:** Knowledge management, Self-evolution, Prompt engineering
 
 ### Observations
-- Current composite score: 0.5651
-- Weakest eval dimension: type_check (0.0), lint (0.3), capability_surface (0.41)
-- Last 3 experiments: #6 keep (inner loop MVP), #7 keep (outer loop intelligence), #8 keep (Claude Code migration)
-- Pattern: 8/8 experiments kept, zero reverts — strong execution track record. Agentic solve rate stagnated at 33.3% (1/3 smoke packages). Deterministic baseline is 4/31 L4 (13%). The inner loop approach is fundamentally limited by giving the LLM full Containerfile control — prose contamination caused 90% of wasted iterations. Node-scoped agents attack the root cause by reviewing structured data at each pipeline step instead of rewriting entire Containerfiles.
-- Benchmark failure categories are well-characterized: multi-module (8), base image (6), build tool (3), unresolved props (2), git tag (2), build command/env (3). Each maps to a specific pipeline node.
-- Infrastructure ready: `spawn_claude_agent()` from exp 8, SSH evaluator to rh-h100-01, GapDetector with OBSERVED/INFERRED/DEFAULTED classification.
+- Current composite score: 0.530
+- Weakest eval dimension: type_check (0.0, 61 errors)
+- Last 3 experiments: #7 keep (outer loop), #8 keep (Claude Code migration), #9 keep (node agents)
+- Pattern: All 9 experiments kept, zero reverts — steady architecture buildout. But the benchmark plateau at 22.6% L4 reveals that the agent system lacks learning: node agents fire once pre-build, fixes don't persist across iterations, and the error classifier is blind (all `unknown`). The 5 architectural gaps from issue #27 are confirmed by code-level analysis and validated by external research (ACE playbooks, CORAL parallel search, Chains-Rebuild reproducibility).
+- The 6 L3 packages (bytecode matches, metadata doesn't) are low-hanging fruit — reproducible build flags could convert them all to L4.
+- The 5 Podman short-name packages are a deterministic one-line fix in `jdk.py:299-304`.
+- The AnalyzeAgent/playbook system is the centerpiece: it closes Gaps 1, 2, 3, and 5 by creating a feedback channel from build outcomes back to node agents.
 
 ### Hypotheses
 
-#### H1: Node-scoped agents — Claude Code reviewer at every pipeline step
+#### H1: Agent architecture overhaul — feedback loops, multi-candidate builds, and runtime awareness
 - **Category:** EXPLORE
 - **Type:** mixed
-- **Backlog item:** Node-scoped agents: Claude Code reviewer at every pipeline step (issue #24)
-- **Addresses:** #24
-- **What:** Implement 13 Claude Code reviewer agents (10 node agents + 3 post-build failure agents) integrated into the deterministic pipeline, plus a full benchmark run on all 31 packages.
+- **Backlog item:** Agent architecture: fix feedback loops, multi-candidate builds, and runtime awareness (issue #27)
+- **Addresses:** #27
+- **What:** Implement all 6 priorities from the issue spec as one coherent architectural change:
 
-  **Code deliverables:**
-  1. `NodeAgent` base class (`src/buildroot/agent/node_agents/base.py`) — system prompt templating, context injection, candidate ranking with evidence hierarchy (direct observation > CI inference > cross-reference > historical pattern > ecosystem heuristic > default), structured output via `spawn_claude_agent()` with JSON schema
-  2. 10 node agent implementations (`src/buildroot/agent/node_agents/`):
-     - **Node 1 — POM Agent**: relocation detection, sparse POM detection
-     - **Node 2 — Parent Chain Agent**: missing parents, BOM import validation
-     - **Node 3 — Property Agent**: resolve remaining `${...}` via CI env vars, profiles, docs (fixes hibernate-core, postgresql)
-     - **Node 4 — Repo Agent**: URL validation, multi-module subdirectory detection, GitHub API search (fixes 8 packages — highest impact)
-     - **Node 5 — CI Agent**: correct workflow selection, alternative CI systems (Jenkins, Makefile, BUILDING.md)
-     - **Node 6 — JDK Agent**: cross-reference POM compiler settings, CI matrix, .java-version, JAR manifest
-     - **Node 7 — Image Agent**: Docker Hub registry API tag verification, alternative tag search (fixes 6 packages)
-     - **Node 8 — Tag Agent**: `git ls-remote --tags` verification, tag naming convention detection (fixes guava, jersey-common)
-     - **Node 9 — Build Command Agent**: build tool detection (mvnw/mvn/gradle/gradlew), flag validation (fixes json-smart, hibernate-validator, json-path)
-     - **Node 10 — Template Agent**: rendered Containerfile syntax validation, unresolved placeholder detection, last gate before emission
-  3. 3 post-build failure agents (`src/buildroot/agent/node_agents/failure_agents.py`):
-     - **L2 Failure Agent**: container build log diagnosis → Containerfile fix proposals
-     - **L3 Failure Agent**: Maven/Gradle output diagnosis → build command fixes
-     - **L4 Failure Agent**: JAR diff analysis → reproducibility issue identification
-  4. `AgentAugmentedObserver` (`src/buildroot/agent/augmented_observer.py`) — wraps existing `Observer`, runs deterministic pipeline → GapDetector → fires node agents per gap status → re-renders Containerfile with updated spec
-  5. CLI integration: `--node-agents` flag on the existing `agent` CLI command to enable the agent-augmented pipeline
-  6. Candidate ranking JSON schema using evidence-type-based hierarchy (not self-assessed confidence)
-  7. Cost-conscious agent configuration: Sonnet model for node reviewers (~$0.25-0.50/agent), 5-10 max turns, 120s timeout. Opus reserved for failure agents that need deeper reasoning.
+  **P1 — Top-K parallel candidate builds (Gap 4):** Replace `apply_best()` in `base.py:117-126` with `apply_top_k(spec, candidates, k=3)` returning K (spec, containerfile) pairs. Fork the spec K times, render K Containerfiles, run K parallel `podman build` subprocesses, evaluate each, keep the winner, store losers in dead_ends. The AnalyzeAgent sees all K outcomes for comparative analysis.
 
-  **Operational deliverable:**
-  - Full benchmark run on all 31 packages on rh-h100-01 with L1-L4 evaluation
-  - Results stored in `results/benchmark-agents/summary.json`
-  - Comparison table: baseline (4/31 L4) vs post-agents for every package
+  **P2 — Per-cycle AnalyzeAgent with ACE-like playbooks (Gaps 1, 2, 5):** New `AnalyzeAgent` class as a Claude Code subprocess (`spawn_claude_agent()`, budget $2, timeout 300s). Runs after each failed iteration cycle — receives build logs from all K candidates, current Containerfiles, eval output, and node agent decision log. Diagnoses root cause, traces it to the responsible node agent, writes append-only DO/DON'T playbook entries to `.factory/playbooks/node_agents/{agent_name}.md` with helpful/harmful counters (ACE pattern from Zhang 2025). Node agents read their playbook file on each activation. Structured output schema: `{ root_cause, responsible_agent, playbook_updates[], spec_overrides{}, is_systemic }`.
 
-- **Execution step:** After code implementation and unit tests pass, run on rh-h100-01:
-  ```
-  python -m buildroot agent --batch results/packages_benchmark.txt --host rh-h100-01 --output results/benchmark-agents/ --node-agents --max-iterations 15
-  ```
-  Then generate comparison report against `results/benchmark-full/summary.json` baseline.
+  **P3 — Tiered recipe store:** Save recipes at every successful level to `.factory/recipes/{coordinate}.json` containing the Containerfile, spec_overrides, agent decisions, and iterations count. Future runs check for existing recipes: L4 → skip, L3 → focus on JAR matching flags, L2 → skip container debugging. The 12 L2-stuck packages get a checkpoint.
 
-- **Expected output:** `results/benchmark-agents/summary.json` with per-package L1-L4 results. Comparison table showing delta from baseline (4/31 L4 = 13%).
+  **P4 — Spec overrides persistence (Gap 3):** Add `spec_overrides: dict[str, Any]` that persists across iterations within a package's build loop. After `Observer.observe()` regenerates the spec deterministically, overrides are applied before node agents fire. Managed by the AnalyzeAgent — ensures fixes survive the deterministic pipeline reset. This directly fixes the kafka-clients smoking gun (same Podman short-name error repeating 15 times).
 
-- **Why:** The deterministic pipeline fails on 24/27 packages at L2 due to well-characterized error categories that map 1:1 to specific pipeline nodes. The inner loop approach (experiments 6-8) hit a ceiling at 33.3% because it gives the LLM full Containerfile control, causing prose contamination in 90% of iterations. Node-scoped agents attack the root cause: each agent reviews structured data (repo URL, JDK version, git tag) at its pipeline step, not entire Containerfiles. The infrastructure is ready — `spawn_claude_agent()`, SSH evaluator, GapDetector — and the failure mapping is precise (Repo Agent addresses 8 packages, Image Agent addresses 6, Build Cmd Agent addresses 3). This is the highest-leverage single change available.
+  **P5 — Podman registry prefix:** In `JdkResolver._map_distribution_to_image()` at `jdk.py:299-304`, always emit `docker.io/library/` prefix for Docker Hub images. One-line deterministic fix that immediately unblocks kafka-clients, assertj-core, json-smart, protobuf-java, hibernate-validator (5 packages).
 
-- **Expected impact:**
-  - capability_surface: 0.41 → 0.50+ (13 new agent modules + augmented observer + CLI flag = ~30+ new public functions)
-  - L2 build rate: 7/31 (23%) → 18-23/31 (58-74%) — if node agents fix most multi-module (6/8), base image (5/6), build tool (2/3), property (2/2), and tag (1/2) failures
-  - L4 match rate: 4/31 (13%) → 8-15/31 (26-48%) — after L3/L4 attrition from post-build issues
-  - observability: 0.61 → 0.65+ (agents log their activations, evidence citations, and corrections via structlog)
+  **P6 — Reproducible build flags:** Add `-Dproject.build.outputTimestamp` to Maven build commands for L3+ packages. Normalize JAR comparison by stripping non-semantic metadata (MANIFEST.MF `Built-By`/`Created-By`/timestamps, pom.properties build path comments). Targets conversion of 6 L3 packages (jackson-core, nimbus-jose-jwt, jakarta.mail, commons-beanutils, commons-fileupload, jersey-common) to L4.
 
+  **Inner loop restructure:** Modify `loop.py` to re-run `observe()` with accumulated spec_overrides on each iteration (currently only runs once). Remove the `failure_agent_used` single-fire gate at `loop.py:83` — failure diagnosis is now handled by the AnalyzeAgent which runs every cycle. Update `should_activate()` in `base.py:93-98` to also activate on fields where `spec_overrides` exist or the AnalyzeAgent has flagged for review, not just DEFAULTED/INFERRED.
+
+- **Execution step:** After code changes are implemented and eval passes, deploy to rh-h100 nodes via rsync, run the full 31-package benchmark (`buildroot agent --batch` split across rh-h100-01 through rh-h100-06+), collect results, merge best-per-package, generate `results/benchmark-agents-merged/summary.json`. Compare L4 solve rate against exp 9 baseline (7/31 = 22.6%).
+- **Expected output:** `results/benchmark-agents-merged/summary.json` with L4 solve rate measured. Target: ≥35% (11/31). Playbook files at `.factory/playbooks/node_agents/`. Recipe store at `.factory/recipes/`.
+- **Why:** The exp 9 benchmark proved node agents add value (+10pp over deterministic baseline) but revealed that agents can't learn from build failures (Gap 1), can't fix OBSERVED-but-wrong data (Gap 2), lose fixes across iterations (Gap 3), discard alternative candidates (Gap 4), and have no knowledge transfer between failure diagnosis and node activation (Gap 5). External research validates: ACE playbooks (Zhang 2025) show append-only rules with helpful/harmful counters converge over time; CORAL shows parallel exploration without coordination outperforms sequential when evaluation is cheap relative to generation; Chains-Rebuild (Sharma FSE 2026) identifies the exact 6 root causes of Java unreproducibility and their canonicalization fixes. The 5 Podman prefix packages and 6 L3→L4 metadata packages are deterministic fixes worth +11 packages alone if they land.
+- **Expected impact:** capability_surface +0.1 (new AnalyzeAgent, recipe store, playbook system = new modules/functions), L4 solve rate 22.6% → ≥35%, observability indirectly improves (AnalyzeAgent writes structured diagnosis logs). Fixes type_check and lint regressions as part of the PR cleanup. P5 alone fixes 5 packages; P6 targets 6 more; P1+P2+P4 close the learning gaps for the remaining hard packages.
 - **Priority:** high
 
 ### Anti-patterns to Avoid
-- **Prose-wrapped Containerfile output** — the dominant failure mode from experiments 6-8. Node agents avoid this entirely by reviewing structured data fields, not generating Containerfiles from scratch.
-- **Framework-first delivery** — issue #24 explicitly prohibits phased delivery. "Framework without agents" or "agents without benchmark" is incomplete. All 13 agents + benchmark must ship together.
-- **Mocked E2E tests** — per user feedback (feedback-e2e-mandatory.md, feedback-mandatory-e2e.md), real E2E on rh-h100-01 is mandatory after any pipeline change. Token cost is never a valid skip reason.
-- **Self-assessed confidence** — agents must rank by evidence type (direct observation > CI inference > ... > default), not output a "confidence: 0.85" score. The issue spec is explicit about this.
-- **Expensive agent configuration** — node reviewers should use Sonnet (~$0.25-0.50 each), not Opus. Total benchmark cost should stay under $400-600 for 31 packages. Only failure agents warrant higher budgets.
-- **Regression on passing packages** — the 4 L4-passing packages (jackson-databind, commons-lang3, plexus-utils, jettison) must continue to pass. Agent augmentation must not corrupt working Containerfiles.
+- **Don't let Builder rewrite entire Containerfiles** — exp 9 showed the Builder's whole-file rewriting causes regressions on solved packages (issue #22). The AnalyzeAgent + spec_overrides approach surgically updates specific fields instead.
+- **Don't mock E2E runs** — experiments 8 taught this lesson. The 31-package benchmark on rh-h100 nodes is mandatory. Code-only completion is not acceptable.
+- **Don't fire AnalyzeAgent without early termination** — at $2/call × 15 iterations × 31 packages = $930 worst case. Must implement stagnation detection: if ≥3 consecutive iterations produce no level improvement, stop iterating on that package and move on.
+- **Don't repeat the error classifier blindness** — analyzer.py currently classifies all errors as `unknown`. The AnalyzeAgent's structured diagnosis replaces this, but don't delete the existing classifier — extend it so non-agent mode still works.
+- **Don't break non-agent mode** — the `--node-agents` flag gates agent behavior. All P1-P4 changes must be behind this flag. P5 and P6 apply universally (they're deterministic fixes).
+
+### New Backlog Items
+(none — targeted mode, no new items)

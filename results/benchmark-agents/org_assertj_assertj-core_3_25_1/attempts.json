@@ -1,0 +1,233 @@
+{
+  "coordinate": "org.assertj:assertj-core:3.25.1",
+  "status": "budget_exhausted",
+  "best_reward": 0.15000000000000002,
+  "iterations": 15,
+  "elapsed_seconds": 2589.9,
+  "attempts": [
+    {
+      "id": "e8886fc1-ba31-4f36-8914-88db51d83faa",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "/bin/sh: 1: ./mvnw: not found\nError: building at STEP \"RUN ./mvnw $MAVEN_ARGS -f ./assertj-core/pom.xml package -DskipTests\": while running runtime: exit status 127",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781675576.555394
+    },
+    {
+      "id": "71c5478e-0827-4a2f-83dc-28e9f38bfb25",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781675773.17086
+    },
+    {
+      "id": "5ca7263d-c236-4a40-8de7-0d7107d80db4",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781675910.32574
+    },
+    {
+      "id": "ee07abd4-6e3b-481e-b67c-5e671de4f78a",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781676073.397047
+    },
+    {
+      "id": "26b8dbc1-56a7-4207-9a3a-5ead1e337fda",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781676219.865611
+    },
+    {
+      "id": "0976d318-beef-4861-a10f-cb00c6924de9",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781676448.6745942
+    },
+    {
+      "id": "cf63cfa9-b6ce-4419-b856-d84fa7b89d85",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781676586.966073
+    },
+    {
+      "id": "bcf85450-f5c3-4b7b-aeb0-ceaf92c17ed5",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781676753.0728052
+    },
+    {
+      "id": "290d2c24-f69f-4ece-9c03-d1d02a5720ad",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] Unknown lifecycle phase \"/root/.m2\". You must specify a valid lifecycle phase or a goal in the format <plugin-prefix>:<goal> or <plugin-group-id>:<plugin-artifact-id>[:<plugin-version>]:<goal>. Available lifecycle phases are: pre-clean, clean, post-clean, validate, initialize, generate-sources, process-sources, generate-resources, process-resources, compile, process-classes, generate-test-sources, process-tes",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781676838.2808168
+    },
+    {
+      "id": "e32be5c6-9eb9-4e2e-bbd4-f888f489da7c",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781677057.2261918
+    },
+    {
+      "id": "9db81d85-d33b-4fa8-b713-f4d36b8d749e",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781677182.7322419
+    },
+    {
+      "id": "4706d314-4f4f-411f-b6d3-64b81cfc0d10",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781677305.9587672
+    },
+    {
+      "id": "063b32fd-eaab-4b3d-9516-05f43555ab1d",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781677477.236099
+    },
+    {
+      "id": "4026c4ef-1858-4fa8-b63c-cc89b387dc12",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781677593.056271
+    },
+    {
+      "id": "62488f2d-6e7f-4b86-8141-d28d793382aa",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "",
+      "timestamp": 1781677726.74956
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "unknown",
+      "approach": "FROM azul/zulu-openjdk:17 | ",
+      "failure_count": 3,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "/bin/sh: 1: ./mvnw: not found\nError: building at STEP \"RUN ./mvnw $MAVEN_ARGS -f ./assertj-core/pom.xml package -DskipTests\": while running runtime: exit status 127",
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-eclipse-temurin-17 | RUN mvn -pl assertj-core -am package -DskipTests -Dspotless.skip=true -Djapicmp.",
+      "failure_count": 5,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-eclipse-temurin-21 | ",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "[INFO] ------------------------------------------------------------------------\n[ERROR] Unknown lifecycle phase \"/root/.m2\". You must specify a valid lifecycle phase or a goal in the format <plugin-pr"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-eclipse-temurin-21 | RUN mvn -B -V -ntp -e install -N -DskipTests && \\",
+      "failure_count": 3,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:21-jdk | ",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    }
+  ]
+}
