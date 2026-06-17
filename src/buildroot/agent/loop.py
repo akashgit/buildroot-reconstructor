@@ -349,11 +349,14 @@ def _run_agent_loop(
             AgentAugmentedObserver._apply_spec_overrides(spec, spec_overrides)
 
         if analyze_result.is_systemic:
-            logger.info("AnalyzeAgent flagged systemic issue: %s", analyze_result.root_cause)
-            result.status = "systemic_blocker"
-            result.elapsed_seconds = time.time() - start_time
-            result.dead_ends = dead_ends
-            return result
+            if analyze_result.spec_overrides:
+                logger.info("AnalyzeAgent flagged systemic issue but provided spec_overrides — continuing: %s", analyze_result.root_cause)
+            else:
+                logger.info("AnalyzeAgent flagged systemic issue with no fix: %s", analyze_result.root_cause)
+                result.status = "systemic_blocker"
+                result.elapsed_seconds = time.time() - start_time
+                result.dead_ends = dead_ends
+                return result
 
         # Re-observe with accumulated spec_overrides on each iteration
         if spec_overrides:
