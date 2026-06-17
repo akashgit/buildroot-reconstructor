@@ -127,7 +127,7 @@ class RecipeStore:
         self._dir = recipe_dir or RECIPE_DIR
 
     def _coordinate_path(self, coordinate: str) -> Path:
-        safe = coordinate.replace(":", "_").replace(".", "_")
+        safe = coordinate.replace(":", "_").replace(".", "_").replace("/", "_")
         return self._dir / f"{safe}.json"
 
     def load(self, coordinate: str) -> dict | None:

@@ -643,7 +643,10 @@ Diagnose the root cause, identify the responsible node agent, and propose:
 
     def _update_playbook(self, agent_name: str, updates: list[dict[str, str]]) -> None:
         self._playbook_dir.mkdir(parents=True, exist_ok=True)
-        playbook_path = self._playbook_dir / f"{agent_name}.md"
+        safe_name = re.sub(r"[^a-zA-Z0-9_-]", "", agent_name)
+        if not safe_name:
+            safe_name = "unknown"
+        playbook_path = self._playbook_dir / f"{safe_name}.md"
 
         existing = ""
         if playbook_path.exists():

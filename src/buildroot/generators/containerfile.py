@@ -183,7 +183,9 @@ class ContainerfileGenerator:
 
     @staticmethod
     def _add_reproducible_flags(cmd: str) -> str:
-        if "mvn " not in cmd and not cmd.startswith("mvn"):
+        if ("mvn " not in cmd and not cmd.startswith("mvn")
+                and "mvnw " not in cmd and not cmd.startswith("mvnw")
+                and not cmd.startswith("./mvnw")):
             return cmd
         for flag in REPRODUCIBLE_FLAGS:
             key = flag.split("=")[0]
