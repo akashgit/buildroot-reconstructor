@@ -35,7 +35,7 @@ class PomAgent(NodeAgent):
     field_name = "pom_data"
     system_prompt = SYSTEM_PROMPT
 
-    def should_activate(self, gap_report) -> bool:
+    def should_activate(self, gap_report, spec_overrides=None) -> bool:
         return True
 
     def _build_task(self, spec: BuildrootSpec, context: dict[str, Any]) -> str:
