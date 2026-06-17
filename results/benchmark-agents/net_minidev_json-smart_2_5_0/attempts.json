@@ -1,0 +1,43 @@
+{
+  "coordinate": "net.minidev:json-smart:2.5.0",
+  "status": "success",
+  "best_reward": 1.0,
+  "iterations": 2,
+  "elapsed_seconds": 698.5,
+  "attempts": [
+    {
+      "id": "aa3d7c1f-1aec-45b9-a1de-105f2678081e",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "/bin/sh: 1: ./mvnw: not found\nError: building at STEP \"RUN ./mvnw -q clean install -DskipTests\": while running runtime: exit status 127",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781678219.146044
+    },
+    {
+      "id": "ae900dff-baf9-442d-be00-cbf85af8c80d",
+      "parent_id": null,
+      "reward": 1.0,
+      "level_reached": 4,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "",
+      "timestamp": 1781678376.868085
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "unknown",
+      "approach": "FROM eclipse-temurin:11-jdk | RUN mvn -q clean install -DskipTests",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "/bin/sh: 1: ./mvnw: not found\nError: building at STEP \"RUN ./mvnw -q clean install -DskipTests\": while running runtime: exit status 127"
+      ]
+    }
+  ]
+}

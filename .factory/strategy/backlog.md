@@ -20,3 +20,5 @@
 - Execute Level 3 container builds for all 10 test packages — code fixes complete (PR #3), Containerfiles generate correctly, but actual podman/docker build and artifact comparison not yet verified for each package
 - Level 4: Re-run artifact comparison on rh-h100 nodes — comparison pipeline code is complete (PR #7), but 0/10 builds succeeded due to upstream Containerfile issues (secrets in ARGs, wrong git tags, multi-module builds, podman short-name resolution). Fix Containerfile generation for these 5 failure classes, then re-run comparison. GitHub issue #5.
 - Node-scoped agents: Claude Code reviewer at every pipeline step (issue #24)
+- Implement top-K parallel builds, per-cycle AnalyzeAgent with ACE-like playbooks, tiered recipe store, and spec overrides persistence (issue #27)
+- Agent architecture: fix feedback loops, multi-candidate builds, and runtime awareness (issue #27)

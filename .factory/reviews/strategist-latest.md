@@ -1,17 +1,22 @@
 # Strategist Agent Output
 
-- **timestamp:** 2026-06-16T02:08:42Z
+- **timestamp:** 2026-06-17T02:10:54Z
 - **exit_code:** 0
 
 ---
 
-Strategy written to `.factory/strategy/current.md` with one hypothesis for issue #24.
+Strategy written to `.factory/strategy/current.md`. 
 
-**H1: Node-scoped agents** (EXPLORE, mixed type)
-- 10 node agents + 3 post-build failure agents + `AgentAugmentedObserver` + CLI `--node-agents` flag
-- Mandatory full 31-package benchmark run on rh-h100-01 with results in `results/benchmark-agents/summary.json`
-- Expected impact: L2 rate 23% → 58-74%, L4 rate 13% → 26-48%, capability_surface 0.41 → 0.50+
-- Anti-patterns documented: no prose contamination (structured data review), no phased delivery, no mocked E2E, no self-assessed confidence scores
+Single hypothesis H1 covers all 6 priorities (P1–P6) from issue #27 as one coherent EXPLORE hypothesis with type `mixed`. Key points:
+
+- **P1**: Top-K parallel builds replacing `apply_best()` 
+- **P2**: AnalyzeAgent with ACE-style append-only playbooks (the centerpiece)
+- **P3**: Tiered recipe store with L2/L3/L4 checkpoints
+- **P4**: Spec overrides persistence across iterations
+- **P5**: Podman `docker.io/library/` prefix fix (5 packages)
+- **P6**: Reproducible build flags for L3→L4 conversion (6 packages)
+- **Execution step**: Full 31-package benchmark on rh-h100 nodes, target ≥35% L4
+- **Expected output**: `results/benchmark-agents-merged/summary.json`
 ---
 
 > **⚠ CEO IDENTITY RE-ANCHOR (Sacred Rule 8)**

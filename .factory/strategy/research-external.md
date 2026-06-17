@@ -1,496 +1,285 @@
-# External Research: Node-Scoped Pipeline Agents (Issue #24)
+# External Research — Issue #27 Agent Architecture Fix
 
-## Context
+## Research Scope
 
-Issue #24 proposes adding Claude Code reviewer agents at every step of the deterministic pipeline in `orchestrator.py`. The current pipeline has 13 sequential steps (POM fetch → parse → parent chain → merge → property resolution → repo discovery → CI parsing → JDK resolution → container image resolution → dependency tree → git tag → Maven wrapper → Containerfile generation). Each step currently runs deterministic Python code. The proposal is to attach an LLM-powered reviewer/improver agent at each node to catch errors, fill gaps, and improve accuracy.
-
-This research covers: multi-agent pipeline architecture patterns, Claude Code subprocess scoping, Docker Hub tag verification API, git tag discovery patterns, Maven POM edge cases, and container base image tag naming conventions.
+Targeted research for issue #27's five proposed changes: AnalyzeAgent with ACE-like playbooks, Top-K parallel candidate builds, tiered recipe store, spec overrides persistence, and Podman/reproducibility fixes.
 
 ---
 
-## 1. Multi-Agent Pipeline Architecture Patterns
+## 1. ACE-Like Playbook Patterns (AnalyzeAgent Design)
 
-### Sequential Pipeline with Per-Step Reviewers
+### ACE Framework (Zhang et al., 2025) — Generator-Reflector-Curator
 
-The strongest emerging pattern for this type of system is the **assembly-line with quality gates**:
+The [ACE framework](https://arxiv.org/abs/2510.04618) from Stanford/SambaNova/Berkeley is the closest academic match to the proposed AnalyzeAgent design. It uses three components unified by an evolving "Context Playbook":
 
-1. Deterministic step produces output
-2. A scoped reviewer agent validates/improves that output against defined criteria
-3. If approved → passes to next step; if improved → replaces output and proceeds
+- **Generator**: Reads playbook rules before acting (= node agents reading `.factory/playbooks/`)
+- **Reflector**: Compares output against ground truth, identifies strategic failures (= AnalyzeAgent diagnosing build failures)
+- **Curator**: Decides whether to create a new "Delta Rule" or merge with existing (= AnalyzeAgent writing DO/DON'T entries)
+- **Pruner**: Periodically synthesizes redundant rules into "Master Rules" (= future optimization for playbook convergence)
 
-**Key principles from research:**
+**Key design detail from ACE**: Playbook entries are append-only with helpful/harmful counters that increment over time — content is never rewritten, only counters change. New insights are deduplicated via cosine similarity (0.8 threshold). This directly validates issue #27's proposed format:
+```
+- [img-001] harmful=1 :: Do NOT emit bare Docker Hub names...
+```
 
-- **Separate implement and review agents.** The code that produced the output should never review its own work. Collapsing these into one step caused immediate quality drops in production multi-agent systems. ([Stephanie Jarmak, Medium](https://medium.com/@steph.jarmak/i-used-two-multi-agent-pipelines-for-everything-i-built-this-week-heres-what-happened-cf68d1b53a62))
+**Relevance**: The AnalyzeAgent IS the Reflector+Curator combined. Node agents ARE the Generator. The playbook files ARE the Context Playbook. Issue #27's design maps 1:1 to the ACE architecture, with the addition that the "ground truth" is the build outcome (L1-L4 level), not a labeled dataset.
 
-- **Strict scoping per agent.** Each agent needs: an objective, an output format, guidance on tools/sources to use, and clear task boundaries. Without this, agents duplicate work or leave gaps. ([Anthropic Engineering Blog](https://www.anthropic.com/engineering/multi-agent-research-system))
+**Source**: [ace-playbook implementation](https://github.com/jmanhype/ace-playbook) shows append-only delta rules with helpful/harmful/neutral labels and FAISS-based semantic deduplication. For our use case, exact-match dedup by agent+rule-hash is simpler and sufficient — the playbook entries are structured, not free-text.
 
-- **Filesystem-based handoffs.** Rather than passing everything through conversation context, agents write outputs to files and pass lightweight references. This avoids information loss and reduces token overhead. ([Anthropic Engineering Blog](https://www.anthropic.com/engineering/multi-agent-research-system))
+### Self-Evolving Agents (OpenAI Cookbook)
 
-- **3-7 agents per pipeline.** Beyond 7, coordination overhead outweighs benefits. For larger pipelines, use hierarchical structures. ([DEV Community Guide](https://dev.to/eira-wexford/how-to-build-multi-agent-systems-complete-2026-guide-1io6))
+The [Self-Evolving Agents cookbook](https://developers.openai.com/cookbook/examples/partners/self_evolving_agents/autonomous_agent_retraining) uses a four-step Generate→Evaluate→Optimize→Accept loop with versioned prompts. Key pattern: `collect_grader_feedback()` translates failures into structured reasoning that feeds the optimizer. This maps to AnalyzeAgent translating build logs into playbook entries.
 
-- **End-state evaluation over process checking.** Judge whether the output is correct, not whether the agent followed prescribed steps. Agents legitimately find alternative paths. ([Anthropic Engineering Blog](https://www.anthropic.com/engineering/multi-agent-research-system))
+Their `VersionedPrompt` class tracks full history with scores per version. For our playbooks, the equivalent is the `helpful`/`harmful` counters — they track whether a rule is working over time without storing full version history.
 
-### Recommended Architecture for This Project
+### AgentDebug (Sep 2025) — Failure Taxonomy
 
-Given the 13-step pipeline, NOT every step needs a reviewer agent. Group steps by error-prone-ness and impact:
+[AgentDebug](https://arxiv.org/abs/2509.25370) provides a modular failure taxonomy (memory, reflection, planning, action, system-level) and a debugging framework that "isolates root-cause failures and provides corrective feedback, enabling agents to recover with up to 26% relative improvement." This validates the AnalyzeAgent's core function: connecting build failures to the responsible node agent (root cause isolation) and writing targeted feedback.
 
-| Priority | Pipeline Steps | Reviewer Agent | Rationale |
-|----------|---------------|----------------|-----------|
-| **High** | POM parsing + parent chain + merge (steps 2-4) | `pom-reviewer` | Property inheritance, relocation, BOM imports are major error sources |
-| **High** | JDK resolution (step 8) | `jdk-reviewer` | Conflict resolution between 12+ signal sources; tag verification needed |
-| **High** | Container image resolution (step 9) | `image-reviewer` | Tag existence verification against Docker Hub API |
-| **High** | Git tag discovery (step 11) | `tag-reviewer` | Verify tag exists via `git ls-remote` |
-| **Medium** | Build command enrichment (step 13b) | `build-cmd-reviewer` | Plugin flag detection has edge cases |
-| **Low** | POM fetch, CI discovery, dep tree, wrapper detect | None (deterministic) | These are API calls with clear pass/fail |
+### Build-bench — Iterative Build Repair
 
-This keeps the reviewer count at 4-5 (well within the 3-7 guideline) while covering the error-prone nodes.
+[Build-bench](https://arxiv.org/pdf/2511.00780) caps tool invocations at 20 per iteration and repair iterations at 3 per package. Each iteration rebuilds the prompt using (1) updated build log, (2) latest package state, (3) historical modifications. This three-input pattern directly maps to AnalyzeAgent's inputs: build logs, current spec, and accumulated playbook entries.
+
+### Meta's Engineering Agent (July 2025)
+
+[Meta's production repair system](https://arxiv.org/pdf/2507.18755) uses Llama with ReAct, averaging 11.8 feedback iterations for a 42.3% solve rate. Key pattern: a separate LLM-as-Judge ensures patch quality before acceptance. For issue #27, the evaluation step (L1-L4 scoring) already serves as the automated judge — no separate judge agent needed.
+
+### LLMLOOP (ICSME 2025) — Per-Error-Type Feedback
+
+Our archive already covers [LLMLOOP](https://arxiv.org/html/2603.23613v1): five dedicated feedback loops per error type with dynamic temperature adjustment. This validates that the AnalyzeAgent should write error-class-specific playbook entries (e.g., image resolution rules go to `image_agent.md`, build command rules go to `build_cmd_agent.md`), not generic catch-all rules.
+
+**Synthesis for AnalyzeAgent design**:
+1. Append-only rules with helpful/harmful counters (ACE pattern) — validated
+2. Per-agent playbook files scoped to one decision domain (LLMLOOP pattern) — validated
+3. Root cause → responsible agent mapping (AgentDebug pattern) — validated
+4. Three-input prompt: build logs + current state + historical rules (Build-bench pattern) — validated
+5. No separate judge needed; L1-L4 scoring IS the judge (Meta pattern) — simplification confirmed
 
 ---
 
-## 2. Claude Code Subprocess Scoping for Node Agents
+## 2. Multi-Candidate Parallel Builds (Top-K Selection)
 
-### Existing Pattern (from research-external.md — prior research)
+### MAP-Elites / Quality-Diversity Search
 
-The project already has `spawn_claude_agent()` in `claude_runner.py` using the `claude --bare -p` pattern with `--append-system-prompt-file`. This same pattern applies to node-scoped agents.
+[MAP-Elites](https://arxiv.org/html/2303.06137v2) maintains a grid of elite solutions across behavioral dimensions. When a new candidate outperforms the existing occupant of a cell, it replaces it. The [MEMES algorithm](https://dl.acm.org/doi/10.1145/3638529.3654089) (GECCO 2024) runs up to 100 simultaneous evolution processes on a single GPU, demonstrating that parallel candidate evaluation at scale is tractable.
 
-### Node Agent Configuration
+**Relevance to Top-K builds**: Issue #27's approach is simpler than MAP-Elites — it's a straightforward best-of-K selection where K candidates are evaluated in parallel and the highest-scoring one wins. MAP-Elites' behavioral dimensions aren't needed because our fitness function (L1<L2<L3<L4) is a single ordinal dimension, not a multi-dimensional quality-diversity space.
 
-Each node reviewer should be configured as a lightweight, fast subprocess:
+### AlphaEvolve (Google DeepMind)
 
-```python
-spawn_claude_agent(
-    task="Review this POM merge result for property resolution errors...",
-    system_prompt=NODE_SPECIFIC_PROMPT,
-    model="claude-sonnet-4-6",       # Sonnet for speed/cost on review tasks
-    max_turns=5,                      # Reviewers need few turns
-    max_budget_usd=0.50,              # Cheap per node
-    timeout=120,                      # 2 min max
-)
-```
+Our archive covers AlphaEvolve's [MAP-Elites island model](https://deepmind.google/blog/alphaevolve-a-gemini-powered-coding-agent-for-designing-advanced-algorithms/). Key insight for Top-K: AlphaEvolve uses an ensemble of LLMs (Flash for throughput, Pro for quality) as mutation operators. For buildroot, node agents already produce ranked candidates — Top-K simply evaluates more of them instead of discarding all but rank-1.
 
-**Key differences from existing builder agents:**
+### CORAL (2025) — Parallel Agent Exploration
 
-| Aspect | Builder Agent | Node Reviewer Agent |
-|--------|--------------|-------------------|
-| Model | opus-4-6 | sonnet-4-6 (cheaper, fast enough for review) |
-| Max turns | 30 | 5-10 |
-| Budget | $5.00 | $0.25-0.50 |
-| Timeout | 600s | 60-120s |
-| Output | Full Containerfile | Structured validation JSON or corrected data |
-| Tools | Read, Edit, Bash, WebSearch | Read, Bash, WebSearch (no Edit — reviewers don't modify files) |
+[CORAL](https://xuquant.com/en/posts/foundation-models/coral-autonomous-multi-agent-evolution/) uses N agents exploring in parallel without message passing, with heartbeat-based interventions. It exceeds fixed evolutionary baselines by 3-10x. The key insight: parallel exploration without coordination outperforms sequential exploration with coordination when evaluation is cheap relative to generation. This applies to our case — `podman build` (evaluation) is ~2-5 minutes, while agent candidate generation is ~30 seconds. Running K=3 builds in parallel costs ~1x wall-clock time, not 3x.
 
-### System Prompt Structure for Node Agents
-
-Each node agent needs a scoped system prompt containing:
-
-1. **Role**: "You are a {step-name} reviewer for the buildroot reconstruction pipeline"
-2. **Input schema**: The specific dataclass fields this step produces (e.g., `PomData` fields for pom-reviewer)
-3. **Validation criteria**: What constitutes correct output for this step
-4. **Tools available**: Which external checks the agent can perform (e.g., `git ls-remote`, Docker Hub API)
-5. **Output format**: Structured JSON with `{valid: bool, corrections: [...], confidence: float}`
-
-### Structured Output Schema for Node Reviewers
-
-```json
-{
-  "type": "object",
-  "properties": {
-    "valid": {"type": "boolean"},
-    "confidence": {"type": "number", "minimum": 0, "maximum": 1},
-    "corrections": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "field": {"type": "string"},
-          "original_value": {"type": "string"},
-          "corrected_value": {"type": "string"},
-          "reason": {"type": "string"}
-        }
-      }
-    },
-    "warnings": {"type": "array", "items": {"type": "string"}}
-  },
-  "required": ["valid", "confidence", "corrections", "warnings"]
-}
-```
-
-Use `--json-schema` with this to get validated structured output from each reviewer.
+**Synthesis for Top-K design**:
+1. Best-of-K with parallel evaluation is the right pattern (simpler than MAP-Elites, sufficient for single-dimension fitness)
+2. K=3 is a reasonable default — CORAL shows diminishing returns past 5-10 parallel candidates for constrained search spaces
+3. Dead-end tracking of losing candidates (already proposed in issue #27) prevents re-exploration
+4. The AnalyzeAgent gets richer signal from K outcomes than from 1 — comparative analysis ("A failed because X, B succeeded because Y") produces better playbook entries
 
 ---
 
-## 3. Docker Hub Registry API for Tag Verification
+## 3. Reproducible Java Builds (L3→L4 Conversion)
 
-### Primary Endpoint: OCI Distribution Spec HEAD Request
+### Causes and Canonicalization (Sharma et al., FSE 2026)
 
-The fastest way to verify a container image tag exists is a HEAD request to the manifests endpoint:
+The definitive paper is ["Causes and Canonicalization of Unreproducible Builds in Java"](https://arxiv.org/abs/2504.21679) (Sharma, Baudry, Monperrus — KTH). They identify **six root causes** of unreproducibility:
 
-```
-HEAD /v2/<name>/manifests/<reference>
-```
+| Root Cause | Key Artifacts Affected | Canonicalization Tool |
+|---|---|---|
+| 1. Build manifests | MANIFEST.MF (`Built-By`, `Build-Jdk`, `Created-By`), pom.properties | Chains-Rebuild: strip env-dependent attrs |
+| 2. SBOM variations | CycloneDX `serialNumber`, `timestamp` | Open problem |
+| 3. Filesystem | File permissions, ordering, sizes, embedded paths | OSS-Rebuild: normalize ZIP metadata |
+| 4. JVM bytecode | Constant pool ordering, lambda naming, synthetic accessors | jNorm: Jimple IR transformation |
+| 5. Versioning properties | git.properties (tag counts, builder info, branch) | Chains-Rebuild: strip git.properties |
+| 6. Timestamps | 10+ locations: properties, docs, scripts, MANIFEST.MF | Chains-Rebuild: strip timestamp patterns |
 
-- **200 OK** → tag exists; response includes `Docker-Content-Digest` and `Content-Length`
-- **404 Not Found** → tag does not exist
-- **401 Unauthorized** → need to authenticate first
+**Results**:
+- OSS-Rebuild alone: 9.48% → reproducible
+- Chains-Rebuild (enhanced): 24.72% → reproducible
+- jNorm (bytecode only): 29.7% of bytecode artifacts
+- **Combined**: 26.89% of all artifacts become reproducible
 
-### Docker Hub Authentication Flow
+**Critical insight for issue #27's L3→L4 gap**: All 6 L3 failures show `bytecode_match=True, structural_match=False, metadata_match=False`. This means bytecode is already identical — the divergence is in categories 1, 3, 5, and 6 (manifests, filesystem, versioning, timestamps). These are ALL canonicalizable by Chains-Rebuild without needing jNorm.
 
-Docker Hub requires token-based auth for registry API calls:
+**Actionable canonicalization steps for L3→L4**:
+1. Strip `Built-By`, `Build-Jdk`, `Created-By`, `Bnd-LastModified`, `Build-Timestamp` from MANIFEST.MF
+2. Remove pom.properties entirely (contains non-deterministic timestamp)
+3. Strip git.properties if present
+4. Normalize ZIP entry ordering and timestamps
+5. Set `project.build.outputTimestamp` in Maven build command: `-Dproject.build.outputTimestamp=1980-01-01T00:00:00Z`
 
-```bash
-# Step 1: Get bearer token
-TOKEN=$(curl -s "https://auth.docker.io/token?service=registry.docker.io&scope=repository:library/eclipse-temurin:pull" | jq -r .token)
+### Maven Reproducible Builds Guide
 
-# Step 2: HEAD request to check tag
-HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" \
-  -H "Authorization: Bearer $TOKEN" \
-  -H "Accept: application/vnd.docker.distribution.manifest.v2+json" \
-  "https://registry-1.docker.io/v2/library/eclipse-temurin/manifests/21-jdk-jammy")
-```
+[Apache Maven's guide](https://maven.apache.org/guides/mini/guide-reproducible-builds.html) recommends setting `<project.build.outputTimestamp>` in the POM to fix archive entry timestamps. The [Maven Artifact Plugin](https://maven.apache.org/plugins/maven-artifact-plugin/reproducible.html) can diagnose reproducibility issues.
 
-### Python Implementation
+### Reproducible Build Maven Plugin
 
-```python
-import requests
+The [zlika/reproducible-build-maven-plugin](https://zlika.github.io/reproducible-build-maven-plugin/) strips non-deterministic data from JAR archives during the build. It handles: ZIP timestamps, MANIFEST.MF ordering, and pom.properties timestamps. This is a build-time solution (add to the Maven command) rather than a post-build canonicalization.
 
-def verify_docker_tag(image: str, tag: str) -> bool:
-    """Check if a Docker Hub image:tag exists via the registry v2 API."""
-    # Split namespace/name
-    if "/" not in image:
-        namespace, name = "library", image
-    else:
-        namespace, name = image.split("/", 1)
+### Chains-Rebuild Canonicalization Detail
 
-    # Get auth token
-    scope = f"repository:{namespace}/{name}:pull"
-    token_resp = requests.get(
-        "https://auth.docker.io/token",
-        params={"service": "registry.docker.io", "scope": scope},
-        timeout=10,
-    )
-    token = token_resp.json()["token"]
+From the [full paper](https://arxiv.org/html/2504.21679v1), Chains-Rebuild applies these specific canonicalization steps:
 
-    # HEAD request to check manifest
-    resp = requests.head(
-        f"https://registry-1.docker.io/v2/{namespace}/{name}/manifests/{tag}",
-        headers={
-            "Authorization": f"Bearer {token}",
-            "Accept": "application/vnd.docker.distribution.manifest.v2+json",
-        },
-        timeout=10,
-    )
-    return resp.status_code == 200
-```
+- **MANIFEST.MF**: Removes `Built-By` (username), `Os-Version`, `Bnd-LastModified`. Fixes attribute value ordering (sorts `Export-Package` values alphabetically).
+- **pom.properties**: Removes the entire file (non-deterministic timestamps and property ordering).
+- **git.properties**: Strips files containing divergent tag counts, builder hostnames, branch names.
+- **Archive-level**: Canonicalizes ZIP file metadata including entry order, modification timestamps, compression algorithms, and encoding.
 
-### Tag Listing Endpoint
+**jNorm limitations** (relevant because bytecode already matches for our L3 cases):
+- Cannot normalize field/method ordering, lambda naming, implicit visibility modifiers
+- Cannot reconcile invokevirtual vs. invokeinterface changes across JDK versions
+- Cannot handle absolute file paths or most embedded timestamps
+- Success rate drops from 99% (same-machine evaluation) to 29.7% (cross-machine evaluation)
 
-To list all available tags (for fuzzy matching when exact tag doesn't exist):
+### Cross-Ecosystem Benchmarks (ICSE 2025)
 
-```
-GET /v2/<name>/tags/list
-```
+[Benedetti et al.](https://nesbitt.io/2026/02/24/reproducible-builds-in-language-package-managers.html) tested 4,000 packages per ecosystem: Cargo and npm score 100% reproducible; PyPI only 12.2%; Java/Maven is in the middle. The gap is primarily timestamps and metadata, not bytecode.
 
-Returns: `{"name": "eclipse-temurin", "tags": ["8-jdk", "11-jdk", "17-jdk", "21-jdk", ...]}`
-
-Paginated — follow `Link` headers for images with many tags.
-
-### Rate Limits
-
-- Anonymous: 100 pulls per 6 hours
-- Authenticated: 200 pulls per 6 hours
-- For the reviewer agent, cache token and reuse within a pipeline run
-
-### Sources
-
-- [Docker Registry API — Baeldung](https://www.baeldung.com/ops/docker-registry-api-list-images-tags)
-- [OCI Distribution Spec](https://github.com/opencontainers/distribution-spec/blob/main/spec.md)
-- [Docker Hub API Reference](https://docs.docker.com/reference/api/hub/latest/)
-- [Docker v2 API Tags — Nick Janetakis](https://nickjanetakis.com/blog/using-dockers-v2-api-to-get-a-list-of-tags-with-the-help-of-jq)
+**Synthesis for L3→L4 strategy**:
+1. **Build-time fix**: Add `-Dproject.build.outputTimestamp=1980-01-01T00:00:00Z` to Maven commands — this is the single highest-impact change
+2. **Post-build canonicalization**: Strip/normalize MANIFEST.MF and pom.properties before JAR comparison — catches what `outputTimestamp` misses
+3. **Comparison pipeline enhancement**: The existing 4-layer comparison (structural → metadata → bytecode → diffoscope) should normalize timestamps BEFORE comparison, not after
+4. **Expected impact**: If bytecode already matches for all 6 L3 packages, canonicalization of metadata/timestamps should convert most or all to L4
 
 ---
 
-## 4. Git Tag Discovery and Verification via `git ls-remote`
+## 4. Podman vs Docker Runtime Differences
 
-### Core Pattern
+### Short-Name Resolution
 
-```bash
-git ls-remote --tags --refs https://github.com/{owner}/{repo} 'v*'
-```
+[Podman's documentation](https://docs.podman.io/en/latest/markdown/podman-pull.1.html) and [Red Hat's blog](https://www.redhat.com/en/blog/container-image-short-names) explain the core issue:
 
-- `--tags` filters to only tag refs
-- `--refs` excludes peeled tag objects (the `^{}` lines for annotated tags)
-- Pattern `'v*'` matches from the tail of the ref (e.g., matches `refs/tags/v1.0`)
+- **Docker**: `eclipse-temurin:17-jdk` → implicitly resolves to `docker.io/library/eclipse-temurin:17-jdk`
+- **Podman**: Requires either (a) explicit `docker.io/library/` prefix, (b) configured `unqualified-search-registries` in `/etc/containers/registries.conf`, or (c) a short-name alias
 
-### Version Tag Patterns Across Projects
+**Three short-name modes** ([registries.conf](https://github.com/containers/podman/discussions/25075)):
+1. **Enforcing** (default): Prompts user to select registry if no alias exists. **Fails without TTY** — this is exactly our containerized build environment
+2. **Permissive**: Tries all search registries in order, no alias recorded
+3. **Disabled**: Tries all registries, no prompting
 
-Projects use inconsistent tag naming. The reviewer agent needs to try multiple patterns:
+**The fix is definitive**: Always emit fully-qualified image names (`docker.io/library/` for Docker Hub official images, `docker.io/<user>/` for user images). This is:
+- A deterministic fix in `_map_distribution_to_image()` or equivalent
+- Zero-cost, no behavioral change for Docker users
+- Eliminates 5 of 12 L2 failures immediately
 
-| Pattern | Example | Projects |
-|---------|---------|----------|
-| `v{version}` | `v3.14.0` | Most common (Spring, Apache Commons) |
-| `{artifactId}-{version}` | `commons-lang3-3.14.0` | Apache multi-module projects |
-| `rel/{artifactId}-{version}` | `rel/commons-lang3-3.14.0` | Some Apache projects |
-| `{version}` | `3.14.0` | Some projects (no prefix) |
-| `release-{version}` | `release-3.14.0` | Less common |
+**Security consideration**: [Red Hat warns](https://www.redhat.com/en/blog/container-image-short-names) that short names risk "hitting squatted registry namespaces" — an attacker could register the same image name on a different registry. Fully-qualifying is the security-recommended approach regardless.
 
-### Verification Strategy for `tag-reviewer` Agent
+### Known Podman Bugs
 
-```bash
-# Try exact match first
-git ls-remote --tags --refs "$REPO_URL" "refs/tags/v$VERSION"
+[Issue #13234](https://github.com/containers/podman/issues/13234) reports that even fully-qualified names sometimes fail with short-name errors in docker-compose contexts. The workaround is to ensure `registries.conf` exists with `unqualified-search-registries = ["docker.io"]`, but the proper fix is fully-qualifying in the Containerfile itself, which our pipeline controls.
 
-# If empty, try artifactId prefix
-git ls-remote --tags --refs "$REPO_URL" "refs/tags/$ARTIFACT_ID-$VERSION"
+### Containerfile Considerations
 
-# If still empty, list all tags matching version substring
-git ls-remote --tags --refs "$REPO_URL" "*$VERSION*"
-```
-
-### Sorting by Version
-
-```bash
-git ls-remote --tags --refs --sort='version:refname' "$REPO_URL"
-```
-
-The `version:refname` sort treats tag names as version numbers, correctly ordering `v1.9` before `v1.10`.
-
-### Key Edge Cases
-
-1. **Annotated vs lightweight tags**: Without `--refs`, annotated tags show two lines (one for the tag object, one peeled `^{}`). Always use `--refs`.
-2. **Tags on forks**: If repo URL points to a fork, tags may be from the parent repo or fork-specific.
-3. **Release branches vs tags**: Some projects use `release/v1.0` branches instead of tags.
-4. **Monorepo tags**: Projects like Spring Framework may have tags like `v5.3.18` for the entire repo, not per-module.
-
-### Sources
-
-- [Git ls-remote Documentation](https://git-scm.com/docs/git-ls-remote.html)
-- [Getting Latest Tag on Git Repository](https://gist.github.com/rponte/fdc0724dd984088606b0)
-- [How to List Git Tags — devconnected](https://devconnected.com/how-to-list-git-tags/)
+When generating Containerfiles for Podman:
+- `FROM docker.io/library/eclipse-temurin:17-jdk` — always fully qualify in FROM
+- For multi-stage builds, the alias (`AS builder`) works the same in both runtimes
+- `RUN` commands that pull images (e.g., `docker pull` within a build) also need fully-qualified names
+- Consider adding `unqualified-search-registries = ["docker.io"]` to the container's `/etc/containers/registries.conf` as a belt-and-suspenders approach
 
 ---
 
-## 5. Maven POM Resolution Edge Cases
+## 5. Agent Feedback Loops and Learning from Build Failures
 
-### Property Inheritance
+### RepairAgent (ICSE 2024)
 
-- Properties are inherited from parent POMs through the entire parent chain. A child POM inherits **all** properties from its parent unless explicitly overridden.
-- Properties can reference other properties: `<my.version>${project.version}</my.version>` — these must be resolved recursively.
-- **Unresolved placeholders**: If a property references `${some.prop}` and `some.prop` is never defined in the chain, Maven leaves the literal `${some.prop}` string. The current pipeline's `GapDetector._check_unresolved_properties()` catches this.
-- **Profile-activated properties**: Properties defined inside `<profiles>` are only active when the profile is activated. These are currently NOT resolved by the pipeline (listed in backlog as "Profile-activated Maven property resolution").
+[RepairAgent](https://arxiv.org/pdf/2403.17134) proceeds in multiple cycles where "each cycle represents one round of interaction with the LLM agent, and the input to the model is updated based on tool calls invoked by the LLM in previous cycles." It fixes 39 bugs not fixed by any baseline. The multi-cycle structure with per-cycle prompt updates maps directly to AnalyzeAgent's per-iteration feedback loop.
 
-### BOM Imports Edge Cases
+### Iterative Generative Optimization (March 2026)
 
-- BOMs are imported via `<dependencyManagement>` with `<scope>import</scope>` and `<type>pom</type>`.
-- **Order matters**: When multiple BOMs are imported, they are processed in declaration order. Later BOMs override earlier ones for the same `groupId:artifactId`.
-- **Recursive imports**: If BOM X imports BOM Q, all of Q's managed dependencies appear as if defined in X.
-- **Circular import prohibition**: A POM must never import a BOM that is also in its parent chain. Maven throws an exception.
-- **Maven 4.0 BOM packaging**: New `<packaging>bom</packaging>` type introduced in Maven 4.0 — separate from `<packaging>pom</packaging>`. Backward-compatible with Maven 3.x consumers.
+A [recent paper](https://arxiv.org/html/2603.23994) distinguishes two loop types:
+- **Within-task loops**: Optimize one task across iterations (= our per-package iteration loop)
+- **Cross-task loops**: Accumulate experience across tasks (= playbook entries persisting across packages and runs)
 
-### Relocated Artifacts
+Issue #27's AnalyzeAgent operates at BOTH levels: within-task (spec_overrides persist across iterations for one package) AND cross-task (playbook entries persist across packages and runs). This dual-loop architecture is identified as the key differentiator for "continual learning through repeated trial and error."
 
-- Relocation uses `<distributionManagement><relocation>` in a stub POM at the old coordinates.
-- Maven automatically redirects resolution to new coordinates and issues a warning.
-- **Edge case: immutable cached POMs.** Once Maven downloads a POM, it doesn't re-download it. If a relocation POM is published after a consumer already cached the old POM, they won't see the relocation until they fetch a new version.
-- **Multi-version relocation**: Some projects (e.g., Apache POI) published relocation POMs for every new version at the old `groupId` across several releases.
-- **Relocation can change groupId, artifactId, and/or version** — not just groupId.
-- The `pom-reviewer` agent should check for `<relocation>` elements in any POM it parses and follow them.
+### Dead-End Registries (Archive)
 
-### Dependency Mediation
+Our archive covers the [Reflexion/ExpeL](https://arxiv.org/abs/2309.16543) episodic memory pattern and DebounceHook for preventing repeated dead ends. The proposed `dead_ends.yaml` for losing Top-K candidates follows this pattern exactly. The 2-failure threshold before registry entry (from our existing design) balances false-positive risk against wasted iterations.
 
-- Maven uses "nearest definition" — the closest dependency to your project in the tree wins.
-- `<dependencyManagement>` overrides mediation — it pins versions regardless of tree depth.
-- **Hidden version pinning**: `dependency:tree` does NOT show where a resolved version comes from (parent POM, BOM import, or direct declaration). This makes debugging difficult.
-- **Exclusion inheritance**: Maven traces exclusions up the tree; when exclusions differ between parent nodes, cached resolution results can't be reused.
+### Context Management (Mini-SWE-Agent)
 
-### Sources
-
-- [POM Reference — Apache Maven](https://maven.apache.org/pom.html)
-- [Guide to Relocation — Apache Maven](https://maven.apache.org/guides/mini/guide-relocation.html)
-- [Introduction to Dependency Mechanism — Apache Maven](https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html)
-- [Maven Dependency Maze Survival Guide — Konvu](https://konvu.com/blog/maze-of-maven-dependencies)
-- [eBay's Maven Dependency Resolution Algorithm](https://innovation.ebayinc.com/stories/open-source-contribution-new-maven-dependency-resolution-algorithm/)
+Our archive notes that context selection prevents prompt growth — only relevant error lines, not full logs. The AnalyzeAgent should receive summarized build logs (key error lines), not full logs, to stay within the $2 budget. The existing `build_log_summary` field (≤500 chars) provides this.
 
 ---
 
-## 6. Container Base Image Tag Naming Conventions
+## Prior Knowledge (Archive) — Key Patterns Relevant to Issue #27
 
-### Eclipse Temurin (Adoptium)
-
-**Tag pattern**: `eclipse-temurin:<java-version>-<jdk|jre>[-<os-codename>]`
-
-| Tag Example | Java | Type | OS |
-|-------------|------|------|----|
-| `eclipse-temurin:21-jdk` | 21 | JDK | Ubuntu (default, currently 26.04 Resolute) |
-| `eclipse-temurin:21-jre` | 21 | JRE | Ubuntu (default) |
-| `eclipse-temurin:21-jdk-noble` | 21 | JDK | Ubuntu 24.04 Noble |
-| `eclipse-temurin:21-jdk-jammy` | 21 | JDK | Ubuntu 22.04 Jammy |
-| `eclipse-temurin:21-jdk-alpine` | 21 | JDK | Alpine Linux (musl) |
-| `eclipse-temurin:21-jdk-ubi9-minimal` | 21 | JDK | Red Hat UBI 9 |
-| `eclipse-temurin:8-jdk` | 8 | JDK | Ubuntu (default) |
-
-**Supported Java versions**: 8, 11, 17, 21, 25, 26
-
-**Architecture**: Multi-arch manifests (amd64, arm64 auto-selected). No arch in tag.
-
-**Key gotcha**: Default Ubuntu base changes over time. `eclipse-temurin:21-jdk` pointed to Ubuntu 24.04 Noble, now points to 26.04 Resolute. For reproducibility, always use the explicit OS codename suffix.
-
-### BellSoft Liberica
-
-**Tag pattern**: `bellsoft/liberica-openjdk-<os>:<java-version>[update[-build]][-arch]`
-
-| Repository | OS |
-|------------|-----|
-| `bellsoft/liberica-openjdk-debian` | Debian |
-| `bellsoft/liberica-openjdk-alpine` | Alpine |
-| `bellsoft/liberica-openjdk-alpine-musl` | Alpine (musl) |
-| `bellsoft/liberica-runtime-container` | Alpaquita Linux (BellSoft's own) |
-
-**Key difference from Temurin**: OS variant is in the **repository name**, not the tag. Tags contain only version + optional arch: `21`, `21.0.3`, `21.0.3-10`, `21.0.3-10-aarch64`.
-
-### Amazon Corretto
-
-**Tag pattern**: `amazoncorretto:<java-version>[-<os>]`
-
-| Tag Example | Notes |
-|-------------|-------|
-| `amazoncorretto:21` | Amazon Linux (default) |
-| `amazoncorretto:21-alpine` | Alpine variant |
-
-### Azul Zulu
-
-**Tag pattern**: `azul/zulu-openjdk[-<os>]:<java-version>`
-
-| Repository | OS |
-|------------|-----|
-| `azul/zulu-openjdk` | Ubuntu (default) |
-| `azul/zulu-openjdk-alpine` | Alpine |
-| `azul/zulu-openjdk-debian` | Debian |
-| `azul/zulu-openjdk-centos` | CentOS |
-
-Like Liberica, the OS variant is in the repository name.
-
-### Current Project Gap: `_map_distribution_to_image()` in `jdk.py`
-
-The current `DISTRIBUTION_IMAGE_MAP` produces tags like `eclipse-temurin:21` — missing the `-jdk` suffix. The correct tag is `eclipse-temurin:21-jdk`. This is a concrete bug the `jdk-reviewer` agent should catch.
-
-```python
-# Current (incorrect for Temurin):
-DISTRIBUTION_IMAGE_MAP = {
-    "temurin": "eclipse-temurin",      # produces eclipse-temurin:21
-    ...
-}
-
-# The generated tag eclipse-temurin:21 does exist (alias for 21-jdk)
-# BUT eclipse-temurin:21-jdk is the canonical form and more explicit
-```
-
-### Tag Verification Matrix for `image-reviewer` Agent
-
-| Distribution | Registry | Auth Required | Verify Pattern |
-|-------------|----------|---------------|----------------|
-| Temurin | Docker Hub (`library/eclipse-temurin`) | Token | `HEAD /v2/library/eclipse-temurin/manifests/{ver}-jdk` |
-| Corretto | Docker Hub (`library/amazoncorretto`) | Token | `HEAD /v2/library/amazoncorretto/manifests/{ver}` |
-| Liberica | Docker Hub (`bellsoft/liberica-openjdk-debian`) | Token | `HEAD /v2/bellsoft/liberica-openjdk-debian/manifests/{ver}` |
-| Zulu | Docker Hub (`azul/zulu-openjdk`) | Token | `HEAD /v2/azul/zulu-openjdk/manifests/{ver}` |
-| Oracle | Oracle CR | Oracle auth | Different auth flow |
-| GraalVM | GHCR | GitHub token | `HEAD /v2/graalvm/jdk/manifests/{ver}` |
-
-### Sources
-
-- [Eclipse Temurin Container Images — Adoptium](https://adoptium.net/installation/containers)
-- [eclipse-temurin Tags — Docker Hub](https://hub.docker.com/_/eclipse-temurin/tags)
-- [Liberica JDK Container Images — BellSoft](https://bell-sw.com/libericajdk-containers/)
-- [Adoptium Containers GitHub](https://github.com/adoptium/containers)
+| Archive Source | Key Finding | Relevance |
+|---|---|---|
+| node-agents-benchmark-failure-analysis | 24/27 failing packages are addressable by agents; realistic target 26-48% L4 | Sets the benchmark target for issue #27 |
+| java-build-nondeterminism-taxonomy | Timestamps are dominant (rank 1-3, 5, 7); strip before comparison | Directly informs L3→L4 canonicalization |
+| jar-comparison-layered-strategy | 4-layer comparison: structural → metadata → bytecode → diffoscope | Canonicalization should apply BEFORE layer 2 |
+| llmloop-iterative-feedback | Per-error-type feedback loops with tailored prompts | Validates per-agent playbook scoping |
+| alphaevolve-llm-mutation-operator | MAP-Elites island model, SEARCH/REPLACE diffs | Validates parallel candidate approach |
+| codex-iterative-repair | Review→Repair→Validation phase separation | Validates AnalyzeAgent→NodeAgent→Build separation |
+| dead-end-registries-failure-memory | Episodic memory prevents repeated dead ends; 2-failure threshold | Validates dead_ends.yaml for losing K candidates |
+| maven-build-error-taxonomy | GHA expression sanitization fixes 7/10 failures as pre-flight | Pre-flight fixes are separate from agent feedback |
+| adaevolve-outer-loop-hierarchy | Three-level adaptation: local/global/meta | AnalyzeAgent = Level 1 (local); playbooks = Level 2 (global) |
 
 ---
 
-## 7. Implementation Recommendations
+## Recommended Implementation Priorities
 
-### Phase 1: Add Tag Verification Functions (No LLM Required)
+Based on external research and archive findings:
 
-Before adding agent reviewers, add deterministic verification functions that the reviewers can call:
+### P1: Podman fully-qualified image names (deterministic fix)
+**Impact**: Fixes 5/12 L2 failures immediately. Zero agent cost.
+**Evidence**: Podman docs confirm this is the only reliable approach. Security-recommended by Red Hat.
+**Implementation**: Single function change in image resolution to always prepend `docker.io/library/`.
 
-```python
-# In resolvers/container_image.py
-def verify_tag_exists(image: str, tag: str) -> bool:
-    """HEAD request to Docker Hub registry v2 API."""
+### P2: Top-K parallel candidate builds
+**Impact**: Multiplicative improvement — each iteration explores K paths instead of 1.
+**Evidence**: CORAL shows 3-10x improvement from parallel exploration. MAP-Elites/MEMES validate parallel candidate evaluation at scale.
+**Implementation**: `apply_best()` → `apply_top_k()`, parallel `podman build`, pick highest L-level winner.
+**Risk**: K=3 is conservative and validated; K>5 has diminishing returns in constrained spaces.
 
-# In utils/github_api.py
-def verify_git_tag(repo_url: str, tag: str) -> bool:
-    """git ls-remote --tags --refs {repo_url} refs/tags/{tag}"""
+### P3: AnalyzeAgent with ACE-like playbooks
+**Impact**: Closes the feedback loop — agents learn from failures they never saw.
+**Evidence**: ACE framework validates Generator-Reflector-Curator with append-only playbooks. AgentDebug shows 26% improvement from targeted corrective feedback. Build-bench validates three-input prompt structure.
+**Implementation**: AnalyzeAgent as Reflector+Curator, node agents as Generator, per-agent playbook files with DO/DON'T entries and helpful/harmful counters.
+**Risk**: Playbook bloat over many runs. Mitigate with ACE's Pruner pattern (future optimization, not P1).
 
-# In parsers/pom.py
-def check_relocation(pom_xml: str) -> dict | None:
-    """Parse <distributionManagement><relocation> if present."""
-```
+### P4: Spec overrides persistence
+**Impact**: Prevents AnalyzeAgent fixes from being overwritten by deterministic pipeline.
+**Evidence**: Iterative Generative Optimization paper confirms that within-task persistence is essential for convergence.
+**Implementation**: `spec_overrides` dict applied after `Observer.observe()`, before node agents.
 
-### Phase 2: Add Reviewer Agents at High-Priority Nodes
+### P5: Tiered recipe store
+**Impact**: 12 L2-stuck packages skip container debugging on next run. 6 L3 packages skip to JAR matching.
+**Evidence**: Build-bench uses "auxiliary context offering historical insights into prior modifications" — recipes are the structured form of this.
+**Implementation**: Save at every level (L2/L3/L4) with agent decisions and playbook entries used.
 
-Start with 4 reviewer agents (within the 3-7 guideline):
-
-1. **`pom-reviewer`**: After steps 2-5 (POM parse + merge + property resolution)
-   - Checks for unresolved `${...}` placeholders
-   - Detects relocation elements
-   - Validates parent chain completeness
-   - Flags circular import risks
-
-2. **`jdk-reviewer`**: After step 8 (JDK resolution)
-   - Verifies resolved JDK version against JAR manifest
-   - Validates base image tag exists via Docker Hub API
-   - Checks for version conflicts between signals
-   - Suggests `-jdk` suffix if missing from Temurin tags
-
-3. **`tag-reviewer`**: After step 11 (git tag discovery)
-   - Runs `git ls-remote --tags --refs` to verify tag exists
-   - Tries alternative patterns if primary tag not found
-   - Checks for monorepo vs per-module tagging
-
-4. **`build-cmd-reviewer`**: After step 13b (build command enrichment)
-   - Validates plugin flags are correct for the detected plugins
-   - Checks wrapper usage consistency
-   - Validates build command syntax
-
-### Phase 3: Integrate into Pipeline
-
-Add reviewer calls in `orchestrator.py` after each relevant step:
-
-```python
-# After step 8
-jdk_spec = jdk_resolver.resolve(merged, ci_data, resolved_props, ...)
-if self._use_reviewers:
-    review = spawn_node_reviewer(
-        "jdk-reviewer",
-        input_data=jdk_spec_to_dict(jdk_spec),
-        context={"pom_properties": resolved_props, "ci_data": ci_data_to_dict(ci_data)},
-    )
-    if review.corrections:
-        jdk_spec = apply_corrections(jdk_spec, review.corrections)
-```
-
-### Cost Estimate
-
-At Sonnet pricing ($3/MTok input, $15/MTok output) with ~2K tokens per reviewer call:
-- 4 reviewers × ~$0.01 per call = ~$0.04 per package reconstruction
-- For 31-package benchmark: ~$1.24 total
-- Acceptable given the current $50/cycle budget
+### P6: Reproducible build flags (L3→L4)
+**Impact**: Could convert 6 L3 → L4 packages. Chains-Rebuild achieves 26.89% success with canonicalization.
+**Evidence**: All 6 L3 failures have bytecode_match=True — divergence is metadata/timestamps only. Canonicalization handles exactly this class.
+**Implementation**: (a) Add `-Dproject.build.outputTimestamp=1980-01-01T00:00:00Z` to Maven commands, (b) strip/normalize MANIFEST.MF and pom.properties before comparison.
 
 ---
 
 ## References
 
-- [How to Build Multi-Agent Systems: 2026 Guide — DEV Community](https://dev.to/eira-wexford/how-to-build-multi-agent-systems-complete-2026-guide-1io6)
-- [Anthropic Multi-Agent Research System](https://www.anthropic.com/engineering/multi-agent-research-system)
-- [Multi-Agent Pipelines — Stephanie Jarmak](https://medium.com/@steph.jarmak/i-used-two-multi-agent-pipelines-for-everything-i-built-this-week-heres-what-happened-cf68d1b53a62)
-- [Claude Code Sub-Agents — MindStudio](https://www.mindstudio.ai/blog/claude-code-sub-agents-explained)
-- [Modifying System Prompts — Claude Code Docs](https://code.claude.com/docs/en/agent-sdk/modifying-system-prompts)
-- [Docker Registry API — Baeldung](https://www.baeldung.com/ops/docker-registry-api-list-images-tags)
-- [OCI Distribution Specification](https://github.com/opencontainers/distribution-spec/blob/main/spec.md)
-- [Docker Hub API Reference](https://docs.docker.com/reference/api/hub/latest/)
-- [Git ls-remote Documentation](https://git-scm.com/docs/git-ls-remote.html)
-- [POM Reference — Apache Maven](https://maven.apache.org/pom.html)
-- [Guide to Relocation — Apache Maven](https://maven.apache.org/guides/mini/guide-relocation.html)
-- [Introduction to Dependency Mechanism — Apache Maven](https://maven.apache.org/guides/introduction/introduction-to-dependency-mechanism.html)
-- [Maven Dependency Maze Survival Guide — Konvu](https://konvu.com/blog/maze-of-maven-dependencies)
-- [Eclipse Temurin Container Images — Adoptium](https://adoptium.net/installation/containers)
-- [Liberica JDK Container Images — BellSoft](https://bell-sw.com/libericajdk-containers/)
-- [Adoptium Containers — GitHub](https://github.com/adoptium/containers)
+- [ACE: Agentic Context Engineering (Zhang et al., 2025)](https://arxiv.org/abs/2510.04618)
+- [ACE Playbook Implementation](https://github.com/jmanhype/ace-playbook)
+- [Self-Evolving Agents Cookbook (OpenAI)](https://developers.openai.com/cookbook/examples/partners/self_evolving_agents/autonomous_agent_retraining)
+- [AgentDebug: Learning from Agent Failures](https://arxiv.org/abs/2509.25370)
+- [Build-bench: LLM Build Repair](https://arxiv.org/pdf/2511.00780)
+- [Meta Engineering Agent at Scale](https://arxiv.org/pdf/2507.18755)
+- [RepairAgent: Autonomous Program Repair](https://arxiv.org/pdf/2403.17134)
+- [Iterative Generative Optimization](https://arxiv.org/html/2603.23994)
+- [Causes and Canonicalization of Unreproducible Builds in Java (Sharma et al., FSE 2026)](https://arxiv.org/abs/2504.21679)
+- [Apache Maven Reproducible Builds Guide](https://maven.apache.org/guides/mini/guide-reproducible-builds.html)
+- [Reproducible Build Maven Plugin](https://zlika.github.io/reproducible-build-maven-plugin/)
+- [Maven Artifact Plugin Diagnostics](https://maven.apache.org/plugins/maven-artifact-plugin/reproducible.html)
+- [Reproducible Builds in Language Package Managers (ICSE 2025)](https://nesbitt.io/2026/02/24/reproducible-builds-in-language-package-managers.html)
+- [Chains-Rebuild / Reproducible Central](https://github.com/chains-project/reproducible-central)
+- [Podman Short-Name Resolution (Red Hat)](https://www.redhat.com/en/blog/container-image-short-names)
+- [Podman registries.conf Documentation](https://docs.podman.io/en/latest/markdown/podman-pull.1.html)
+- [MEMES: MAP-Elites-Multi-ES (GECCO 2024)](https://dl.acm.org/doi/10.1145/3638529.3654089)
+- [CORAL: Autonomous Multi-Agent Evolution](https://xuquant.com/en/posts/foundation-models/coral-autonomous-multi-agent-evolution/)
+- [AlphaEvolve (Google DeepMind)](https://deepmind.google/blog/alphaevolve-a-gemini-powered-coding-agent-for-designing-advanced-algorithms/)
+- [Self-Evolving Agents Survey](https://github.com/CharlesQ9/Self-Evolving-Agents)
+- [LLMLOOP: Iterative Feedback Loops (ICSME 2025)](https://arxiv.org/html/2603.23613v1)
+- [Java Build Nondeterminism (Reproducible Builds)](https://reproducible-builds.org/docs/jvm/)

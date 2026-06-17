@@ -1,0 +1,210 @@
+{
+  "coordinate": "com.sun.mail:jakarta.mail:2.0.1",
+  "status": "budget_exhausted",
+  "best_reward": 0.15000000000000002,
+  "iterations": 15,
+  "elapsed_seconds": 3160.8,
+  "attempts": [
+    {
+      "id": "5d879c84-8327-4776-854d-4734ac998247",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "plugin/configuration_error",
+      "build_log_summary": "[INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/codehaus/plexus/plexus-resources/1.1.0/plexus-resources-1.1.0.jar (23 kB at 352 kB/s)\n[ERROR] Errors: 1\n[INFO] ------------------------------------------------------------------------\n[ERROR] Failed to execute goal org.glassfish.copyright:glassfish-copyright-maven-plugin:2.4:check (default-cli) on project all: Copyright checking failed -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with ",
+      "diff_summary": "",
+      "fix_applied": "refine: Try skipping the failing plugin with -Dplugin.skip=true or updating the plugin version.\n\nSpecific en",
+      "timestamp": 1781670366.870494
+    },
+    {
+      "id": "e7f67df8-b633-48ab-8f72-0c6f39736de6",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781670545.155782
+    },
+    {
+      "id": "d9df6a8b-94e2-4015-bc35-73ac24660157",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781670685.150321
+    },
+    {
+      "id": "c9cbdefa-f9f6-4882-9079-091f7cd0d46d",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781670891.109927
+    },
+    {
+      "id": "58bbc3b4-e404-4037-a402-78dfae2f7a4b",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781671027.373505
+    },
+    {
+      "id": "6795f13f-4979-4b33-aff2-7c00e7846322",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781671276.9352949
+    },
+    {
+      "id": "6d93cf88-12c6-45dc-813f-c7ac3381ba5e",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781671458.9296849
+    },
+    {
+      "id": "9dab2fe9-ebd3-417b-8555-78ec613d3271",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781671628.4884238
+    },
+    {
+      "id": "486703df-9717-4b1b-a191-7fba96810ff6",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781671726.262346
+    },
+    {
+      "id": "48a552f6-7a00-4ccd-bd7e-dd8de9954e47",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781671900.006731
+    },
+    {
+      "id": "f1868405-fd63-4cc1-85ff-a65f2f7fc1cb",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781672021.7456472
+    },
+    {
+      "id": "02e6d619-8f4d-45a1-83bb-2f94914f963e",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781672146.2029738
+    },
+    {
+      "id": "30dd5395-bcf8-45ed-8e25-821c45698e23",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781672352.776026
+    },
+    {
+      "id": "caf890a2-b878-4c97-a0fd-8c19b46058c7",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781672499.1518981
+    },
+    {
+      "id": "bd156447-78f6-4a82-a646-46b110f69bc2",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "",
+      "timestamp": 1781672627.319388
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "plugin/configuration_error",
+      "approach": "FROM azul/zulu-openjdk:11 | RUN mvn -B -U -C -V clean verify -Poss-release,staging -Dgpg.skip=true -DskipTes",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "[INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/codehaus/plexus/plexus-resources/1.1.0/plexus-resources-1.1.0.jar (23 kB at 352 kB/s)\n[ERROR] Errors: 1\n[INFO] ----------------"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM azul/zulu-openjdk:11 | RUN mvn -B -U -C -V clean verify -Poss-release,staging -Dgpg.skip=true -DskipTes",
+      "failure_count": 3,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.8-eclipse-temurin-11 | RUN mvn -B -U -V clean install \\",
+      "failure_count": 10,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    }
+  ]
+}

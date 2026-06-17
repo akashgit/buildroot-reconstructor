@@ -4,7 +4,7 @@ tags:
   - patterns
 source: factory-archivist
 date: 2026-06-07
-updated: 2026-06-15T23:35
+updated: 2026-06-16T23:30
 ---
 
 # Cross-Project Patterns
@@ -148,3 +148,35 @@ The 5 bugs caught across 3 review rounds fell into distinct categories: (1) stat
 ## 9/9 Keep Streak Validates Incremental Agent Layering as a Development Strategy
 Discovered in buildroot-reconstructor experiment #009 (9th consecutive KEEP, zero reverts).
 The project has maintained a perfect keep streak across 9 experiments spanning: core pipeline (#001-#003) → external validation (#004-#005) → agentic inner loop (#006) → intelligent outer loop (#007) → agent subprocess migration (#008) → node-scoped agents (#009). Each layer builds on the previous. The compound score trajectory (0.6433 → 0.845) with zero reverts validates that the combination of: (1) one-layer-per-experiment discipline, (2) 4-guard safety chain, (3) multi-round CEO code review, and (4) real E2E validation before verdict produces reliable quality gating at scale. The -0.001 noise in #009 demonstrates that KEEP decisions can correctly be made on code quality + partial validation even when full benchmark is incomplete.
+
+## ACE-Style Append-Only Playbooks for Agent Learning Across Tasks
+Discovered in buildroot-reconstructor issue #27 research (2026-06-16).
+When agents make decisions that can fail at runtime (e.g., choosing a Docker image tag that Podman rejects), the pattern of append-only playbook entries with helpful/harmful counters (ACE framework, Zhang et al. 2025) provides persistent cross-task learning without retraining. Each agent reads its own scoped playbook file before acting. A separate AnalyzeAgent writes entries after failures, mapping build outcomes to the responsible agent's decision. This is the Generator-Reflector-Curator pattern applied to build pipelines. Pattern: for multi-agent pipelines where individual agents make decisions validated only by downstream execution, add an "analyst" agent that traces failures to responsible agents and writes scoped, append-only feedback. This closes the feedback loop without modifying the agents' core logic.
+
+## Deterministic Fixes Should Be Applied Before Entering Agent Loops
+Discovered in buildroot-reconstructor issue #27 research — Podman short-name resolution (2026-06-16).
+Five of 12 L2 failures in the 31-package benchmark were caused by Podman rejecting bare Docker Hub image names (e.g., `eclipse-temurin:17-jdk` without `docker.io/library/` prefix). This is a deterministic bug with a one-line fix in `_map_distribution_to_image()`. The agent loop spent 15 iterations × 5 packages = 75 iterations trying to fix something that never needed LLM reasoning. Pattern: when post-mortem reveals a dominant failure class with a deterministic fix, apply it as infrastructure before the next agent experiment. Never let agents waste iteration budget rediscovering known fixes. This extends the earlier "Pre-Flight Sanitization" pattern to infrastructure-level fixes.
+
+## Parallel Candidate Evaluation Beats Sequential When Evaluation Is Cheap Relative to Generation
+Discovered in buildroot-reconstructor issue #27 research — CORAL paper (2026-06-16).
+Node agents already generate ranked candidate lists (e.g., 3 possible Docker image tags), but `apply_best()` picks only the top-ranked one and discards the rest. CORAL (2025) shows that parallel exploration without coordination outperforms sequential when evaluation cost ≪ generation cost. For buildroot: agent candidate generation = ~30s, `podman build` evaluation = ~2-5 min. Running K=3 candidates in parallel costs ~1x wall-clock (not 3x) with 3x information gain. Pattern: when agents generate multiple candidates and evaluation is cheap (containerized builds, test runs, compilation), evaluate Top-K in parallel rather than picking the best by heuristic. The AnalyzeAgent gets richer comparative signal from K outcomes.
+
+## L3→L4 Java Reproducibility Gaps Are Canonicalizable Metadata, Not Bytecode
+Discovered in buildroot-reconstructor issue #27 research — Chains-Rebuild FSE 2026 (2026-06-16).
+All 6 L3 failures in the 31-package benchmark show `bytecode_match=True` but `metadata_match=False`. The divergence is in MANIFEST.MF timestamps, `Created-By` headers, pom.properties build paths, and ZIP entry ordering. Sharma et al. (FSE 2026) show that Chains-Rebuild canonicalization converts 26.89% of artifacts to reproducible by stripping exactly these categories. Pattern: before investing in bytecode normalization (jNorm), check whether L3 failures are metadata-only — if `bytecode_match=True`, the fix is build-flag + comparison-side canonicalization (`-Dproject.build.outputTimestamp` + MANIFEST.MF stripping), not deeper analysis.
+
+## E2E Benchmark Can Substitute for Unit Tests When Architecture Is Exploratory
+Discovered in buildroot-reconstructor experiment #010 (CEO PROCEEDING despite missing tests, 2026-06-16).
+The Builder implemented 5 new classes (AnalyzeAgent, RecipeStore, observe_top_k, _run_agent_loop, _evaluate_candidates) with zero unit tests. The CEO proceeded because: (1) the 31-package benchmark IS the integration test for all new code, (2) re-invoking the Builder for test additions risked another timeout, (3) the architecture is experimental and may change significantly after benchmark results. Pattern: for exploratory agent architecture experiments where the code path only executes inside an end-to-end pipeline, the full benchmark is a more meaningful validation than unit tests of individual components. However, this is a calculated trade-off — missing unit tests should be tracked as follow-up work once the architecture stabilizes. Do not generalize this to non-exploratory code where unit test coverage is standard.
+
+## Early Termination Thresholds Must Be Calibrated Against Baseline Iteration Counts
+Discovered in buildroot-reconstructor experiment #010 (REVERT, -19.4pp L4 rate, 2026-06-17).
+An early termination threshold of `consecutive_no_improvement >= 3` caused 14/31 packages to regress by cutting iteration budget from 15 to ~4. Packages that previously reached L4 in 8-12 iterations were terminated at iteration 4. The threshold was set based on intuition, not empirical calibration against the baseline's iteration-to-solve distribution. Pattern: before adding early termination to an iterative optimization loop, analyze how many iterations successful solutions actually need. Set the threshold at or above the 75th percentile of successful iteration counts. If most successes happen at iteration 8-12, a threshold of 3 is catastrophically low. When in doubt, don't terminate — the baseline's "run all iterations" approach is a safer default than premature cutoff.
+
+## Level-Based Improvement Tracking Is Too Coarse for Early Termination Decisions
+Discovered in buildroot-reconstructor experiment #010 (REVERT, 2026-06-17).
+The early termination counter tracked level changes (L1→L2→L3→L4) but not reward improvement within a level. A package improving from reward 0.05 to 0.14 within L1 registered as "no improvement" and was terminated. This is a 3x reward improvement being invisible to the termination logic. Pattern: when implementing early termination for multi-level optimization, track the FINEST-GRAINED progress signal available (reward, not level). A continuous improvement signal (reward) catches within-level progress that a discrete signal (level) misses. If reward is improving, the agent may be approaching a level transition — terminating at that point wastes the most valuable iterations.
+
+## First Revert After Long Keep Streak Reveals Hidden Assumptions
+Discovered in buildroot-reconstructor experiment #010 (first REVERT after 9 consecutive KEEPs, 2026-06-17).
+Nine consecutive KEEPs created an assumption that the guard chain (code review + eval scoring + E2E) catches all regressions. Experiment #010's catastrophic -19.4pp regression was only visible via the full 31-package benchmark — the code review was CLEAN, the eval score was not yet computed, and the CEO proceeded based on code quality alone. Pattern: long keep streaks can foster overconfidence in quality gates. When the gates do not include a COMPARISON against the baseline's operational metrics (not just code quality), architectural changes that shift runtime behavior (like early termination) can pass code review but fail operationally. The lesson: for changes that alter loop control flow or iteration behavior, the benchmark IS the gate — code review alone is insufficient.

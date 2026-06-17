@@ -1,0 +1,48 @@
+- error_class: unknown
+  approach: 'FROM azul/zulu-openjdk:17 | '
+  failure_count: 3
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "/bin/sh: 1: ./mvnw: not found\nError: building at STEP \"RUN ./mvnw $MAVEN_ARGS
+    -f ./assertj-core/pom.xml package -DskipTests\": while running runtime: exit status
+    127"
+  - BUILD_FAILED
+  - BUILD_FAILED
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-17 | RUN mvn -pl 
+    assertj-core -am package -DskipTests -Dspotless.skip=true -Djapicmp.
+  failure_count: 5
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+  - BUILD_FAILED
+- error_class: unknown
+  approach: 'FROM docker.io/library/maven:3.9-eclipse-temurin-21 | '
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "[INFO] ------------------------------------------------------------------------\n\
+    [ERROR] Unknown lifecycle phase \"/root/.m2\". You must specify a valid lifecycle
+    phase or a goal in the format <plugin-pr"
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-21 | RUN mvn -B -V 
+    -ntp -e install -N -DskipTests && \
+  failure_count: 3
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+  - BUILD_FAILED
+- error_class: unknown
+  approach: 'FROM docker.io/library/eclipse-temurin:21-jdk | '
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED

@@ -1,26 +1,13 @@
-## CEO Review: Researcher Agents (3 parallel — local, external, context)
+## CEO Review: Researcher Agent (3 parallel)
 
 - **Verdict:** PROCEED
-- **Rationale:** All 3 researchers completed with substantive, complementary findings. Local researcher mapped the full pipeline architecture (13 steps → 10 node agents), identified the GapDetector integration pattern, and confirmed claude_runner.py infrastructure is ready. External researcher found best practices for multi-agent pipelines, Docker Hub API patterns, git tag discovery, and Maven POM edge cases. Context researcher traced experiment history and confirmed the failure category mapping.
-
-### Key CEO Observations
-
-1. **Infrastructure is ready.** `spawn_claude_agent()` from experiment 8 provides the foundation. No new infra needed — just node-specific system prompts and JSON schemas.
-
-2. **GapDetector integration strategy is sound.** Run full deterministic pipeline → gap analysis → fire node agents per gap classification. This avoids refactoring the pipeline itself.
-
-3. **External researcher recommends 4-5 agents, issue spec requires 10+3.** Issue spec takes precedence — but the builder should prioritize the high-impact agents (Repo=8 packages, Image=6, Build Cmd=3, Tag=2, Property=2).
-
-4. **Cost and model considerations.** External researcher suggests Sonnet for node agents to reduce cost. This is practical — node agents are reviewers, not builders. Budget ~$0.25-0.50 per node agent, ~$1-4 per package total.
-
-5. **Benchmark run is the primary acceptance criterion.** The issue is NOT done until full 31-package L1-L4 results exist on rh-h100-01. This is an operational requirement.
-
-6. **Realistic L4 target: 8-15/31 (26-48%).** The 24 addressable failures map cleanly to specific node agents, but not all will be fully resolvable by a reviewer agent.
-
-### Issues Found
-- None — research coverage is adequate for this focused task.
-
-### Instructions for Next Step
-- Strategist: generate exactly 1 hypothesis for issue #24. Must be type: mixed/operational (requires code + benchmark execution).
-- Hypothesis must specify all 13 agent implementations as a single deliverable.
-- Include benchmark execution step on rh-h100-01 as acceptance criterion.
+- **Rationale:** All 3 researchers converged on the same architectural picture. Local analysis confirmed all 5 gaps from the issue spec with code-level evidence. External research validated the AnalyzeAgent/ACE pattern (Zhang 2025), Top-K parallel builds (CORAL), and L3→L4 reproducibility (Chains-Rebuild FSE 2026). Context analysis confirmed exp 9 data — kafka-clients repeating the same Podman short-name error 15 times is the smoking gun for Gap 3 (fixes don't persist).
+- **Issues found:** None substantive. The cost risk for AnalyzeAgent ($930 at full scale) is noted — Builder must implement early termination for stagnant packages.
+- **Key CEO priorities for the Strategist:**
+  1. This is a SINGLE hypothesis in targeted mode — the hypothesis must cover ALL 6 implementation priorities (P1-P6) from the issue spec as one coherent PR
+  2. The AnalyzeAgent is the centerpiece (P2) — it connects all other pieces
+  3. Top-K parallel builds (P1) is the user's core design intent — must be in the PR
+  4. P5 (Podman prefix) is trivial but high-impact — should be included
+  5. P6 (reproducible build flags) is important for L3→L4 conversion
+  6. The Builder task MUST include running the full 31-package benchmark on rh-h100 nodes — this is an operational requirement, not optional
+  7. No calendar-time estimates

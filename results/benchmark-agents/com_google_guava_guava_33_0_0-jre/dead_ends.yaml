@@ -1,24 +1,17 @@
-- error_class: environment/image_resolution
-  approach: 'FROM eclipse-temurin:11-jdk-jdk | '
-  failure_count: 1
-  threshold: 2
-  is_exhausted: false
-  examples:
-  - "Trying to pull docker.io/library/eclipse-temurin:11-jdk-jdk...\nError: creating
-    build container: unable to copy from source docker://eclipse-temurin:11-jdk-jdk:
-    initializing source docker://eclipse-tem"
 - error_class: unknown
-  approach: 'FROM docker.io/library/eclipse-temurin:11-jdk | '
+  approach: 'FROM eclipse-temurin:11-jdk | '
   failure_count: 3
   threshold: 2
   is_exhausted: true
   examples:
-  - BUILD_FAILED
+  - "/bin/sh: 1: ./mvnw: not found\nError: building at STEP \"RUN ./mvnw -B -ntp -Dtoolchain.skip
+    install -U -DskipTests=true -f $ROOT_POM\": while running runtime: exit status
+    127"
   - BUILD_FAILED
   - BUILD_FAILED
 - error_class: unknown
   approach: FROM docker.io/library/maven:3.9-eclipse-temurin-17 | RUN mvn -B 
-    -ntp install -U -DskipTests=true -Dmaven.javadoc.skip=true -Dgpg.skip
+    -ntp install -U \
   failure_count: 2
   threshold: 2
   is_exhausted: true
@@ -27,14 +20,37 @@
   - BUILD_FAILED
 - error_class: unknown
   approach: 'FROM docker.io/library/maven:3.9-eclipse-temurin-11 | '
-  failure_count: 7
+  failure_count: 4
   threshold: 2
   is_exhausted: true
   examples:
   - "[INFO] ------------------------------------------------------------------------\n\
     [ERROR] Unknown lifecycle phase \"/root/.m2\". You must specify a valid lifecycle
     phase or a goal in the format <plugin-pr"
-  - "[INFO] ------------------------------------------------------------------------\n\
-    [ERROR] Unknown lifecycle phase \"/root/.m2\". You must specify a valid lifecycle
-    phase or a goal in the format <plugin-pr"
   - "cp: '.' and '' are the same file"
+  - "cp: '.' and '' are the same file"
+- error_class: unknown
+  approach: FROM docker.io/library/amazoncorretto:11 | RUN mvn -B -ntp \
+  failure_count: 3
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+  - BUILD_FAILED
+- error_class: dependency_resolution/missing_artifact
+  approach: FROM docker.io/library/amazoncorretto:17 | RUN mvn -B -ntp \
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "chown: changing ownership of ‘/dev/null’: Operation not permitted\nfailed to
+    change ownership of ‘/dev/null’ from 65534 to 0\nchown: changing group of ‘/dev/null’:
+    Operation not permitted\nfailed to chan"
+- error_class: unknown
+  approach: FROM docker.io/library/amazoncorretto:17 | RUN mvn -B -ntp \
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - BUILD_FAILED

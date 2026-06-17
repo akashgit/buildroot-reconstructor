@@ -1,0 +1,16 @@
+FROM docker.io/library/eclipse-temurin:17-jdk-jammy
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    git \
+    ca-certificates \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+RUN git clone --depth 1 --branch '3.6.1' 'https://github.com/apache/kafka.git' /build
+WORKDIR /build
+
+RUN chmod +x ./gradlew && \
+    ./gradlew :clients:jar -x test -x integrationTest -x unitTest -x rat -x checkstyleMain -x checkstyleTest -x spotbugsMain -x spotbugsTest -x javadoc --no-daemon --no-scan --no-build-cache -PskipSigning=true -PcommitId=unknown

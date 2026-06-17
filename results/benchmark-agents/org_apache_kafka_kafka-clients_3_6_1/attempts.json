@@ -1,0 +1,199 @@
+{
+  "coordinate": "org.apache.kafka:kafka-clients:3.6.1",
+  "status": "budget_exhausted",
+  "best_reward": 0.15000000000000002,
+  "iterations": 15,
+  "elapsed_seconds": 2766.8,
+  "attempts": [
+    {
+      "id": "7317eee8-a83e-4655-9bd5-9e5864839b29",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "build_tool/wrong_build_system",
+      "build_log_summary": "/bin/sh: 1: ./gradlew: not found\nError: building at STEP \"RUN ./gradlew :clients:jar -x test -x integrationTest -x unitTest -x rat -x checkstyleMain -x checkstyleTest -x spotbugsMain -x spotbugsTest -x javadoc --no-daemon --no-scan --no-build-cache -PskipSigning=true -PcommitId=unknown\": while running runtime: exit status 127",
+      "diff_summary": "",
+      "fix_applied": "refine: This project uses Gradle, not Maven. Switch the build command to use './gradlew build' or install Gr",
+      "timestamp": 1781666726.243702
+    },
+    {
+      "id": "02900dcf-e76a-47d6-9529-49e8b546fd5e",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "build_tool/wrong_build_system",
+      "build_log_summary": "Setting up x11-common (1:7.7+23ubuntu3) ...\ninvoke-rc.d: could not determine current runlevel\ninvoke-rc.d: policy-rc.d denied execution of start.\n./gradlew: 118: curl: not found\nError: Could not find or load main class org.gradle.wrapper.GradleWrapperMain\nCaused by: java.lang.ClassNotFoundException: org.gradle.wrapper.GradleWrapperMain\nError: building at STEP \"RUN chmod +x ./gradlew &&     ./gradlew :clients:jar -x test -x integrationTest -x unitTest -x rat -x checkstyleMain -x checkstyleTest -x",
+      "diff_summary": "",
+      "fix_applied": "refine: This project uses Gradle, not Maven. Switch the build command to use './gradlew build' or install Gr",
+      "timestamp": 1781666838.142356
+    },
+    {
+      "id": "47eebb83-32c4-4d87-9342-0ee01328a3cc",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781666959.779962
+    },
+    {
+      "id": "9d9270e1-a93d-401d-8893-78eccc8459dd",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781667107.503558
+    },
+    {
+      "id": "b67ace31-6589-4c7c-bb58-3cc1ed4a0ce0",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781667289.449944
+    },
+    {
+      "id": "f71cdd58-4fda-4ca8-9c35-f1edf62d6b1c",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781667421.903884
+    },
+    {
+      "id": "c1d557eb-35e0-485b-adce-eae55fc6b87b",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781667552.525929
+    },
+    {
+      "id": "7db528e4-c9a7-48b1-a7ec-e49ca5cc1969",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781667750.831142
+    },
+    {
+      "id": "9a8ce238-b92f-4760-8437-d469f98fe9cb",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781667885.0371032
+    },
+    {
+      "id": "ad5b0114-4be9-4bb5-9aa2-f2e58c52e2dd",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781668045.6734238
+    },
+    {
+      "id": "1ca437d5-4ca0-4220-aef6-1c521435e262",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781668214.164191
+    },
+    {
+      "id": "2b34c3c9-d5c7-4e13-9b7e-7a246c86d49f",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781668424.208225
+    },
+    {
+      "id": "a89564c6-3f6b-44e0-b9a8-524a3e3b836c",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781668578.586185
+    },
+    {
+      "id": "001cae77-5a74-4a55-8212-accb1aa78589",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781668728.29888
+    },
+    {
+      "id": "a3a68d8e-367c-4bb9-bf65-93f69ec521a3",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "",
+      "timestamp": 1781668887.424923
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "build_tool/wrong_build_system",
+      "approach": "FROM ubuntu:24.04 | ",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "/bin/sh: 1: ./gradlew: not found\nError: building at STEP \"RUN ./gradlew :clients:jar -x test -x integrationTest -x unitTest -x rat -x checkstyleMain -x checkstyleTest -x spotbugsMain -x spotbugsTest -",
+        "Setting up x11-common (1:7.7+23ubuntu3) ...\ninvoke-rc.d: could not determine current runlevel\ninvoke-rc.d: policy-rc.d denied execution of start.\n./gradlew: 118: curl: not found\nError: Could not find "
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:17-jdk-jammy | ",
+      "failure_count": 12,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    }
+  ]
+}

@@ -1,26 +1,42 @@
-- error_class: unknown
+- error_class: build_tool/wrong_build_system
   approach: 'FROM ubuntu:24.04 | '
   failure_count: 1
   threshold: 2
   is_exhausted: false
   examples:
-  - time="2026-06-16T10:35:40Z" level=error msg="+(UNHANDLED LOGLEVEL) 
-    &imagebuilder.Step{Env:[]string{\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\",
-    \"DEBIAN_FRONTEND=noninteracti
+  - "[INFO] ------------------------------------------------------------------------\n\
+    [ERROR] The goal you specified requires a project to execute but there is no POM
+    in this directory (/build). Please veri"
 - error_class: unknown
-  approach: 'FROM docker.io/library/eclipse-temurin:8-jdk | '
+  approach: 'FROM ubuntu:24.04 | '
   failure_count: 2
   threshold: 2
   is_exhausted: true
   examples:
-  - BUILD_FAILED
-  - BUILD_FAILED
+  - "Setting up x11-common (1:7.7+23ubuntu3) ...\ninvoke-rc.d: could not determine
+    current runlevel\ninvoke-rc.d: policy-rc.d denied execution of start.\n[mkdir]
+    Created dir: /build/build/java\n[java] Exceptio"
+  - "Setting up x11-common (1:7.7+23ubuntu3) ...\ninvoke-rc.d: could not determine
+    current runlevel\ninvoke-rc.d: policy-rc.d denied execution of start.\nTotal time:
+    4 seconds\nError: building at STEP \"RUN ant"
 - error_class: unknown
   approach: 'FROM docker.io/library/amazoncorretto:8 | '
-  failure_count: 10
+  failure_count: 3
   threshold: 2
   is_exhausted: true
   examples:
   - BUILD_FAILED
+  - BUILD_FAILED
+  - "chown: changing ownership of ‘/dev/null’: Operation not permitted\nfailed to
+    change ownership of ‘/dev/null’ from 65534 to 0\nchown: changing group of ‘/dev/null’:
+    Operation not permitted\nfailed to chan"
+- error_class: unknown
+  approach: 'FROM docker.io/library/eclipse-temurin:8-jdk | '
+  failure_count: 8
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "Setting up git (1:2.53.0-1ubuntu1) ...\nProcessing triggers for libc-bin (2.43-2ubuntu2)
+    ...\n--> 9fa9c342af47\nSTEP 3/9: RUN curl -fsSL https://archive.apache.org/dist/ant/binaries/apache-ant-1.10.14-bi"
   - BUILD_FAILED
   - BUILD_FAILED

@@ -1,0 +1,29 @@
+- error_class: plugin/configuration_error
+  approach: FROM azul/zulu-openjdk:11 | RUN mvn -B -U -C -V clean verify 
+    -Poss-release,staging -Dgpg.skip=true -DskipTes
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "[INFO] Downloaded from central: https://repo.maven.apache.org/maven2/org/codehaus/plexus/plexus-resources/1.1.0/plexus-resources-1.1.0.jar
+    (23 kB at 352 kB/s)\n[ERROR] Errors: 1\n[INFO] ----------------"
+- error_class: unknown
+  approach: FROM azul/zulu-openjdk:11 | RUN mvn -B -U -C -V clean verify 
+    -Poss-release,staging -Dgpg.skip=true -DskipTes
+  failure_count: 3
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+  - BUILD_FAILED
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.8-eclipse-temurin-11 | RUN mvn -B -U 
+    -V clean install \
+  failure_count: 10
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+  - BUILD_FAILED

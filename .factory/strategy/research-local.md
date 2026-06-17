@@ -1,412 +1,327 @@
-# Local Research — Node-Scoped Agents (Issue #24)
+# Local Architecture Analysis — Issue #27
 
-## 1. Agent Architecture (`src/buildroot/agent/`)
+## Executive Summary
 
-### Existing Agents
+The buildroot reconstructor has a well-structured agent pipeline (exp 9) with 10 node agents and 3 failure agents, achieving 7/31 L4 (22.6%). Issue #27 identifies 5 architectural gaps. This analysis maps each gap to specific code locations, traces the data flow through the pipeline, and identifies where each proposed fix fits.
 
-| File | Role | Uses Claude Code? |
-|---|---|---|
-| `observer.py` | Wraps `BuildrootOrchestrator.reconstruct()` to produce initial spec + Containerfile | No — pure deterministic |
-| `builder.py` | Containerfile mutation (refine/explore/fresh_start/diagnose) | Yes — `spawn_claude_agent` |
-| `evaluator.py` | 4-level scoring (L1 parse, L2 build, L3 command, L4 JAR match) via SSH to rh-h100-01 | No — deterministic SSH/subprocess |
-| `analyzer.py` | Error classification, dead-end registry, build progress estimation, root cause extraction | No — regex-based |
-| `failure_analyst.py` | Batch failure aggregation, stagnation detection | No — aggregation logic |
-| `outer_researcher.py` | Web research on failure patterns | Yes — `spawn_claude_agent` |
-| `outer_strategist.py` | Hypothesis generation with J(S) scoring | Yes — `spawn_claude_agent` with JSON schema |
-| `loop.py` | Inner loop: Observer → [Builder → Evaluator → Analyzer]* | Orchestrator only |
-| `outer_loop.py` | Intelligent self-improving cycle: batch → analyze → research → strategize → implement → guards → verdict | Orchestrator + uses `spawn_claude_agent` for OuterBuilder |
-| `claude_runner.py` | Shared subprocess runner for all Claude Code invocations | Infrastructure |
-| `guards.py` | Surface guards, leakage detection, monotonic enforcement | No — deterministic |
-| `knowledge/knowledge_base.py` | KB read/write for cross-package patterns | No — file I/O |
+---
 
-### `claude_runner.py` Infrastructure (claude_runner.py:33-136)
+## 1. Current Architecture — Data Flow
 
-The `spawn_claude_agent()` function is the single entry point for all Claude Code subprocess invocations:
+```
+run_inner_loop()  [loop.py:42-201]
+  │
+  ├── Observer.observe()  [observer.py:21-33]
+  │   └── BuildrootOrchestrator.reconstruct()  → (spec, containerfile)
+  │
+  ├── [if node_agents] AgentAugmentedObserver.observe()  [augmented_observer.py:40-72]
+  │   ├── super().observe()  → deterministic pipeline
+  │   ├── GapDetector.analyze(spec)  → gap_report
+  │   ├── for agent in ALL_NODE_AGENTS:
+  │   │     if agent.should_activate(gap_report):
+  │   │       candidates = agent.review(spec)
+  │   │       agent.apply_best(spec, candidates)  ← PICKS ONLY ONE
+  │   └── re-render Containerfile from updated spec
+  │
+  ├── for t in range(max_iterations):          [loop.py:84-195]
+  │   ├── evaluator.evaluate(containerfile)     → EvalResult
+  │   │
+  │   ├── [if node_agents and t==0 and failed]
+  │   │   └── observer.run_failure_agents()     [augmented_observer.py:100-141]
+  │   │       ├── L2/L3/L4FailureAgent.diagnose()
+  │   │       └── agent.apply_fixes(spec)
+  │   │       └── re-render Containerfile
+  │   │
+  │   ├── analyzer.analyze(eval_result)         → AnalysisResult
+  │   ├── analyzer.update_dead_ends()
+  │   │
+  │   └── based on ProgressSignal mode:
+  │       ├── exploit → builder.refine()        [builder.py:400-479]
+  │       ├── explore → builder.explore()       [builder.py:481-561]
+  │       └── meta_shift → builder.fresh_start()
+  │
+  └── return LoopResult
+```
+
+### Key Observation: Two Disconnected Fix Systems
+
+The pipeline has TWO independent fix mechanisms that don't talk to each other:
+
+1. **Node agents** (pre-build): `augmented_observer.py` — review spec fields, propose candidates, `apply_best()` picks one. Run ONCE before any builds.
+
+2. **Inner loop builder** (post-build): `loop.py:84-195` — on failure, the Builder agent rewrites the entire Containerfile. Uses `analyzer.py` for error classification and dead-end tracking, but NOT the node agent system.
+
+The Builder (inner loop iterations 1-14) operates as a standalone Containerfile rewriter. It doesn't know which node agent made which decision, can't update the spec, and can't leverage alternative candidates the node agents generated.
+
+---
+
+## 2. Gap Analysis — Code-Level Mapping
+
+### Gap 1: Agents run pre-build only — no failure feedback
+
+**Location:** `augmented_observer.py:40-72` — `observe()` is called once at the top of `loop.py:69`.
+
+**Problem:** Node agents fire in `observe()` → build → evaluate → if build fails, the Builder (a Containerfile rewriter) handles iterations. Node agents never see build results.
+
+**Failure agents partially address this:** `loop.py:100-122` calls `run_failure_agents()` after the FIRST evaluation (t==0 only). But:
+- It only fires once (`failure_agent_used` flag at `loop.py:83`)
+- It modifies the spec and re-renders, but subsequent iterations use the Builder's Containerfile rewriting, not the spec-based system
+- No feedback flows back to node agents
+
+**Where AnalyzeAgent fits:** After `evaluator.evaluate()` returns a failure, before the Builder rewrites. The AnalyzeAgent would:
+1. Trace the failure to the responsible node agent's decision
+2. Write playbook entries for that agent
+3. Update `spec_overrides` for the next iteration
+4. On the next iteration, `observe()` would re-run with playbook guidance
+
+This requires changing the inner loop to re-run `observe()` with accumulated knowledge, not just let the Builder rewrite the raw Containerfile.
+
+### Gap 2: `should_activate()` blocks agents from fixing OBSERVED-but-wrong values
+
+**Location:** `base.py:93-98`
 
 ```python
-def spawn_claude_agent(
-    task: str,
-    system_prompt: str,
-    *,
-    model: str = "claude-opus-4-6",
-    json_schema: dict | None = None,   # for structured output
-    max_turns: int = 30,
-    max_budget_usd: float = 5.0,
-    timeout: int = 600,
-    cwd: str | None = None,
-    allowed_tools: list[str] | None = None,
-) -> AgentResult
+def should_activate(self, gap_report: GapReport) -> bool:
+    for entry in gap_report.entries:
+        if entry.field == self.field_name or entry.field.startswith(self.field_name):
+            if entry.source in (Source.DEFAULTED, Source.INFERRED):
+                return True
+    return False
 ```
 
-Key capabilities:
-- **Structured output** via `--json-schema` — used by strategist for `CodeChangeHypothesis`
-- **Tool scoping** via `--allowedTools` — OuterBuilder uses `["Read", "Edit"]`, Researcher uses `["Read", "WebSearch", "Bash"]`
-- **System prompt injection** via `--append-system-prompt-file` (temp file, cleaned up in finally block)
-- **Permission bypass** via `--dangerously-skip-permissions`
-- Returns `AgentResult(text, structured_output, is_error, cost_usd, num_turns)`
+**Problem:** If CI data sets a field as `Source.OBSERVED`, the agent never fires. But OBSERVED doesn't mean CORRECT — CI data might say Maven when the project uses Gradle (lz4-java case).
 
-**This is the foundation for all node agents.** Each node agent will call `spawn_claude_agent()` with a node-specific system prompt, scoped allowed tools, and a JSON schema for structured candidate ranking output.
+**Fix:** The AnalyzeAgent should be able to force-activate agents by writing spec_overrides or by marking OBSERVED fields as "needs review" after a build failure traces back to that field.
 
-## 2. The Deterministic Pipeline (`pipeline/orchestrator.py:78-229`)
+### Gap 3: Fixes don't persist across iterations
 
-`BuildrootOrchestrator.reconstruct()` runs 13 sequential steps. Each step maps to one or more node agents from issue #24:
+**Location:** `loop.py:84-195` — each iteration of the inner loop.
 
-| Step | Code | What It Does | Node Agent |
-|---|---|---|---|
-| 1 | `fetch_pom()` | Download POM from Maven Central | **Node 1: POM Agent** |
-| 2 | `PomParser.parse()` | Parse POM XML | Node 1 |
-| 3 | `resolve_parent_chain()` | Walk parent POM chain | **Node 2: Parent Chain Agent** |
-| 4 | `merge_poms()` | Merge parent → child properties | Node 2 |
-| 5 | `PropertyResolver.resolve()` | Resolve `${...}` placeholders | **Node 3: Property Agent** |
-| 6 | `discover_repo_from_pom()` | Find source repo URL | **Node 4: Repo Agent** |
-| 7 | `CIParser.discover_ci_type()` + parse | Parse CI config (GHA, CircleCI) | **Node 5: CI Agent** |
-| 8 | `JdkResolver.resolve()` | Determine JDK version + vendor | **Node 6: JDK Agent** |
-| 9 | `ContainerImageResolver.resolve()` | Resolve container base image | **Node 7: Image Agent** |
-| 10 | `DependencyResolver.resolve()` | Dependency tree | — |
-| 11 | `discover_git_tag()` | Find correct git tag | **Node 8: Tag Agent** |
-| 12 | `_detect_maven_wrapper_version()` | Maven wrapper version + `_enrich_build_commands()` | **Node 9: Build Cmd Agent** |
-| 13 | `GapDetector.analyze()` + `ContainerfileGenerator.generate()` | Gap detection + Containerfile rendering | **Node 10: Template Agent** |
+**Problem:** The inner loop does NOT re-run `observe()` on iterations 2+. The Builder takes the previous Containerfile and mutates it. So failure agent fixes DO survive within the Builder's mutation chain. But if the AnalyzeAgent wants to change a spec field for a re-observation, there's no mechanism for that.
 
-### Where Agents Insert
+**The real persistence problem:** The inner loop has no concept of "accumulated spec overrides." Each run of the inner loop starts fresh from `observe()`.
 
-Each node agent inserts **after** its deterministic step. The agent receives:
-1. The current `BuildrootSpec` (partially built, all upstream fields populated)
-2. The gap classification for this node's field (OBSERVED/INFERRED/DEFAULTED)
-3. Read access to upstream context (POM XML text, CI YAML, git repo data)
+**Fix:** Add a `spec_overrides: dict` parameter to `run_inner_loop()`. After `observe()`, apply overrides before entering the iteration loop. The AnalyzeAgent writes overrides; the recipe store persists them.
 
-The agent **can modify** only the current node's contribution to the spec before the next step consumes it.
+### Gap 4: `apply_best()` picks one candidate — discards alternatives
 
-## 3. The GapDetector (`pipeline/gap_detector.py:16-199`)
-
-`GapDetector.analyze()` checks 6 dimensions and classifies each as OBSERVED/INFERRED/DEFAULTED via the `Source` enum:
-
-| Check Method | Field | Gap Trigger |
-|---|---|---|
-| `_check_jdk_confidence` | `jdk_version` | `JdkSpec.confidence.level == DEFAULTED/INFERRED` |
-| `_check_ubuntu_latest` | `runner_os` | `ubuntu-latest` mapping → INFERRED |
-| `_check_unresolved_properties` | `property:*` | Any `${...}` remaining → DEFAULTED |
-| `_check_maven_wrapper` | `maven_version` | No wrapper found → DEFAULTED |
-| `_check_build_command` | `build_command` | No CI build command → DEFAULTED |
-| `_check_system_packages` | `system_packages` | No CI data → DEFAULTED |
-
-**For issue #24:** The GapDetector currently runs post-hoc at step 13. For node-scoped agents, the approach is:
-1. Run the full deterministic pipeline → produces draft `BuildrootSpec`
-2. Run `GapDetector.analyze(spec)` → gap report with per-field source classifications
-3. Use gap entries to determine which node agents activate and at what level:
-   - **DEFAULTED** → agent always fires (highest value)
-   - **INFERRED** → agent fires in standard mode (verify the inference)
-   - **OBSERVED** → agent fires in light/validate-only mode (sanity check)
-4. Each node agent can update the spec → re-render Containerfile
-
-This avoids refactoring the GapDetector to run per-field during the pipeline.
-
-## 4. The Template System (`generators/`)
-
-Three Jinja2 templates, selected by `ContainerfileGenerator._select_template()` at `containerfile.py:116`:
-
-| Template | Selector | FROM Source |
-|---|---|---|
-| `jdk_base.j2` | Default | `{{ base_image }}-jdk` (e.g., `docker.io/library/eclipse-temurin:17-jdk`) |
-| `jdk_on_ubuntu.j2` | `spec.system_packages` non-empty | `ubuntu:{{ ubuntu_version }}` + manual JDK install |
-| `custom_base.j2` | `spec.base_image` set | `{{ custom_image }}` (from CI container reference) |
-
-All templates share the same structure: FROM → Maven install → ENV vars → git clone → build RUN.
-
-**Node 10 (Template Agent)** reviews the rendered Containerfile, not the template. It validates:
-- Syntax of every line (ENV, ARG, RUN)
-- Unresolved `${...}` in ENV/ARG values
-- Missing package installs
-- Dockerfile best practices
-
-Re-rendering after agent updates is straightforward — `ContainerfileGenerator.generate(updated_spec, output_dir)`.
-
-## 5. The Evaluator (`evaluator.py:26-267`)
-
-4-level pipeline, all via SSH to rh-h100-01:
-
-| Level | Method | What It Tests | Reward Weight |
-|---|---|---|---|
-| L1 | `_l1_parse()` | `dockerfile_parse.DockerfileParser` structural parse | 0.05 |
-| L2 | `_l2_build()` | `ssh rh-h100-01 "podman build --no-cache -t TAG -f Containerfile ."` | 0.10 |
-| L3 | `_l3_command()` | `podman run --rm TAG sh -c 'ls target/*.jar && echo BUILD_SUCCESS'` | 0.35 |
-| L4 | `_l4_match()` | Download original JAR from Maven Central, extract rebuilt JAR, `compare_jars()` | 0.50 |
-
-**FIXED surface** — evaluator.py and jar_comparator.py cannot be modified.
-
-Reward function (`models.py:86`): `reward = 0.05*L1 + 0.10*L2 + 0.35*L3 + 0.50*L4`
-
-**Post-build failure agents** fire based on evaluator results:
-- L2 failure (container build failed) → **L2 Failure Agent** reads build log, proposes Containerfile fixes
-- L3 failure (no JAR in target/) → **L3 Failure Agent** reads Maven/Gradle output, proposes build command fixes
-- L4 failure (JAR mismatch) → **L4 Failure Agent** reads comparison report, proposes reproducibility fixes
-
-## 6. The Benchmark Script
-
-**No dedicated `benchmark.py` or `benchmark` CLI command exists.** Benchmarking is done via:
-```bash
-buildroot agent --batch results/packages_benchmark.txt --output results/benchmark-full
-```
-
-This routes through `agent_cmd.py:54` → `run_outer_loop()` → `run_batch()` in `outer_loop.py:73`.
-
-Package lists:
-- `results/packages_smoke.txt` — 3 packages (commons-lang3, micrometer-core, spring-security-core)
-- `results/packages_benchmark.txt` — 31 packages (full benchmark set)
-
-Current baseline from `results/benchmark-full/summary.json`:
-```
-L1: 31/31 (100%), L2: 7/31 (23%), L3: 5/31 (16%), L4: 4/31 (13%)
-```
-
-**For issue #24:** The `agent_cmd.py` CLI needs a `--node-agents` flag or similar to enable the node agent layer. The benchmark command already exists as `agent --batch`.
-
-## 7. Current Flow vs. Target Flow
-
-### Current Flow
-```
-Observer.observe(coordinate)
-  └── BuildrootOrchestrator.reconstruct()  ← 13 deterministic steps, no review
-       └── GapDetector runs at end (post-hoc)
-       └── ContainerfileGenerator renders template
-       └── returns (spec, containerfile)
-
-[Inner Loop] (only used in agentic mode, not in benchmark):
-  for t in range(max_iterations):
-      Evaluator.evaluate(containerfile)
-      Analyzer.classify + analyze
-      Builder.refine/explore/fresh_start(containerfile)
-```
-
-### Target Flow (Issue #24)
-```
-Phase 1: Deterministic + Agent Augmentation
-  BuildrootOrchestrator.reconstruct()  ← 13 deterministic steps (draft)
-  GapDetector.analyze(spec)            ← classify each field
-  For each Node Agent (1-10):
-      if gap_status warrants activation:
-          NodeAgent.review(spec, context) → ranked candidates
-          Apply best candidate to spec
-  ContainerfileGenerator.generate(updated_spec)  ← re-render with fixes
-
-Phase 2: Evaluate + Post-Build Agents
-  Evaluator.evaluate(containerfile)
-  If L2 fail → L2FailureAgent.diagnose(build_log) → fix + re-evaluate
-  If L3 fail → L3FailureAgent.diagnose(build_output) → fix + re-evaluate
-  If L4 fail → L4FailureAgent.diagnose(comparison_report) → note for future
-```
-
-**Key insight:** The inner Builder loop from the current agentic pipeline may become unnecessary for most packages. If node agents fix upstream issues (wrong repo, wrong tag, wrong image, wrong build command), the first Containerfile should be correct. The post-build failure agents handle the remaining cases.
-
-## 8. Integration Architecture
-
-### Recommended: AgentAugmentedObserver
-
-**Option C from issue analysis** — modify `observer.py` or create a new class:
-
-```
-AgentAugmentedObserver.observe(coordinate)
-  1. deterministic_spec, draft_containerfile = super().observe(coordinate)
-  2. gap_report = GapDetector().analyze(deterministic_spec)
-  3. for node_agent in ordered_agents:
-         if node_agent.should_activate(gap_report):
-             candidates = node_agent.review(deterministic_spec, context)
-             node_agent.apply_best(deterministic_spec, candidates)
-  4. final_containerfile = ContainerfileGenerator().generate(updated_spec)
-  5. return updated_spec, final_containerfile
-```
-
-This approach:
-- Doesn't modify `orchestrator.py` (the deterministic pipeline stays clean)
-- Drops into the existing inner loop seamlessly (the loop calls `observer.observe()`)
-- Allows enabling/disabling via a flag (`--node-agents`)
-
-### File Organization
-
-New files:
-```
-src/buildroot/agent/node_agents/
-├── __init__.py
-├── base.py              # NodeAgent base class
-├── pom_agent.py         # Node 1
-├── parent_chain_agent.py # Node 2
-├── property_agent.py    # Node 3
-├── repo_agent.py        # Node 4
-├── ci_agent.py          # Node 5
-├── jdk_agent.py         # Node 6
-├── image_agent.py       # Node 7
-├── tag_agent.py         # Node 8
-├── build_cmd_agent.py   # Node 9
-├── template_agent.py    # Node 10
-└── failure_agents.py    # L2, L3, L4 post-build agents
-
-src/buildroot/agent/augmented_observer.py  # AgentAugmentedObserver
-```
-
-### NodeAgent Base Class Shape
+**Location:** `base.py:117-126`
 
 ```python
-@dataclass
-class Candidate:
-    value: Any                    # The proposed value for this field
-    evidence_type: str            # From the ranking hierarchy
-    evidence_citations: list[str] # Specific citations
-    reasoning: str                # Why this candidate
-
-class NodeAgent:
-    node_name: str
-    field_name: str               # Maps to GapEntry.field
-    system_prompt: str
-
-    def should_activate(self, gap_report: GapReport) -> bool:
-        entry = next((e for e in gap_report.entries if e.field == self.field_name), None)
-        if entry is None:
-            return False  # No gap → OBSERVED → light mode or skip
-        if entry.source == Source.DEFAULTED:
-            return True   # Always fire
-        if entry.source == Source.INFERRED:
-            return True   # Standard mode
-        return False      # OBSERVED → skip
-
-    def review(self, spec: BuildrootSpec, context: dict) -> list[Candidate]:
-        result = spawn_claude_agent(
-            task=self._build_task(spec, context),
-            system_prompt=self.system_prompt,
-            json_schema=CANDIDATE_RANKING_SCHEMA,
-            allowed_tools=self._allowed_tools(),
-            max_turns=10,
-            max_budget_usd=2.0,
-            timeout=300,
-        )
-        return self._parse_candidates(result)
-
-    def apply_best(self, spec: BuildrootSpec, candidates: list[Candidate]) -> None:
-        if candidates:
-            self._update_spec(spec, candidates[0])
+def apply_best(self, spec: BuildrootSpec, candidates: list[Candidate]) -> bool:
+    if not candidates:
+        return False
+    best = sorted(candidates, key=lambda c: c.rank)[0]
+    self._apply_candidate(spec, best)
+    return True
 ```
 
-### Evidence Ranking Schema
+**Problem:** Agents generate ranked lists of candidates (the schema supports arrays), but only the top-ranked one is used. If it fails at build time, the alternatives are lost.
 
-From issue #24, agents rank proposals by evidence type (NOT self-assessed "confidence"):
-1. **Direct observation** — file exists, API returns value, tag found in git ls-remote
-2. **CI inference** — value from GitHub Actions / Jenkins / CircleCI
-3. **Cross-reference** — multiple independent sources agree
-4. **Historical pattern** — project's own conventions
-5. **Ecosystem heuristic** — common practice
-6. **Default** — last resort
+**Fix — Top-K forking:** Replace `apply_best()` with `apply_top_k(spec, candidates, k=3)` returning K (spec, containerfile) pairs. The inner loop evaluates all K in parallel, picks the best.
 
-```python
-CANDIDATE_RANKING_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "candidates": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "value": {"type": "string"},
-                    "evidence_type": {"type": "string", "enum": [
-                        "direct_observation", "ci_inference", "cross_reference",
-                        "historical_pattern", "ecosystem_heuristic", "default"
-                    ]},
-                    "evidence_citations": {"type": "array", "items": {"type": "string"}},
-                    "reasoning": {"type": "string"},
-                },
-                "required": ["value", "evidence_type"]
-            }
-        },
-        "field_updated": {"type": "string"},
-    },
-    "required": ["candidates", "field_updated"]
+**Implementation complexity:** This is the most invasive change. It requires:
+1. `apply_top_k()` on `NodeAgent` base class — return K spec copies with different candidate values applied
+2. `ContainerfileGenerator` called K times to produce K Containerfiles
+3. `Evaluator` called K times (can be parallelized via K SSH subprocesses)
+4. Picking the best result and discarding losers
+5. Changes to `run_inner_loop()` to handle branching
+
+### Gap 5: Failure agents and node agents are disconnected
+
+**Location:** `failure_agents.py` vs `node_agents/base.py`
+
+**Failure agents:**
+- Are NOT subclasses of `NodeAgent`
+- Have their own `_BaseFailureAgent` base class (`failure_agents.py:64`)
+- Operate on (spec, containerfile, build_log) → structured `FailureDiagnosis` with fixes
+- Apply fixes directly to spec fields via `apply_fixes()` (`failure_agents.py:91-123`)
+- Called from `augmented_observer.py:run_failure_agents()` — once, after first evaluation
+
+**Node agents:**
+- Subclass `NodeAgent` (`base.py:80`)
+- Operate on (spec, gap_report) → `Candidate` list
+- Called from `augmented_observer.py:observe()` — once, before any build
+- Have evidence hierarchy, but no knowledge of build results
+
+**The disconnect:** A failure agent might correctly diagnose "Podman needs docker.io/library/ prefix" and fix the base_image. But the image_agent doesn't learn this. Next time the image_agent fires (on a different package), it'll make the same mistake.
+
+**AnalyzeAgent as the bridge:** The AnalyzeAgent would:
+1. See the failure agent's diagnosis
+2. Attribute it to the image_agent's decision
+3. Write a playbook entry: "DON'T: bare Docker Hub names without docker.io/library/ prefix"
+4. On the next package (or next outer loop cycle), the image_agent reads its playbook and adjusts
+
+---
+
+## 3. The AnalyzeAgent — Design & Placement
+
+The AnalyzeAgent is the **central new component** from issue #27. It's a Claude Code subprocess agent that runs after each failed evaluation cycle. It's NOT the existing `analyzer.py` (which is a regex-based error classifier).
+
+### Inputs
+- Build logs from all K candidates this cycle
+- Containerfiles tried + level reached per candidate
+- Current node agent playbooks (`.factory/playbooks/node_agents/`)
+- Which pipeline node agent made which decision (from spec.gaps / agent activation log)
+- Current spec_overrides
+
+### Outputs
+- Playbook entries written to `.factory/playbooks/node_agents/{agent_name}.md`
+- Updated spec_overrides for next iteration
+- Recipe entries for `.factory/recipes/{coordinate}.json`
+
+### Proposed inner loop flow
+```
+loop.py iteration flow (proposed):
+  evaluate() → EvalResult
+  if success → save recipe, return
+  if fail:
+    AnalyzeAgent.analyze(eval_results, candidates_tried)
+      → writes playbook entries
+      → updates spec_overrides
+      → saves recipe if L2+
+    if re-observe mode:
+      observe(spec_overrides, playbook_dir) → new (spec, containerfile)
+      → re-run node agents with playbook guidance
+    else:
+      builder.refine/explore/fresh_start → mutated containerfile
+```
+
+### Relationship to existing `analyzer.py`
+
+The existing `analyzer.py` provides:
+- `classify_error()` — regex-based error classification (17 patterns at `analyzer.py:14-98`)
+- `estimate_build_progress()` — Maven lifecycle phase tracking (`analyzer.py:208-221`)
+- `extract_root_cause_details()` — specific entity extraction (`analyzer.py:224-243`)
+- `detect_error_loop()` — oscillation detection (`analyzer.py:361-387`)
+- `build_remediation_context()` — prompt section builder (`analyzer.py:390-448`)
+- `analyze()` — full analysis → `AnalysisResult` (`analyzer.py:460-498`)
+- Dead-end registry management (`analyzer.py:501-522`)
+
+The existing analyzer is purely regex/heuristic. The AnalyzeAgent is an LLM-powered agent that uses these heuristic signals as inputs but performs deeper reasoning:
+- Traces failures to responsible pipeline nodes
+- Generates playbook instructions (natural language, not just error classes)
+- Makes cross-iteration strategic decisions (when to re-observe vs. when to let Builder iterate)
+
+**Recommendation:** Keep `analyzer.py` as the heuristic layer. Create `analyze_agent.py` as the LLM layer that wraps it.
+
+---
+
+## 4. Recipe / Checkpoint Mechanism
+
+**Current state:** No recipe/checkpoint mechanism exists. Each `run_inner_loop()` starts fresh from `observe()`. The outer loop (`outer_loop.py:167-399`) runs batch → analyze → research → strategize → implement → guards → verdict, but at the code-change level (modifying the pipeline's Python code), not the per-package level.
+
+**What issue #27 proposes:** A per-package recipe store at `.factory/recipes/{coordinate}.json`:
+```json
+{
+  "coordinate": "org.json:json:20231013",
+  "level_reached": 4,
+  "containerfile": "FROM docker.io/library/eclipse-temurin:17-jdk ...",
+  "spec_overrides": {"base_image": "docker.io/library/eclipse-temurin:17-jdk"},
+  "agent_decisions": {"image_agent": "...", "build_cmd_agent": "..."},
+  "iterations_to_solve": 2
 }
 ```
 
-## 9. Benchmark Failure Category → Node Agent Mapping
+Tiered reuse:
+- L4 recipe exists → skip entirely
+- L3 recipe → start from L3 config, focus on JAR matching flags
+- L2 recipe → start from L2 config, skip container debugging
 
-From the issue spec's failure breakdown:
+This is entirely new infrastructure. Needs:
+1. A recipe data model (in `models.py`)
+2. Save logic after each evaluation in the inner loop
+3. Load logic at the start of `run_inner_loop()` — check recipe store, start from checkpoint
 
-| Category | Count | % | Primary Agent | How Agent Fixes It |
-|---|---|---|---|---|
-| Multi-module / wrong directory | 8 | 26% | **Node 4: Repo Agent** | Identifies correct subdir for multi-module repos, adjusts clone + build |
-| Base image not found | 6 | 19% | **Node 7: Image Agent** | Checks Docker Hub registry API for tag existence, finds alternatives |
-| Build tool not found | 3 | 10% | **Node 9: Build Cmd Agent** | Detects gradlew vs mvn vs gradle, checks for mvnw presence |
-| Containerfile syntax (unresolved props) | 2 | 6% | **Node 3: Property Agent** | Resolves remaining `${...}` from CI env vars, profiles, docs |
-| Git tag not found | 2 | 6% | **Node 8: Tag Agent** | `git ls-remote --tags`, checks tag naming conventions |
-| Build command / environment | 3 | 10% | **Node 9: Build Cmd Agent** | Cross-references CI config with detected build tool |
-| L3 build failures | 2 | 6% | **L3 Failure Agent** | Reads Maven/Gradle build output, diagnoses compile/dep issues |
-| L4 JAR mismatch | 1 | 3% | **L4 Failure Agent** | Diffs JAR contents, identifies timestamp/JDK/plugin issues |
-| L4 pass (baseline) | 4 | 13% | — | No action needed |
+---
 
-**Total addressable: 24/27 failing packages (89%)** if all agents work correctly.
+## 5. Node Agent Specific Issues
 
-## 10. Specific Failure Details (from benchmark)
+### Agents with known failure-traced issues
 
-### Multi-module failures (8 packages) — Repo Agent target
-Packages: tomcat-catalina, nimbus-jose-jwt, jetty-server, lz4-java, kafka-clients, snakeyaml, commons-beanutils, protobuf-java
+**`image_agent.py`** — Gap 1 manifestation. Validates Docker Hub tag existence but doesn't know Podman needs `docker.io/library/` prefix. Caused 5 L2 failures (kafka-clients, assertj-core, json-smart, protobuf-java, hibernate-validator). Fix needs both:
+1. Deterministic: always prefix `docker.io/library/` in `generators/containerfile.py`
+2. Agent: AnalyzeAgent writes playbook entry after Podman short-name failure
 
-Root cause: `discover_repo_from_pom()` finds the repo, but the POM is in a subdirectory. The generated Containerfile clones at root and runs `mvn clean install` at root, which fails because the target module's POM is in a subdirectory.
+**`build_cmd_agent.py`** — Gap 2 manifestation. Trusts OBSERVED CI data even when wrong (lz4-java: CI says Maven, project uses Gradle). Fix: AnalyzeAgent force-activates after build failure shows wrong build system.
 
-Repo Agent fix: Detect multi-module structure, identify the correct subdirectory, set `WORKDIR /build/<subdir>` in the Containerfile or add `-pl <module>` to the build command.
+**`template_agent.py`** — Gap 1 manifestation. Validates Containerfile syntax pre-build but can't catch runtime issues. hibernate-core: `ENV JAVA_OPTS -Xmx4g` instead of `ENV JAVA_OPTS="-Xmx4g"` — generated by failure agent, not caught by template_agent on re-render.
 
-### Base image failures (6 packages) — Image Agent target
-Packages: spring-boot, netty-buffer, jakarta.mail, assertj-core, snappy-java, junit
+**`tag_agent.py`** — Works well for tag discovery, but alternatives discarded by `apply_best()`. Top-K would let it try multiple tag formats.
 
-Root cause: The `JdkSpec.base_image` resolves to a tag that doesn't exist on Docker Hub (e.g., `eclipse-temurin:17-jdk` without OS suffix, or a version that was never published).
+---
 
-Image Agent fix: HTTP HEAD or Docker Hub registry API (`/v2/<image>/tags/list`) to verify tag existence. If missing, try alternative tags (same JDK, different OS suffix or vendor).
+## 6. Implementation Impact Assessment
 
-### Build tool failures (3 packages) — Build Cmd Agent target
-Packages: json-smart, hibernate-validator, json-path
+### P1: Top-K parallel candidate builds (Gap 4)
+**Files to change:**
+- `node_agents/base.py` — add `apply_top_k()` method
+- `augmented_observer.py` — return K (spec, containerfile) pairs
+- `loop.py` — handle K candidates per iteration, evaluate all, pick best
+- `models.py` — add fields to track which candidate was used
 
-Root cause: Project uses Gradle (has `build.gradle`, `gradlew`) but the pipeline defaults to `mvn clean install -B`.
+**Complexity:** High. Changes the observer↔loop contract fundamentally.
 
-Build Cmd Agent fix: Check repo for `build.gradle`, `gradlew`, `settings.gradle`. If found, switch to `./gradlew build` or `gradle build`.
+### P2: AnalyzeAgent + playbooks (Gaps 1, 2, 5)
+**Files to create:**
+- `src/buildroot/agent/analyze_agent.py` — new Claude Code subprocess agent
+- `.factory/playbooks/node_agents/` directory
 
-## 11. Cost & Performance Estimates
+**Files to change:**
+- `loop.py` — call AnalyzeAgent after failed evaluation
+- `augmented_observer.py` — pass playbook_dir to node agents
+- `node_agents/base.py` — read playbook in `_build_task()`
 
-Current agent costs per invocation:
-| Agent | Budget | Turns | Timeout | Typical Cost |
-|---|---|---|---|---|
-| Inner Builder (refine) | $5 | 10 | 600s | $1-3 |
-| Inner Builder (diagnose) | $1 | 3 | 180s | $0.30 |
-| Outer Researcher | $3 | 20 | 600s | $1-2 |
-| Outer Strategist | $2 | 10 | 300s | $0.50 |
+**Complexity:** Medium. New agent follows established `spawn_claude_agent()` pattern.
 
-Node agents should be lightweight — most do simple lookups:
-| Agent | Budget | Turns | Timeout | Expected Cost |
-|---|---|---|---|---|
-| Node agents (1-10) | $2 | 5-10 | 300s | $0.50-1.50 |
-| Failure agents (L2/L3/L4) | $3 | 10 | 300s | $1-2 |
+### P3: Tiered recipe store
+**Files to create/change:**
+- `models.py` — `Recipe` dataclass
+- `loop.py` — load/save recipes
 
-Full benchmark run:
-- 31 packages × ~10 node agents × ~$1 each = ~$310 for node agents
-- Plus ~5-10 failure agent calls per failing package = ~$150
-- **Total estimated cost for full 31-package benchmark: $400-600**
+**Complexity:** Low-Medium.
 
-Optimization: Only fire agents for DEFAULTED/INFERRED fields. The 4 L4-passing packages likely have mostly OBSERVED fields → fewer agent calls.
+### P4: Spec overrides persistence (Gap 3)
+**Files to change:**
+- `loop.py` — add spec_overrides parameter
+- `augmented_observer.py` — accept and apply overrides
 
-## 12. Critical Dependencies & Risks
+**Complexity:** Low.
 
-| Dependency | Status | Risk |
-|---|---|---|
-| `spawn_claude_agent()` infrastructure | ✅ Proven, used by 4 agents | None |
-| `GapDetector` field classification | ✅ Works, 6 checks | May need more checks for full coverage |
-| `BuildrootSpec` mutability | ✅ Mutable dataclass | Fields like `source_repo`, `git_tag` are simple strings — easy to update |
-| `ContainerfileGenerator` re-rendering | ✅ Can re-render from updated spec | Works |
-| SSH to rh-h100-01 | ✅ Evaluator handles this | Must be reachable during benchmark |
-| `--dangerously-skip-permissions` | ✅ Set in spawn_claude_agent | No change needed |
-| Docker Hub API for Image Agent | New dependency | May have rate limits |
-| `git ls-remote` for Tag Agent | Available via Bash tool | Requires network access |
-| `MUTABLE_SURFACES` in guards.py | Needs update | Add new files to the set |
+### P5: Podman registry prefix (deterministic)
+**Files to change:**
+- `src/buildroot/generators/containerfile.py` — prefix `docker.io/library/`
 
-## 13. Summary of Gaps
+**Complexity:** Very low.
 
-| Gap | Severity | Resolution |
-|---|---|---|
-| No `NodeAgent` base class or implementations | **Critical** | Implement all 13 agents (10 node + 3 failure) |
-| No `AgentAugmentedObserver` | **Critical** | New class wrapping Observer with agent layer |
-| No benchmark CLI flag for agent mode | Medium | Add `--node-agents` flag to `agent_cmd.py` |
-| `GapDetector` missing checks for repo, tag, image | Medium | Add `_check_source_repo`, `_check_git_tag`, `_check_base_image` |
-| `MUTABLE_SURFACES` doesn't include new files | Low | Update `guards.py` after implementation |
-| No per-node agent cost tracking | Low | Log cost from `AgentResult.cost_usd` |
-| Template re-rendering path not exposed | Low | `ContainerfileGenerator` already supports this |
-| No benchmark storage for agent-augmented results | Low | Use `results/benchmark-agents/` directory |
+### P6: Reproducible build flags
+**Files to change:**
+- `src/buildroot/generators/containerfile.py` — add `-Dproject.build.outputTimestamp`
+- Possibly `src/buildroot/utils/jar_comparator.py` — normalize MANIFEST.MF
+
+**Complexity:** Low.
+
+---
+
+## 7. Recommended Implementation Order
+
+Issue #27 proposes P1→P6 priority. Based on code analysis, recommended order for maximum impact:
+
+1. **P5** (Podman prefix) — trivial fix, unblocks 5 L2-stuck packages immediately
+2. **P4** (spec overrides) — required infrastructure for P2
+3. **P2** (AnalyzeAgent + playbooks) — the core learning loop, bridges gaps 1/2/5
+4. **P3** (recipe store) — checkpointing, prevents re-solving
+5. **P6** (reproducible build flags) — unblocks L3→L4 conversion for 6 packages
+6. **P1** (Top-K) — highest complexity, highest potential, needs P2 to be maximally effective
+
+P5+P4+P6 alone could push from 7/31 to ~15/31 L4 (5 Podman fixes + ~3-4 L3→L4 conversions). P2+P3 then enable iterative learning.
+
+---
+
+## 8. Key Code Patterns to Preserve
+
+- **Claude Code subprocess pattern:** All agents use `spawn_claude_agent()` from `claude_runner.py`. The AnalyzeAgent must follow this.
+- **Structured output via JSON schema:** Node agents return `CANDIDATE_SCHEMA` (`base.py:23-48`), failure agents return `FAILURE_FIX_SCHEMA` (`failure_agents.py:19-46`). The AnalyzeAgent needs its own schema for playbook entries + spec overrides.
+- **Spec mutation pattern:** Changes flow through `BuildrootSpec` → `ContainerfileGenerator.generate()` → Containerfile text. The Builder bypasses this (rewrites raw Containerfile) — that's the source of Gap 3.
+- **GapReport/GapEntry pattern:** Activation uses `GapReport`. Force-activation should add synthetic gap entries, not bypass `should_activate()`.
+- **Evidence hierarchy:** `EVIDENCE_HIERARCHY` at `base.py:14-21` — used for candidate ranking. The AnalyzeAgent's playbook entries should note which evidence type failed.

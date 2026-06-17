@@ -1,0 +1,21 @@
+{
+  "coordinate": "org.yaml:snakeyaml:2.2",
+  "status": "success",
+  "best_reward": 1.0,
+  "iterations": 1,
+  "elapsed_seconds": 579.1,
+  "attempts": [
+    {
+      "id": "2c97ab12-41c1-4da9-806a-d4890798ba72",
+      "parent_id": null,
+      "reward": 1.0,
+      "level_reached": 4,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "",
+      "timestamp": 1781669394.184892
+    }
+  ],
+  "dead_ends": []
+}

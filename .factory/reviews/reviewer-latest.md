@@ -1,19 +1,47 @@
 # Reviewer Agent Output
 
-- **timestamp:** 2026-06-16T02:50:36Z
+- **timestamp:** 2026-06-17T03:18:47Z
 - **exit_code:** 0
 
 ---
 
-Review posted on PR #26.
+## Results
 
-**Verdict: KEEP**
+### Guard Check: **FAIL**
 
-Summary:
-- **Guards:** All PASS. The `factory guard` exit-code-1 is a false positive — the dirty files are all `.factory/` metadata from factory operation, not PR content. No fixed surfaces modified. All 17 changed files are within declared scope (`src/**/*.py`).
-- **Code quality:** 0 critical, 1 important (misleading `_best_level` function name), 2 minor issues. Architecture is clean — NodeAgent base class with evidence hierarchy + JSON schema structured output is well-designed.
-- **Scores:** Before=0.5651 (above 0.55 threshold). No regression detectable — the Builder was killed before the benchmark could run.
-- **Key caveat:** The E2E benchmark on rh-h100-01 has NOT been run. Per project conventions (feedback-e2e-mandatory.md), real E2E on at least 1 package is mandatory before the experiment can be declared complete. A separate Builder invocation is needed to run the benchmark.
+```
+factory guard --check-scope → VIOLATION: Working tree is dirty
+```
+
+The worktree has ~120+ deleted `.factory/` files (archive, experiments, strategies, reviews, config, events). These are infrastructure files absent on the experiment branch — a worktree artifact, not a code issue.
+
+### Scope Check: PASS
+
+All 13 changed files are within declared scope (`src/**/*.py`, `src/**/*.j2`, `tests/**/*.py`):
+
+| File | Status |
+|------|--------|
+| `src/buildroot/agent/analyzer.py` | mutable surface |
+| `src/buildroot/agent/augmented_observer.py` | in scope |
+| `src/buildroot/agent/builder.py` | mutable surface |
+| `src/buildroot/agent/loop.py` | mutable surface |
+| `src/buildroot/agent/models.py` | mutable surface |
+| `src/buildroot/agent/node_agents/base.py` | in scope |
+| `src/buildroot/generators/containerfile.py` | in scope |
+| `src/buildroot/generators/templates/*.j2` (×3) | in scope |
+| `src/buildroot/resolvers/jdk.py` | in scope |
+| `tests/test_containerfile.py` | in scope |
+| `tests/test_jdk.py` | in scope |
+
+### Fixed Surfaces: PASS
+
+No fixed surface files modified (`evaluator.py`, `eval/score.py`, `packages_smoke.txt`, `jar_comparator.py`, `maven_central.py` — all untouched).
+
+### Eval Immutability: PASS
+
+---
+
+**Verdict: FAIL** — `factory guard` returned a dirty-tree violation. The violation is from `.factory/` files missing on the experiment branch (worktree artifact), not from actual uncommitted code changes. All code-level checks (scope, fixed surfaces, eval immutability) pass.
 ---
 
 > **⚠ CEO IDENTITY RE-ANCHOR (Sacred Rule 8)**

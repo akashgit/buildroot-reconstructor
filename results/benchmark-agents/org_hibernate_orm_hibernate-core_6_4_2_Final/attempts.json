@@ -1,0 +1,212 @@
+{
+  "coordinate": "org.hibernate.orm:hibernate-core:6.4.2.Final",
+  "status": "budget_exhausted",
+  "best_reward": 0.05,
+  "iterations": 15,
+  "elapsed_seconds": 2509.6,
+  "attempts": [
+    {
+      "id": "43ccc921-3bb8-448d-badb-ed213eceb396",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Error: parsing main Dockerfile: Containerfile: Syntax error - can't find = in \"-Xmx4g\". Must be of the form: name=value",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781673163.451635
+    },
+    {
+      "id": "013b308b-64d0-45c4-b30f-e684994b956d",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Error: parsing main Dockerfile: Containerfile: Syntax error - can't find = in \"-Xmx4g\". Must be of the form: name=value",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781673408.1883252
+    },
+    {
+      "id": "303e8758-5a19-403c-886f-2db578ad02ca",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Error: parsing main Dockerfile: Containerfile: Syntax error - can't find = in \"-Xmx4g\". Must be of the form: name=value",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781673502.544389
+    },
+    {
+      "id": "7b7c9e8b-c8eb-4b0a-a971-e44bc8aaa8bd",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Error: parsing main Dockerfile: Containerfile: Syntax error - can't find = in \"-Xmx4g\". Must be of the form: name=value",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781673596.496649
+    },
+    {
+      "id": "0c4ace76-aa4a-451f-ba03-04a1ef462003",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "A problem occurred configuring project ':documentation'.\n> Could not resolve all files for configuration ':documentation:classpath'.\n> Could not find com.burgstaller:okhttp-digest:1.10.\nSearched in the following locations:\nBUILD FAILED in 27s\nError: building at STEP \"RUN ./gradlew :hibernate-core:publishToMavenLocal -x test -x javadoc --no-build-cache --no-daemon\": while running runtime: exit status 1",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781673764.147498
+    },
+    {
+      "id": "b742e041-47cd-4504-a6b8-c6d3c6ad20b9",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "A problem occurred configuring project ':documentation'.\n> Could not resolve all files for configuration ':documentation:classpath'.\n> Could not find com.burgstaller:okhttp-digest:1.10.\nSearched in the following locations:\nBUILD FAILED in 27s\nError: building at STEP \"RUN ./gradlew :hibernate-core:publishToMavenLocal -x test -x javadoc --no-build-cache --no-daemon\": while running runtime: exit status 1",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781673903.86818
+    },
+    {
+      "id": "8edee72b-662b-4d9a-af1f-88f9414f8373",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "A problem occurred configuring project ':documentation'.\n> Could not resolve all files for configuration ':documentation:classpath'.\n> Could not find com.burgstaller:okhttp-digest:1.10.\nSearched in the following locations:\nBUILD FAILED in 27s\nError: building at STEP \"RUN ./gradlew :hibernate-core:publishToMavenLocal -x test -x javadoc --no-build-cache --no-daemon\": while running runtime: exit status 1",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781674024.212012
+    },
+    {
+      "id": "3c51fdf0-8e84-49e0-a464-0951914e55f1",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD FAILED in 26s\nError: building at STEP \"RUN ./gradlew :hibernate-core:publishToMavenLocal -x test -x javadoc --no-build-cache --no-daemon --configure-on-demand\": while running runtime: exit status 1",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781674172.699975
+    },
+    {
+      "id": "5d256da0-403c-45a9-8d60-33ae44d28452",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD FAILED in 27s\nError: building at STEP \"RUN ./gradlew :hibernate-core:publishToMavenLocal -x test -x javadoc --no-build-cache --no-daemon --configure-on-demand\": while running runtime: exit status 1",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781674335.936167
+    },
+    {
+      "id": "6397972b-6d43-4b26-b40c-7a6052c28e02",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD FAILED in 27s\nError: building at STEP \"RUN ./gradlew :hibernate-core:publishToMavenLocal -x test -x javadoc --no-build-cache --no-daemon --configure-on-demand\": while running runtime: exit status 1",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781674446.9942982
+    },
+    {
+      "id": "7c9ea652-dcb7-45cb-b1e5-a93d58458bdc",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD FAILED in 27s\nError: building at STEP \"RUN ./gradlew :hibernate-core:publishToMavenLocal -x test -x javadoc --no-build-cache --no-daemon --configure-on-demand\": while running runtime: exit status 1",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781674580.6609972
+    },
+    {
+      "id": "e6cd50d6-f64e-4856-9534-03ea1a6f6a95",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD FAILED in 28s\nError: building at STEP \"RUN ./gradlew :hibernate-core:publishToMavenLocal -x test -x javadoc --no-build-cache --no-daemon --configure-on-demand\": while running runtime: exit status 1",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781674740.53938
+    },
+    {
+      "id": "d68c4c41-ee8e-498b-97ca-c915b368404a",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD FAILED in 26s\nError: building at STEP \"RUN ./gradlew :hibernate-core:publishToMavenLocal -x test -x javadoc --no-build-cache --no-daemon --configure-on-demand\": while running runtime: exit status 1",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781674863.370537
+    },
+    {
+      "id": "153eed99-2595-49e8-87d4-2fe3fd9395a7",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD FAILED in 27s\nError: building at STEP \"RUN ./gradlew :hibernate-core:publishToMavenLocal -x test -x javadoc --no-build-cache --no-daemon --configure-on-demand\": while running runtime: exit status 1",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781675013.268142
+    },
+    {
+      "id": "d1c90c4c-5d88-462d-9378-8c71f886d5dc",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD FAILED in 32s\nError: building at STEP \"RUN ./gradlew :hibernate-core:publishToMavenLocal -x test -x javadoc --no-build-cache --no-daemon --configure-on-demand\": while running runtime: exit status 1",
+      "diff_summary": "",
+      "fix_applied": "",
+      "timestamp": 1781675136.89425
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "unknown",
+      "approach": "FROM eclipse-temurin:25-jdk | RUN ./gradlew :hibernate-core:publishToMavenLocal -x test -x javadoc --no-build-",
+      "failure_count": 4,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "Error: parsing main Dockerfile: Containerfile: Syntax error - can't find = in \"-Xmx4g\". Must be of the form: name=value",
+        "Error: parsing main Dockerfile: Containerfile: Syntax error - can't find = in \"-Xmx4g\". Must be of the form: name=value",
+        "Error: parsing main Dockerfile: Containerfile: Syntax error - can't find = in \"-Xmx4g\". Must be of the form: name=value"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM eclipse-temurin:17-jdk-jammy | RUN ./gradlew :hibernate-core:publishToMavenLocal -x test -x javadoc --no-build-",
+      "failure_count": 3,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "A problem occurred configuring project ':documentation'.\n> Could not resolve all files for configuration ':documentation:classpath'.\n> Could not find com.burgstaller:okhttp-digest:1.10.\nSearched in th",
+        "A problem occurred configuring project ':documentation'.\n> Could not resolve all files for configuration ':documentation:classpath'.\n> Could not find com.burgstaller:okhttp-digest:1.10.\nSearched in th",
+        "A problem occurred configuring project ':documentation'.\n> Could not resolve all files for configuration ':documentation:classpath'.\n> Could not find com.burgstaller:okhttp-digest:1.10.\nSearched in th"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:17-jdk | RUN ./gradlew :hibernate-core:publishToMavenLocal -x test -x javadoc --no-build-",
+      "failure_count": 7,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD FAILED in 26s\nError: building at STEP \"RUN ./gradlew :hibernate-core:publishToMavenLocal -x test -x javadoc --no-build-cache --no-daemon --configure-on-demand\": while running runtime: exit statu",
+        "BUILD FAILED in 27s\nError: building at STEP \"RUN ./gradlew :hibernate-core:publishToMavenLocal -x test -x javadoc --no-build-cache --no-daemon --configure-on-demand\": while running runtime: exit statu",
+        "BUILD FAILED in 27s\nError: building at STEP \"RUN ./gradlew :hibernate-core:publishToMavenLocal -x test -x javadoc --no-build-cache --no-daemon --configure-on-demand\": while running runtime: exit statu"
+      ]
+    }
+  ]
+}

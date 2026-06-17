@@ -1,11 +1,11 @@
-# Session Summary — buildroot-reconstructor
+# Session Summary — run-65e04373
 
-_Generated: 2026-06-16 03:35 UTC_
+_Generated: 2026-06-17 09:26 UTC_
 
 ## Overview
 
 - **Mode:** improve
-- **Experiments:** 9 total (9 kept, 0 reverted, 0 errors)
+- **Experiments:** 10 total (9 kept, 1 reverted, 0 errors)
 
 ## What Was Built
 
@@ -45,6 +45,8 @@ _Generated: 2026-06-16 03:35 UTC_
 - Execute Level 3 container builds for all 10 test packages — code fixes complete (PR #3), Containerfiles generate correctly, but actual podman/docker build and artifact comparison not yet verified for each package
 - Level 4: Re-run artifact comparison on rh-h100 nodes — comparison pipeline code is complete (PR #7), but 0/10 builds succeeded due to upstream Containerfile issues (secrets in ARGs, wrong git tags, multi-module builds, podman short-name resolution). Fix Containerfile generation for these 5 failure classes, then re-run comparison. GitHub issue #5.
 - Node-scoped agents: Claude Code reviewer at every pipeline step (issue #24)
+- Implement top-K parallel builds, per-cycle AnalyzeAgent with ACE-like playbooks, tiered recipe store, and spec overrides persistence (issue #27)
+- Agent architecture: fix feedback loops, multi-candidate builds, and runtime awareness (issue #27)
 
 ## Needs Your Input
 

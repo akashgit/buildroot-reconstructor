@@ -1,25 +1,23 @@
 # Researcher Agent Output
 
-- **timestamp:** 2026-06-16T02:03:34Z
+- **timestamp:** 2026-06-17T02:00:45Z
 - **exit_code:** 0
 
 ---
 
-Local research complete. Written to `.factory/strategy/research-local.md`.
+Local architecture analysis written to `.factory/strategy/research-local.md`. 
 
 Key findings:
 
-1. **`claude_runner.py`** provides a proven `spawn_claude_agent()` infrastructure already used by 4 agents — all node agents will use this directly.
+1. **Two disconnected fix systems** — node agents (pre-build, spec-based) and the Builder (post-build, Containerfile rewriting) don't talk to each other. The AnalyzeAgent bridges them.
 
-2. **The orchestrator** runs 13 sequential deterministic steps, each mapping cleanly to a node agent. The recommended integration is an **`AgentAugmentedObserver`** that runs the deterministic pipeline first, then fires node agents based on `GapDetector` gap classifications (DEFAULTED → always fire, INFERRED → standard, OBSERVED → skip/light).
+2. **The AnalyzeAgent placement** — fits between `evaluator.evaluate()` failure and Builder iteration, tracing failures to responsible node agents and writing playbook entries they read on the next cycle.
 
-3. **The GapDetector** already classifies fields as OBSERVED/INFERRED/DEFAULTED but only covers 6 dimensions — needs expansion for repo, tag, and image checks.
+3. **`should_activate()` gate** at `base.py:93-98` blocks agents from fixing OBSERVED-but-wrong values — the AnalyzeAgent can force-activate by adding synthetic gap entries.
 
-4. **No benchmark script exists** — batch evaluation is done via `buildroot agent --batch`. Needs a `--node-agents` flag.
+4. **No recipe/checkpoint mechanism exists** — the outer loop modifies Python code across cycles but doesn't checkpoint per-package progress. Entirely new infrastructure needed.
 
-5. **Benchmark failure mapping**: 24/27 failing packages (89%) are addressable by specific node agents — Repo Agent (8 packages, 26%), Image Agent (6, 19%), Build Cmd Agent (3-6, 10-19%), Tag Agent (2, 6%), Property Agent (2, 6%), plus failure agents for remaining L3/L4 issues.
-
-6. **Estimated benchmark cost**: $400-600 for all 31 packages with node agents enabled.
+5. **Recommended build order** differs from issue priority: P5 (Podman prefix, trivial) → P4 (spec overrides) → P2 (AnalyzeAgent) → P3 (recipes) → P6 (repro flags) → P1 (Top-K). The deterministic fixes (P5+P6) alone could push from 7/31 to ~15/31 L4.
 ---
 
 > **⚠ CEO IDENTITY RE-ANCHOR (Sacred Rule 8)**

@@ -1,0 +1,8 @@
+- error_class: unknown
+  approach: FROM eclipse-temurin:11-jdk | RUN mvn -q clean install -DskipTests
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - "/bin/sh: 1: ./mvnw: not found\nError: building at STEP \"RUN ./mvnw -q clean
+    install -DskipTests\": while running runtime: exit status 127"
