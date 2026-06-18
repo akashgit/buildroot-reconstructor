@@ -46,7 +46,6 @@ def run_inner_loop(
     host: str = "rh-h100-01",
     model: str = "claude-opus-4-6",
     skip_deps: bool = True,
-    meta_guidance: str | None = None,
     node_agents: bool = False,
     initial_containerfile: str | None = None,
 ) -> LoopResult:
@@ -56,18 +55,14 @@ def run_inner_loop(
             coordinate,
             max_iterations=max_iterations,
             host=host,
-            model=model,
             skip_deps=skip_deps,
-            meta_guidance=meta_guidance,
             initial_containerfile=initial_containerfile,
         )
     return _run_standard_loop(
         coordinate,
         max_iterations=max_iterations,
         host=host,
-        model=model,
         skip_deps=skip_deps,
-        meta_guidance=meta_guidance,
     )
 
 
@@ -76,9 +71,7 @@ def _run_standard_loop(
     *,
     max_iterations: int = 15,
     host: str = "rh-h100-01",
-    model: str = "claude-opus-4-6",
     skip_deps: bool = True,
-    meta_guidance: str | None = None,
 ) -> LoopResult:
     """Standard inner loop — uses AnalyzeAgent → spec_overrides → re-observe → template re-render."""
     from buildroot.agent.augmented_observer import AgentAugmentedObserver
@@ -277,9 +270,7 @@ def _run_agent_loop(
     *,
     max_iterations: int = 15,
     host: str = "rh-h100-01",
-    model: str = "claude-opus-4-6",
     skip_deps: bool = True,
-    meta_guidance: str | None = None,
     initial_containerfile: str | None = None,
 ) -> LoopResult:
     """Agent-augmented inner loop with Top-K builds, AnalyzeAgent, recipes, and spec overrides."""
