@@ -9,6 +9,16 @@
 # Distribution: {{ jdk_distribution }} (source: {{ dist_source }}, confidence: {{ dist_confidence }})
 FROM {{ base_image }}
 
+# Build tool: {{ build_tool }}
+{% if build_tool == 'ant' %}
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends ant && \
+    rm -rf /var/lib/apt/lists/*
+{% elif build_tool == 'gradle' %}
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends gradle && \
+    rm -rf /var/lib/apt/lists/*
+{% else %}
 # Maven version: {{ maven_version }} (source: {{ maven_source }}, confidence: {{ maven_confidence }})
 {% if maven_version %}
 RUN apt-get update && \
@@ -25,6 +35,7 @@ ENV MAVEN_HOME=/opt/apache-maven-{{ maven_version }}
 RUN apt-get update && \
     apt-get install -y --no-install-recommends maven && \
     rm -rf /var/lib/apt/lists/*
+{% endif %}
 {% endif %}
 
 {% if env_vars %}
@@ -48,3 +59,16 @@ COPY . .
 
 # Build command: {{ build_command }} (source: {{ build_source }}, confidence: {{ build_confidence }})
 RUN {{ build_command }}
+
+# Normalize non-reproducible JAR metadata for comparison
+RUN for jar in $(find . -name '*.jar' \( -path '*/target/*' -o -path '*/build/libs/*' -o -path '*/build/*' -o -path '*/dist/*' \) 2>/dev/null); do \
+      abs=$(readlink -f "$jar") && \
+      tmp=$(mktemp -d) && cd "$tmp" && \
+      jar xf "$abs" META-INF/ 2>/dev/null && \
+      if [ -f META-INF/MANIFEST.MF ]; then \
+        sed -i '/^Built-By:/d;/^Build-Jdk:/d;/^Created-By:/d;/^Bnd-LastModified:/d' META-INF/MANIFEST.MF; \
+      fi && \
+      find META-INF/maven -name pom.properties -exec sed -i '/^#/d' {} \; 2>/dev/null; \
+      jar uf "$abs" META-INF/ 2>/dev/null; \
+      cd / && rm -rf "$tmp"; \
+    done 2>/dev/null || true

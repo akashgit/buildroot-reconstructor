@@ -51,6 +51,7 @@ Rules:
 - Do NOT repeat approaches listed in the dead-end registry
 - Preserve the overall structure (FROM, JDK install, build tool install, git clone, build)
 - Use fully-qualified image names (e.g. docker.io/library/maven:3.9-eclipse-temurin-17)
+- Always add -Dproject.build.outputTimestamp=1 to Maven build commands for reproducible builds
 - Some projects use Gradle (build.gradle / gradlew) instead of Maven. Detect the build \
 system from the repository contents and use the appropriate tool (./gradlew, gradle, or mvn).
 

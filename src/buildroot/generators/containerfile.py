@@ -24,6 +24,10 @@ RUNNER_IMAGE_MAP = {
 
 DEFAULT_BUILD_COMMAND = "mvn clean install -B"
 
+REPRODUCIBLE_FLAGS = [
+    "-Dproject.build.outputTimestamp=1",
+]
+
 
 class ContainerfileGenerator:
     """Generate Containerfile and buildroot.json from a BuildrootSpec."""
@@ -146,6 +150,8 @@ class ContainerfileGenerator:
 
         timestamp = datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
 
+        build_tool = self._detect_build_tool(build_command)
+
         return {
             "source_repo": spec.source_repo,
             "git_tag": spec.git_tag,
@@ -163,6 +169,7 @@ class ContainerfileGenerator:
             "build_command": build_command,
             "build_source": build_source,
             "build_confidence": build_conf,
+            "build_tool": build_tool,
             "system_packages": spec.system_packages,
             "ubuntu_version": ubuntu_version,
             "os_source": os_source,
@@ -174,9 +181,20 @@ class ContainerfileGenerator:
         }
 
     def _resolve_build_command(self, spec: BuildrootSpec) -> str:
-        if spec.build_commands:
-            return spec.build_commands[0]
-        return DEFAULT_BUILD_COMMAND
+        cmd = spec.build_commands[0] if spec.build_commands else DEFAULT_BUILD_COMMAND
+        return self._add_reproducible_flags(cmd)
+
+    @staticmethod
+    def _add_reproducible_flags(cmd: str) -> str:
+        if ("mvn " not in cmd and not cmd.startswith("mvn")
+                and "mvnw " not in cmd and not cmd.startswith("mvnw")
+                and not cmd.startswith("./mvnw")):
+            return cmd
+        for flag in REPRODUCIBLE_FLAGS:
+            key = flag.split("=")[0]
+            if key not in cmd:
+                cmd = cmd + " " + flag
+        return cmd
 
     def _build_command_provenance(self, spec: BuildrootSpec) -> tuple[str, str]:
         if spec.build_commands:
@@ -219,6 +237,15 @@ class ContainerfileGenerator:
         if version.startswith('1.') and len(version) >= 3:
             return version[2:]
         return version
+
+    @staticmethod
+    def _detect_build_tool(build_command: str) -> str:
+        cmd = build_command.strip()
+        if cmd.startswith("ant") or "ant " in cmd:
+            return "ant"
+        if cmd.startswith("gradle") or "gradle " in cmd or cmd.startswith("./gradlew") or "./gradlew " in cmd:
+            return "gradle"
+        return "maven"
 
     @staticmethod
     def map_runner_to_ubuntu(runner_os: str) -> str:

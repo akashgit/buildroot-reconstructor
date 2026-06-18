@@ -41,6 +41,7 @@ def spawn_claude_agent(
     timeout: int = 600,
     cwd: str | None = None,
     allowed_tools: list[str] | None = None,
+    disallowed_tools: list[str] | None = None,
 ) -> AgentResult:
     """Spawn a Claude Code agent as a subprocess and return the parsed result.
 
@@ -55,6 +56,7 @@ def spawn_claude_agent(
         timeout: Subprocess timeout in seconds.
         cwd: Working directory for the agent process.
         allowed_tools: Optional list of allowed tools (e.g. ``["Read", "Edit", "Bash"]``).
+        disallowed_tools: Optional list of tools to block (e.g. ``["Bash", "Read"]``).
     """
     prompt_file: str | None = None
     try:
@@ -83,6 +85,9 @@ def spawn_claude_agent(
 
         if allowed_tools:
             cmd.extend(["--allowedTools", ",".join(allowed_tools)])
+
+        if disallowed_tools:
+            cmd.extend(["--disallowedTools", ",".join(disallowed_tools)])
 
         logger.info("Spawning Claude agent: model=%s, max_turns=%d, timeout=%ds", model, max_turns, timeout)
         logger.debug("Agent task: %s", task[:200])
