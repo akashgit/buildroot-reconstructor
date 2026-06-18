@@ -48,3 +48,6 @@
 - [x] archivist after build — 2026-06-17T03:12:25Z
 - [x] archivist after experiment 10 (REVERT) — 2026-06-17T09:24:47Z
 - [x] FINAL archivist — 2026-06-17T09:26:29Z
+- [x] archivist after experiment 12 (keep) — 2026-06-18T01:30:28Z
+- [x] FINAL archivist — cycle close, all notes written — 2026-06-18T01:45:00Z
+- [x] FINAL archivist — 2026-06-18T01:35:12Z

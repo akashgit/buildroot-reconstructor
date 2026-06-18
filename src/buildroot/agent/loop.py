@@ -107,6 +107,8 @@ def _run_standard_loop(
 
     logger.info("Observer produced initial Containerfile (%d bytes)", len(containerfile))
 
+    patience_counter = 0
+
     for t in range(max_iterations):
         logger.info("Iteration %d/%d for %s", t + 1, max_iterations, coordinate)
 
@@ -133,6 +135,11 @@ def _run_standard_loop(
             result.best_reward = eval_result.reward
             result.best_attempt = attempt
 
+        if eval_result.reward < result.best_reward:
+            patience_counter += 1
+        else:
+            patience_counter = 0
+
         if eval_result.reward >= 0.98:
             logger.info("  Reward >= 0.98, running confirmation build...")
             confirm = evaluator.evaluate(containerfile, coordinate)
@@ -147,6 +154,18 @@ def _run_standard_loop(
 
         if t >= max_iterations - 1:
             break
+
+        if (
+            patience_counter >= 2
+            and result.best_attempt is not None
+            and result.best_attempt.containerfile
+        ):
+            logger.info(
+                "Elitist gate: restoring best containerfile (current=%.2f < best=%.2f, patience exhausted)",
+                eval_result.reward, result.best_reward,
+            )
+            containerfile = result.best_attempt.containerfile
+            patience_counter = 0
 
         mode = progress.update(eval_result.reward)
         analysis = analyzer.analyze(eval_result, dead_ends)

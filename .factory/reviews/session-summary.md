@@ -1,11 +1,11 @@
-# Session Summary — run-65e04373
+# Session Summary — run-be2d42b6
 
-_Generated: 2026-06-17 09:26 UTC_
+_Generated: 2026-06-18 01:35 UTC_
 
 ## Overview
 
 - **Mode:** improve
-- **Experiments:** 10 total (9 kept, 1 reverted, 0 errors)
+- **Experiments:** 11 total (10 kept, 1 reverted, 0 errors)
 
 ## What Was Built
 
@@ -20,6 +20,7 @@ _Generated: 2026-06-17 09:26 UTC_
 | 7 | Outer Loop: Cross-Package Improvement with Failure Analysis  | FIX | — | #18 |
 | 8 | Replace raw API calls with Claude Code agents across inner a | EXPLORE | — | #21 |
 | 9 | Add node-scoped Claude Code agents at every pipeline step wi | FIX | — | #26 |
+| 12 | Add elitist gate with patience counter to prevent containerf | FIX | — | #33 |
 
 ## What Was Deferred
 

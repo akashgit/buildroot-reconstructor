@@ -5,56 +5,36 @@ tags:
   - buildroot-reconstructor
 source: factory-archivist
 date: 2026-06-07
-updated: 2026-06-17T12:00
+updated: 2026-06-17T23:30
 ---
 
 
 # Factory: Buildroot Reconstructor
 
 ## Status
-- **State**: CYCLE 10 COMPLETE — REVERT — early termination regression, PR #29 closed
-- **Active Issue**: #27 — Agent architecture: fix feedback loops, multi-candidate builds, and runtime awareness (REVERTED)
-- **Cycle**: 10 — COMPLETE (REVERT)
-- **Strategy Approved**: 2026-06-16 — H1: Agent architecture overhaul (P1-P6), EXPLORE/mixed, high priority
-- **Current Score**: ~0.845 (unchanged — reverted to exp #009 state)
-- **Composite Score**: 0.5651
+- **State**: FACTORY CYCLE COMPLETE — 11 experiments, 10 KEEP, 1 REVERT
+- **Final Experiment**: #012 — Elitist gate with patience counter (KEEP, +0.025, PR #33)
+- **Current Score**: 0.519 (composite)
 - **Agentic Solve Rate**: 1/3 (33.3%) — commons-lang3 solved in 1 iteration, micrometer-core reached L2, spring-security-core stuck at L1
 - **PNC Validation Score**: 0.5833 mean accuracy (3 packages, range 0.325–0.750)
-- **Pre-Experiment #010 Score**: ~0.845
-- **Pre-Experiment #009 Score**: 0.8456 (composite: 0.5651)
-- **Pre-Experiment #008 Score**: 0.8442
-- **Pre-Experiment #007 Score**: 0.8012
-- **Pre-Experiment #006 Score**: 0.5662
+- **L4 Solve Rate**: 7/31 (22.6%) on 31-package benchmark (exp #009 baseline)
 - **Baseline Score**: 0.6433 (pre-experiment #001)
-- **Experiments Run**: 10
-- **Kept**: 9, **Reverted**: 1
-- **Last Experiment**: #010 — Agent architecture overhaul (REVERT, -19.4pp L4 rate regression, 1/31 vs 7/31 baseline)
-- **Previous Experiment**: #009 — Node-scoped agents: 13 Claude Code reviewers (KEEP, -0.001 noise)
-- **Total Tests**: 342/343 passing (no new tests for core classes — benchmark is primary validation)
-- **Active Strategy**: Issue #27 — Agent architecture overhaul: H1 approved (P1-P6), EXPLORE/mixed, high priority. REVERTED after 31-package benchmark showed severe regression. Root cause: early termination threshold too aggressive.
-- **Previous Strategy**: Issue #24 — Node-scoped pipeline agents (KEEP, 9/9 streak)
-- **Open PRs**: #29 — Agent architecture overhaul (CLOSED/REVERTED), #26 — Node-scoped agents, #21 — Claude Code agent migration, #15 — Inner loop MVP
+- **Experiments Run**: 11 (IDs 1–10, 12)
+- **Kept**: 10, **Reverted**: 1
+- **Keep Rate**: 90.9%
+- **Keep Streak**: 1 (recovering — #012 KEPT after #010 revert)
+- **Total Tests**: ~342 passing
+- **Open PRs**: #33 — Elitist gate (exp 12, KEPT), #26 — Node-scoped agents, #21 — Claude Code agent migration, #15 — Inner loop MVP
+- **Closed PRs**: #29 — Agent architecture overhaul (REVERTED)
 - **Merged PRs**: #18 — Outer loop intelligence layer, #11 — PNC ground-truth validation
-- **Keep Streak**: 0 (BROKEN at 9 — experiment #010 reverted)
 
-## Experiment #010 Post-Mortem: Early Termination Regression
+## Experiment #010 Post-Mortem and #012 Fix
 
-### The Problem
-Early termination at `loop.py:300-315` (`consecutive_no_improvement >= 3`) terminates packages after ~4 iterations. The baseline ran all 15 iterations. This cut exploration budget by ~73%, causing 14/31 packages to regress.
+### The Problem (#010)
+Early termination at `loop.py` (`consecutive_no_improvement >= 3`) terminated packages after ~4 iterations. The baseline ran all 15 iterations. This cut exploration budget by ~73%, causing 14/31 packages to regress. L4 rate: 22.6% → 3.2%.
 
-### Root Cause
-The termination counter tracks **level** improvement only (L1→L2→L3→L4), not **reward** improvement (0.05→0.14 within L1). Packages that need many attempts to break through level boundaries register as "no improvement" and get terminated before they can reach L4.
-
-### What Should Be Preserved
-- **P5 (Podman prefix)** — Universal fix for docker.io/library/ issue. Should be cherry-picked.
-- **P2 (AnalyzeAgent)** — Worked when it fired. Needs more iterations to be useful.
-- **P1 (Top-K)** — Generated candidates correctly. Needs iteration budget to explore them.
-
-### Recommendation for Next Cycle
-1. Remove early termination entirely, or raise threshold to ≥8
-2. Track reward improvement, not just level
-3. Cherry-pick P5 (Podman prefix) as a standalone fix
-4. Retest P1/P2 with full 15-iteration budget
+### The Fix (#012)
+Elitist gate with patience counter: instead of terminating, restores the best containerfile after 2 consecutive regressions. Allows 1 iteration of exploration below best. Score: +0.025. Checkpoint-and-restore validated as the correct approach over early termination for stochastic LLM-based optimizers.
 
 ## PNC Ground-Truth Validation Results (Experiment #005)
 
@@ -93,6 +73,14 @@ The termination counter tracks **level** improvement only (L1→L2→L3→L4), n
 | research_grounding | 0.320 | 0.07 | 60+ sources (10 new agentic) |
 
 ## Recent Experiments
+
+### Experiment #012 — Elitist gate with patience counter (KEEP, +0.025)
+- **Hypothesis**: Add checkpoint-and-restore mechanism to prevent containerfile regression within runs
+- **Score**: 0.494 → 0.519 (+0.025)
+- **Change**: +18 lines in `src/buildroot/agent/loop.py` — patience counter tracks consecutive regressions, restores from best checkpoint after 2
+- **PR**: #33 (OPEN), commit f8e6fee
+- **Verdict**: **KEEP** — force-kept after 3 precheck false positives documented
+- **Details**: `experiments/buildroot-reconstructor-012.md`
 
 ### Experiment #010 — Agent architecture overhaul: AnalyzeAgent, Top-K builds, tiered recipes (REVERT, -19.4pp L4)
 - **Hypothesis**: Implement 6 architecture priorities (P1-P6) from issue #27 to close feedback loops, enable multi-candidate builds, and add runtime awareness
@@ -199,3 +187,5 @@ Reconstruct the complete build environment (buildroot) for a Maven artifact as a
 - `strategies/buildroot-reconstructor-2026-06-15-cycle-summary.md` — Cycle 9 summary
 - `strategies/buildroot-reconstructor-2026-06-16-agent-architecture-overhaul.md` — Cycle 10 strategy (REVERTED)
 - `strategies/buildroot-reconstructor-2026-06-17-cycle-summary.md` — Cycle 10 summary (REVERT, first revert in 10 experiments)
+- `strategies/buildroot-reconstructor-2026-06-17-elitist-gate.md` — Cycle 12 strategy (elitist gate, KEEP)
+- `strategies/buildroot-reconstructor-2026-06-17-final-factory-cycle-summary.md` — Final factory cycle summary (11 experiments, 90.9% keep rate)

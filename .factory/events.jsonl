@@ -617,3 +617,17 @@
 {"type": "sprint.completed", "timestamp": "2026-06-17T09:26:29.568561+00:00", "project": "run-65e04373", "agent": null, "data": {}}
 {"type": "summary.started", "timestamp": "2026-06-17T09:26:33.901534+00:00", "project": "run-65e04373", "agent": null, "data": {}}
 {"type": "summary.completed", "timestamp": "2026-06-17T09:26:33.907669+00:00", "project": "run-65e04373", "agent": null, "data": {"kept": 9, "reverted": 1, "errored": 0, "backlog": 24}}
+{"type": "precheck.completed", "timestamp": "2026-06-18T01:25:09.428618+00:00", "project": "run-be2d42b6", "agent": null, "data": {"passed": false, "failures": ["score_direction", "scope", "fixed_surfaces"]}}
+{"type": "guard.completed", "timestamp": "2026-06-18T01:25:14.908545+00:00", "project": "run-be2d42b6", "agent": null, "data": {"violations": 1, "clean": false}}
+{"type": "verdict.force_kept", "timestamp": "2026-06-18T01:27:43.215521+00:00", "project": "run-be2d42b6", "agent": null, "data": {"exp_id": 12}}
+{"type": "experiment.finalize", "timestamp": "2026-06-18T01:27:43.222469+00:00", "project": "run-be2d42b6", "agent": null, "data": {"exp_id": 12, "verdict": "keep", "hypothesis": "Add elitist gate with patience counter to prevent containerfile regression (issue #32)"}}
+{"type": "phase.verdict", "timestamp": "2026-06-18T01:27:47.953549+00:00", "project": "run-be2d42b6", "agent": null, "data": {"verdict": "keep", "exp_id": 12}}
+{"type": "phase.eval.completed", "timestamp": "2026-06-18T01:27:48.063924+00:00", "project": "run-be2d42b6", "agent": null, "data": {"exp_id": 12}}
+{"type": "agent.started", "timestamp": "2026-06-18T01:27:56.474212+00:00", "project": "run-be2d42b6", "agent": "archivist", "data": {"task": "Record experiment 12 outcome (verdict: keep) at /Users/akash/factory-projects/buildroot-reconstructor/.factory/worktrees/run-be2d42b6.\n1. Read experiment history: factory history /Users/akash/factory-"}}
+{"type": "agent.completed", "timestamp": "2026-06-18T01:30:23.630672+00:00", "project": "run-be2d42b6", "agent": "archivist", "data": {"return_code": 0, "input_tokens": 15, "output_tokens": 6700, "cache_read_tokens": 817358, "total_cost_usd": 0.0, "duration_ms": 146850.0, "num_turns": 19}}
+{"type": "phase.archive.completed", "timestamp": "2026-06-18T01:30:28.660710+00:00", "project": "run-be2d42b6", "agent": null, "data": {"exp_id": 12}}
+{"type": "agent.started", "timestamp": "2026-06-18T01:30:57.155902+00:00", "project": "run-be2d42b6", "agent": "archivist", "data": {"task": "Final archive for this factory cycle on /Users/akash/factory-projects/buildroot-reconstructor/.factory/worktrees/run-be2d42b6.\n1. Read full experiment history: factory history /Users/akash/factory-pro"}}
+{"type": "agent.completed", "timestamp": "2026-06-18T01:35:04.141535+00:00", "project": "run-be2d42b6", "agent": "archivist", "data": {"return_code": 0, "input_tokens": 20, "output_tokens": 11610, "cache_read_tokens": 1258323, "total_cost_usd": 0.0, "duration_ms": 246689.0, "num_turns": 37}}
+{"type": "sprint.completed", "timestamp": "2026-06-18T01:35:13.024931+00:00", "project": "run-be2d42b6", "agent": null, "data": {}}
+{"type": "summary.started", "timestamp": "2026-06-18T01:35:16.566676+00:00", "project": "run-be2d42b6", "agent": null, "data": {}}
+{"type": "summary.completed", "timestamp": "2026-06-18T01:35:16.572377+00:00", "project": "run-be2d42b6", "agent": null, "data": {"kept": 10, "reverted": 1, "errored": 0, "backlog": 24}}
