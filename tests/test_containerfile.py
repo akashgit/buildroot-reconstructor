@@ -133,7 +133,7 @@ class TestBuildrootJsonOutput:
         gen = ContainerfileGenerator()
         result = gen.generate_buildroot_json(spec)
 
-        assert result["build_command"]["value"] == "mvn clean install -B -Dproject.build.outputTimestamp=1980-01-01T00:00:00Z"
+        assert result["build_command"]["value"] == "mvn clean install -B -Dproject.build.outputTimestamp=2000-01-01T00:00:00Z"
         assert result["build_command"]["source"] == "defaulted"
 
 
