@@ -79,6 +79,32 @@ class ComparisonReport:
     bytecode: BytecodeResult = field(default_factory=BytecodeResult)
     error: str | None = None
 
+    def equivalence_score(self) -> float:
+        """Continuous 0.0-1.0 equivalence score.
+
+        Weights: 70% bytecode, 15% resources, 15% entry-set completeness.
+        MANIFEST.MF differences are excluded — they are packaging artifacts.
+        """
+        if self.verdict == Verdict.IDENTICAL:
+            return 1.0
+
+        if self.bytecode.classes_compared > 0:
+            bytecode_ratio = self.bytecode.classes_identical / self.bytecode.classes_compared
+        else:
+            bytecode_ratio = 1.0
+
+        total_resources = self.metadata.resource_matches + len(self.metadata.resource_mismatches)
+        if total_resources > 0:
+            resource_ratio = self.metadata.resource_matches / total_resources
+        else:
+            resource_ratio = 1.0
+
+        total_entries = max(self.structural.original_count, self.structural.rebuilt_count, 1)
+        missing_extra = len(self.structural.diff.missing) + len(self.structural.diff.extra)
+        entry_score = max(0.0, 1.0 - (missing_extra / total_entries))
+
+        return 0.70 * bytecode_ratio + 0.15 * resource_ratio + 0.15 * entry_score
+
     def to_dict(self) -> dict:
         return {
             "coordinate": self.coordinate,

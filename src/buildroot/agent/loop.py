@@ -49,6 +49,7 @@ def run_inner_loop(
     skip_deps: bool = True,
     meta_guidance: str | None = None,
     node_agents: bool = False,
+    initial_containerfile: str | None = None,
 ) -> LoopResult:
     """Run the inner loop: Observer → [Builder → Evaluator → Analyzer]* → result."""
     if node_agents:
@@ -59,6 +60,7 @@ def run_inner_loop(
             model=model,
             skip_deps=skip_deps,
             meta_guidance=meta_guidance,
+            initial_containerfile=initial_containerfile,
         )
     return _run_standard_loop(
         coordinate,
@@ -231,6 +233,7 @@ def _run_agent_loop(
     model: str = "claude-opus-4-6",
     skip_deps: bool = True,
     meta_guidance: str | None = None,
+    initial_containerfile: str | None = None,
 ) -> LoopResult:
     """Agent-augmented inner loop with Top-K builds, AnalyzeAgent, recipes, and spec overrides."""
     from buildroot.agent.augmented_observer import AgentAugmentedObserver
@@ -259,24 +262,53 @@ def _run_agent_loop(
             result.elapsed_seconds = time.time() - start_time
             return result
 
+    # Seed recipe store from initial_containerfile if provided
+    if initial_containerfile:
+        recipe_store.save(coordinate, 3, initial_containerfile, 0.5)
+        logger.info("Seeded RecipeStore with initial_containerfile for %s", coordinate)
+
+    # Warm-start: use best known Containerfile as a seed candidate
+    warm_start_cf = None
+    if existing_level >= 2:
+        warm_start_cf = recipe_store.get_containerfile(coordinate, existing_level)
+        if warm_start_cf:
+            logger.info("Warm-start from RecipeStore: L%d Containerfile for %s", existing_level, coordinate)
+
     logger.info(
-        "Starting agent loop for %s (max %d iterations, existing_level=L%d)",
-        coordinate, max_iterations, existing_level,
+        "Starting agent loop for %s (max %d iterations, existing_level=L%d, warm_start=%s)",
+        coordinate, max_iterations, existing_level, warm_start_cf is not None,
     )
 
     # Initial observation with Top-K
     try:
         variants = observer.observe_top_k(coordinate, k=3, spec_overrides=spec_overrides)
     except Exception as e:
-        result.status = "observer_failed"
-        result.error_message = str(e)
-        result.elapsed_seconds = time.time() - start_time
-        return result
+        if warm_start_cf:
+            logger.warning("Observer failed but using warm-start Containerfile: %s", e)
+            from buildroot.agent.observer import Observer
+            obs = Observer(skip_deps=skip_deps)
+            spec_fallback, _ = obs.observe(coordinate)
+            variants = [(spec_fallback, warm_start_cf)]
+        else:
+            result.status = "observer_failed"
+            result.error_message = str(e)
+            result.elapsed_seconds = time.time() - start_time
+            return result
 
     if not variants or not variants[0][1]:
-        result.status = "observer_failed"
-        result.elapsed_seconds = time.time() - start_time
-        return result
+        if warm_start_cf:
+            from buildroot.agent.observer import Observer
+            obs = Observer(skip_deps=skip_deps)
+            spec_fallback, _ = obs.observe(coordinate)
+            variants = [(spec_fallback, warm_start_cf)]
+        else:
+            result.status = "observer_failed"
+            result.elapsed_seconds = time.time() - start_time
+            return result
+
+    # Insert warm-start as first candidate if available
+    if warm_start_cf and variants:
+        variants.insert(0, (variants[0][0], warm_start_cf))
 
     # Evaluate all K candidates, pick best
     spec, containerfile = _evaluate_candidates(variants, evaluator, coordinate, result, dead_ends)

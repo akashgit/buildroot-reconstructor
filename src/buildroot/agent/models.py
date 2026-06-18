@@ -81,6 +81,7 @@ class EvalResult:
     l2_build: bool = False
     l3_command: bool = False
     l4_match: bool = False
+    l4_score: float = 0.0
     reward: float = 0.0
     build_log: str = ""
     error_summary: str = ""
@@ -89,11 +90,13 @@ class EvalResult:
     level_reached: int = 0
 
     def compute_reward(self) -> float:
+        if self.l4_match:
+            self.l4_score = 1.0
         self.reward = (
             0.05 * float(self.l1_parse)
             + 0.10 * float(self.l2_build)
             + 0.35 * float(self.l3_command)
-            + 0.50 * float(self.l4_match)
+            + self.l4_score * 0.50
         )
         self.level_reached = (
             4 if self.l4_match
@@ -110,6 +113,7 @@ class EvalResult:
             "l2_build": self.l2_build,
             "l3_command": self.l3_command,
             "l4_match": self.l4_match,
+            "l4_score": round(self.l4_score, 4),
             "reward": self.reward,
             "level_reached": self.level_reached,
             "error_summary": self.error_summary,

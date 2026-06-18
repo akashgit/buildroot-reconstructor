@@ -383,7 +383,7 @@ Produce a diagnosis with:
             task=task,
             system_prompt=DIAGNOSIS_PROMPT,
             model=self._model,
-            max_turns=3,
+            max_turns=8,
             max_budget_usd=1.0,
             timeout=180,
         )
@@ -462,7 +462,7 @@ Produce the corrected Containerfile with a targeted fix for the identified error
             task=task,
             system_prompt=self._build_system_prompt(),
             model=self._model,
-            max_turns=10,
+            max_turns=15,
             max_budget_usd=5.0,
             timeout=600,
         )
@@ -544,7 +544,7 @@ Produce a new Containerfile using a fundamentally different approach."""
             task=task,
             system_prompt=self._build_system_prompt(),
             model=self._model,
-            max_turns=10,
+            max_turns=15,
             max_budget_usd=5.0,
             timeout=600,
         )
@@ -580,7 +580,7 @@ Produce a complete Containerfile."""
             task=task,
             system_prompt=self._build_system_prompt(),
             model=self._model,
-            max_turns=10,
+            max_turns=15,
             max_budget_usd=5.0,
             timeout=600,
         )

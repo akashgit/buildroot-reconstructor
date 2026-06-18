@@ -149,6 +149,7 @@ class Evaluator:
 
                 report = compare_jars(original_jar, rebuilt_jar, coordinate)
                 result.comparison_verdict = report.verdict
+                result.l4_score = report.equivalence_score()
                 if report.verdict in ("IDENTICAL", "EQUIVALENT"):
                     result.l4_match = True
                 else:

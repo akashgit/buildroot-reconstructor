@@ -101,6 +101,26 @@ def spawn_claude_agent(
         )
 
         if result.returncode != 0:
+            # Try parsing JSON stdout — Claude CLI returns valid JSON even on
+            # exit code 1 (e.g. error_max_turns). Partial results are often useful.
+            try:
+                output = json.loads(result.stdout)
+                partial_result = output.get("result", "")
+                subtype = output.get("subtype", "")
+                if partial_result and subtype == "error_max_turns":
+                    logger.warning(
+                        "Claude agent hit max_turns but produced partial result (%d chars)",
+                        len(partial_result),
+                    )
+                    return AgentResult(
+                        text=partial_result,
+                        structured_output=output.get("structured_output"),
+                        is_error=False,
+                        cost_usd=output.get("total_cost_usd", 0.0),
+                        num_turns=output.get("num_turns", 0),
+                    )
+            except (json.JSONDecodeError, KeyError):
+                pass
             error_detail = result.stderr.strip() or f"Exit code {result.returncode}"
             logger.error("Claude agent failed: %s", error_detail[:500])
             return AgentResult(
