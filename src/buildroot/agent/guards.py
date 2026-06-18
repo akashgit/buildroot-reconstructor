@@ -10,7 +10,6 @@ from dataclasses import dataclass
 logger = logging.getLogger(__name__)
 
 MUTABLE_SURFACES = frozenset({
-    "src/buildroot/agent/builder.py",
     "src/buildroot/agent/analyzer.py",
     "src/buildroot/agent/loop.py",
     "src/buildroot/agent/observer.py",
@@ -21,10 +20,13 @@ MUTABLE_SURFACES = frozenset({
     "src/buildroot/agent/outer_strategist.py",
     "src/buildroot/agent/claude_runner.py",
     "src/buildroot/agent/outer_researcher.py",
+    "src/buildroot/agent/augmented_observer.py",
     "src/buildroot/agent/knowledge/knowledge_base.py",
     "src/buildroot/agent/knowledge/__init__.py",
     "src/buildroot/agent/__init__.py",
     "src/buildroot/cli/commands/agent_cmd.py",
+    "src/buildroot/generators/containerfile.py",
+    "src/buildroot/pipeline/models.py",
 })
 
 MUTABLE_GLOBS = (

@@ -78,6 +78,19 @@ RUN apt-get update && \
 ENV {{ key }}={{ value }}
 {% endfor %}
 {% endif %}
+{% if reproducibility_env %}
+{% for key, value in reproducibility_env.items() %}
+ENV {{ key }}={{ value }}
+{% endfor %}
+{% endif %}
+
+{% if config_files %}
+{% for cf in config_files %}
+RUN mkdir -p "$(dirname '{{ cf.path }}')" && cat > '{{ cf.path }}' << 'CONFIGEOF'
+{{ cf.content }}
+CONFIGEOF
+{% endfor %}
+{% endif %}
 
 {% if source_repo and git_tag %}
 RUN apt-get update && \
@@ -90,11 +103,23 @@ WORKDIR /build
 COPY . .
 {% endif %}
 
+{% if pre_build_commands %}
+{% for cmd in pre_build_commands %}
+RUN {{ cmd }}
+{% endfor %}
+{% endif %}
+
 # Reproducible build: pin timestamps
 ENV SOURCE_DATE_EPOCH=0
 
 # Build command: {{ build_command }} (source: {{ build_source }}, confidence: {{ build_confidence }})
-RUN {{ build_command }}
+RUN {{ build_command }}{% if extra_build_flags %} {{ extra_build_flags | join(' ') }}{% endif %}
+
+{% if post_build_commands %}
+{% for cmd in post_build_commands %}
+RUN {{ cmd }}
+{% endfor %}
+{% endif %}
 
 # Normalize non-reproducible JAR metadata for comparison
 RUN for jar in $(find . -name '*.jar' \( -path '*/target/*' -o -path '*/build/libs/*' -o -path '*/build/*' -o -path '*/dist/*' \) 2>/dev/null); do \
@@ -103,6 +128,11 @@ RUN for jar in $(find . -name '*.jar' \( -path '*/target/*' -o -path '*/build/li
       jar xf "$abs" META-INF/ 2>/dev/null && \
       if [ -f META-INF/MANIFEST.MF ]; then \
         sed -i '/^Built-By:/d;/^Build-Jdk:/d;/^Created-By:/d;/^Bnd-LastModified:/d' META-INF/MANIFEST.MF; \
+{% if metadata_strip_patterns %}
+{% for pattern in metadata_strip_patterns %}
+        sed -i '/{{ pattern }}/d' META-INF/MANIFEST.MF; \
+{% endfor %}
+{% endif %}
       fi && \
       find META-INF/maven -name pom.properties -exec sed -i '/^#/d' {} \; 2>/dev/null; \
       jar uf "$abs" META-INF/ 2>/dev/null; \

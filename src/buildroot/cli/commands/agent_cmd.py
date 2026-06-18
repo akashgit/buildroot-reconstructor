@@ -21,8 +21,9 @@ import click
 @click.option("--max-cycles", default=5, type=int, help="Max outer loop cycles")
 @click.option("--node-agents", "node_agents", is_flag=True, help="Enable node-scoped Claude Code reviewer agents at each pipeline step")
 @click.option("--resume", type=click.Path(exists=True), help="Resume from prior results directory (seeds RecipeStore for warm-start)")
+@click.option("--legacy-builder", "legacy_builder", is_flag=True, help="Re-enable the old Builder-based pipeline (default: Builder-free)")
 @click.option("-v", "--verbose", is_flag=True, help="Enable debug logging")
-def agent_cmd(coordinate, host, max_iterations, model, batch, output, outer_loop, target_solve_rate, max_cycles, node_agents, resume, verbose):
+def agent_cmd(coordinate, host, max_iterations, model, batch, output, outer_loop, target_solve_rate, max_cycles, node_agents, resume, legacy_builder, verbose):
     """Run agentic reconstruction loop for a Maven COORDINATE.
 
     Single package: buildroot agent org.apache.commons:commons-lang3:3.14.0
@@ -95,6 +96,7 @@ def agent_cmd(coordinate, host, max_iterations, model, batch, output, outer_loop
         model=model,
         node_agents=node_agents,
         initial_containerfile=initial_cf,
+        legacy_builder=legacy_builder,
     )
     click.echo(json.dumps(result.to_dict(), indent=2))
     sys.exit(0 if result.status == "success" else 1)

@@ -9,7 +9,6 @@ from typing import Any
 
 from buildroot.agent import analyzer
 from buildroot.agent.analyzer import AnalyzeAgent
-from buildroot.agent.builder import Builder
 from buildroot.agent.evaluator import Evaluator
 from buildroot.agent.models import BuildAttempt, DeadEndEntry, ProgressSignal, RecipeStore
 
@@ -50,8 +49,9 @@ def run_inner_loop(
     meta_guidance: str | None = None,
     node_agents: bool = False,
     initial_containerfile: str | None = None,
+    legacy_builder: bool = False,
 ) -> LoopResult:
-    """Run the inner loop: Observer → [Builder → Evaluator → Analyzer]* → result."""
+    """Run the inner loop: Observer → [AnalyzeAgent → spec_overrides → re-observe → Evaluator]* → result."""
     if node_agents:
         return _run_agent_loop(
             coordinate,
@@ -61,6 +61,7 @@ def run_inner_loop(
             skip_deps=skip_deps,
             meta_guidance=meta_guidance,
             initial_containerfile=initial_containerfile,
+            legacy_builder=legacy_builder,
         )
     return _run_standard_loop(
         coordinate,
@@ -69,6 +70,7 @@ def run_inner_loop(
         model=model,
         skip_deps=skip_deps,
         meta_guidance=meta_guidance,
+        legacy_builder=legacy_builder,
     )
 
 
@@ -80,20 +82,26 @@ def _run_standard_loop(
     model: str = "claude-opus-4-6",
     skip_deps: bool = True,
     meta_guidance: str | None = None,
+    legacy_builder: bool = False,
 ) -> LoopResult:
-    """Original inner loop without node agents — preserved for non-agent mode."""
-    from buildroot.agent.observer import Observer
+    """Standard inner loop — uses AnalyzeAgent → spec_overrides → re-observe → template re-render."""
+    from buildroot.agent.augmented_observer import AgentAugmentedObserver
 
     start_time = time.time()
     result = LoopResult(coordinate=coordinate)
 
-    observer = Observer(skip_deps=skip_deps)
-    builder = Builder(model=model, meta_guidance=meta_guidance)
+    observer = AgentAugmentedObserver(skip_deps=skip_deps)
     evaluator = Evaluator(host=host)
+    analyze_agent = AnalyzeAgent()
     progress = ProgressSignal()
     dead_ends: list[DeadEndEntry] = []
+    spec_overrides: dict[str, Any] = {}
 
-    logger.info("Starting inner loop for %s (max %d iterations)", coordinate, max_iterations)
+    if legacy_builder:
+        from buildroot.agent.builder import Builder
+        builder = Builder(model=model, meta_guidance=meta_guidance)
+
+    logger.info("Starting standard loop for %s (max %d iterations, legacy_builder=%s)", coordinate, max_iterations, legacy_builder)
 
     try:
         spec, containerfile = observer.observe(coordinate)
@@ -115,13 +123,15 @@ def _run_standard_loop(
         logger.info("Iteration %d/%d for %s", t + 1, max_iterations, coordinate)
 
         eval_result = evaluator.evaluate(containerfile, coordinate)
+        error_class = analyzer.classify_error(
+            eval_result.error_summary, eval_result.build_log,
+            diff_summary=eval_result.diff_summary,
+        )
         attempt = BuildAttempt(
             containerfile=containerfile,
             reward=eval_result.reward,
             level_reached=eval_result.level_reached,
-            error_class=analyzer.classify_error(
-                eval_result.error_summary, eval_result.build_log
-            ),
+            error_class=error_class,
             build_log_summary=eval_result.error_summary[:500],
             diff_summary=eval_result.diff_summary,
         )
@@ -188,33 +198,87 @@ def _run_standard_loop(
 
         logger.info("  mode=%s, fix_suggestion=%s", mode, analysis.fix_suggestion[:80])
 
-        try:
-            if mode == "exploit":
-                containerfile = builder.refine(
-                    containerfile, analysis.error_class,
-                    eval_result.error_summary, dead_ends, spec,
-                )
-                attempt.fix_applied = f"refine: {analysis.fix_suggestion[:100]}"
-            elif mode == "explore":
-                containerfile = builder.explore(
-                    containerfile, spec, analysis.error_class,
-                    eval_result.error_summary, dead_ends,
-                )
-                attempt.fix_applied = "explore: trying different approach"
-            else:
+        if legacy_builder:
+            try:
+                if mode == "exploit":
+                    containerfile = builder.refine(
+                        containerfile, analysis.error_class,
+                        eval_result.error_summary, dead_ends, spec,
+                    )
+                    attempt.fix_applied = f"refine: {analysis.fix_suggestion[:100]}"
+                elif mode == "explore":
+                    containerfile = builder.explore(
+                        containerfile, spec, analysis.error_class,
+                        eval_result.error_summary, dead_ends,
+                    )
+                    attempt.fix_applied = "explore: trying different approach"
+                else:
+                    if analyzer.all_exhausted(dead_ends):
+                        result.status = "all_exhausted"
+                        result.elapsed_seconds = time.time() - start_time
+                        result.dead_ends = dead_ends
+                        logger.info("All approaches exhausted for %s", coordinate)
+                        return result
+                    containerfile = builder.fresh_start(spec)
+                    attempt.fix_applied = "meta_shift: fresh start from metadata"
+                    progress.reset()
+            except Exception as e:
+                logger.error("Builder error at iteration %d: %s", t + 1, e)
+                attempt.fix_applied = f"builder_error: {e}"
+                continue
+        else:
+            build_results = [{
+                "level_reached": eval_result.level_reached,
+                "reward": eval_result.reward,
+                "error_class": attempt.error_class,
+                "error_summary": eval_result.error_summary[:500],
+                "diff_summary": eval_result.diff_summary,
+                "comparison_verdict": eval_result.comparison_verdict,
+            }]
+
+            analyze_result = analyze_agent.analyze_cycle(
+                coordinate, build_results, t + 1, dead_ends,
+            )
+
+            if analyze_result.spec_overrides:
+                spec_overrides.update(analyze_result.spec_overrides)
+                logger.info("AnalyzeAgent spec_overrides: %s", analyze_result.spec_overrides)
+
+            if analyze_result.is_systemic:
+                if analyze_result.spec_overrides:
+                    logger.info("AnalyzeAgent flagged systemic issue but provided spec_overrides — continuing: %s", analyze_result.root_cause)
+                else:
+                    logger.info("AnalyzeAgent flagged systemic issue with no fix: %s", analyze_result.root_cause)
+                    result.status = "systemic_blocker"
+                    result.elapsed_seconds = time.time() - start_time
+                    result.dead_ends = dead_ends
+                    return result
+
+            if spec_overrides:
+                AgentAugmentedObserver._apply_spec_overrides(spec, spec_overrides)
+
+            if mode == "meta_shift":
                 if analyzer.all_exhausted(dead_ends):
                     result.status = "all_exhausted"
                     result.elapsed_seconds = time.time() - start_time
                     result.dead_ends = dead_ends
                     logger.info("All approaches exhausted for %s", coordinate)
                     return result
-                containerfile = builder.fresh_start(spec)
-                attempt.fix_applied = "meta_shift: fresh start from metadata"
+                spec_overrides.clear()
                 progress.reset()
-        except Exception as e:
-            logger.error("Builder error at iteration %d: %s", t + 1, e)
-            attempt.fix_applied = f"builder_error: {e}"
-            continue
+
+            try:
+                variants = observer.observe_top_k(coordinate, k=3, spec_overrides=spec_overrides)
+                if variants and variants[0][1]:
+                    variants.append((spec, containerfile))
+                    spec, containerfile = _evaluate_candidates(
+                        variants, evaluator, coordinate, result, dead_ends,
+                    )
+                    logger.info("Re-observed with spec_overrides, %d variants", len(variants))
+                    attempt.fix_applied = f"reobserve: {mode}"
+            except Exception as e:
+                logger.warning("Re-observe with spec_overrides failed: %s", e)
+                attempt.fix_applied = f"reobserve_error: {e}"
 
     result.elapsed_seconds = time.time() - start_time
     result.dead_ends = dead_ends
@@ -234,6 +298,7 @@ def _run_agent_loop(
     skip_deps: bool = True,
     meta_guidance: str | None = None,
     initial_containerfile: str | None = None,
+    legacy_builder: bool = False,
 ) -> LoopResult:
     """Agent-augmented inner loop with Top-K builds, AnalyzeAgent, recipes, and spec overrides."""
     from buildroot.agent.augmented_observer import AgentAugmentedObserver
@@ -242,13 +307,16 @@ def _run_agent_loop(
     result = LoopResult(coordinate=coordinate)
 
     observer = AgentAugmentedObserver(skip_deps=skip_deps)
-    builder = Builder(model=model, meta_guidance=meta_guidance)
     evaluator = Evaluator(host=host)
     analyze_agent = AnalyzeAgent()
     recipe_store = RecipeStore()
     progress = ProgressSignal()
     dead_ends: list[DeadEndEntry] = []
     spec_overrides: dict[str, Any] = {}
+
+    if legacy_builder:
+        from buildroot.agent.builder import Builder
+        builder = Builder(model=model, meta_guidance=meta_guidance)
 
     # P3: Check recipe store — skip if already L4
     existing_level = recipe_store.best_level(coordinate)
@@ -320,13 +388,15 @@ def _run_agent_loop(
         logger.info("Iteration %d/%d for %s", t + 1, max_iterations, coordinate)
 
         eval_result = evaluator.evaluate(containerfile, coordinate)
+        error_class = analyzer.classify_error(
+            eval_result.error_summary, eval_result.build_log,
+            diff_summary=eval_result.diff_summary,
+        )
         attempt = BuildAttempt(
             containerfile=containerfile,
             reward=eval_result.reward,
             level_reached=eval_result.level_reached,
-            error_class=analyzer.classify_error(
-                eval_result.error_summary, eval_result.build_log
-            ),
+            error_class=error_class,
             build_log_summary=eval_result.error_summary[:500],
             diff_summary=eval_result.diff_summary,
         )
@@ -393,25 +463,24 @@ def _run_agent_loop(
             eval_result.error_summary[:200],
         )
 
-        # P2: Run AnalyzeAgent after each failed iteration
+        # Run AnalyzeAgent after each failed iteration
         build_results = [{
             "level_reached": eval_result.level_reached,
             "reward": eval_result.reward,
             "error_class": attempt.error_class,
             "error_summary": eval_result.error_summary[:500],
-            "diff_summary": eval_result.diff_summary[:300],
+            "diff_summary": eval_result.diff_summary,
+            "comparison_verdict": eval_result.comparison_verdict,
         }]
 
         analyze_result = analyze_agent.analyze_cycle(
             coordinate, build_results, t + 1, dead_ends,
         )
 
-        # P4: Accumulate spec_overrides from AnalyzeAgent
         if analyze_result.spec_overrides:
             spec_overrides.update(analyze_result.spec_overrides)
             logger.info("AnalyzeAgent spec_overrides: %s", analyze_result.spec_overrides)
 
-        # Apply overrides to spec immediately so Builder sees them
         if spec_overrides:
             from buildroot.agent.augmented_observer import AgentAugmentedObserver
             AgentAugmentedObserver._apply_spec_overrides(spec, spec_overrides)
@@ -426,7 +495,7 @@ def _run_agent_loop(
                 result.dead_ends = dead_ends
                 return result
 
-        # Re-observe with accumulated spec_overrides on each iteration
+        # Re-observe with accumulated spec_overrides → template re-render
         if spec_overrides:
             try:
                 variants = observer.observe_top_k(coordinate, k=3, spec_overrides=spec_overrides)
@@ -439,7 +508,7 @@ def _run_agent_loop(
             except Exception as e:
                 logger.warning("Re-observe with spec_overrides failed: %s", e)
 
-        # Run failure agents on each iteration (no single-fire gate)
+        # Run failure agents on each iteration
         if eval_result.level_reached < 4 and hasattr(observer, "run_failure_agents"):
             failure_result = observer.run_failure_agents(
                 spec, containerfile,
@@ -455,32 +524,43 @@ def _run_agent_loop(
 
         logger.info("  mode=%s, fix_suggestion=%s", mode, analysis.fix_suggestion[:80])
 
-        try:
-            if mode == "exploit":
-                containerfile = builder.refine(
-                    containerfile, analysis.error_class,
-                    eval_result.error_summary, dead_ends, spec,
-                )
-                attempt.fix_applied = f"refine: {analysis.fix_suggestion[:100]}"
-            elif mode == "explore":
-                containerfile = builder.explore(
-                    containerfile, spec, analysis.error_class,
-                    eval_result.error_summary, dead_ends,
-                )
-                attempt.fix_applied = "explore: trying different approach"
-            else:
+        if legacy_builder:
+            try:
+                if mode == "exploit":
+                    containerfile = builder.refine(
+                        containerfile, analysis.error_class,
+                        eval_result.error_summary, dead_ends, spec,
+                    )
+                    attempt.fix_applied = f"refine: {analysis.fix_suggestion[:100]}"
+                elif mode == "explore":
+                    containerfile = builder.explore(
+                        containerfile, spec, analysis.error_class,
+                        eval_result.error_summary, dead_ends,
+                    )
+                    attempt.fix_applied = "explore: trying different approach"
+                else:
+                    if analyzer.all_exhausted(dead_ends):
+                        result.status = "all_exhausted"
+                        result.elapsed_seconds = time.time() - start_time
+                        result.dead_ends = dead_ends
+                        return result
+                    containerfile = builder.fresh_start(spec)
+                    attempt.fix_applied = "meta_shift: fresh start from metadata"
+                    progress.reset()
+            except Exception as e:
+                logger.error("Builder error at iteration %d: %s", t + 1, e)
+                attempt.fix_applied = f"builder_error: {e}"
+                continue
+        else:
+            if mode == "meta_shift":
                 if analyzer.all_exhausted(dead_ends):
                     result.status = "all_exhausted"
                     result.elapsed_seconds = time.time() - start_time
                     result.dead_ends = dead_ends
                     return result
-                containerfile = builder.fresh_start(spec)
-                attempt.fix_applied = "meta_shift: fresh start from metadata"
+                spec_overrides.clear()
                 progress.reset()
-        except Exception as e:
-            logger.error("Builder error at iteration %d: %s", t + 1, e)
-            attempt.fix_applied = f"builder_error: {e}"
-            continue
+            attempt.fix_applied = f"reobserve: {mode}"
 
     result.elapsed_seconds = time.time() - start_time
     result.dead_ends = dead_ends

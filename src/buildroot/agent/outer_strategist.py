@@ -271,7 +271,7 @@ Is stagnant: {analysis.is_stagnant}
         data = agent_result.structured_output
         return CodeChangeHypothesis(
             target_error_class=data.get("target_error_class", "unknown"),
-            files_to_modify=data.get("files_to_modify", ["src/buildroot/agent/builder.py"]),
+            files_to_modify=data.get("files_to_modify", ["src/buildroot/agent/analyzer.py"]),
             expected_impact=data.get("expected_impact", ""),
             rationale=data.get("rationale", ""),
             priority=data.get("priority", 0),
@@ -289,9 +289,9 @@ def _fallback_hypothesis(
     if not analysis.error_frequencies:
         return CodeChangeHypothesis(
             target_error_class="unknown",
-            files_to_modify=["src/buildroot/agent/builder.py"],
+            files_to_modify=["src/buildroot/agent/analyzer.py"],
             expected_impact="Improve general build success rate",
-            rationale="No specific error class dominant — improve Builder prompts",
+            rationale="No specific error class dominant — improve AnalyzeAgent spec_overrides",
         )
 
     for ef in analysis.error_frequencies:
@@ -302,7 +302,7 @@ def _fallback_hypothesis(
 
         return CodeChangeHypothesis(
             target_error_class=ef.error_class,
-            files_to_modify=["src/buildroot/agent/builder.py"],
+            files_to_modify=["src/buildroot/agent/analyzer.py"],
             expected_impact=f"Address {ef.error_class} failures",
             rationale=f"Target dominant error class {ef.error_class} with count={ef.count}",
             priority=1,
@@ -311,8 +311,8 @@ def _fallback_hypothesis(
     return CodeChangeHypothesis(
         target_error_class="architectural",
         files_to_modify=[
-            "src/buildroot/agent/builder.py",
             "src/buildroot/agent/analyzer.py",
+            "src/buildroot/agent/loop.py",
         ],
         expected_impact="Architectural improvement to escape local optimum",
         rationale=(
