@@ -184,13 +184,13 @@ def _run_standard_loop(
         mode = progress.update(eval_result.reward)
         analysis = analyzer.analyze(eval_result, dead_ends)
         error_history.append(analysis.error_class)
-        previous_progress = analysis.build_progress
 
         remediation_context = analyzer.build_remediation_context(
             analysis, eval_result.build_log,
-            error_history=error_history,
+            error_history=error_history[-10:],
             previous_progress=previous_progress,
         )
+        previous_progress = analysis.build_progress
 
         if analysis.is_fundamental_blocker:
             result.status = "fundamental_blocker"
@@ -203,7 +203,7 @@ def _run_standard_loop(
             dead_ends,
             analysis.error_class,
             _describe_approach(containerfile),
-            eval_result.error_summary[:200],
+            (eval_result.error_summary or '')[:200],
         )
 
         logger.info("  mode=%s, fix_suggestion=%s", mode, analysis.fix_suggestion[:80])
@@ -241,7 +241,7 @@ def _run_standard_loop(
                 "level_reached": eval_result.level_reached,
                 "reward": eval_result.reward,
                 "error_class": attempt.error_class,
-                "error_summary": eval_result.error_summary[:500],
+                "error_summary": (eval_result.error_summary or '')[:500],
                 "diff_summary": eval_result.diff_summary,
                 "comparison_verdict": eval_result.comparison_verdict,
             }]
@@ -280,7 +280,7 @@ def _run_standard_loop(
 
             build_error_ctx = (
                 f"Error class: {analysis.error_class}\n"
-                f"Error: {eval_result.error_summary[:300]}"
+                f"Error: {(eval_result.error_summary or '')[:300]}"
             )
             try:
                 variants = observer.observe_top_k(
@@ -470,13 +470,13 @@ def _run_agent_loop(
         mode = progress.update(eval_result.reward)
         analysis = analyzer.analyze(eval_result, dead_ends)
         error_history.append(analysis.error_class)
-        previous_progress = analysis.build_progress
 
         remediation_context = analyzer.build_remediation_context(
             analysis, eval_result.build_log,
-            error_history=error_history,
+            error_history=error_history[-10:],
             previous_progress=previous_progress,
         )
+        previous_progress = analysis.build_progress
 
         if analysis.is_fundamental_blocker:
             result.status = "fundamental_blocker"
@@ -488,7 +488,7 @@ def _run_agent_loop(
             dead_ends,
             analysis.error_class,
             _describe_approach(containerfile),
-            eval_result.error_summary[:200],
+            (eval_result.error_summary or '')[:200],
         )
 
         # Run AnalyzeAgent after each failed iteration
@@ -496,7 +496,7 @@ def _run_agent_loop(
             "level_reached": eval_result.level_reached,
             "reward": eval_result.reward,
             "error_class": attempt.error_class,
-            "error_summary": eval_result.error_summary[:500],
+            "error_summary": (eval_result.error_summary or '')[:500],
             "diff_summary": eval_result.diff_summary,
             "comparison_verdict": eval_result.comparison_verdict,
         }]
@@ -527,7 +527,7 @@ def _run_agent_loop(
         # Re-observe with accumulated spec_overrides → template re-render
         build_error_ctx = (
             f"Error class: {analysis.error_class}\n"
-            f"Error: {eval_result.error_summary[:300]}"
+            f"Error: {(eval_result.error_summary or '')[:300]}"
         )
         if spec_overrides:
             try:
