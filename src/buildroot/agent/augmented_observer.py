@@ -84,6 +84,7 @@ class AgentAugmentedObserver(Observer):
         coordinate: str,
         k: int = 3,
         spec_overrides: dict[str, Any] | None = None,
+        build_error_context: str = "",
     ) -> list[tuple[BuildrootSpec, str]]:
         """Produce up to K (spec, containerfile) variants via top-K candidate forking."""
         spec, draft_containerfile = super().observe(coordinate)
@@ -96,13 +97,15 @@ class AgentAugmentedObserver(Observer):
         gap_report = self._gap_detector.analyze(spec)
         spec.gaps = gap_report
 
+        agent_context: dict[str, Any] = {"containerfile": draft_containerfile}
+        if build_error_context:
+            agent_context["build_error_context"] = build_error_context
+
         forked_specs: list[BuildrootSpec] = []
         for agent in self._node_agents:
             if agent.should_activate(gap_report, spec_overrides):
                 try:
-                    candidates = agent.review(
-                        spec, context={"containerfile": draft_containerfile},
-                    )
+                    candidates = agent.review(spec, context=agent_context)
                     variants = agent.apply_top_k(spec, candidates, k=k)
                     if variants:
                         forked_specs.extend(variants)
@@ -113,9 +116,7 @@ class AgentAugmentedObserver(Observer):
             for agent in self._node_agents:
                 if agent.should_activate(gap_report, spec_overrides):
                     try:
-                        candidates = agent.review(
-                            spec, context={"containerfile": draft_containerfile},
-                        )
+                        candidates = agent.review(spec, context=agent_context)
                         agent.apply_best(spec, candidates)
                     except Exception:
                         logger.exception("Node agent %s failed", agent.node_name)

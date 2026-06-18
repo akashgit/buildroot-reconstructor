@@ -699,12 +699,17 @@ class AnalyzeAgent:
         build_results: list[dict[str, Any]],
         iteration: int,
         dead_ends: list[DeadEndEntry],
+        remediation_context: str = "",
     ) -> AnalyzeAgentResult:
         results_summary = json.dumps(build_results[:5], indent=2, default=str)[:4000]
         dead_end_summary = "\n".join(
             f"- [{de.error_class}] {de.approach} (failed {de.failure_count}x)"
             for de in dead_ends if de.is_exhausted
         ) or "None exhausted."
+
+        diagnostics_section = ""
+        if remediation_context:
+            diagnostics_section = f"\n## Structured Diagnostics\n{remediation_context}\n"
 
         task = f"""\
 Analyze the failed build iteration {iteration} for {coordinate}.
@@ -714,7 +719,7 @@ Analyze the failed build iteration {iteration} for {coordinate}.
 
 ## Dead-End Registry
 {dead_end_summary}
-
+{diagnostics_section}
 Diagnose the root cause, identify the responsible node agent, and propose:
 1. Playbook DO/DON'T rules for future iterations
 2. spec_overrides (field_name -> new_value) to try in the next observe() cycle

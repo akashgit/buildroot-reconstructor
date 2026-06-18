@@ -118,6 +118,8 @@ def _run_standard_loop(
     logger.info("Observer produced initial Containerfile (%d bytes)", len(containerfile))
 
     patience_counter = 0
+    error_history: list[str] = []
+    previous_progress: analyzer.BuildProgress | None = None
 
     for t in range(max_iterations):
         logger.info("Iteration %d/%d for %s", t + 1, max_iterations, coordinate)
@@ -181,6 +183,14 @@ def _run_standard_loop(
 
         mode = progress.update(eval_result.reward)
         analysis = analyzer.analyze(eval_result, dead_ends)
+        error_history.append(analysis.error_class)
+
+        remediation_context = analyzer.build_remediation_context(
+            analysis, eval_result.build_log,
+            error_history=error_history[-10:],
+            previous_progress=previous_progress,
+        )
+        previous_progress = analysis.build_progress
 
         if analysis.is_fundamental_blocker:
             result.status = "fundamental_blocker"
@@ -193,7 +203,7 @@ def _run_standard_loop(
             dead_ends,
             analysis.error_class,
             _describe_approach(containerfile),
-            eval_result.error_summary[:200],
+            (eval_result.error_summary or '')[:200],
         )
 
         logger.info("  mode=%s, fix_suggestion=%s", mode, analysis.fix_suggestion[:80])
@@ -231,13 +241,14 @@ def _run_standard_loop(
                 "level_reached": eval_result.level_reached,
                 "reward": eval_result.reward,
                 "error_class": attempt.error_class,
-                "error_summary": eval_result.error_summary[:500],
+                "error_summary": (eval_result.error_summary or '')[:500],
                 "diff_summary": eval_result.diff_summary,
                 "comparison_verdict": eval_result.comparison_verdict,
             }]
 
             analyze_result = analyze_agent.analyze_cycle(
                 coordinate, build_results, t + 1, dead_ends,
+                remediation_context=remediation_context,
             )
 
             if analyze_result.spec_overrides:
@@ -267,8 +278,15 @@ def _run_standard_loop(
                 spec_overrides.clear()
                 progress.reset()
 
+            build_error_ctx = (
+                f"Error class: {analysis.error_class}\n"
+                f"Error: {(eval_result.error_summary or '')[:300]}"
+            )
             try:
-                variants = observer.observe_top_k(coordinate, k=3, spec_overrides=spec_overrides)
+                variants = observer.observe_top_k(
+                    coordinate, k=3, spec_overrides=spec_overrides,
+                    build_error_context=build_error_ctx,
+                )
                 if variants and variants[0][1]:
                     variants.append((spec, containerfile))
                     spec, containerfile = _evaluate_candidates(
@@ -383,6 +401,8 @@ def _run_agent_loop(
     logger.info("Initial observation produced %d variants, best selected", len(variants))
 
     patience_counter = 0
+    error_history: list[str] = []
+    previous_progress: analyzer.BuildProgress | None = None
 
     for t in range(max_iterations):
         logger.info("Iteration %d/%d for %s", t + 1, max_iterations, coordinate)
@@ -449,6 +469,14 @@ def _run_agent_loop(
 
         mode = progress.update(eval_result.reward)
         analysis = analyzer.analyze(eval_result, dead_ends)
+        error_history.append(analysis.error_class)
+
+        remediation_context = analyzer.build_remediation_context(
+            analysis, eval_result.build_log,
+            error_history=error_history[-10:],
+            previous_progress=previous_progress,
+        )
+        previous_progress = analysis.build_progress
 
         if analysis.is_fundamental_blocker:
             result.status = "fundamental_blocker"
@@ -460,7 +488,7 @@ def _run_agent_loop(
             dead_ends,
             analysis.error_class,
             _describe_approach(containerfile),
-            eval_result.error_summary[:200],
+            (eval_result.error_summary or '')[:200],
         )
 
         # Run AnalyzeAgent after each failed iteration
@@ -468,13 +496,14 @@ def _run_agent_loop(
             "level_reached": eval_result.level_reached,
             "reward": eval_result.reward,
             "error_class": attempt.error_class,
-            "error_summary": eval_result.error_summary[:500],
+            "error_summary": (eval_result.error_summary or '')[:500],
             "diff_summary": eval_result.diff_summary,
             "comparison_verdict": eval_result.comparison_verdict,
         }]
 
         analyze_result = analyze_agent.analyze_cycle(
             coordinate, build_results, t + 1, dead_ends,
+            remediation_context=remediation_context,
         )
 
         if analyze_result.spec_overrides:
@@ -496,9 +525,16 @@ def _run_agent_loop(
                 return result
 
         # Re-observe with accumulated spec_overrides → template re-render
+        build_error_ctx = (
+            f"Error class: {analysis.error_class}\n"
+            f"Error: {(eval_result.error_summary or '')[:300]}"
+        )
         if spec_overrides:
             try:
-                variants = observer.observe_top_k(coordinate, k=3, spec_overrides=spec_overrides)
+                variants = observer.observe_top_k(
+                    coordinate, k=3, spec_overrides=spec_overrides,
+                    build_error_context=build_error_ctx,
+                )
                 if variants and variants[0][1]:
                     variants.append((spec, containerfile))
                     spec, containerfile = _evaluate_candidates(

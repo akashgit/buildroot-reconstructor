@@ -103,7 +103,11 @@ class NodeAgent:
         return False
 
     def review(self, spec: BuildrootSpec, context: dict[str, Any] | None = None) -> list[Candidate]:
-        task = self._build_task(spec, context or {})
+        ctx = context or {}
+        task = self._build_task(spec, ctx)
+        build_error_ctx = ctx.get("build_error_context", "")
+        if build_error_ctx:
+            task += f"\n\n## Build Failure Context\n{build_error_ctx}"
         result = spawn_claude_agent(
             task=task,
             system_prompt=self.system_prompt,
