@@ -20,8 +20,9 @@ import click
 @click.option("--target-solve-rate", default=1.0, type=float, help="Target solve rate for outer loop (0.0-1.0)")
 @click.option("--max-cycles", default=5, type=int, help="Max outer loop cycles")
 @click.option("--node-agents", "node_agents", is_flag=True, help="Enable node-scoped Claude Code reviewer agents at each pipeline step")
+@click.option("--resume", type=click.Path(exists=True), help="Resume from prior results directory (seeds RecipeStore for warm-start)")
 @click.option("-v", "--verbose", is_flag=True, help="Enable debug logging")
-def agent_cmd(coordinate, host, max_iterations, model, batch, output, outer_loop, target_solve_rate, max_cycles, node_agents, verbose):
+def agent_cmd(coordinate, host, max_iterations, model, batch, output, outer_loop, target_solve_rate, max_cycles, node_agents, resume, verbose):
     """Run agentic reconstruction loop for a Maven COORDINATE.
 
     Single package: buildroot agent org.apache.commons:commons-lang3:3.14.0
@@ -32,6 +33,12 @@ def agent_cmd(coordinate, host, max_iterations, model, batch, output, outer_loop
         level=logging.DEBUG if verbose else logging.INFO,
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     )
+
+    if resume:
+        from pathlib import Path
+        from buildroot.agent.outer_loop import seed_recipes_from_results
+        count = seed_recipes_from_results(Path(resume))
+        click.echo(f"Seeded {count} recipes from {resume}")
 
     if outer_loop:
         if not batch:
@@ -71,12 +78,23 @@ def agent_cmd(coordinate, host, max_iterations, model, batch, output, outer_loop
 
     from buildroot.agent.loop import run_inner_loop
 
+    initial_cf = None
+    if resume:
+        from buildroot.agent.models import RecipeStore
+        store = RecipeStore()
+        best = store.best_level(coordinate)
+        if best >= 2:
+            initial_cf = store.get_containerfile(coordinate, best)
+            if initial_cf:
+                click.echo(f"Warm-starting {coordinate} from L{best} recipe")
+
     result = run_inner_loop(
         coordinate,
         max_iterations=max_iterations,
         host=host,
         model=model,
         node_agents=node_agents,
+        initial_containerfile=initial_cf,
     )
     click.echo(json.dumps(result.to_dict(), indent=2))
     sys.exit(0 if result.status == "success" else 1)
