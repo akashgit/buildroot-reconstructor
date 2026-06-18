@@ -25,7 +25,7 @@ RUNNER_IMAGE_MAP = {
 DEFAULT_BUILD_COMMAND = "mvn clean install -B"
 
 REPRODUCIBLE_FLAGS = [
-    "-Dproject.build.outputTimestamp=1",
+    "-Dproject.build.outputTimestamp=1980-01-01T00:00:00Z",
 ]
 
 

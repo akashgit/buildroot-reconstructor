@@ -282,6 +282,8 @@ def _run_agent_loop(
     spec, containerfile = _evaluate_candidates(variants, evaluator, coordinate, result, dead_ends)
     logger.info("Initial observation produced %d variants, best selected", len(variants))
 
+    patience_counter = 0
+
     for t in range(max_iterations):
         logger.info("Iteration %d/%d for %s", t + 1, max_iterations, coordinate)
 
@@ -307,6 +309,9 @@ def _run_agent_loop(
         if eval_result.reward > result.best_reward:
             result.best_reward = eval_result.reward
             result.best_attempt = attempt
+            patience_counter = 0
+        elif eval_result.reward < result.best_reward:
+            patience_counter += 1
 
         # P3: Save recipe at each level reached
         if eval_result.level_reached > 0:
@@ -327,6 +332,18 @@ def _run_agent_loop(
 
         if t >= max_iterations - 1:
             break
+
+        if (
+            patience_counter >= 2
+            and result.best_attempt is not None
+            and result.best_attempt.containerfile
+        ):
+            logger.info(
+                "Elitist gate: restoring best containerfile (current=%.2f < best=%.2f, patience exhausted)",
+                eval_result.reward, result.best_reward,
+            )
+            containerfile = result.best_attempt.containerfile
+            patience_counter = 0
 
         mode = progress.update(eval_result.reward)
         analysis = analyzer.analyze(eval_result, dead_ends)
@@ -489,14 +506,5 @@ def _evaluate_candidates(
 
 
 def _describe_approach(containerfile: str) -> str:
-    """Extract a short description of the current approach from the Containerfile."""
-    lines = containerfile.splitlines()
-    from_line = ""
-    build_cmd = ""
-    for line in lines:
-        stripped = line.strip()
-        if stripped.startswith("FROM ") and not from_line:
-            from_line = stripped[:80]
-        if stripped.startswith("RUN ") and ("mvn " in stripped or "maven" in stripped.lower()):
-            build_cmd = stripped[:80]
-    return f"{from_line} | {build_cmd}" if from_line else "unknown approach"
+    """Extract a rich description of the current approach from the Containerfile."""
+    return analyzer.extract_build_signature(containerfile)

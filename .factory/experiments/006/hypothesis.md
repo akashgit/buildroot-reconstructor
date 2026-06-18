@@ -1,1 +1,0 @@
-Implement Agentic Reconstructor Inner Loop MVP with Outer Loop Skeleton (issue #13)

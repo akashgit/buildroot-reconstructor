@@ -193,7 +193,7 @@ class ProgressSignal:
     Low G_t = stagnating (explore). Very low G_t = exhausted (meta-shift).
     """
 
-    def __init__(self, rho: float = 0.9, tau_m: float = 0.12, tau_s: float = 0.02):
+    def __init__(self, rho: float = 0.9, tau_m: float = 0.08, tau_s: float = 0.005):
         self.g_t: float = 1.0
         self.best_reward: float = 0.0
         self.rho = rho

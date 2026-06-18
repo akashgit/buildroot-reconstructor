@@ -100,6 +100,21 @@ ERROR_PATTERNS: list[tuple[str, re.Pattern]] = [
         r"PermSize|"
         r"Unrecognized option:.*-XX:", re.IGNORECASE
     )),
+    ("l3/jar_not_found", re.compile(
+        r"BUILD_FAILED.*no.*JAR|"
+        r"BUILD_FAILED.*\.jar|"
+        r"No \.jar files? found|"
+        r"ls:.*target/\*\.jar.*No such file", re.IGNORECASE
+    )),
+    ("l4/structural_divergence", re.compile(
+        r"structural_match=False", re.IGNORECASE
+    )),
+    ("l4/metadata_mismatch", re.compile(
+        r"metadata_match=False", re.IGNORECASE
+    )),
+    ("l4/bytecode_divergence", re.compile(
+        r"bytecode_match=False", re.IGNORECASE
+    )),
 ]
 
 FUNDAMENTAL_BLOCKERS = frozenset({
@@ -416,7 +431,7 @@ def build_remediation_context(
     if analysis_result.root_cause_details:
         rc_lines = [str(rc) for rc in analysis_result.root_cause_details]
         sections.append(
-            "## Root Cause Details\n" + "\n".join(f"- {l}" for l in rc_lines)
+            "## Root Cause Details\n" + "\n".join(f"- {line}" for line in rc_lines)
         )
 
     # 3. Actionable fix direction from the analyzer
@@ -450,6 +465,36 @@ def build_remediation_context(
             sections.append(f"## Error Trajectory\n{trajectory}")
 
     return "\n\n".join(sections)
+
+
+def extract_build_signature(containerfile: str) -> str:
+    """Extract a rich build signature from a Containerfile for dead-end deduplication.
+
+    Includes FROM line, build command, ENV variables, and build flags.
+    """
+    lines = containerfile.splitlines()
+    from_line = ""
+    build_cmd = ""
+    env_vars = []
+    for line in lines:
+        stripped = line.strip()
+        if stripped.startswith("FROM ") and not from_line:
+            from_line = stripped[:80]
+        if stripped.startswith("RUN ") and (
+            "mvn " in stripped or "maven" in stripped.lower()
+            or "gradle" in stripped.lower() or "gradlew" in stripped
+            or "ant " in stripped
+        ):
+            build_cmd = stripped[:120]
+        if stripped.startswith("ENV "):
+            env_vars.append(stripped[:60])
+
+    parts = [from_line or "unknown"]
+    if build_cmd:
+        parts.append(build_cmd)
+    if env_vars:
+        parts.append(" | ".join(env_vars[:5]))
+    return " | ".join(parts)
 
 
 def classify_error(error_summary: str, build_log: str = "") -> str:
@@ -763,6 +808,26 @@ def _suggest_fix(error_class: str, error_summary: str) -> str:
             "The build uses obsolete JVM flags (e.g. MaxPermSize, PermSize) removed in JDK 9+. "
             "Remove them via sed in the Containerfile before building: "
             "sed -i 's/-XX:MaxPermSize=[^ ]*//' or use JDK 8 if the project supports it."
+        ),
+        "l3/jar_not_found": (
+            "Build completed but no JAR was produced in target/. Check if this is a Gradle "
+            "project (outputs to build/libs/) or a multi-module project (JARs in */target/). "
+            "Ensure the build command produces a JAR (not just compiles)."
+        ),
+        "l4/structural_divergence": (
+            "JAR structure differs from the original — files are missing or extra. "
+            "Check if resource filtering, shading, or assembly plugins are configured correctly. "
+            "Add SOURCE_DATE_EPOCH=0 and -Dproject.build.outputTimestamp=1980-01-01T00:00:00Z."
+        ),
+        "l4/metadata_mismatch": (
+            "JAR metadata (MANIFEST.MF, pom.properties) differs. Ensure SOURCE_DATE_EPOCH=0 "
+            "is set, add -Dproject.build.outputTimestamp=1980-01-01T00:00:00Z, and strip "
+            "non-reproducible entries (Built-By, Build-Jdk, Created-By) from MANIFEST.MF."
+        ),
+        "l4/bytecode_divergence": (
+            "Compiled class files differ from the original. This may be caused by a different "
+            "JDK version/vendor, annotation processor differences, or compiler flag mismatches. "
+            "Verify JDK version exactly matches the original build environment."
         ),
     }
     return suggestions.get(error_class, "Analyze the build log for specific failure details.")

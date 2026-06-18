@@ -57,6 +57,9 @@ WORKDIR /build
 COPY . .
 {% endif %}
 
+# Reproducible build: pin timestamps
+ENV SOURCE_DATE_EPOCH=0
+
 # Build command: {{ build_command }} (source: {{ build_source }}, confidence: {{ build_confidence }})
 RUN {{ build_command }}
 

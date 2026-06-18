@@ -7,14 +7,10 @@ import re
 
 from buildroot.agent.analyzer import (
     BUILD_PHASES,
-    AnalysisResult,
     BuildProgress,
-    build_remediation_context,
-    classify_error,
     compute_progress_delta,
     detect_error_loop,
     estimate_build_progress,
-    extract_build_log_excerpt,
     extract_root_cause_details,
     suggest_relaxation_flags,
 )
@@ -317,7 +313,7 @@ class Builder:
         if root_causes:
             rc_lines = [str(rc) for rc in root_causes[:5]]
             sections.append(
-                "## Root Cause Details\n" + "\n".join(f"- {l}" for l in rc_lines)
+                "## Root Cause Details\n" + "\n".join(f"- {line}" for line in rc_lines)
             )
 
         # Relaxation flags
@@ -416,7 +412,7 @@ Produce a diagnosis with:
         diagnosis agent runs first (two-phase approach).
         """
         # Track iteration state
-        progress = self._track_iteration(error_class, error_summary)
+        self._track_iteration(error_class, error_summary)
 
         # Compute remediation context if the caller didn't provide one
         if not remediation_context:

@@ -99,7 +99,13 @@ class Evaluator:
         try:
             check_cmd = (
                 f"podman run --rm {tag} sh -c '"
-                f"ls target/*.jar 2>/dev/null && echo BUILD_SUCCESS || echo BUILD_FAILED'"
+                f"find target/ build/libs/ */target/ */build/libs/ "
+                f"-name \"*.jar\" "
+                f"-not -name \"*-sources.jar\" "
+                f"-not -name \"*-javadoc.jar\" "
+                f"-not -name \"original-*.jar\" "
+                f"2>/dev/null | head -1 | grep -q . "
+                f"&& echo BUILD_SUCCESS || echo BUILD_FAILED'"
             )
             proc = subprocess.run(
                 ["ssh", "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=no",
@@ -146,12 +152,27 @@ class Evaluator:
                 if report.verdict in ("IDENTICAL", "EQUIVALENT"):
                     result.l4_match = True
                 else:
-                    result.diff_summary = (
-                        f"verdict={report.verdict}, "
-                        f"structural_match={report.structural.match}, "
-                        f"metadata_match={report.metadata.match}, "
-                        f"bytecode_match={report.bytecode.match}"
-                    )
+                    parts = [
+                        f"verdict={report.verdict}",
+                        f"structural_match={report.structural.match}",
+                        f"metadata_match={report.metadata.match}",
+                        f"bytecode_match={report.bytecode.match}",
+                    ]
+                    if not report.structural.match and hasattr(report.structural, 'details'):
+                        details = report.structural.details
+                        if hasattr(details, 'missing_files') and details.missing_files:
+                            parts.append(f"missing_files={details.missing_files[:5]}")
+                        if hasattr(details, 'extra_files') and details.extra_files:
+                            parts.append(f"extra_files={details.extra_files[:5]}")
+                    if not report.metadata.match and hasattr(report.metadata, 'details'):
+                        details = report.metadata.details
+                        if hasattr(details, 'differing_keys') and details.differing_keys:
+                            parts.append(f"metadata_diffs={details.differing_keys[:5]}")
+                    if not report.bytecode.match and hasattr(report.bytecode, 'details'):
+                        details = report.bytecode.details
+                        if hasattr(details, 'divergent_classes') and details.divergent_classes:
+                            parts.append(f"bytecode_diffs={details.divergent_classes[:5]}")
+                    result.diff_summary = ", ".join(parts)
         except Exception as e:
             result.error_summary = f"L4 comparison error: {e}"
 
@@ -207,13 +228,13 @@ class Evaluator:
             copy_cmd = (
                 f"podman run --rm {tag} cat {shlex.quote(target_jar)}"
             )
-            proc = subprocess.run(
+            copy_proc = subprocess.run(
                 ["ssh", "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=no",
                  self._host, copy_cmd],
                 capture_output=True, timeout=120,
             )
-            if proc.returncode == 0 and proc.stdout:
-                local_jar.write_bytes(proc.stdout)
+            if copy_proc.returncode == 0 and copy_proc.stdout:
+                local_jar.write_bytes(copy_proc.stdout)
                 return local_jar
             return None
         except Exception as e:
