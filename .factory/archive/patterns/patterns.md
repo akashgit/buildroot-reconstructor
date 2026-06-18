@@ -4,7 +4,7 @@ tags:
   - patterns
 source: factory-archivist
 date: 2026-06-07
-updated: 2026-06-16T23:30
+updated: 2026-06-17T23:30
 ---
 
 # Cross-Project Patterns
@@ -180,3 +180,11 @@ The early termination counter tracked level changes (L1→L2→L3→L4) but not 
 ## First Revert After Long Keep Streak Reveals Hidden Assumptions
 Discovered in buildroot-reconstructor experiment #010 (first REVERT after 9 consecutive KEEPs, 2026-06-17).
 Nine consecutive KEEPs created an assumption that the guard chain (code review + eval scoring + E2E) catches all regressions. Experiment #010's catastrophic -19.4pp regression was only visible via the full 31-package benchmark — the code review was CLEAN, the eval score was not yet computed, and the CEO proceeded based on code quality alone. Pattern: long keep streaks can foster overconfidence in quality gates. When the gates do not include a COMPARISON against the baseline's operational metrics (not just code quality), architectural changes that shift runtime behavior (like early termination) can pass code review but fail operationally. The lesson: for changes that alter loop control flow or iteration behavior, the benchmark IS the gate — code review alone is insufficient.
+
+## Self-Referential Precheck False Positives
+Discovered in buildroot-reconstructor experiment #012 (KEEP, force-kept, 2026-06-17).
+The factory precheck system writes to `.factory/events.jsonl` during its own execution. When the precheck then scans for unexpected file modifications, it detects its OWN writes as a scope violation. Similarly, if `fixed_surfaces` is checked against an empty violation list, the check triggers vacuously. These are systemic false positives inherent to the precheck architecture, not experiment-specific issues. Pattern: when a quality gate system modifies state as part of its checking process, exclude its own artifacts from the check. Self-referential detection (the guard detecting its own traces) is a class of false positive that will recur on every experiment until the guard excludes its own write paths from the violation scan.
+
+## Checkpoint-and-Restore Validated: Elitist Gate Produces +0.025 After Early Termination Catastrophe
+Discovered in buildroot-reconstructor experiment #012 (KEEP, +0.025, 2026-06-17).
+Experiment #010 showed that early termination (`consecutive_no_improvement >= 3`) causes catastrophic regression (-19.4pp). Experiment #012 validated the alternative: an elitist gate with patience counter that RESTORES from the best-known state instead of TERMINATING the run. The +0.025 score improvement confirms the hypothesis. Pattern: when an iterative optimization loop regresses, the correct response is checkpoint-restore (preserve best state, continue exploring from it), NOT early termination (kill the run entirely). Termination assumes the optimizer is stuck; restore assumes it just needs a better starting point. For stochastic LLM-based optimizers where each iteration is non-deterministic, restore is almost always correct because the same prompt can produce different (and better) output on retry from a good checkpoint.

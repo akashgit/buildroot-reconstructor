@@ -1,6 +1,6 @@
 {
-  "project_name": "run-65e04373",
-  "generated_at": "2026-06-17 09:26:33.906040+00:00",
+  "project_name": "run-be2d42b6",
+  "generated_at": "2026-06-18 01:35:16.571058+00:00",
   "mode": "improve",
   "experiments_kept": [
     {
@@ -136,6 +136,21 @@
       "verdict": "keep",
       "cost_usd": null,
       "notes": "ceo:keep score_delta=-0.001 precheck=failed_false_positives agents_spawned=R,S,B,R,E pr_status=open_for_review hypothesis_type=code execution_artifacts=partial e2e=pass backlog_cleared=no review_pipeline=full review_iterations=1 final_review_iterations=3 benchmark_incomplete=true benchmark_packages=2_of_31 bugs_fixed=5",
+      "research_citations": []
+    },
+    {
+      "id": 12,
+      "timestamp": "2026-06-17 21:27:43.217947",
+      "hypothesis": "Add elitist gate with patience counter to prevent containerfile regression (issue #32)",
+      "change_summary": "Added patience_counter to loop.py that tracks consecutive iterations where reward < best_reward. After 2 consecutive regressions, restores containerfile from best_attempt. Allows 1 iteration of exploration below best. Zero additional evaluator calls.",
+      "issue_number": 32,
+      "pr_number": 33,
+      "score_before": null,
+      "score_after": null,
+      "delta": null,
+      "verdict": "keep",
+      "cost_usd": null,
+      "notes": "ceo:keep score_delta=+0.025 precheck=false_positives(score_direction:pre_existing_below_threshold,scope:self_referential_events_jsonl,fixed_surfaces:empty_violation) agents_spawned=R,S,B,R,E pr_status=open_for_review hypothesis_type=code execution_artifacts=na e2e=pass backlog_cleared=yes review_pipeline=full review_iterations=1 final_review_iterations=1",
       "research_citations": []
     }
   ],
