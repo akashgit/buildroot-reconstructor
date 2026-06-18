@@ -701,6 +701,8 @@ class AnalyzeAgent:
         iteration: int,
         dead_ends: list[DeadEndEntry],
         remediation_context: str = "",
+        containerfile: str = "",
+        build_log: str = "",
     ) -> AnalyzeAgentResult:
         results_summary = json.dumps(build_results[:5], indent=2, default=str)[:4000]
         dead_end_summary = "\n".join(
@@ -712,6 +714,14 @@ class AnalyzeAgent:
         if remediation_context:
             diagnostics_section = f"\n## Structured Diagnostics\n{remediation_context}\n"
 
+        containerfile_section = ""
+        if containerfile:
+            containerfile_section = f"\n## Current Containerfile\n```\n{containerfile}\n```\n"
+
+        build_log_section = ""
+        if build_log:
+            build_log_section = f"\n## Build Log (last 3000 chars)\n```\n{build_log[-3000:]}\n```\n"
+
         task = f"""\
 Analyze the failed build iteration {iteration} for {coordinate}.
 
@@ -720,7 +730,7 @@ Analyze the failed build iteration {iteration} for {coordinate}.
 
 ## Dead-End Registry
 {dead_end_summary}
-{diagnostics_section}
+{diagnostics_section}{containerfile_section}{build_log_section}
 Diagnose the root cause, identify the responsible node agent, and propose:
 1. Playbook DO/DON'T rules for future iterations
 2. spec_overrides (field_name -> new_value) to try in the next observe() cycle

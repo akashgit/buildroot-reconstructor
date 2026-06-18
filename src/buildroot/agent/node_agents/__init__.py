@@ -11,11 +11,6 @@ from buildroot.agent.node_agents.image_agent import ImageAgent
 from buildroot.agent.node_agents.tag_agent import TagAgent
 from buildroot.agent.node_agents.build_cmd_agent import BuildCmdAgent
 from buildroot.agent.node_agents.template_agent import TemplateAgent
-from buildroot.agent.node_agents.failure_agents import (
-    L2FailureAgent,
-    L3FailureAgent,
-    L4FailureAgent,
-)
 
 ALL_NODE_AGENTS = [
     PomAgent,
@@ -44,8 +39,5 @@ __all__ = [
     "TagAgent",
     "BuildCmdAgent",
     "TemplateAgent",
-    "L2FailureAgent",
-    "L3FailureAgent",
-    "L4FailureAgent",
     "ALL_NODE_AGENTS",
 ]
