@@ -1,7 +1,6 @@
-"""Tests for agent builder — GHA sanitization and prompt structure."""
+"""Tests for GHA sanitization (relocated from builder to analyzer)."""
 
-from buildroot.agent.builder import sanitize_gha_expressions
-from buildroot.agent.models import DeadEndEntry
+from buildroot.agent.analyzer import sanitize_gha_expressions
 
 
 class TestSanitizeGhaExpressions:
@@ -53,32 +52,3 @@ class TestSanitizeGhaExpressions:
     def test_no_expressions(self):
         cf = "FROM docker.io/library/maven:3.9\nRUN mvn clean install"
         assert sanitize_gha_expressions(cf) == cf
-
-
-class TestDeadEndFormatting:
-    def test_format_dead_ends_empty(self):
-        from buildroot.agent.builder import _format_dead_ends
-
-        result = _format_dead_ends([])
-        assert result == "None yet."
-
-    def test_format_dead_ends_with_exhausted(self):
-        from buildroot.agent.builder import _format_dead_ends
-
-        de = DeadEndEntry(
-            error_class="jdk_mismatch", approach="use jdk 8",
-            failure_count=3, threshold=2,
-        )
-        result = _format_dead_ends([de])
-        assert "DO NOT retry" in result
-        assert "jdk_mismatch" in result
-
-    def test_format_dead_ends_non_exhausted_skipped(self):
-        from buildroot.agent.builder import _format_dead_ends
-
-        de = DeadEndEntry(
-            error_class="jdk_mismatch", approach="use jdk 8",
-            failure_count=1, threshold=2,
-        )
-        result = _format_dead_ends([de])
-        assert result == "None exhausted yet."

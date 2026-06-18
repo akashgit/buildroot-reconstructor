@@ -13,7 +13,7 @@ from pathlib import Path
 import requests
 from dockerfile_parse import DockerfileParser
 
-from buildroot.agent.builder import sanitize_gha_expressions
+from buildroot.agent.analyzer import sanitize_gha_expressions
 from buildroot.agent.models import EvalResult
 from buildroot.pipeline.orchestrator import parse_gav
 from buildroot.utils.jar_comparator import compare_jars

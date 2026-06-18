@@ -30,7 +30,7 @@ class TestCheckSurfaces:
         assert result.passed
 
     def test_mutable_file_passes(self):
-        result = check_surfaces("src/buildroot/agent/builder.py\n")
+        result = check_surfaces("src/buildroot/agent/analyzer.py\n")
         assert result.passed
 
     def test_fixed_surface_fails(self):
@@ -64,7 +64,7 @@ class TestCheckSurfaces:
         assert result.passed
 
     def test_multiple_files_mixed(self):
-        diff = "src/buildroot/agent/builder.py\nsrc/buildroot/agent/evaluator.py\n"
+        diff = "src/buildroot/agent/analyzer.py\nsrc/buildroot/agent/evaluator.py\n"
         result = check_surfaces(diff)
         assert not result.passed
 
@@ -172,7 +172,7 @@ class TestRunTestGate:
 class TestCheckAll:
     def test_all_pass(self):
         result = check_all(
-            diff_output="src/buildroot/agent/builder.py\n",
+            diff_output="src/buildroot/agent/analyzer.py\n",
             solve_rate_before=0.3,
             solve_rate_after=0.5,
             historical_best=0.3,
@@ -193,7 +193,7 @@ class TestCheckAll:
 
     def test_regression_stops(self):
         result = check_all(
-            diff_output="src/buildroot/agent/builder.py\n",
+            diff_output="src/buildroot/agent/analyzer.py\n",
             solve_rate_before=0.5,
             solve_rate_after=0.3,
             historical_best=0.5,
@@ -204,9 +204,9 @@ class TestCheckAll:
 
     def test_file_names_used_for_surface_check(self):
         unified_diff = (
-            "diff --git a/src/buildroot/agent/builder.py b/src/buildroot/agent/builder.py\n"
-            "--- a/src/buildroot/agent/builder.py\n"
-            "+++ b/src/buildroot/agent/builder.py\n"
+            "diff --git a/src/buildroot/agent/analyzer.py b/src/buildroot/agent/analyzer.py\n"
+            "--- a/src/buildroot/agent/analyzer.py\n"
+            "+++ b/src/buildroot/agent/analyzer.py\n"
             "@@ -1,3 +1,3 @@\n"
             "-old line\n"
             "+new line\n"
@@ -217,7 +217,7 @@ class TestCheckAll:
             solve_rate_after=0.5,
             historical_best=0.3,
             run_tests=False,
-            file_names=["src/buildroot/agent/builder.py"],
+            file_names=["src/buildroot/agent/analyzer.py"],
         )
         assert result.passed
 
@@ -242,8 +242,8 @@ class TestSurfaceConstants:
     def test_jar_comparator_is_fixed(self):
         assert "src/buildroot/utils/jar_comparator.py" in FIXED_SURFACES
 
-    def test_builder_is_mutable(self):
-        assert "src/buildroot/agent/builder.py" in MUTABLE_SURFACES
+    def test_augmented_observer_is_mutable(self):
+        assert "src/buildroot/agent/augmented_observer.py" in MUTABLE_SURFACES
 
     def test_analyzer_is_mutable(self):
         assert "src/buildroot/agent/analyzer.py" in MUTABLE_SURFACES

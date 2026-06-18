@@ -121,3 +121,11 @@ class BuildrootSpec:
     source_repo: str = ""
     git_tag: str = ""
     gaps: GapReport = field(default_factory=GapReport)
+    extra_build_flags: list[str] = field(default_factory=list)
+    reproducibility_env: dict[str, str] = field(default_factory=dict)
+    metadata_strip_patterns: list[str] = field(default_factory=list)
+    pre_build_commands: list[str] = field(default_factory=list)
+    post_build_commands: list[str] = field(default_factory=list)
+    config_files: list[dict[str, str]] = field(default_factory=list)
+    template_id: str = ""
+    build_system: str = ""

@@ -14,6 +14,27 @@ from buildroot.agent.models import DeadEndEntry, EvalResult
 
 logger = logging.getLogger(__name__)
 
+GHA_EXPRESSION_RE = re.compile(r"\$\{\{[^}]*\}\}")
+
+
+def sanitize_gha_expressions(containerfile: str) -> str:
+    """Strip GitHub Actions expressions that leak from CI workflows into Containerfiles."""
+    lines = []
+    for line in containerfile.splitlines():
+        if GHA_EXPRESSION_RE.search(line):
+            stripped = line.strip()
+            if stripped.startswith("ARG ") or stripped.startswith("ENV "):
+                key_match = re.match(r"(ARG|ENV)\s+(\w+)=", stripped)
+                if key_match:
+                    lines.append(f"{key_match.group(1)} {key_match.group(2)}=")
+                    continue
+            cleaned = GHA_EXPRESSION_RE.sub("", line)
+            if cleaned.strip():
+                lines.append(cleaned)
+        else:
+            lines.append(line)
+    return "\n".join(lines)
+
 
 ERROR_PATTERNS: list[tuple[str, re.Pattern]] = [
     ("containerfile/parse_error", re.compile(
@@ -412,11 +433,11 @@ def build_remediation_context(
     error_history: list[str] | None = None,
     previous_progress: BuildProgress | None = None,
 ) -> str:
-    """Produce a rich remediation-context block for the builder agent.
+    """Produce a rich remediation-context block for diagnosis.
 
-    Bridges the analyzer→builder gap by packaging fix suggestions,
-    key build-log lines, error-trajectory warnings, build progress,
-    and root-cause details into a single structured prompt section.
+    Packages fix suggestions, key build-log lines, error-trajectory
+    warnings, build progress, and root-cause details into a single
+    structured prompt section.
     """
     sections: list[str] = []
 
@@ -497,9 +518,9 @@ def extract_build_signature(containerfile: str) -> str:
     return " | ".join(parts)
 
 
-def classify_error(error_summary: str, build_log: str = "") -> str:
+def classify_error(error_summary: str, build_log: str = "", *, diff_summary: str = "") -> str:
     """Classify a build error using regex patterns. Returns the error class string."""
-    combined = f"{error_summary}\n{build_log}"
+    combined = f"{error_summary}\n{build_log}\n{diff_summary}"
     for error_class, pattern in ERROR_PATTERNS:
         if pattern.search(combined):
             return error_class
@@ -596,7 +617,8 @@ ANALYZE_AGENT_SCHEMA = {
 
 ANALYZE_AGENT_SYSTEM = """\
 You are the AnalyzeAgent for the buildroot reconstruction pipeline. After each failed \
-build iteration, you receive the build logs from all candidate builds and must:
+build iteration, you receive the build results (including L4 JAR comparison data when \
+available) and must:
 
 1. Diagnose the root cause of the failure
 2. Identify which node agent (jdk, image, tag, build_cmd, repo, etc.) is responsible
@@ -609,10 +631,12 @@ build iteration, you receive the build logs from all candidate builds and must:
 You MUST use ONLY these exact field names in spec_overrides. Do NOT invent field names \
 like 'jdk_image', 'repo_url', 'repo_tag', 'pre_build_steps', or 'source_setup'.
 
+### Tier 1: Parameter Overrides
 - base_image (or image): Docker base image, e.g. 'eclipse-temurin:17-jdk'
-- jdk_version: JDK version string, e.g. '17', '11', '8'
+- jdk_version: JDK major version string, e.g. '17', '11', '8'
+- jdk_minor_version: exact JDK minor version, e.g. '11.0.20', '8u382' — use when L4 bytecode divergence indicates JDK version mismatch
 - jdk_distribution: JDK distribution, e.g. 'temurin', 'openjdk'
-- build_command (or build_cmd): main build command, e.g. 'mvn clean install -B', 'ant jar', 'gradle build'
+- build_command (or build_cmd): main build command, e.g. 'mvn clean install -B'
 - maven_version: Maven version string, e.g. '3.9.6'
 - git_tag (or tag, source_tag): git tag to clone
 - source_repo: git repository URL
@@ -620,6 +644,34 @@ like 'jdk_image', 'repo_url', 'repo_tag', 'pre_build_steps', or 'source_setup'.
 - extra_packages (or apt_packages): additional apt packages to append
 - image_setup_cmds (or pre_build_cmds): list of commands to run before the main build
 - pre_build_cmd: single command to prepend before the main build
+- extra_build_flags: list of flags to APPEND to the build command (e.g. ["-Dgpg.skip=true", "-Drat.skip=true"]). Do NOT rewrite the full build_command just to add flags — use this instead.
+- reproducibility_env: dict of environment variables for reproducible builds (e.g. {"SOURCE_DATE_EPOCH": "0", "TZ": "UTC"})
+- metadata_strip_patterns: list of additional sed patterns for MANIFEST.MF normalization (e.g. ["^Implementation-Title:", "^Bundle-Version:"])
+
+### Tier 2: Template Selection
+- build_system: "maven" | "gradle" | "ant" | "custom" — triggers template switch
+- template_id: explicit template name override (e.g. "gradle_base.j2", "custom_base.j2")
+
+### Tier 3: Injection Points
+- pre_build_commands: list of shell commands to run after git clone, before build (e.g. ["sed -i 's/-XX:MaxPermSize=256m//' pom.xml", "chmod +x gradlew"])
+- post_build_commands: list of shell commands to run after build, before JAR normalization
+- config_files: list of {path, content} dicts for files to write before build (e.g. [{"path": "/root/.m2/settings.xml", "content": "<settings>...</settings>"}])
+- env_vars: dict of additional environment variables to set
+
+## L4 Diagnosis Guidance
+
+When the build succeeds (L3) but JAR comparison fails (L4), the diff_summary and \
+comparison_verdict fields contain structured comparison data:
+- structural_match=False: JAR entry sets differ (missing/extra files)
+- metadata_match=False: MANIFEST.MF or pom.properties differ
+- bytecode_match=False: compiled .class files differ (likely JDK version mismatch)
+
+For L4 failures, focus on:
+1. Exact JDK minor version matching (use jdk_minor_version + base_image)
+2. Reproducibility env vars (SOURCE_DATE_EPOCH, TZ, build timestamps)
+3. Metadata stripping patterns (metadata_strip_patterns)
+4. Build flags for reproducibility (extra_build_flags)
+5. Pre/post build commands for normalization
 
 Output structured JSON with root_cause, responsible_agent, playbook_updates, \
 spec_overrides (field_name -> value), and is_systemic flag.
@@ -672,7 +724,7 @@ Diagnose the root cause, identify the responsible node agent, and propose:
         agent_result = spawn_claude_agent(
             task=task,
             system_prompt=ANALYZE_AGENT_SYSTEM,
-            model="claude-sonnet-4-6",
+            model="claude-opus-4-6",
             json_schema=ANALYZE_AGENT_SCHEMA,
             max_turns=3,
             max_budget_usd=2.0,

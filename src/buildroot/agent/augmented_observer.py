@@ -159,7 +159,7 @@ class AgentAugmentedObserver(Observer):
 
     _SILENTLY_SKIPPED_FIELDS = frozenset({
         "build_tool", "workdir", "artifact_path", "maven_profile",
-        "extra_maven_args", "env", "env_vars",
+        "extra_maven_args", "env",
     })
 
     @staticmethod
@@ -169,6 +169,8 @@ class AgentAugmentedObserver(Observer):
             if field_name in ("base_image", "image"):
                 spec.jdk_spec.base_image = value
             elif field_name == "jdk_version":
+                spec.jdk_spec.version = value
+            elif field_name == "jdk_minor_version":
                 spec.jdk_spec.version = value
             elif field_name == "jdk_distribution":
                 spec.jdk_spec.distribution = value
@@ -190,6 +192,34 @@ class AgentAugmentedObserver(Observer):
                 spec.build_commands = cmds + spec.build_commands
             elif field_name == "pre_build_cmd":
                 spec.build_commands = [value] + spec.build_commands
+            elif field_name == "extra_build_flags":
+                flags = [value] if isinstance(value, str) else list(value)
+                spec.extra_build_flags = flags
+            elif field_name == "reproducibility_env":
+                if isinstance(value, dict):
+                    spec.reproducibility_env.update(value)
+            elif field_name == "metadata_strip_patterns":
+                patterns = [value] if isinstance(value, str) else list(value)
+                spec.metadata_strip_patterns = patterns
+            elif field_name == "pre_build_commands":
+                cmds = [value] if isinstance(value, str) else list(value)
+                spec.pre_build_commands = cmds
+            elif field_name == "post_build_commands":
+                cmds = [value] if isinstance(value, str) else list(value)
+                spec.post_build_commands = cmds
+            elif field_name == "config_files":
+                if isinstance(value, list):
+                    spec.config_files = value
+            elif field_name == "env_vars":
+                if isinstance(value, dict):
+                    if spec.ci_data is None:
+                        from buildroot.pipeline.models import CIData
+                        spec.ci_data = CIData()
+                    spec.ci_data.env_vars.update(value)
+            elif field_name == "build_system":
+                spec.build_system = value
+            elif field_name == "template_id":
+                spec.template_id = value
             elif field_name in AgentAugmentedObserver._SILENTLY_SKIPPED_FIELDS:
                 pass
             elif field_name.startswith("dockerfile_"):

@@ -45,7 +45,9 @@ class ContainerfileGenerator:
     ) -> tuple[Path, Path]:
         output_dir.mkdir(parents=True, exist_ok=True)
 
-        template_name = self._select_template(spec)
+        template_name = self._select_template(
+            spec, template_id=spec.template_id, build_system=spec.build_system,
+        )
         template = self._env.get_template(template_name)
 
         context = self._build_template_context(spec)
@@ -117,7 +119,18 @@ class ContainerfileGenerator:
             "gap_report": gap_entries,
         }
 
-    def _select_template(self, spec: BuildrootSpec) -> str:
+    _BUILD_SYSTEM_TEMPLATE_MAP = {
+        "maven": "jdk_base.j2",
+        "gradle": "gradle_base.j2",
+        "ant": "jdk_base.j2",
+        "custom": "custom_base.j2",
+    }
+
+    def _select_template(self, spec: BuildrootSpec, *, template_id: str = "", build_system: str = "") -> str:
+        if template_id:
+            return template_id
+        if build_system and build_system in self._BUILD_SYSTEM_TEMPLATE_MAP:
+            return self._BUILD_SYSTEM_TEMPLATE_MAP[build_system]
         if spec.base_image:
             return "custom_base.j2"
         build_cmd = spec.build_commands[0] if spec.build_commands else ""
@@ -181,6 +194,12 @@ class ContainerfileGenerator:
             "custom_image": spec.base_image,
             "image_source": "CI container reference",
             "image_confidence": Source.OBSERVED.value.upper(),
+            "extra_build_flags": spec.extra_build_flags,
+            "pre_build_commands": spec.pre_build_commands,
+            "post_build_commands": spec.post_build_commands,
+            "config_files": spec.config_files,
+            "metadata_strip_patterns": spec.metadata_strip_patterns,
+            "reproducibility_env": spec.reproducibility_env,
         }
 
     def _resolve_build_command(self, spec: BuildrootSpec) -> str:
