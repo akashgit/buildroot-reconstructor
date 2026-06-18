@@ -89,7 +89,7 @@ class NodeAgent:
     node_name: str = ""
     field_name: str = ""
     system_prompt: str = ""
-    allowed_tools: tuple[str, ...] = ("Read", "Bash", "WebSearch")
+    allowed_tools: list[str] = field(default_factory=lambda: ["Read", "Bash", "WebSearch"])
 
     def should_activate(
         self, gap_report: GapReport, spec_overrides: dict[str, Any] | None = None,

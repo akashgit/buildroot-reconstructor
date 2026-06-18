@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from buildroot.agent.node_agents.base import NodeAgent
-from buildroot.pipeline.models import BuildrootSpec, Source
+from buildroot.pipeline.models import BuildrootSpec
 
 SYSTEM_PROMPT = """\
 You are a Maven property resolution specialist for the buildroot reconstruction pipeline.
@@ -54,7 +54,7 @@ class PropertyAgent(NodeAgent):
             f"Source repo: {spec.source_repo}\n\n"
             f"Unresolved properties:\n"
             + "\n".join(f"  {k} = {v}" for k, v in unresolved.items())
-            + f"\n\nCI environment variables:\n"
+            + "\n\nCI environment variables:\n"
             + "\n".join(f"  {k} = {v}" for k, v in ci_env.items())
             + "\n\nSearch the source repo and CI configs for these property values."
         )

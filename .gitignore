@@ -8,4 +8,4 @@ build/
 .coverage
 htmlcov/
 *.egg
-.factory
+.factory/

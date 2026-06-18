@@ -314,7 +314,7 @@ class JdkResolver:
         return version
 
     def _detect_conflicts(self, signals: list[dict[str, str]]) -> list[dict[str, str]]:
-        versions = {}
+        versions: dict[str, list[str]] = {}
         for sig in signals:
             v = sig.get("version", "")
             if v:

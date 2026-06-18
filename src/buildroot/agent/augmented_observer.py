@@ -210,24 +210,24 @@ class AgentAugmentedObserver(Observer):
         diagnosis: FailureDiagnosis | None = None
 
         if level_reached < 2:
-            agent = L2FailureAgent()
-            diagnosis = agent.diagnose(spec, containerfile, build_log)
+            l2_agent = L2FailureAgent()
+            diagnosis = l2_agent.diagnose(spec, containerfile, build_log)
             if diagnosis:
-                agent.apply_fixes(spec, diagnosis)
+                l2_agent.apply_fixes(spec, diagnosis)
         elif level_reached < 3:
-            agent = L3FailureAgent()
-            diagnosis = agent.diagnose(spec, containerfile, build_log)
+            l3_agent = L3FailureAgent()
+            diagnosis = l3_agent.diagnose(spec, containerfile, build_log)
             if diagnosis:
-                agent.apply_fixes(spec, diagnosis)
+                l3_agent.apply_fixes(spec, diagnosis)
         elif level_reached < 4:
-            agent = L4FailureAgent()
-            diagnosis = agent.diagnose(
+            l4_agent = L4FailureAgent()
+            diagnosis = l4_agent.diagnose(
                 spec, containerfile, build_log,
                 diff_summary=diff_summary,
                 comparison_verdict=comparison_verdict,
             )
             if diagnosis:
-                agent.apply_fixes(spec, diagnosis)
+                l4_agent.apply_fixes(spec, diagnosis)
 
         if diagnosis and diagnosis.fixes:
             new_containerfile = self._re_render(spec)

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import logging
 import re
+from typing import Any
 
 from ruamel.yaml import YAML
 
@@ -156,7 +157,7 @@ class CIParser:
             return val
 
         parts = ref_path.split(".")
-        current = matrix
+        current: Any = matrix
         for part in parts:
             if isinstance(current, dict):
                 current = current.get(part)
