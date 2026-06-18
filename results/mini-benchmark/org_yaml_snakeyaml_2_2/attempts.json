@@ -1,0 +1,210 @@
+{
+  "coordinate": "org.yaml:snakeyaml:2.2",
+  "status": "success",
+  "best_reward": 1.0,
+  "iterations": 3,
+  "elapsed_seconds": 3170.8,
+  "attempts": [
+    {
+      "id": "4df58c5f-bdd5-455f-9754-41ca008c1ce2",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "build_tool/wrong_build_system",
+      "build_log_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please verify you invoked Maven from the correct directory. -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR] Re-run Maven using the -X switch to enable full debug logging.\n[ERROR] For more information about the errors and possible solutions, please",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781777644.2194088
+    },
+    {
+      "id": "57969afc-ad53-4904-b987-bb1f87faff00",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "build_tool/wrong_build_system",
+      "build_log_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please verify you invoked Maven from the correct directory. -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR] Re-run Maven using the -X switch to enable full debug logging.\n[ERROR] For more information about the errors and possible solutions, please",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781777664.9545348
+    },
+    {
+      "id": "0a90b882-3f1d-4983-8c99-f7259cf6cfe6",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "build_tool/wrong_build_system",
+      "build_log_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please verify you invoked Maven from the correct directory. -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR] Re-run Maven using the -X switch to enable full debug logging.\n[ERROR] For more information about the errors and possible solutions, please",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781777685.6436975
+    },
+    {
+      "id": "533be521-a031-4493-8d10-0be1537fb3a5",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "build_tool/wrong_build_system",
+      "build_log_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please verify you invoked Maven from the correct directory. -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR] Re-run Maven using the -X switch to enable full debug logging.\n[ERROR] For more information about the errors and possible solutions, please",
+      "diff_summary": "",
+      "fix_applied": "refine: This project uses Gradle, not Maven. Switch the build command to use './gradlew build' or install Gr",
+      "timestamp": 1781777701.3585846
+    },
+    {
+      "id": "ae4d8704-cdb9-403f-9650-d4f159965842",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "source/wrong_tag",
+      "build_log_summary": "Cloning into '/build'...\nfatal: Remote branch v2.2 not found in upstream origin\nError: building at STEP \"RUN git clone --depth 1 --branch 'v2.2' 'https://github.com/snakeyaml/snakeyaml' /build\": while running runtime: exit status 128",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781778583.661517
+    },
+    {
+      "id": "d17474dc-a8b8-4fe4-b005-baf770af5f7a",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "source/wrong_tag",
+      "build_log_summary": "Cloning into '/build'...\nfatal: Remote branch v2.2 not found in upstream origin\nError: building at STEP \"RUN git clone --depth 1 --branch 'v2.2' 'https://github.com/snakeyaml/snakeyaml' /build\": while running runtime: exit status 128",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781778615.5513487
+    },
+    {
+      "id": "5491a4ad-edb5-4f3c-8d98-f9fe1c9424a6",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "source/wrong_tag",
+      "build_log_summary": "Cloning into '/build'...\nfatal: Remote branch v2.2 not found in upstream origin\nError: building at STEP \"RUN git clone --depth 1 --branch 'v2.2' 'https://github.com/snakeyaml/snakeyaml' /build\": while running runtime: exit status 128",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781778652.8284137
+    },
+    {
+      "id": "20ca4574-c8f2-47f6-95d5-04935b3df0ac",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "build_tool/wrong_build_system",
+      "build_log_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please verify you invoked Maven from the correct directory. -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR] Re-run Maven using the -X switch to enable full debug logging.\n[ERROR] For more information about the errors and possible solutions, please",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781778673.8099358
+    },
+    {
+      "id": "39b187ac-6a08-4bb9-99ae-189abbdcb540",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "source/wrong_tag",
+      "build_log_summary": "Cloning into '/build'...\nfatal: Remote branch snakeyaml-2.2 not found in upstream origin\nError: building at STEP \"RUN git clone --depth 1 --branch 'snakeyaml-2.2' 'https://github.com/snakeyaml/snakeyaml' /build\": while running runtime: exit status 128",
+      "diff_summary": "",
+      "fix_applied": "refine: Try alternate tag formats: remove 'v' prefix, try 'rel/' prefix, or use the branch name.",
+      "timestamp": 1781778945.1566675
+    },
+    {
+      "id": "4b24cfa3-95f8-4a0b-a5ae-19f53c80f249",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "source/wrong_tag",
+      "build_log_summary": "Cloning into '/build'...\nfatal: Remote branch 2.2 not found in upstream origin\nError: building at STEP \"RUN git clone --depth 1 --branch '2.2' 'https://github.com/snakeyaml/snakeyaml' /build\": while running runtime: exit status 128",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781779806.7988255
+    },
+    {
+      "id": "23de81dd-1c43-4fee-91cf-9a36083614a4",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "source/wrong_tag",
+      "build_log_summary": "Cloning into '/build'...\nfatal: Remote branch 2.2 not found in upstream origin\nError: building at STEP \"RUN git clone --depth 1 --branch '2.2' 'https://github.com/snakeyaml/snakeyaml' /build\": while running runtime: exit status 128",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781779833.744381
+    },
+    {
+      "id": "891f900b-8b3b-4895-9c9c-2c166f02b471",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "source/wrong_tag",
+      "build_log_summary": "Cloning into '/build'...\nfatal: Remote branch 2.2 not found in upstream origin\nError: building at STEP \"RUN git clone --depth 1 --branch '2.2' 'https://github.com/snakeyaml/snakeyaml' /build\": while running runtime: exit status 128",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781779855.6248438
+    },
+    {
+      "id": "65ba5a72-e62b-470b-b530-0422bc584fa1",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "source/wrong_tag",
+      "build_log_summary": "Cloning into '/build'...\nfatal: Remote branch snakeyaml-2.2 not found in upstream origin\nError: building at STEP \"RUN git clone --depth 1 --branch 'snakeyaml-2.2' 'https://github.com/snakeyaml/snakeyaml' /build\": while running runtime: exit status 128",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781779883.7882876
+    },
+    {
+      "id": "68497c88-432c-4307-8262-f344584d5649",
+      "parent_id": null,
+      "reward": 1.0,
+      "level_reached": 4,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "",
+      "timestamp": 1781780213.4006834
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "build_tool/wrong_build_system",
+      "approach": "FROM docker.io/library/eclipse-temurin:11-jdk | RUN mvn clean install -B -DskipTests -Dproject.build.outputTimestamp=1980-01-01T00:00:00Z | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 4,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please veri",
+        "[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please veri",
+        "[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please veri"
+      ]
+    },
+    {
+      "error_class": "source/wrong_tag",
+      "approach": "FROM eclipse-temurin:11-jdk | RUN bash -c 'D=$(find /build -maxdepth 3 -name pom.xml ! -path \"*/target/*\" | head -1 | xargs dirname); cd \"$D\" && mvn c | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "Cloning into '/build'...\nfatal: Remote branch v2.2 not found in upstream origin\nError: building at STEP \"RUN git clone --depth 1 --branch 'v2.2' 'https://github.com/snakeyaml/snakeyaml' /build\": while",
+        "Cloning into '/build'...\nfatal: Remote branch v2.2 not found in upstream origin\nError: building at STEP \"RUN git clone --depth 1 --branch 'v2.2' 'https://github.com/snakeyaml/snakeyaml' /build\": while"
+      ]
+    },
+    {
+      "error_class": "source/wrong_tag",
+      "approach": "FROM eclipse-temurin:11-jdk | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "Cloning into '/build'...\nfatal: Remote branch snakeyaml-2.2 not found in upstream origin\nError: building at STEP \"RUN git clone --depth 1 --branch 'snakeyaml-2.2' 'https://github.com/snakeyaml/snakeya",
+        "Cloning into '/build'...\nfatal: Remote branch snakeyaml-2.2 not found in upstream origin\nError: building at STEP \"RUN git clone --depth 1 --branch 'snakeyaml-2.2' 'https://github.com/snakeyaml/snakeya"
+      ]
+    },
+    {
+      "error_class": "source/wrong_tag",
+      "approach": "FROM eclipse-temurin:11-jdk | RUN mvn clean install -B -DskipTests -Dproject.build.outputTimestamp=1980-01-01T00:00:00Z | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "Cloning into '/build'...\nfatal: Remote branch 2.2 not found in upstream origin\nError: building at STEP \"RUN git clone --depth 1 --branch '2.2' 'https://github.com/snakeyaml/snakeyaml' /build\": while r",
+        "Cloning into '/build'...\nfatal: Remote branch 2.2 not found in upstream origin\nError: building at STEP \"RUN git clone --depth 1 --branch '2.2' 'https://github.com/snakeyaml/snakeyaml' /build\": while r"
+      ]
+    }
+  ]
+}

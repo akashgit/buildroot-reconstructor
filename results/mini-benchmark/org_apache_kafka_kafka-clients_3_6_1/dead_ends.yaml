@@ -1,0 +1,144 @@
+- error_class: build_tool/wrong_build_system
+  approach: FROM docker.io/library/eclipse-temurin:17-jdk | RUN mvn clean 
+    install -B -DskipTests -Papache-release 
+    -Dproject.build.outputTimestamp=1980-01-01T00:00:00Z | ENV 
+    SOURCE_DATE_EPOCH=0
+  failure_count: 4
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "[INFO] Scanning for projects...\n[WARNING] The requested profile \"apache-release\"\
+    \ could not be activated because it does not exist.\n[INFO] --------------------------------------------------------------"
+  - "[INFO] Scanning for projects...\n[WARNING] The requested profile \"apache-release\"\
+    \ could not be activated because it does not exist.\n[INFO] --------------------------------------------------------------"
+  - "[INFO] Scanning for projects...\n[WARNING] The requested profile \"apache-release\"\
+    \ could not be activated because it does not exist.\n[INFO] --------------------------------------------------------------"
+- error_class: build_tool/wrong_build_system
+  approach: FROM eclipse-temurin:17-jdk | RUN ./gradlew :clients:jar -x test 
+    --no-daemon | ENV SOURCE_DATE_EPOCH=0
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "/bin/sh: 1: ./gradlew: not found\nError: building at STEP \"RUN ./gradlew :clients:jar
+    -x test --no-daemon\": while running runtime: exit status 127"
+  - "/bin/sh: 1: ./gradlew: not found\nError: building at STEP \"RUN ./gradlew :clients:jar
+    -x test --no-daemon\": while running runtime: exit status 127"
+- error_class: unknown
+  approach: FROM eclipse-temurin:17-jdk | RUN ./gradlew :clients:jar -x test -x 
+    integrationTest -x rat -x checkstyleMain -x checkstyleTest -x spotbugsMain 
+    -x java | ENV SOURCE_DATE_EPOCH=0
+  failure_count: 4
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM eclipse-temurin:17-jdk | RUN chmod +x gradlew | ENV 
+    SOURCE_DATE_EPOCH=0
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+- error_class: unknown
+  approach: FROM eclipse-temurin:11-jdk | ENV SOURCE_DATE_EPOCH=0
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+- error_class: unknown
+  approach: FROM ubuntu:24.04 | ENV DEBIAN_FRONTEND=noninteractive | ENV 
+    SOURCE_DATE_EPOCH=0
+  failure_count: 10
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - time="2026-06-18T05:29:18Z" level=error msg="+(UNHANDLED LOGLEVEL) 
+    &imagebuilder.Step{Env:[]string{\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\",
+    \"DEBIAN_FRONTEND=noninteracti
+  - time="2026-06-18T05:29:32Z" level=error msg="+(UNHANDLED LOGLEVEL) 
+    &imagebuilder.Step{Env:[]string{\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\",
+    \"DEBIAN_FRONTEND=noninteracti
+  - time="2026-06-18T05:56:18Z" level=error msg="+(UNHANDLED LOGLEVEL) 
+    &imagebuilder.Step{Env:[]string{\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\",
+    \"DEBIAN_FRONTEND=noninteracti
+- error_class: unknown
+  approach: FROM docker.io/library/gradle:8.2.1-jdk17 | RUN gradle :clients:jar 
+    -x test -x integrationTest -x rat -x checkstyleMain -x checkstyleTest -x 
+    spotbugsMain -x javadoc | ENV SOURCE_DATE_EPOCH=0
+  failure_count: 3
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/gradle:8.2.1-jdk11 | RUN printf 'allprojects 
+    {\n  tasks.withType(AbstractArchiveTask).configureEach {\n    
+    preserveFileTimestamps = false\n   | ENV SOURCE_DATE_EPOCH=0
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "Setting up ca-certificates-java (20190909ubuntu1.3) ...\nhead: cannot open '/etc/ssl/certs/java/cacerts'
+    for reading: No such file or directory\nAdding debian:ePKI_Root_Certification_Authority.pem\n\
+    * Wha"
+  - "Setting up ca-certificates-java (20190909ubuntu1.3) ...\nhead: cannot open '/etc/ssl/certs/java/cacerts'
+    for reading: No such file or directory\nAdding debian:ePKI_Root_Certification_Authority.pem\n\
+    * Wha"
+- error_class: unknown
+  approach: FROM ubuntu:24.04 | RUN mkdir -p /root/.gradle/init.d | ENV 
+    DEBIAN_FRONTEND=noninteractive | ENV SOURCE_DATE_EPOCH=0
+  failure_count: 10
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - time="2026-06-18T07:17:06Z" level=error msg="+(UNHANDLED LOGLEVEL) 
+    &imagebuilder.Step{Env:[]string{\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\",
+    \"DEBIAN_FRONTEND=noninteracti
+  - time="2026-06-18T07:17:20Z" level=error msg="+(UNHANDLED LOGLEVEL) 
+    &imagebuilder.Step{Env:[]string{\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\",
+    \"DEBIAN_FRONTEND=noninteracti
+  - time="2026-06-18T08:31:46Z" level=error msg="+(UNHANDLED LOGLEVEL) 
+    &imagebuilder.Step{Env:[]string{\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\",
+    \"DEBIAN_FRONTEND=noninteracti
+- error_class: unknown
+  approach: FROM docker.io/library/amazoncorretto:17 | RUN chmod +x gradlew && \
+    | ENV SOURCE_DATE_EPOCH=0
+  failure_count: 3
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM ubuntu:24.04 | RUN export GRADLE_OPTS='-Xmx2g 
+    -Dfile.encoding=UTF-8' | ENV DEBIAN_FRONTEND=noninteractive | ENV 
+    SOURCE_DATE_EPOCH=0
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - time="2026-06-18T08:09:29Z" level=error msg="+(UNHANDLED LOGLEVEL) 
+    &imagebuilder.Step{Env:[]string{\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\",
+    \"DEBIAN_FRONTEND=noninteracti
+  - time="2026-06-18T08:09:44Z" level=error msg="+(UNHANDLED LOGLEVEL) 
+    &imagebuilder.Step{Env:[]string{\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\",
+    \"DEBIAN_FRONTEND=noninteracti
+- error_class: unknown
+  approach: FROM docker.io/library/amazoncorretto:11 | RUN chmod +x gradlew && \
+    | ENV SOURCE_DATE_EPOCH=0
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''

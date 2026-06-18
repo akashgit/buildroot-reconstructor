@@ -1,0 +1,261 @@
+- error_class: build_tool/wrong_build_system
+  approach: FROM docker.io/library/eclipse-temurin:8-jdk | RUN mvn clean install
+    -B -DskipTests -Dgpg.skip=true -Drat.skip=true 
+    -Dproject.build.outputTimestamp=1980-01-01T00:00:00 | ENV 
+    SOURCE_DATE_EPOCH=0
+  failure_count: 4
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "[INFO] ------------------------------------------------------------------------\n\
+    [ERROR] The goal you specified requires a project to execute but there is no POM
+    in this directory (/build). Please veri"
+  - "[INFO] ------------------------------------------------------------------------\n\
+    [ERROR] The goal you specified requires a project to execute but there is no POM
+    in this directory (/build). Please veri"
+  - "[INFO] ------------------------------------------------------------------------\n\
+    [ERROR] The goal you specified requires a project to execute but there is no POM
+    in this directory (/build). Please veri"
+- error_class: unknown
+  approach: FROM eclipse-temurin:8-jdk | ENV SOURCE_DATE_EPOCH=0
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.6-jdk-8 | RUN mvn clean install -B 
+    -DskipTests -Dgpg.skip=true -Drat.skip=true 
+    -Dproject.build.outputTimestamp=1
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "E: The repository 'http://deb.debian.org/debian buster-updates Release' does
+    not have a Release file.\nError: building at STEP \"RUN apt-get update &&    \
+    \ apt-get install -y --no-install-recommends git "
+  - "E: The repository 'http://security.debian.org/debian-security buster/updates
+    Release' does not have a Release file.\nError: building at STEP \"RUN apt-get
+    update &&     apt-get install -y --no-install-r"
+- error_class: unknown
+  approach: FROM maven:3.9.6-eclipse-temurin-8 | ENV SOURCE_DATE_EPOCH=0
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-8\nError: creating build container:
+    short-name resolution enforced but cannot prompt without a TTY"
+  - "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-8\nError: creating build container:
+    short-name resolution enforced but cannot prompt without a TTY"
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-amazoncorretto-8 | RUN mvn clean 
+    install -B -DskipTests -Dgpg.skip=true -Drat.skip=true 
+    -Dproject.build.outputTimestamp=1 | ENV SOURCE_DATE_EPOCH=0
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - ''
+- error_class: unknown
+  approach: FROM maven:3.8.6-eclipse-temurin-8 | ENV SOURCE_DATE_EPOCH=0
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "STEP 1/8: FROM maven:3.8.6-eclipse-temurin-8\nError: creating build container:
+    short-name resolution enforced but cannot prompt without a TTY"
+  - "STEP 1/8: FROM maven:3.8.6-eclipse-temurin-8\nError: creating build container:
+    short-name resolution enforced but cannot prompt without a TTY"
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.8-eclipse-temurin-8 | RUN mvn clean 
+    install -B -DskipTests -Dgpg.skip=true -Drat.skip=true \ | ENV 
+    SOURCE_DATE_EPOCH=1565827200
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - ''
+- error_class: unknown
+  approach: FROM maven:3.6.3-jdk-8 | RUN mvn dependency:resolve-plugins -B -q ||
+    true -Dproject.build.outputTimestamp=1980-01-01T00:00:00Z | ENV 
+    SOURCE_DATE_EPOCH=0
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "STEP 1/8: FROM maven:3.6.3-jdk-8\nError: creating build container: short-name
+    resolution enforced but cannot prompt without a TTY"
+  - "STEP 1/8: FROM maven:3.6.3-jdk-8\nError: creating build container: short-name
+    resolution enforced but cannot prompt without a TTY"
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.8-amazoncorretto-8 | RUN mvn clean 
+    install -B -DskipTests -Dgpg.skip=true -Drat.skip=true \ | ENV 
+    SOURCE_DATE_EPOCH=1565827200
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - ''
+- error_class: unknown
+  approach: FROM maven:3.6.3-jdk-8 | ENV SOURCE_DATE_EPOCH=0
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "STEP 1/8: FROM maven:3.6.3-jdk-8\nError: creating build container: short-name
+    resolution enforced but cannot prompt without a TTY"
+  - "STEP 1/8: FROM maven:3.6.3-jdk-8\nError: creating build container: short-name
+    resolution enforced but cannot prompt without a TTY"
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.8.8-eclipse-temurin-8 | RUN mvn clean
+    package -B -DskipTests -Dgpg.skip=true -Drat.skip=true \ | ENV 
+    SOURCE_DATE_EPOCH=1565827200
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - ''
+- error_class: unknown
+  approach: FROM maven:3.6.3-jdk-8 | ENV MAVEN_HOME=/opt/apache-maven-3.6.2 | 
+    ENV SOURCE_DATE_EPOCH=0
+  failure_count: 4
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "STEP 1/9: FROM maven:3.6.3-jdk-8\nError: creating build container: short-name
+    resolution enforced but cannot prompt without a TTY"
+  - "STEP 1/9: FROM maven:3.6.3-jdk-8\nError: creating build container: short-name
+    resolution enforced but cannot prompt without a TTY"
+  - "STEP 1/9: FROM maven:3.6.3-jdk-8\nError: creating build container: short-name
+    resolution enforced but cannot prompt without a TTY"
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.8.8-eclipse-temurin-8 | RUN mvn clean
+    install -B -DskipTests -Dgpg.skip=true -Drat.skip=true \ | ENV 
+    SOURCE_DATE_EPOCH=1569024000 | ENV TZ=UTC | ENV LC_ALL=C
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/amazoncorretto:8 | RUN mvn clean install -B 
+    -DskipTests -Dgpg.skip=true -Drat.skip=true \ | ENV 
+    MAVEN_HOME=/opt/apache-maven-3.8.8 | ENV 
+    PATH=/opt/apache-maven-3.8.8/bin:${PATH} | ENV SOURCE_DATE_EPOCH=1569024000 
+    | ENV TZ=UTC | ENV LC_ALL=C
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM ubuntu:24.04 | ENV DEBIAN_FRONTEND=noninteractive | ENV 
+    JAVA_HOME=/usr/lib/jvm/jdk-8 | ENV PATH="${JAVA_HOME}/bin:${PATH}" | ENV 
+    MAVEN_HOME=/opt/apache-maven-3.6.2 | ENV SOURCE_DATE_EPOCH=0
+  failure_count: 4
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - time="2026-06-18T07:25:11Z" level=error msg="+(UNHANDLED LOGLEVEL) 
+    &imagebuilder.Step{Env:[]string{\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\",
+    \"DEBIAN_FRONTEND=noninteracti
+  - time="2026-06-18T07:25:35Z" level=error msg="+(UNHANDLED LOGLEVEL) 
+    &imagebuilder.Step{Env:[]string{\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\",
+    \"DEBIAN_FRONTEND=noninteracti
+  - time="2026-06-18T07:57:18Z" level=error msg="+(UNHANDLED LOGLEVEL) 
+    &imagebuilder.Step{Env:[]string{\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\",
+    \"DEBIAN_FRONTEND=noninteracti
+- error_class: environment/image_resolution
+  approach: FROM docker.io/library/openjdk:8-jdk-slim | RUN mvn clean install -B
+    -DskipTests -Dgpg.skip=true -Drat.skip=true \ | ENV 
+    MAVEN_HOME=/opt/apache-maven-3.6.2 | ENV 
+    PATH=/opt/apache-maven-3.6.2/bin:${PATH} | ENV SOURCE_DATE_EPOCH=1569024000 
+    | ENV TZ=UTC | ENV LC_ALL=C
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "Trying to pull docker.io/library/openjdk:8-jdk-slim...\nError: creating build
+    container: initializing source docker://openjdk:8-jdk-slim: reading manifest 8-jdk-slim
+    in docker.io/library/openjdk: manif"
+  - "Trying to pull docker.io/library/openjdk:8-jdk-slim...\nError: creating build
+    container: initializing source docker://openjdk:8-jdk-slim: reading manifest 8-jdk-slim
+    in docker.io/library/openjdk: manif"
+- error_class: unknown
+  approach: FROM ubuntu:24.04 | ENV DEBIAN_FRONTEND=noninteractive | ENV 
+    MAVEN_HOME=/opt/apache-maven-3.8.8 | ENV SOURCE_DATE_EPOCH=0
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - time="2026-06-18T08:24:07Z" level=error msg="+(UNHANDLED LOGLEVEL) 
+    &imagebuilder.Step{Env:[]string{\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\",
+    \"DEBIAN_FRONTEND=noninteracti
+  - time="2026-06-18T08:24:26Z" level=error msg="+(UNHANDLED LOGLEVEL) 
+    &imagebuilder.Step{Env:[]string{\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\",
+    \"DEBIAN_FRONTEND=noninteracti
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.8.8-eclipse-temurin-8 | RUN mvn clean
+    package -B -DskipTests -Dgpg.skip=true -Drat.skip=true 
+    -Dcheckstyle.skip=true -Dmaven.javadoc.skip=true -D | ENV TZ=UTC | ENV 
+    LC_ALL=C | ENV SOURCE_DATE_EPOCH=1569024000
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - ''
+- error_class: unknown
+  approach: FROM ubuntu:24.04 | ENV DEBIAN_FRONTEND=noninteractive | ENV 
+    MAVEN_HOME=/opt/apache-maven-3.6.0 | ENV SOURCE_DATE_EPOCH=0
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - time="2026-06-18T08:50:48Z" level=error msg="+(UNHANDLED LOGLEVEL) 
+    &imagebuilder.Step{Env:[]string{\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\",
+    \"DEBIAN_FRONTEND=noninteracti
+  - time="2026-06-18T08:51:02Z" level=error msg="+(UNHANDLED LOGLEVEL) 
+    &imagebuilder.Step{Env:[]string{\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\",
+    \"DEBIAN_FRONTEND=noninteracti
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.8.8-eclipse-temurin-8 | RUN mvn clean
+    install -B -e -DskipTests -Dgpg.skip=true -Drat.skip=true \ | ENV TZ=UTC | 
+    ENV LC_ALL=C | ENV SOURCE_DATE_EPOCH=1569024000
+  failure_count: 3
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM ubuntu:24.04 | ENV DEBIAN_FRONTEND=noninteractive | ENV 
+    MAVEN_HOME=/opt/apache-maven-3.6.1 | ENV SOURCE_DATE_EPOCH=0
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - time="2026-06-18T09:21:23Z" level=error msg="+(UNHANDLED LOGLEVEL) 
+    &imagebuilder.Step{Env:[]string{\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\",
+    \"DEBIAN_FRONTEND=noninteracti
+  - time="2026-06-18T09:21:43Z" level=error msg="+(UNHANDLED LOGLEVEL) 
+    &imagebuilder.Step{Env:[]string{\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\",
+    \"DEBIAN_FRONTEND=noninteracti
+- error_class: unknown
+  approach: FROM ubuntu:24.04 | ENV DEBIAN_FRONTEND=noninteractive | ENV 
+    MAVEN_HOME=/opt/apache-maven-3.6.3 | ENV SOURCE_DATE_EPOCH=0
+  failure_count: 4
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - time="2026-06-18T09:53:26Z" level=error msg="+(UNHANDLED LOGLEVEL) 
+    &imagebuilder.Step{Env:[]string{\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\",
+    \"DEBIAN_FRONTEND=noninteracti
+  - time="2026-06-18T09:53:41Z" level=error msg="+(UNHANDLED LOGLEVEL) 
+    &imagebuilder.Step{Env:[]string{\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\",
+    \"DEBIAN_FRONTEND=noninteracti
+  - time="2026-06-18T10:22:10Z" level=error msg="+(UNHANDLED LOGLEVEL) 
+    &imagebuilder.Step{Env:[]string{\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\",
+    \"DEBIAN_FRONTEND=noninteracti

@@ -1,0 +1,6 @@
+com.fasterxml.jackson.core:jackson-core:2.15.3
+com.jayway.jsonpath:json-path:2.9.0
+commons-beanutils:commons-beanutils:1.9.4
+org.apache.kafka:kafka-clients:3.6.1
+org.assertj:assertj-core:3.25.1
+org.yaml:snakeyaml:2.2

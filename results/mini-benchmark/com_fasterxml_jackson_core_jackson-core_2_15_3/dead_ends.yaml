@@ -1,0 +1,336 @@
+- error_class: plugin/configuration_error
+  approach: FROM docker.io/library/eclipse-temurin:8-jdk | ENV 
+    MAVEN_HOME=/opt/apache-maven-3.9.11 | ENV GH_TOKEN=${{ secrets.GITHUB_TOKEN 
+    }} | ENV JAVA_OPTS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 | ENV 
+    CI_DEPLOY_USERNAME=${{ secrets.CI_DEPLOY_USERNAME }} | ENV 
+    CI_DEPLOY_PASSWORD=${{ secrets.CI_DEPLOY_PASSWORD }}
+  failure_count: 4
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "[INFO] ------------------------------------------------------------------------\n\
+    [ERROR] Failed to execute goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar
+    (default-jar) on project jackson-core"
+  - "[INFO] ------------------------------------------------------------------------\n\
+    [ERROR] Failed to execute goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar
+    (default-jar) on project jackson-core"
+  - "[INFO] ------------------------------------------------------------------------\n\
+    [ERROR] Failed to execute goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar
+    (default-jar) on project jackson-core"
+- error_class: unknown
+  approach: FROM docker.io/library/eclipse-temurin:8-jdk | RUN mvn clean install
+    -B -Dproject.build.outputTimestamp=2023-10-13T00:00:00Z | ENV 
+    MAVEN_HOME=/opt/apache-maven-3.9.11 | ENV GH_TOKEN=${{ secrets.GITHUB_TOKEN 
+    }} | ENV JAVA_OPTS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 | ENV 
+    CI_DEPLOY_USERNAME=${{ secrets.CI_DEPLOY_USERNAME }} | ENV 
+    CI_DEPLOY_PASSWORD=${{ secrets.CI_DEPLOY_PASSWORD }}
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/eclipse-temurin:8-jdk | RUN mvn clean install
+    -B -Dproject.build.outputTimestamp=2023-10-13T00:00:00Z -Dgpg.skip=true 
+    -DskipTests -Dcheckstyle.s | ENV MAVEN_HOME=/opt/apache-maven-3.9.11 | ENV 
+    JAVA_OPTS="-XX:+TieredCompilation -XX:TieredStopAtLevel= | ENV 
+    SOURCE_DATE_EPOCH=1697155200
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM eclipse-temurin:11-jdk | RUN mvn clean install -B -DskipTests 
+    -Dproject.build.outputTimestamp=2023-10-13T00:00:00Z | ENV 
+    MAVEN_HOME=/opt/apache-maven-3.8.6 | ENV GH_TOKEN=${{ secrets.GITHUB_TOKEN 
+    }} | ENV JAVA_OPTS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 | ENV 
+    CI_DEPLOY_USERNAME=${{ secrets.CI_DEPLOY_USERNAME }} | ENV 
+    CI_DEPLOY_PASSWORD=${{ secrets.CI_DEPLOY_PASSWORD }}
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM eclipse-temurin:11-jdk | RUN mvn clean install -B -DskipTests 
+    -Dproject.build.outputTimestamp=2023-10-13T00:00:00Z -Dgpg.skip=true 
+    -Denforcer.ski | ENV MAVEN_HOME=/opt/apache-maven-3.8.6 | ENV 
+    JAVA_OPTS="-XX:+TieredCompilation -XX:TieredStopAtLevel= | ENV 
+    SOURCE_DATE_EPOCH=0
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM eclipse-temurin:17-jdk | RUN mvn clean install -B -DskipTests 
+    -Dproject.build.outputTimestamp=2023-10-13T00:00:00Z | ENV 
+    MAVEN_HOME=/opt/apache-maven-3.9.6 | ENV GH_TOKEN=${{ secrets.GITHUB_TOKEN 
+    }} | ENV JAVA_OPTS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 | ENV 
+    CI_DEPLOY_USERNAME=${{ secrets.CI_DEPLOY_USERNAME }} | ENV 
+    CI_DEPLOY_PASSWORD=${{ secrets.CI_DEPLOY_PASSWORD }}
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/eclipse-temurin:17-jdk | ENV 
+    SOURCE_DATE_EPOCH=0 | ENV JAVA_OPTS="-XX:+TieredCompilation 
+    -XX:TieredStopAtLevel=
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM eclipse-temurin:11-jdk | RUN mvn clean verify -B 
+    -Dgpg.skip=true -DskipTests 
+    -Dproject.build.outputTimestamp=2023-10-13T00:00:00Z | ENV 
+    MAVEN_HOME=/opt/apache-maven-3.9.6 | ENV GH_TOKEN=${{ secrets.GITHUB_TOKEN 
+    }} | ENV JAVA_OPTS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 | ENV 
+    CI_DEPLOY_USERNAME=${{ secrets.CI_DEPLOY_USERNAME }} | ENV 
+    CI_DEPLOY_PASSWORD=${{ secrets.CI_DEPLOY_PASSWORD }}
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9.6-eclipse-temurin-11 | RUN mvn 
+    clean verify -B -Dgpg.skip=true -DskipTests 
+    -Dproject.build.outputTimestamp=2023-10-12T22:49:11Z | ENV 
+    JAVA_OPTS="-XX:+TieredCompilation -XX:TieredStopAtLevel= | ENV 
+    SOURCE_DATE_EPOCH=0
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM eclipse-temurin:11-jdk | RUN mvn -B clean verify 
+    -Dgpg.skip=true -DskipTests 
+    -Dproject.build.outputTimestamp=2023-10-13T00:10:58Z | ENV 
+    MAVEN_HOME=/opt/apache-maven-3.9.4 | ENV GH_TOKEN=${{ secrets.GITHUB_TOKEN 
+    }} | ENV JAVA_OPTS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 | ENV 
+    CI_DEPLOY_USERNAME=${{ secrets.CI_DEPLOY_USERNAME }} | ENV 
+    CI_DEPLOY_PASSWORD=${{ secrets.CI_DEPLOY_PASSWORD }}
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM eclipse-temurin:11-jdk | RUN mvn -B clean verify 
+    -Dgpg.skip=true -DskipTests 
+    -Dproject.build.outputTimestamp=2023-10-13T00:10:58Z | ENV 
+    MAVEN_HOME=/opt/apache-maven-3.9.4 | ENV JAVA_OPTS="-XX:+TieredCompilation 
+    -XX:TieredStopAtLevel= | ENV SOURCE_DATE_EPOCH=0
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM maven:3.9.6-eclipse-temurin-21 | RUN mvn clean install -B 
+    -DskipTests -Dgpg.skip=true 
+    -Dproject.build.outputTimestamp=2023-10-13T00:00:00Z | ENV 
+    MAVEN_HOME=/opt/apache-maven-3.9.4 | ENV GH_TOKEN=${{ secrets.GITHUB_TOKEN 
+    }} | ENV JAVA_OPTS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 | ENV 
+    CI_DEPLOY_USERNAME=${{ secrets.CI_DEPLOY_USERNAME }} | ENV 
+    CI_DEPLOY_PASSWORD=${{ secrets.CI_DEPLOY_PASSWORD }}
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9.4-eclipse-temurin-17 | RUN mvn 
+    clean install -B -DskipTests -Dgpg.skip=true -Denforcer.skip=true 
+    -Danimal.sniffer.skip=true -Dproject.build.out | ENV SOURCE_DATE_EPOCH=0
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM eclipse-temurin:11.0.21_9-jdk | RUN mvn clean install -B 
+    -Dgpg.skip=true -DskipTests 
+    -Dproject.build.outputTimestamp=2023-10-13T00:00:00Z | ENV 
+    MAVEN_HOME=/opt/apache-maven-3.9.6 | ENV GH_TOKEN=${{ secrets.GITHUB_TOKEN 
+    }} | ENV JAVA_OPTS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 | ENV 
+    CI_DEPLOY_USERNAME=${{ secrets.CI_DEPLOY_USERNAME }} | ENV 
+    CI_DEPLOY_PASSWORD=${{ secrets.CI_DEPLOY_PASSWORD }}
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9.6-eclipse-temurin-17 | RUN mvn 
+    clean install -B -DskipTests -Dgpg.skip=true -Denforcer.skip=true 
+    -Danimal.sniffer.skip=true -Dproject.build.out | ENV SOURCE_DATE_EPOCH=0
+  failure_count: 3
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+  - ''
+- error_class: plugin/configuration_error
+  approach: FROM maven:3.9.6-eclipse-temurin-11 | RUN mvn clean install -B 
+    -Dgpg.skip=true -DskipTests 
+    -Dproject.build.outputTimestamp=1980-01-01T00:00:00Z | ENV 
+    MAVEN_HOME=/opt/apache-maven-3.9.6 | ENV GH_TOKEN=${{ secrets.GITHUB_TOKEN 
+    }} | ENV JAVA_OPTS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 | ENV 
+    CI_DEPLOY_USERNAME=${{ secrets.CI_DEPLOY_USERNAME }} | ENV 
+    CI_DEPLOY_PASSWORD=${{ secrets.CI_DEPLOY_PASSWORD }}
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "[INFO] ------------------------------------------------------------------------\n\
+    [ERROR] Failed to execute goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar
+    (default-jar) on project jackson-core"
+  - "[INFO] ------------------------------------------------------------------------\n\
+    [ERROR] Failed to execute goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar
+    (default-jar) on project jackson-core"
+- error_class: unknown
+  approach: FROM maven:3.9.4-eclipse-temurin-11 | RUN mvn clean install -B 
+    -DskipTests -Dgpg.skip=true 
+    -Dproject.build.outputTimestamp=2023-10-12T22:49:11Z | ENV 
+    MAVEN_HOME=/opt/apache-maven-3.9.4 | ENV GH_TOKEN=${{ secrets.GITHUB_TOKEN 
+    }} | ENV JAVA_OPTS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 | ENV 
+    CI_DEPLOY_USERNAME=${{ secrets.CI_DEPLOY_USERNAME }} | ENV 
+    CI_DEPLOY_PASSWORD=${{ secrets.CI_DEPLOY_PASSWORD }}
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9.4-eclipse-temurin-11 | RUN mvn 
+    clean install -B -DskipTests -Dgpg.skip=true -Denforcer.skip=true 
+    -Danimal.sniffer.skip=true -Dproject.build.out | ENV SOURCE_DATE_EPOCH=0 | 
+    ENV JAVA_OPTS="-XX:+TieredCompilation -XX:TieredStopAtLevel=
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM maven:3.9.4-eclipse-temurin-11 | RUN mvn clean install -B 
+    -DskipTests -Dgpg.skip=true 
+    -Dproject.build.outputTimestamp=2023-10-13T00:00:00Z | ENV 
+    MAVEN_HOME=/opt/apache-maven-3.9.4 | ENV GH_TOKEN=${{ secrets.GITHUB_TOKEN 
+    }} | ENV JAVA_OPTS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 | ENV 
+    CI_DEPLOY_USERNAME=${{ secrets.CI_DEPLOY_USERNAME }} | ENV 
+    CI_DEPLOY_PASSWORD=${{ secrets.CI_DEPLOY_PASSWORD }}
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9-eclipse-temurin-11 | RUN mvn clean 
+    install -B -DskipTests -Dgpg.skip=true -Dproject.build.outputTimestamp=1 | 
+    ENV SOURCE_DATE_EPOCH=0 | ENV JAVA_OPTS="-XX:+TieredCompilation 
+    -XX:TieredStopAtLevel=
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM maven:3.9.6-eclipse-temurin-11 | RUN mvn clean install -B 
+    -Dgpg.skip=true -DskipTests 
+    -Dproject.build.outputTimestamp=2023-10-13T00:10:58Z | ENV 
+    MAVEN_HOME=/opt/apache-maven-3.9.6 | ENV GH_TOKEN=${{ secrets.GITHUB_TOKEN 
+    }} | ENV JAVA_OPTS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 | ENV 
+    CI_DEPLOY_USERNAME=${{ secrets.CI_DEPLOY_USERNAME }} | ENV 
+    CI_DEPLOY_PASSWORD=${{ secrets.CI_DEPLOY_PASSWORD }}
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.8.8-eclipse-temurin-11 | RUN mvn 
+    clean install -B -DskipTests -Dgpg.skip=true -Denforcer.skip=true 
+    -Danimal.sniffer.skip=true -Djacoco.skip=true  | ENV SOURCE_DATE_EPOCH=0
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+- error_class: plugin/configuration_error
+  approach: FROM maven:3.9.4-eclipse-temurin-11 | RUN mvn clean install -B 
+    -Dgpg.skip=true -DskipTests 
+    -Dproject.build.outputTimestamp=1980-01-01T00:00:00Z | ENV 
+    MAVEN_HOME=/opt/apache-maven-3.9.4 | ENV GH_TOKEN=${{ secrets.GITHUB_TOKEN 
+    }} | ENV JAVA_OPTS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 | ENV 
+    CI_DEPLOY_USERNAME=${{ secrets.CI_DEPLOY_USERNAME }} | ENV 
+    CI_DEPLOY_PASSWORD=${{ secrets.CI_DEPLOY_PASSWORD }}
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "[INFO] ------------------------------------------------------------------------\n\
+    [ERROR] Failed to execute goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar
+    (default-jar) on project jackson-core"
+  - "[INFO] ------------------------------------------------------------------------\n\
+    [ERROR] Failed to execute goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar
+    (default-jar) on project jackson-core"
+- error_class: unknown
+  approach: FROM eclipse-temurin:17.0.9_9-jdk | ENV 
+    MAVEN_HOME=/opt/apache-maven-3.9.6 | ENV GH_TOKEN=${{ secrets.GITHUB_TOKEN 
+    }} | ENV JAVA_OPTS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 | ENV 
+    CI_DEPLOY_USERNAME=${{ secrets.CI_DEPLOY_USERNAME }} | ENV 
+    CI_DEPLOY_PASSWORD=${{ secrets.CI_DEPLOY_PASSWORD }}
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED
+- error_class: unknown
+  approach: FROM docker.io/library/maven:3.9.16-eclipse-temurin-17 | RUN mvn 
+    clean install -B -DskipTests \ | ENV SOURCE_DATE_EPOCH=0 | ENV 
+    MAVEN_OPTS="-Xmx512m"
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - ''
+- error_class: unknown
+  approach: FROM eclipse-temurin:11.0.20_8-jdk | ENV 
+    MAVEN_HOME=/opt/apache-maven-3.9.6 | ENV GH_TOKEN=${{ secrets.GITHUB_TOKEN 
+    }} | ENV JAVA_OPTS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 | ENV 
+    CI_DEPLOY_USERNAME=${{ secrets.CI_DEPLOY_USERNAME }} | ENV 
+    CI_DEPLOY_PASSWORD=${{ secrets.CI_DEPLOY_PASSWORD }}
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - BUILD_FAILED
+  - BUILD_FAILED

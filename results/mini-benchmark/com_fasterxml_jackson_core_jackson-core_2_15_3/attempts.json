@@ -1,0 +1,1112 @@
+{
+  "coordinate": "com.fasterxml.jackson.core:jackson-core:2.15.3",
+  "status": "budget_exhausted",
+  "best_reward": 0.5,
+  "iterations": 15,
+  "elapsed_seconds": 26544.9,
+  "attempts": [
+    {
+      "id": "517499a9-cb75-4243-9641-40f382df1cd5",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "plugin/configuration_error",
+      "build_log_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] Failed to execute goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar (default-jar) on project jackson-core: Execution default-jar of goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar failed: '1980-01-01T00:00:00Z' is not within the valid range 1980-01-01T00:00:02Z to 2099-12-31T23:59:59Z -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781754880.9186587
+    },
+    {
+      "id": "11675806-390b-416b-b6a9-09ec59d54918",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "plugin/configuration_error",
+      "build_log_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] Failed to execute goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar (default-jar) on project jackson-core: Execution default-jar of goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar failed: '1980-01-01T00:00:00Z' is not within the valid range 1980-01-01T00:00:02Z to 2099-12-31T23:59:59Z -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781754915.910808
+    },
+    {
+      "id": "a7311ae8-4e92-4928-9334-7d1c6fc16ee1",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "plugin/configuration_error",
+      "build_log_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] Failed to execute goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar (default-jar) on project jackson-core: Execution default-jar of goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar failed: '1980-01-01T00:00:00Z' is not within the valid range 1980-01-01T00:00:02Z to 2099-12-31T23:59:59Z -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781754952.3611977
+    },
+    {
+      "id": "01acba11-4fe4-4fd6-bc6f-74cd2efa93df",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "plugin/configuration_error",
+      "build_log_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] Failed to execute goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar (default-jar) on project jackson-core: Execution default-jar of goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar failed: '1980-01-01T00:00:00Z' is not within the valid range 1980-01-01T00:00:02Z to 2099-12-31T23:59:59Z -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR",
+      "diff_summary": "",
+      "fix_applied": "refine: Try skipping the failing plugin with -Dplugin.skip=true or updating the plugin version.\n\nSpecific en",
+      "timestamp": 1781754988.5197527
+    },
+    {
+      "id": "16850cad-f00b-46ff-8cf8-26138f0c3ceb",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781755938.6479397
+    },
+    {
+      "id": "47d5d3cf-28a2-4dfd-8fd1-01aa4ac5c301",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781756019.5700405
+    },
+    {
+      "id": "8e8a3645-f5f0-477b-9693-5a777822adcc",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781756101.8953078
+    },
+    {
+      "id": "3415a098-8b2a-41fb-a33a-e7b90924376e",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "plugin/configuration_error",
+      "build_log_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] Failed to execute goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar (default-jar) on project jackson-core: Execution default-jar of goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar failed: '1980-01-01T00:00:00Z' is not within the valid range 1980-01-01T00:00:02Z to 2099-12-31T23:59:59Z -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781756138.5429595
+    },
+    {
+      "id": "316c71d7-5c68-45d4-ab90-b0d818c618f7",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781756377.5844073
+    },
+    {
+      "id": "943dae10-b097-4f5d-90c5-8ffa5161d62f",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781757793.9814985
+    },
+    {
+      "id": "c6424835-ff60-4557-a349-a9459219a658",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781757847.5455837
+    },
+    {
+      "id": "a0e9aa84-8fb2-4ab4-960f-e592f6c22478",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781757905.906941
+    },
+    {
+      "id": "4da05dfa-74ba-4c7a-89ae-c3165071571e",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781757955.4208272
+    },
+    {
+      "id": "76874780-8a60-44a0-ad21-165595d285c2",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781758359.1520777
+    },
+    {
+      "id": "fd450233-cd2a-455a-9192-6d9e63c837bd",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781759452.0143633
+    },
+    {
+      "id": "0918fec7-90d5-47b6-a1ba-10a0aaac0a8a",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781759513.1150224
+    },
+    {
+      "id": "ede2cd5e-f2d8-4abb-8813-1737e01211f6",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781759570.6733274
+    },
+    {
+      "id": "23817eee-4fa3-44b4-824f-3a91b2d28c66",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781759637.881328
+    },
+    {
+      "id": "9c46a8f2-00bd-4dd2-9033-1c3c5a7b6b48",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781759936.9509032
+    },
+    {
+      "id": "dc4bc54d-d183-4676-b29a-e751fc441ecb",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781761115.1588788
+    },
+    {
+      "id": "fa26d0bc-9bc4-472e-9f13-0a6cfe86385d",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781761160.7151308
+    },
+    {
+      "id": "ed55428d-01d1-408d-8c14-c643dc386f08",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781761206.02244
+    },
+    {
+      "id": "e7137f76-54d2-4e12-a52b-09a803a44d4f",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781761244.6213005
+    },
+    {
+      "id": "b570ac75-f3a3-4bce-924a-adb5f9a2260a",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781761519.1972241
+    },
+    {
+      "id": "c1a8b7f9-cea6-4fc5-b4fc-831ec09d0e5a",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781762645.6755025
+    },
+    {
+      "id": "20391f53-bee9-4753-9bbc-299cb4b7741e",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781762691.9213889
+    },
+    {
+      "id": "f0ff436b-d743-4e5f-a8ef-9548560b4a5a",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781762737.3954349
+    },
+    {
+      "id": "d71a4d05-4c54-487f-a99f-96a0e5690894",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781762774.6160443
+    },
+    {
+      "id": "f8630aa2-40ce-4a55-abf1-ec237468a068",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781763366.7379103
+    },
+    {
+      "id": "d1ba552b-ae4d-4219-914e-e41b510b1db3",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781764601.9601576
+    },
+    {
+      "id": "4b1aa556-7922-45e8-9692-e286e22345c4",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781764665.9291084
+    },
+    {
+      "id": "fea32e97-b423-4c3f-93ab-10693def43e5",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781764714.630803
+    },
+    {
+      "id": "3c0b9d66-a2f1-4c72-9eca-2b7788415272",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781764754.7193468
+    },
+    {
+      "id": "c755fe8a-c9a7-468a-aff5-9b73b2914ced",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781765176.0606484
+    },
+    {
+      "id": "a65b3dec-758d-4907-9160-be694004abe9",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781766505.4508033
+    },
+    {
+      "id": "7783a549-9cc9-443d-a832-4310d25cba6c",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781766567.3020914
+    },
+    {
+      "id": "2d1e157e-35fb-43cf-9495-f93ab924b040",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781766629.4521153
+    },
+    {
+      "id": "361fdf11-2a00-408b-91dc-e88f549f6300",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781766665.3562887
+    },
+    {
+      "id": "c35f0226-d1a5-48a3-9204-22bcf33d8ce2",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781767079.1049864
+    },
+    {
+      "id": "4cabf8aa-4e30-4121-82d6-6fb7aea28d5f",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "plugin/configuration_error",
+      "build_log_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] Failed to execute goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar (default-jar) on project jackson-core: Execution default-jar of goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar failed: '1980-01-01T00:00:00Z' is not within the valid range 1980-01-01T00:00:02Z to 2099-12-31T23:59:59Z -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781768663.9133584
+    },
+    {
+      "id": "bd1621b2-f652-4f44-98c0-ce18d409d622",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "plugin/configuration_error",
+      "build_log_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] Failed to execute goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar (default-jar) on project jackson-core: Execution default-jar of goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar failed: '1980-01-01T00:00:00Z' is not within the valid range 1980-01-01T00:00:02Z to 2099-12-31T23:59:59Z -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781768716.6422884
+    },
+    {
+      "id": "86bc6a54-bc56-442e-a419-e6ab660d89f1",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "plugin/configuration_error",
+      "build_log_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] Failed to execute goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar (default-jar) on project jackson-core: Execution default-jar of goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar failed: '1980-01-01T00:00:00Z' is not within the valid range 1980-01-01T00:00:02Z to 2099-12-31T23:59:59Z -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781768764.426716
+    },
+    {
+      "id": "b7f377da-606f-4d91-a3cf-06083197ca37",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781768800.2933302
+    },
+    {
+      "id": "bdc0b734-5fb6-400c-aad9-f0c0149b467e",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781769101.0510051
+    },
+    {
+      "id": "a2c3bb97-9fea-4843-aee2-dfed0f9490df",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781770260.224728
+    },
+    {
+      "id": "78c08631-8561-4d7b-9c54-a717dcdf6c75",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781770317.070316
+    },
+    {
+      "id": "5a4b566e-407d-4c98-99c4-0b5c49b7e928",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781770372.1260865
+    },
+    {
+      "id": "f3831f9e-d87e-4b6d-b47c-8c49fdb5c8bb",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781770410.4988043
+    },
+    {
+      "id": "37034255-e025-491a-af46-d15e52fe0daf",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781770805.9598587
+    },
+    {
+      "id": "6063d8cd-2a10-41f8-8f48-1f89daef352c",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781772290.2075741
+    },
+    {
+      "id": "ce308f0d-a9ba-4d2e-a54a-ae79223b36dd",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781772360.9731379
+    },
+    {
+      "id": "3d35b03c-1096-4770-afab-3970897c4b42",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781772430.4182265
+    },
+    {
+      "id": "40288c3f-7a5b-4acc-bb81-e3ef19094b0a",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781772467.3921096
+    },
+    {
+      "id": "0335c700-b3f9-48e3-8b4c-6ccc6358f15e",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781772804.9093072
+    },
+    {
+      "id": "5e303da8-46c4-4c09-ad34-b1b314592880",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781774423.2018275
+    },
+    {
+      "id": "fc793204-12a7-43fd-abb0-e31ee3daf56f",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781774542.0947127
+    },
+    {
+      "id": "fcd69ce8-67ea-4b6b-bcb4-5b3261455908",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781774669.2832732
+    },
+    {
+      "id": "b284cfce-21f8-4b9e-8640-334a00d489be",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781774703.6101677
+    },
+    {
+      "id": "139bd2d6-c919-4d3c-9049-aca7cd9a72c2",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781775195.0595345
+    },
+    {
+      "id": "16851c44-d400-4914-bb18-adceae9c1a4d",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "plugin/configuration_error",
+      "build_log_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] Failed to execute goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar (default-jar) on project jackson-core: Execution default-jar of goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar failed: '1980-01-01T00:00:00Z' is not within the valid range 1980-01-01T00:00:02Z to 2099-12-31T23:59:59Z -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781776377.1332953
+    },
+    {
+      "id": "359c8105-900b-4717-86b4-cd9d6a965588",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "plugin/configuration_error",
+      "build_log_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] Failed to execute goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar (default-jar) on project jackson-core: Execution default-jar of goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar failed: '1980-01-01T00:00:00Z' is not within the valid range 1980-01-01T00:00:02Z to 2099-12-31T23:59:59Z -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781776466.4178414
+    },
+    {
+      "id": "fd926912-f6b0-4449-8148-3fd952b73f4c",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "plugin/configuration_error",
+      "build_log_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] Failed to execute goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar (default-jar) on project jackson-core: Execution default-jar of goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar failed: '1980-01-01T00:00:00Z' is not within the valid range 1980-01-01T00:00:02Z to 2099-12-31T23:59:59Z -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781776581.0325122
+    },
+    {
+      "id": "aa25be3e-03cd-428b-853a-fdd8ba3b9991",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781776629.8888967
+    },
+    {
+      "id": "dfec89fd-36e7-4443-98b9-204c7a591528",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781777078.6351116
+    },
+    {
+      "id": "43d81524-83d6-4813-8acd-b2c19c2d9f6e",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781778240.2310338
+    },
+    {
+      "id": "e09ed573-64a1-4df6-a07f-32e09394bc4a",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781778320.7822654
+    },
+    {
+      "id": "2b2710e3-8d90-4c8d-8592-6732a168908b",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781778382.7281034
+    },
+    {
+      "id": "6e8670fd-f8b0-4631-8ac4-5ed5ef9047b1",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781778428.5145416
+    },
+    {
+      "id": "5c77f1f7-695a-4be3-9d9a-0f887b5af914",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781778781.4129543
+    },
+    {
+      "id": "c250cd37-8757-426c-80d7-0ca524217d00",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781779960.18223
+    },
+    {
+      "id": "8946d745-4017-45ce-8ac6-26840dfa7478",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781780023.029989
+    },
+    {
+      "id": "78cc9b70-04d3-49a4-875f-94eafe8ec2a2",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781780138.7974536
+    },
+    {
+      "id": "7520851d-8f1e-400f-bb8f-6f2130ec0edf",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781780174.834093
+    },
+    {
+      "id": "9f0a5c4f-f5c5-41c1-a1ba-32f75d12f425",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False",
+      "fix_applied": "",
+      "timestamp": 1781780633.3888333
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "plugin/configuration_error",
+      "approach": "FROM docker.io/library/eclipse-temurin:8-jdk | ENV MAVEN_HOME=/opt/apache-maven-3.9.11 | ENV GH_TOKEN=${{ secrets.GITHUB_TOKEN }} | ENV JAVA_OPTS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 | ENV CI_DEPLOY_USERNAME=${{ secrets.CI_DEPLOY_USERNAME }} | ENV CI_DEPLOY_PASSWORD=${{ secrets.CI_DEPLOY_PASSWORD }}",
+      "failure_count": 4,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "[INFO] ------------------------------------------------------------------------\n[ERROR] Failed to execute goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar (default-jar) on project jackson-core",
+        "[INFO] ------------------------------------------------------------------------\n[ERROR] Failed to execute goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar (default-jar) on project jackson-core",
+        "[INFO] ------------------------------------------------------------------------\n[ERROR] Failed to execute goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar (default-jar) on project jackson-core"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:8-jdk | RUN mvn clean install -B -Dproject.build.outputTimestamp=2023-10-13T00:00:00Z | ENV MAVEN_HOME=/opt/apache-maven-3.9.11 | ENV GH_TOKEN=${{ secrets.GITHUB_TOKEN }} | ENV JAVA_OPTS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 | ENV CI_DEPLOY_USERNAME=${{ secrets.CI_DEPLOY_USERNAME }} | ENV CI_DEPLOY_PASSWORD=${{ secrets.CI_DEPLOY_PASSWORD }}",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:8-jdk | RUN mvn clean install -B -Dproject.build.outputTimestamp=2023-10-13T00:00:00Z -Dgpg.skip=true -DskipTests -Dcheckstyle.s | ENV MAVEN_HOME=/opt/apache-maven-3.9.11 | ENV JAVA_OPTS=\"-XX:+TieredCompilation -XX:TieredStopAtLevel= | ENV SOURCE_DATE_EPOCH=1697155200",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM eclipse-temurin:11-jdk | RUN mvn clean install -B -DskipTests -Dproject.build.outputTimestamp=2023-10-13T00:00:00Z | ENV MAVEN_HOME=/opt/apache-maven-3.8.6 | ENV GH_TOKEN=${{ secrets.GITHUB_TOKEN }} | ENV JAVA_OPTS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 | ENV CI_DEPLOY_USERNAME=${{ secrets.CI_DEPLOY_USERNAME }} | ENV CI_DEPLOY_PASSWORD=${{ secrets.CI_DEPLOY_PASSWORD }}",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM eclipse-temurin:11-jdk | RUN mvn clean install -B -DskipTests -Dproject.build.outputTimestamp=2023-10-13T00:00:00Z -Dgpg.skip=true -Denforcer.ski | ENV MAVEN_HOME=/opt/apache-maven-3.8.6 | ENV JAVA_OPTS=\"-XX:+TieredCompilation -XX:TieredStopAtLevel= | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM eclipse-temurin:17-jdk | RUN mvn clean install -B -DskipTests -Dproject.build.outputTimestamp=2023-10-13T00:00:00Z | ENV MAVEN_HOME=/opt/apache-maven-3.9.6 | ENV GH_TOKEN=${{ secrets.GITHUB_TOKEN }} | ENV JAVA_OPTS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 | ENV CI_DEPLOY_USERNAME=${{ secrets.CI_DEPLOY_USERNAME }} | ENV CI_DEPLOY_PASSWORD=${{ secrets.CI_DEPLOY_PASSWORD }}",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:17-jdk | ENV SOURCE_DATE_EPOCH=0 | ENV JAVA_OPTS=\"-XX:+TieredCompilation -XX:TieredStopAtLevel=",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM eclipse-temurin:11-jdk | RUN mvn clean verify -B -Dgpg.skip=true -DskipTests -Dproject.build.outputTimestamp=2023-10-13T00:00:00Z | ENV MAVEN_HOME=/opt/apache-maven-3.9.6 | ENV GH_TOKEN=${{ secrets.GITHUB_TOKEN }} | ENV JAVA_OPTS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 | ENV CI_DEPLOY_USERNAME=${{ secrets.CI_DEPLOY_USERNAME }} | ENV CI_DEPLOY_PASSWORD=${{ secrets.CI_DEPLOY_PASSWORD }}",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9.6-eclipse-temurin-11 | RUN mvn clean verify -B -Dgpg.skip=true -DskipTests -Dproject.build.outputTimestamp=2023-10-12T22:49:11Z | ENV JAVA_OPTS=\"-XX:+TieredCompilation -XX:TieredStopAtLevel= | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM eclipse-temurin:11-jdk | RUN mvn -B clean verify -Dgpg.skip=true -DskipTests -Dproject.build.outputTimestamp=2023-10-13T00:10:58Z | ENV MAVEN_HOME=/opt/apache-maven-3.9.4 | ENV GH_TOKEN=${{ secrets.GITHUB_TOKEN }} | ENV JAVA_OPTS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 | ENV CI_DEPLOY_USERNAME=${{ secrets.CI_DEPLOY_USERNAME }} | ENV CI_DEPLOY_PASSWORD=${{ secrets.CI_DEPLOY_PASSWORD }}",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM eclipse-temurin:11-jdk | RUN mvn -B clean verify -Dgpg.skip=true -DskipTests -Dproject.build.outputTimestamp=2023-10-13T00:10:58Z | ENV MAVEN_HOME=/opt/apache-maven-3.9.4 | ENV JAVA_OPTS=\"-XX:+TieredCompilation -XX:TieredStopAtLevel= | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM maven:3.9.6-eclipse-temurin-21 | RUN mvn clean install -B -DskipTests -Dgpg.skip=true -Dproject.build.outputTimestamp=2023-10-13T00:00:00Z | ENV MAVEN_HOME=/opt/apache-maven-3.9.4 | ENV GH_TOKEN=${{ secrets.GITHUB_TOKEN }} | ENV JAVA_OPTS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 | ENV CI_DEPLOY_USERNAME=${{ secrets.CI_DEPLOY_USERNAME }} | ENV CI_DEPLOY_PASSWORD=${{ secrets.CI_DEPLOY_PASSWORD }}",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9.4-eclipse-temurin-17 | RUN mvn clean install -B -DskipTests -Dgpg.skip=true -Denforcer.skip=true -Danimal.sniffer.skip=true -Dproject.build.out | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM eclipse-temurin:11.0.21_9-jdk | RUN mvn clean install -B -Dgpg.skip=true -DskipTests -Dproject.build.outputTimestamp=2023-10-13T00:00:00Z | ENV MAVEN_HOME=/opt/apache-maven-3.9.6 | ENV GH_TOKEN=${{ secrets.GITHUB_TOKEN }} | ENV JAVA_OPTS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 | ENV CI_DEPLOY_USERNAME=${{ secrets.CI_DEPLOY_USERNAME }} | ENV CI_DEPLOY_PASSWORD=${{ secrets.CI_DEPLOY_PASSWORD }}",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9.6-eclipse-temurin-17 | RUN mvn clean install -B -DskipTests -Dgpg.skip=true -Denforcer.skip=true -Danimal.sniffer.skip=true -Dproject.build.out | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 3,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "plugin/configuration_error",
+      "approach": "FROM maven:3.9.6-eclipse-temurin-11 | RUN mvn clean install -B -Dgpg.skip=true -DskipTests -Dproject.build.outputTimestamp=1980-01-01T00:00:00Z | ENV MAVEN_HOME=/opt/apache-maven-3.9.6 | ENV GH_TOKEN=${{ secrets.GITHUB_TOKEN }} | ENV JAVA_OPTS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 | ENV CI_DEPLOY_USERNAME=${{ secrets.CI_DEPLOY_USERNAME }} | ENV CI_DEPLOY_PASSWORD=${{ secrets.CI_DEPLOY_PASSWORD }}",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "[INFO] ------------------------------------------------------------------------\n[ERROR] Failed to execute goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar (default-jar) on project jackson-core",
+        "[INFO] ------------------------------------------------------------------------\n[ERROR] Failed to execute goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar (default-jar) on project jackson-core"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM maven:3.9.4-eclipse-temurin-11 | RUN mvn clean install -B -DskipTests -Dgpg.skip=true -Dproject.build.outputTimestamp=2023-10-12T22:49:11Z | ENV MAVEN_HOME=/opt/apache-maven-3.9.4 | ENV GH_TOKEN=${{ secrets.GITHUB_TOKEN }} | ENV JAVA_OPTS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 | ENV CI_DEPLOY_USERNAME=${{ secrets.CI_DEPLOY_USERNAME }} | ENV CI_DEPLOY_PASSWORD=${{ secrets.CI_DEPLOY_PASSWORD }}",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9.4-eclipse-temurin-11 | RUN mvn clean install -B -DskipTests -Dgpg.skip=true -Denforcer.skip=true -Danimal.sniffer.skip=true -Dproject.build.out | ENV SOURCE_DATE_EPOCH=0 | ENV JAVA_OPTS=\"-XX:+TieredCompilation -XX:TieredStopAtLevel=",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM maven:3.9.4-eclipse-temurin-11 | RUN mvn clean install -B -DskipTests -Dgpg.skip=true -Dproject.build.outputTimestamp=2023-10-13T00:00:00Z | ENV MAVEN_HOME=/opt/apache-maven-3.9.4 | ENV GH_TOKEN=${{ secrets.GITHUB_TOKEN }} | ENV JAVA_OPTS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 | ENV CI_DEPLOY_USERNAME=${{ secrets.CI_DEPLOY_USERNAME }} | ENV CI_DEPLOY_PASSWORD=${{ secrets.CI_DEPLOY_PASSWORD }}",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-eclipse-temurin-11 | RUN mvn clean install -B -DskipTests -Dgpg.skip=true -Dproject.build.outputTimestamp=1 | ENV SOURCE_DATE_EPOCH=0 | ENV JAVA_OPTS=\"-XX:+TieredCompilation -XX:TieredStopAtLevel=",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM maven:3.9.6-eclipse-temurin-11 | RUN mvn clean install -B -Dgpg.skip=true -DskipTests -Dproject.build.outputTimestamp=2023-10-13T00:10:58Z | ENV MAVEN_HOME=/opt/apache-maven-3.9.6 | ENV GH_TOKEN=${{ secrets.GITHUB_TOKEN }} | ENV JAVA_OPTS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 | ENV CI_DEPLOY_USERNAME=${{ secrets.CI_DEPLOY_USERNAME }} | ENV CI_DEPLOY_PASSWORD=${{ secrets.CI_DEPLOY_PASSWORD }}",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.8.8-eclipse-temurin-11 | RUN mvn clean install -B -DskipTests -Dgpg.skip=true -Denforcer.skip=true -Danimal.sniffer.skip=true -Djacoco.skip=true  | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "plugin/configuration_error",
+      "approach": "FROM maven:3.9.4-eclipse-temurin-11 | RUN mvn clean install -B -Dgpg.skip=true -DskipTests -Dproject.build.outputTimestamp=1980-01-01T00:00:00Z | ENV MAVEN_HOME=/opt/apache-maven-3.9.4 | ENV GH_TOKEN=${{ secrets.GITHUB_TOKEN }} | ENV JAVA_OPTS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 | ENV CI_DEPLOY_USERNAME=${{ secrets.CI_DEPLOY_USERNAME }} | ENV CI_DEPLOY_PASSWORD=${{ secrets.CI_DEPLOY_PASSWORD }}",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "[INFO] ------------------------------------------------------------------------\n[ERROR] Failed to execute goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar (default-jar) on project jackson-core",
+        "[INFO] ------------------------------------------------------------------------\n[ERROR] Failed to execute goal org.apache.maven.plugins:maven-jar-plugin:3.3.0:jar (default-jar) on project jackson-core"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM eclipse-temurin:17.0.9_9-jdk | ENV MAVEN_HOME=/opt/apache-maven-3.9.6 | ENV GH_TOKEN=${{ secrets.GITHUB_TOKEN }} | ENV JAVA_OPTS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 | ENV CI_DEPLOY_USERNAME=${{ secrets.CI_DEPLOY_USERNAME }} | ENV CI_DEPLOY_PASSWORD=${{ secrets.CI_DEPLOY_PASSWORD }}",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9.16-eclipse-temurin-17 | RUN mvn clean install -B -DskipTests \\ | ENV SOURCE_DATE_EPOCH=0 | ENV MAVEN_OPTS=\"-Xmx512m\"",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM eclipse-temurin:11.0.20_8-jdk | ENV MAVEN_HOME=/opt/apache-maven-3.9.6 | ENV GH_TOKEN=${{ secrets.GITHUB_TOKEN }} | ENV JAVA_OPTS=-XX:+TieredCompilation -XX:TieredStopAtLevel=1 | ENV CI_DEPLOY_USERNAME=${{ secrets.CI_DEPLOY_USERNAME }} | ENV CI_DEPLOY_PASSWORD=${{ secrets.CI_DEPLOY_PASSWORD }}",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    }
+  ]
+}

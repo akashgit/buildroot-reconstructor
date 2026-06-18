@@ -1,0 +1,143 @@
+- error_class: unknown
+  approach: FROM docker.io/azul/zulu-openjdk:25 | RUN ./mvnw $MAVEN_ARGS -f ${{ 
+    github.run_id }}.${{ github.base_ref }}/assertj-core/pom.xml package 
+    -DskipTests -Dproject | ENV MAVEN_HOME=/opt/apache-maven-3.9.12 | ENV 
+    GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} | ENV SONAR_TOKEN=${{ 
+    secrets.SONAR_TOKEN }} | ENV MAVEN_CENTRAL_USERNAME=${{ 
+    secrets.MAVEN_CENTRAL_USERNAM | ENV MAVEN_CENTRAL_TOKEN=${{ 
+    secrets.MAVEN_CENTRAL_TOKEN }}
+  failure_count: 4
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+  - ''
+- error_class: source/wrong_tag
+  approach: FROM eclipse-temurin:17-jdk | RUN mvn clean package -DskipTests -B 
+    -Dproject.build.outputTimestamp=1980-01-01T00:00:00Z | ENV 
+    MAVEN_HOME=/opt/apache-maven-3.9.6 | ENV GITHUB_TOKEN=${{ 
+    secrets.GITHUB_TOKEN }} | ENV SONAR_TOKEN=${{ secrets.SONAR_TOKEN }} | ENV 
+    MAVEN_CENTRAL_USERNAME=${{ secrets.MAVEN_CENTRAL_USERNAM | ENV 
+    MAVEN_CENTRAL_TOKEN=${{ secrets.MAVEN_CENTRAL_TOKEN }}
+  failure_count: 26
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "Cloning into '/build'...\nfatal: Remote branch assertj-core-3.25.1 not found
+    in upstream origin\nError: building at STEP \"RUN git clone --depth 1 --branch
+    'assertj-core-3.25.1' 'https://github.com/asser"
+  - "Cloning into '/build'...\nfatal: Remote branch assertj-core-3.25.1 not found
+    in upstream origin\nError: building at STEP \"RUN git clone --depth 1 --branch
+    'assertj-core-3.25.1' 'https://github.com/asser"
+  - "Cloning into '/build'...\nfatal: Remote branch assertj-core-3.25.1 not found
+    in upstream origin\nError: building at STEP \"RUN git clone --depth 1 --branch
+    'assertj-core-3.25.1' 'https://github.com/asser"
+- error_class: unknown
+  approach: FROM eclipse-temurin:21-jdk | RUN mvn clean package -DskipTests -B 
+    -Dproject.build.outputTimestamp=1980-01-01T00:00:00Z | ENV 
+    MAVEN_HOME=/opt/apache-maven-3.9.6 | ENV GITHUB_TOKEN=${{ 
+    secrets.GITHUB_TOKEN }} | ENV SONAR_TOKEN=${{ secrets.SONAR_TOKEN }} | ENV 
+    MAVEN_CENTRAL_USERNAME=${{ secrets.MAVEN_CENTRAL_USERNAM | ENV 
+    MAVEN_CENTRAL_TOKEN=${{ secrets.MAVEN_CENTRAL_TOKEN }}
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "STEP 1/15: FROM eclipse-temurin:21-jdk\nError: creating build container: short-name
+    resolution enforced but cannot prompt without a TTY"
+  - "STEP 1/15: FROM eclipse-temurin:21-jdk\nError: creating build container: short-name
+    resolution enforced but cannot prompt without a TTY"
+- error_class: unknown
+  approach: FROM docker.io/azul/zulu-openjdk:21 | RUN ./mvnw $MAVEN_ARGS install
+    -pl assertj-parent,assertj-bom,assertj-core -am 
+    -Dproject.build.outputTimestamp=1 | ENV SOURCE_DATE_EPOCH=0 | ENV 
+    MAVEN_ARGS="-B -V -ntp -e -Djansi.passthrough=true -Dsty
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - ''
+- error_class: unknown
+  approach: FROM eclipse-temurin:11-jdk | RUN mvn clean package -DskipTests -B 
+    -Dproject.build.outputTimestamp=1980-01-01T00:00:00Z | ENV 
+    MAVEN_HOME=/opt/apache-maven-3.9.6 | ENV GITHUB_TOKEN=${{ 
+    secrets.GITHUB_TOKEN }} | ENV SONAR_TOKEN=${{ secrets.SONAR_TOKEN }} | ENV 
+    MAVEN_CENTRAL_USERNAME=${{ secrets.MAVEN_CENTRAL_USERNAM | ENV 
+    MAVEN_CENTRAL_TOKEN=${{ secrets.MAVEN_CENTRAL_TOKEN }}
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "STEP 1/15: FROM eclipse-temurin:11-jdk\nError: creating build container: short-name
+    resolution enforced but cannot prompt without a TTY"
+  - "STEP 1/15: FROM eclipse-temurin:11-jdk\nError: creating build container: short-name
+    resolution enforced but cannot prompt without a TTY"
+- error_class: unknown
+  approach: FROM docker.io/library/eclipse-temurin:11-jdk | RUN mvn clean 
+    package -DskipTests -B -Dproject.build.outputTimestamp=1980-01-01T00:00:00Z 
+    | ENV MAVEN_HOME=/opt/apache-maven-3.9.6 | ENV GITHUB_TOKEN=${{ 
+    secrets.GITHUB_TOKEN }} | ENV SONAR_TOKEN=${{ secrets.SONAR_TOKEN }} | ENV 
+    MAVEN_CENTRAL_USERNAME=${{ secrets.MAVEN_CENTRAL_USERNAM | ENV 
+    MAVEN_CENTRAL_TOKEN=${{ secrets.MAVEN_CENTRAL_TOKEN }}
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "at org.codehaus.plexus.classworlds.launcher.Launcher.main (Launcher.java:348)\n\
+    Caused by: java.lang.UnsupportedClassVersionError: aQute/bnd/maven/plugin/BndPackagingLifecycleParticipant
+    has been compil"
+  - "at org.codehaus.plexus.classworlds.launcher.Launcher.main (Launcher.java:348)\n\
+    Caused by: java.lang.UnsupportedClassVersionError: aQute/bnd/maven/plugin/BndPackagingLifecycleParticipant
+    has been compil"
+- error_class: source/wrong_tag
+  approach: FROM docker.io/azul/zulu-openjdk:25 | RUN ./mvnw $MAVEN_ARGS -f ${{ 
+    github.run_id }}.${{ github.base_ref }}/assertj-core/pom.xml package 
+    -DskipTests -Dproject | ENV MAVEN_HOME=/opt/apache-maven-3.9.12 | ENV 
+    GITHUB_TOKEN=${{ secrets.GITHUB_TOKEN }} | ENV SONAR_TOKEN=${{ 
+    secrets.SONAR_TOKEN }} | ENV MAVEN_CENTRAL_USERNAME=${{ 
+    secrets.MAVEN_CENTRAL_USERNAM | ENV MAVEN_CENTRAL_TOKEN=${{ 
+    secrets.MAVEN_CENTRAL_TOKEN }}
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "Cloning into '/build'...\nfatal: Remote branch assertj-core-3.25.1 not found
+    in upstream origin\nError: building at STEP \"RUN git clone --depth 1 --branch
+    'assertj-core-3.25.1' 'https://github.com/asser"
+  - "Cloning into '/build'...\nfatal: Remote branch assertj-core-3.25.1 not found
+    in upstream origin\nError: building at STEP \"RUN git clone --depth 1 --branch
+    'assertj-core-3.25.1' 'https://github.com/asser"
+- error_class: unknown
+  approach: FROM docker.io/library/eclipse-temurin:17-jdk | ENV 
+    SOURCE_DATE_EPOCH=0
+  failure_count: 4
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/library/eclipse-temurin:17-jdk | RUN mvn clean 
+    package -DskipTests -B -Dproject.build.outputTimestamp=1 \ | ENV 
+    MAVEN_HOME=/opt/apache-maven-3.9.6 | ENV SOURCE_DATE_EPOCH=0
+  failure_count: 1
+  threshold: 2
+  is_exhausted: false
+  examples:
+  - ''
+- error_class: unknown
+  approach: FROM docker.io/eclipse-temurin:17-jdk | RUN mvn clean package 
+    -DskipTests -B -f assertj-core/pom.xml 
+    -Dproject.build.outputTimestamp=1980-01-01T00:00:00Z | ENV 
+    MAVEN_HOME=/opt/apache-maven-3.9.6 | ENV GITHUB_TOKEN=${{ 
+    secrets.GITHUB_TOKEN }} | ENV SONAR_TOKEN=${{ secrets.SONAR_TOKEN }} | ENV 
+    MAVEN_CENTRAL_USERNAME=${{ secrets.MAVEN_CENTRAL_USERNAM | ENV 
+    MAVEN_CENTRAL_TOKEN=${{ secrets.MAVEN_CENTRAL_TOKEN }}
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - ''
+  - ''

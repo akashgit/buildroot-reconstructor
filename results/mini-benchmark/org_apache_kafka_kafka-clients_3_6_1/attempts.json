@@ -1,0 +1,963 @@
+{
+  "coordinate": "org.apache.kafka:kafka-clients:3.6.1",
+  "status": "budget_exhausted",
+  "best_reward": 0.5,
+  "iterations": 15,
+  "elapsed_seconds": 22812.2,
+  "attempts": [
+    {
+      "id": "c485ba6d-c84f-416d-9b33-2170f55ba70f",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "build_tool/wrong_build_system",
+      "build_log_summary": "[INFO] Scanning for projects...\n[WARNING] The requested profile \"apache-release\" could not be activated because it does not exist.\n[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please verify you invoked Maven from the correct directory. -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR] Re-run M",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781754934.3092976
+    },
+    {
+      "id": "9efe580e-d368-4605-b319-9f3f5ccd0184",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "build_tool/wrong_build_system",
+      "build_log_summary": "[INFO] Scanning for projects...\n[WARNING] The requested profile \"apache-release\" could not be activated because it does not exist.\n[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please verify you invoked Maven from the correct directory. -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR] Re-run M",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781754960.2877457
+    },
+    {
+      "id": "d5a0e361-d136-4a38-b035-ecd4378b13d6",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "build_tool/wrong_build_system",
+      "build_log_summary": "[INFO] Scanning for projects...\n[WARNING] The requested profile \"apache-release\" could not be activated because it does not exist.\n[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please verify you invoked Maven from the correct directory. -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR] Re-run M",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781754985.4164228
+    },
+    {
+      "id": "f0a33c16-f93d-44b7-a8b1-c7e8ead9ce41",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "build_tool/wrong_build_system",
+      "build_log_summary": "[INFO] Scanning for projects...\n[WARNING] The requested profile \"apache-release\" could not be activated because it does not exist.\n[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please verify you invoked Maven from the correct directory. -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR] Re-run M",
+      "diff_summary": "",
+      "fix_applied": "refine: This project uses Gradle, not Maven. Switch the build command to use './gradlew build' or install Gr",
+      "timestamp": 1781755010.7091055
+    },
+    {
+      "id": "04f07db2-6855-47ae-8225-6520b9a1fa35",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "build_tool/wrong_build_system",
+      "build_log_summary": "/bin/sh: 1: ./gradlew: not found\nError: building at STEP \"RUN ./gradlew :clients:jar -x test --no-daemon\": while running runtime: exit status 127",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781755924.1401162
+    },
+    {
+      "id": "aa630c10-0383-449f-8f7d-5369c44f653e",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "build_tool/wrong_build_system",
+      "build_log_summary": "/bin/sh: 1: ./gradlew: not found\nError: building at STEP \"RUN ./gradlew :clients:jar -x test --no-daemon\": while running runtime: exit status 127",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781755943.5969505
+    },
+    {
+      "id": "d6d579d3-09d3-4ee9-8f83-bc8b56e1d584",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "build_tool/wrong_build_system",
+      "build_log_summary": "/bin/sh: 1: ./gradlew: not found\nError: building at STEP \"RUN ./gradlew :clients:jar -x test --no-daemon\": while running runtime: exit status 127",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781755967.6979103
+    },
+    {
+      "id": "094bce72-2591-4be9-8858-cfacc245e264",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "build_tool/wrong_build_system",
+      "build_log_summary": "[INFO] Scanning for projects...\n[WARNING] The requested profile \"apache-release\" could not be activated because it does not exist.\n[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please verify you invoked Maven from the correct directory. -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR] Re-run M",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781755993.7638943
+    },
+    {
+      "id": "02130091-d9ca-44f0-8788-762c960c97e2",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781756316.6222327
+    },
+    {
+      "id": "c7fdcc73-a042-437f-bb70-8dc23a7ce9d0",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781757261.683638
+    },
+    {
+      "id": "27b5509c-8f50-41a1-9a9a-42acbb8d606a",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781757301.7035458
+    },
+    {
+      "id": "57550eef-3a91-493f-8cca-d27ad931441e",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781757340.7266808
+    },
+    {
+      "id": "2d57f516-b0c3-4a35-a526-4f26634659c3",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781757444.6858873
+    },
+    {
+      "id": "f08ca27c-42c3-4d7f-80b2-67bbc5e22e7f",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781757833.5650373
+    },
+    {
+      "id": "f5459fe4-c0b8-4f8b-9c8a-370651cc3505",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781758766.1420734
+    },
+    {
+      "id": "a7ed4163-66b8-4b62-83f4-435f9eafb68c",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781758810.230797
+    },
+    {
+      "id": "076a1ce3-8be5-45bf-ac8e-6687505d2215",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781758859.8978314
+    },
+    {
+      "id": "87de9958-cbc7-47ea-91f6-2936bc312007",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781758962.7713273
+    },
+    {
+      "id": "abf43906-68ba-4a94-8819-765294948971",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781759508.1894968
+    },
+    {
+      "id": "d0257a65-1766-4983-8881-3364bab00ce5",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T05:29:03Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781760549.5468588
+    },
+    {
+      "id": "ac32c86b-2c6c-42ac-a75c-d59a3e8e2f66",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T05:29:18Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781760564.2300894
+    },
+    {
+      "id": "f134ad33-6f77-41b6-9e50-70d47b9f8d60",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T05:29:32Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781760573.247648
+    },
+    {
+      "id": "ecfc7b56-41fd-477a-98aa-b48c19447b1e",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781760676.5232365
+    },
+    {
+      "id": "888f5605-ca36-45a2-81bd-c99549d69fe4",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781761181.9943893
+    },
+    {
+      "id": "7ed5f967-57c2-4a8d-8d6a-320faf7a7b45",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T05:56:08Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781762169.4985275
+    },
+    {
+      "id": "1c6ccd40-85af-4e0e-91ae-7d7e0848e877",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T05:56:18Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781762184.1666555
+    },
+    {
+      "id": "7ad5c12f-0632-4e83-9cf7-2e04b4b4c638",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T05:56:38Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781762198.614974
+    },
+    {
+      "id": "2a955968-d58a-4515-a4e3-b0197f95e889",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781762272.9129224
+    },
+    {
+      "id": "0ddd1733-6c67-4f44-89ee-8e6d2721ca87",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781762785.472301
+    },
+    {
+      "id": "e16baf21-6787-46ec-b5f8-809b4faea34d",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T06:23:37Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781763818.5023718
+    },
+    {
+      "id": "cb994fcd-90d7-4ae4-87a7-0d8c4ca1495b",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T06:23:47Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781763833.3470087
+    },
+    {
+      "id": "9bf2db4c-a208-4f07-ade1-f4f18a4f3eb8",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T06:24:07Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781763853.0181463
+    },
+    {
+      "id": "392552a5-97e4-4dd8-8345-cfeb8407c949",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781763932.4436398
+    },
+    {
+      "id": "fb8603cc-b1b1-4ad0-b311-4dbde7df1428",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781764400.0834768
+    },
+    {
+      "id": "13d7a68f-9368-453c-a603-d4f61b19a8a9",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T06:51:32Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781765497.9172451
+    },
+    {
+      "id": "cab6ed79-eb5e-4172-9f68-c388a6d2a519",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T06:51:52Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781765512.6647494
+    },
+    {
+      "id": "52f83914-ef18-4374-937f-67c25f52e988",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T06:52:01Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781765527.3897147
+    },
+    {
+      "id": "5af121a5-f5b2-48a7-9e0b-fe75c57852c4",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781765605.6122322
+    },
+    {
+      "id": "45a56387-c0b7-4103-8bbe-1dccb1cbd3de",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Setting up ca-certificates-java (20190909ubuntu1.3) ...\nhead: cannot open '/etc/ssl/certs/java/cacerts' for reading: No such file or directory\nAdding debian:ePKI_Root_Certification_Authority.pem\n* What went wrong:\nCould not compile settings file '/build/settings.gradle'.\n> startup failed:\nBUILD FAILED in 1s\nError: building at STEP \"RUN printf 'allprojects {\\n  tasks.withType(AbstractArchiveTask).configureEach {\\n    preserveFileTimestamps = false\\n    reproducibleFileOrder = true\\n  }\\n}\\n' > /t",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781766080.10881
+    },
+    {
+      "id": "9e57bdaf-8ee4-4f0c-b673-50312a2b4900",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T07:16:56Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781767017.4755347
+    },
+    {
+      "id": "c92c04f4-2455-4c66-a237-0f4c3e765380",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T07:17:06Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781767027.2362666
+    },
+    {
+      "id": "09a5ca5e-b41d-455c-b6d3-a6b17bbd7bc8",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T07:17:20Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781767046.3441675
+    },
+    {
+      "id": "8a84adac-788e-4609-8d48-45e73df83b2c",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Setting up ca-certificates-java (20190909ubuntu1.3) ...\nhead: cannot open '/etc/ssl/certs/java/cacerts' for reading: No such file or directory\nAdding debian:ePKI_Root_Certification_Authority.pem\n* What went wrong:\nCould not compile settings file '/build/settings.gradle'.\n> startup failed:\nBUILD FAILED in 1s\nError: building at STEP \"RUN printf 'allprojects {\\n  tasks.withType(AbstractArchiveTask).configureEach {\\n    preserveFileTimestamps = false\\n    reproducibleFileOrder = true\\n  }\\n}\\n' > /t",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781767091.964799
+    },
+    {
+      "id": "c5ea96c0-8e68-49cf-aa38-533ff335b270",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "Setting up ca-certificates-java (20190909ubuntu1.3) ...\nhead: cannot open '/etc/ssl/certs/java/cacerts' for reading: No such file or directory\nAdding debian:ePKI_Root_Certification_Authority.pem\n/bin/sh: 1: Syntax error: \"(\" unexpected\nError: building at STEP \"RUN chmod +x gradlew && ./gradlew :clients:jar -x test -x integrationTest -x rat -x checkstyleMain -x checkstyleTest -x spotbugsMain -x javadoc --no-daemon --no-scan --no-build-cache -PskipSigning=true -Dfile.encoding=UTF-8 (source: observ",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781767394.876531
+    },
+    {
+      "id": "f29a95b3-0862-4bda-af2b-5182d2eb4335",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T07:41:21Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781768481.6337166
+    },
+    {
+      "id": "823062be-ac5e-4990-bb00-dc1090aa9446",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T07:41:35Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781768501.055892
+    },
+    {
+      "id": "900169ef-c3fe-467f-91ee-d89df9391c5a",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T07:41:50Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781768515.8474085
+    },
+    {
+      "id": "7c802fa7-2d3d-4568-8c3f-ff4fc4fd3080",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781768615.6191838
+    },
+    {
+      "id": "02370a4c-ac34-49ea-9dc6-a3ba1e03f1bd",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781769028.2083986
+    },
+    {
+      "id": "788280aa-9cf1-48ab-b682-d1593897217d",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T08:09:15Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781770160.5702388
+    },
+    {
+      "id": "74e08a1f-9254-415b-a529-a55c120cdcad",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T08:09:29Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781770175.1633413
+    },
+    {
+      "id": "90bfd5be-8c9d-4094-9d43-f99222c69154",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T08:09:44Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781770189.872059
+    },
+    {
+      "id": "3d978ecb-d4c7-4ca3-bbef-1d0f1f0bf4ad",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781770287.4245377
+    },
+    {
+      "id": "6677ddb8-2298-4767-b883-ce7e25d57a07",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781770637.2507374
+    },
+    {
+      "id": "582a5a8c-a610-4929-af74-aad583c56a5f",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T08:31:31Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781771492.2755485
+    },
+    {
+      "id": "2cfa4111-297d-418e-887d-3a9db04d3b69",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T08:31:46Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781771511.8148475
+    },
+    {
+      "id": "0bf2ca0d-476e-4b3c-8c0d-bdc9c836b8ad",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T08:31:56Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781771521.5731933
+    },
+    {
+      "id": "dfd7bc1b-e20f-492b-9b9e-ba8b766acefd",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781771639.949957
+    },
+    {
+      "id": "cc53269c-72e1-4174-93c7-50a7c28c8353",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781772086.8619552
+    },
+    {
+      "id": "a62125d1-a2c0-4c22-b88e-3351bdc5ed53",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T08:57:33Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781773058.9724104
+    },
+    {
+      "id": "c98d2390-96f1-4d7f-a4dd-bc3dfc2e54da",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T08:57:48Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781773068.5957758
+    },
+    {
+      "id": "9ad216ee-0ab3-45a1-912a-58605806ed33",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T08:58:07Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781773088.2298646
+    },
+    {
+      "id": "73021f60-6e25-431b-a317-134bc2e55ff2",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781773202.4121482
+    },
+    {
+      "id": "e948fa29-152d-4901-a0b0-6fcbd73ce876",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781773683.6292942
+    },
+    {
+      "id": "32c55e00-e8ef-47c5-ba14-0c1e7e9b7d53",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T09:27:31Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781774857.409447
+    },
+    {
+      "id": "b523294e-3105-4233-8a4e-3ed3c1db0116",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T09:27:45Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781774871.4413688
+    },
+    {
+      "id": "211a5b55-ca32-4d3a-b631-3afc8ec546a3",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T09:27:55Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781774881.1345015
+    },
+    {
+      "id": "1dd4f1d0-a827-497f-98ca-4ebe0fa56d9a",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781774998.9827738
+    },
+    {
+      "id": "eba003eb-9d71-4ddc-bc4e-b32925e9b231",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781775544.4105487
+    },
+    {
+      "id": "14b75d6d-ea96-433f-b93a-f8a06a4535a2",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T09:55:05Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781776510.944712
+    },
+    {
+      "id": "af6b16a4-eedf-430d-9530-4233728b1dbf",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T09:55:25Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781776530.6429386
+    },
+    {
+      "id": "7d01d586-25f4-4ba1-97bf-f901d244ec2e",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T09:55:34Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781776540.3754675
+    },
+    {
+      "id": "b6f754bf-a641-4099-8a16-b012e480ae4d",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781776658.3095922
+    },
+    {
+      "id": "ee713fd5-63aa-4fdf-8129-0c87dfc11a1f",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=False",
+      "fix_applied": "",
+      "timestamp": 1781777126.616958
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "build_tool/wrong_build_system",
+      "approach": "FROM docker.io/library/eclipse-temurin:17-jdk | RUN mvn clean install -B -DskipTests -Papache-release -Dproject.build.outputTimestamp=1980-01-01T00:00:00Z | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 4,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "[INFO] Scanning for projects...\n[WARNING] The requested profile \"apache-release\" could not be activated because it does not exist.\n[INFO] --------------------------------------------------------------",
+        "[INFO] Scanning for projects...\n[WARNING] The requested profile \"apache-release\" could not be activated because it does not exist.\n[INFO] --------------------------------------------------------------",
+        "[INFO] Scanning for projects...\n[WARNING] The requested profile \"apache-release\" could not be activated because it does not exist.\n[INFO] --------------------------------------------------------------"
+      ]
+    },
+    {
+      "error_class": "build_tool/wrong_build_system",
+      "approach": "FROM eclipse-temurin:17-jdk | RUN ./gradlew :clients:jar -x test --no-daemon | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "/bin/sh: 1: ./gradlew: not found\nError: building at STEP \"RUN ./gradlew :clients:jar -x test --no-daemon\": while running runtime: exit status 127",
+        "/bin/sh: 1: ./gradlew: not found\nError: building at STEP \"RUN ./gradlew :clients:jar -x test --no-daemon\": while running runtime: exit status 127"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM eclipse-temurin:17-jdk | RUN ./gradlew :clients:jar -x test -x integrationTest -x rat -x checkstyleMain -x checkstyleTest -x spotbugsMain -x java | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 4,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM eclipse-temurin:17-jdk | RUN chmod +x gradlew | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM eclipse-temurin:11-jdk | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM ubuntu:24.04 | ENV DEBIAN_FRONTEND=noninteractive | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 10,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "time=\"2026-06-18T05:29:18Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteracti",
+        "time=\"2026-06-18T05:29:32Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteracti",
+        "time=\"2026-06-18T05:56:18Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteracti"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/gradle:8.2.1-jdk17 | RUN gradle :clients:jar -x test -x integrationTest -x rat -x checkstyleMain -x checkstyleTest -x spotbugsMain -x javadoc | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 3,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/gradle:8.2.1-jdk11 | RUN printf 'allprojects {\\n  tasks.withType(AbstractArchiveTask).configureEach {\\n    preserveFileTimestamps = false\\n   | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "Setting up ca-certificates-java (20190909ubuntu1.3) ...\nhead: cannot open '/etc/ssl/certs/java/cacerts' for reading: No such file or directory\nAdding debian:ePKI_Root_Certification_Authority.pem\n* Wha",
+        "Setting up ca-certificates-java (20190909ubuntu1.3) ...\nhead: cannot open '/etc/ssl/certs/java/cacerts' for reading: No such file or directory\nAdding debian:ePKI_Root_Certification_Authority.pem\n* Wha"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM ubuntu:24.04 | RUN mkdir -p /root/.gradle/init.d | ENV DEBIAN_FRONTEND=noninteractive | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 10,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "time=\"2026-06-18T07:17:06Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteracti",
+        "time=\"2026-06-18T07:17:20Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteracti",
+        "time=\"2026-06-18T08:31:46Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteracti"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/amazoncorretto:17 | RUN chmod +x gradlew && \\ | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 3,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM ubuntu:24.04 | RUN export GRADLE_OPTS='-Xmx2g -Dfile.encoding=UTF-8' | ENV DEBIAN_FRONTEND=noninteractive | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "time=\"2026-06-18T08:09:29Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteracti",
+        "time=\"2026-06-18T08:09:44Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteracti"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/amazoncorretto:11 | RUN chmod +x gradlew && \\ | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        ""
+      ]
+    }
+  ]
+}

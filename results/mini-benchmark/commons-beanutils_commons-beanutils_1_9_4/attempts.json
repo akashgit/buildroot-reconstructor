@@ -1,0 +1,1066 @@
+{
+  "coordinate": "commons-beanutils:commons-beanutils:1.9.4",
+  "status": "budget_exhausted",
+  "best_reward": 0.5,
+  "iterations": 15,
+  "elapsed_seconds": 24364.6,
+  "attempts": [
+    {
+      "id": "1795d54c-869c-4c5a-b95e-a4d1c37c1f6f",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "build_tool/wrong_build_system",
+      "build_log_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please verify you invoked Maven from the correct directory. -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR] Re-run Maven using the -X switch to enable full debug logging.\n[ERROR] For more information about the errors and possible solutions, please",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781755118.7299125
+    },
+    {
+      "id": "5533f35e-e343-4136-9a7b-5c33e1b3ebfb",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "build_tool/wrong_build_system",
+      "build_log_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please verify you invoked Maven from the correct directory. -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR] Re-run Maven using the -X switch to enable full debug logging.\n[ERROR] For more information about the errors and possible solutions, please",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781755140.7848163
+    },
+    {
+      "id": "57538735-d0f7-44d4-893c-ce81f7f98a2a",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "build_tool/wrong_build_system",
+      "build_log_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please verify you invoked Maven from the correct directory. -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR] Re-run Maven using the -X switch to enable full debug logging.\n[ERROR] For more information about the errors and possible solutions, please",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781755172.1234314
+    },
+    {
+      "id": "04a18b1c-3d83-405e-93f2-20551d093fd5",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "build_tool/wrong_build_system",
+      "build_log_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please verify you invoked Maven from the correct directory. -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR] Re-run Maven using the -X switch to enable full debug logging.\n[ERROR] For more information about the errors and possible solutions, please",
+      "diff_summary": "",
+      "fix_applied": "refine: This project uses Gradle, not Maven. Switch the build command to use './gradlew build' or install Gr",
+      "timestamp": 1781755188.9186373
+    },
+    {
+      "id": "c747db78-bb25-4f78-a430-bb61eb04a2ea",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781756212.2199903
+    },
+    {
+      "id": "a6771dcc-865d-4d08-b473-f2af23fbd219",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781756253.4882462
+    },
+    {
+      "id": "31749ccc-afe9-48ce-a331-b40ebcb9d4b1",
+      "parent_id": null,
+      "reward": 0.15000000000000002,
+      "level_reached": 2,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD_FAILED",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781756299.3059416
+    },
+    {
+      "id": "7775ff48-11e9-4b13-8af4-443bb32b7cb1",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "build_tool/wrong_build_system",
+      "build_log_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please verify you invoked Maven from the correct directory. -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR] Re-run Maven using the -X switch to enable full debug logging.\n[ERROR] For more information about the errors and possible solutions, please",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781756320.6310313
+    },
+    {
+      "id": "17aa47f8-b242-4aae-8219-4d62b66973b0",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "E: The repository 'http://deb.debian.org/debian buster-updates Release' does not have a Release file.\nError: building at STEP \"RUN apt-get update &&     apt-get install -y --no-install-recommends git ca-certificates &&     rm -rf /var/lib/apt/lists/*\": while running runtime: exit status 100",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781756620.5830946
+    },
+    {
+      "id": "d5a04708-a736-4d88-9862-7509322fcc84",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-8\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781757691.3932452
+    },
+    {
+      "id": "620a5379-ce36-44d6-bf98-91d4d424ca7b",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-8\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781757702.7251914
+    },
+    {
+      "id": "2c2c9f13-03f5-404c-930e-06726a0c3d25",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-8\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781757714.0628967
+    },
+    {
+      "id": "003023ce-958e-4537-b3ea-18d9fcc26c3a",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "E: The repository 'http://security.debian.org/debian-security buster/updates Release' does not have a Release file.\nError: building at STEP \"RUN apt-get update &&     apt-get install -y --no-install-recommends git ca-certificates &&     rm -rf /var/lib/apt/lists/*\": while running runtime: exit status 100",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781757720.69095
+    },
+    {
+      "id": "3d35075c-0726-43d5-b482-eb99b25c736d",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781757946.7449527
+    },
+    {
+      "id": "4371d2fd-2489-47ee-9bda-2e53bf49cd4f",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.8.6-eclipse-temurin-8\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781759016.2759879
+    },
+    {
+      "id": "143165ee-68ee-4edc-a8c5-458284714db0",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.8.6-eclipse-temurin-8\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781759017.5575485
+    },
+    {
+      "id": "5b3d4275-5bad-4f59-a067-9a89a62af338",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.8.6-eclipse-temurin-8\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781759028.8625228
+    },
+    {
+      "id": "9281aaea-1c04-4dda-b289-08a5a981fefa",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781759080.8199265
+    },
+    {
+      "id": "78534c8e-014b-4246-8a4e-4181b1e08ca7",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781759550.0283248
+    },
+    {
+      "id": "37ccf4ab-aefb-468a-85a2-13f58233dfd0",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.6.3-jdk-8\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781760726.6096694
+    },
+    {
+      "id": "c4b941ba-60ff-4888-b7c8-f389f36a2900",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.6.3-jdk-8\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781760732.917977
+    },
+    {
+      "id": "9db0115e-803a-4fe9-b2b4-d89f477212b6",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.6.3-jdk-8\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781760744.2434177
+    },
+    {
+      "id": "522a2982-924e-45b1-a478-bbb92eb866c0",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781760794.9799237
+    },
+    {
+      "id": "42bf3e13-14e2-4338-92fc-34a47cd6168d",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781761227.8877614
+    },
+    {
+      "id": "d87cb51a-cadc-4cbc-83ca-e2a39e1bb1e6",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.6.3-jdk-8\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781762262.5495355
+    },
+    {
+      "id": "31e3d473-a533-4953-beff-da54feb54881",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.6.3-jdk-8\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781762268.8836498
+    },
+    {
+      "id": "ce10e8c4-36af-413e-afbe-31cd35b92a84",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.6.3-jdk-8\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781762270.1778235
+    },
+    {
+      "id": "98eeee9b-aee0-415a-a2c9-b07a230d1e5e",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781762456.1515026
+    },
+    {
+      "id": "5fde4477-f163-49df-9aa4-471700f7c473",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781762837.3384986
+    },
+    {
+      "id": "a11076d0-79f6-4319-ba69-eeba0a4e5810",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/9: FROM maven:3.6.3-jdk-8\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781764118.020645
+    },
+    {
+      "id": "5d1758ed-ed0b-49ea-b272-262a7cf1b5e4",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/9: FROM maven:3.6.3-jdk-8\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781764119.3330452
+    },
+    {
+      "id": "7b8f53d1-995c-4e53-99d3-94865ceb1fb3",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/9: FROM maven:3.6.3-jdk-8\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781764125.6611855
+    },
+    {
+      "id": "0fe33c39-e6ea-4daa-9679-5dd43d4f7b4a",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781764183.4579134
+    },
+    {
+      "id": "0e0764bc-f2a3-4563-acaf-0fe6a87f37c9",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781764520.0206778
+    },
+    {
+      "id": "b79a473d-7dab-4880-a02d-42526e2d5079",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/9: FROM maven:3.6.3-jdk-8\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781765724.6873405
+    },
+    {
+      "id": "2a8777db-0808-487a-b753-1d28eb2d982e",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/9: FROM maven:3.6.3-jdk-8\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781765736.0339577
+    },
+    {
+      "id": "b014265d-cdce-4e19-830d-8fb2688c78bf",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/9: FROM maven:3.6.3-jdk-8\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781765737.3619134
+    },
+    {
+      "id": "2d9f2eb3-4994-4d21-b161-5e6e6689016e",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781765793.6462884
+    },
+    {
+      "id": "075ca90a-6ce0-49a3-91a4-7db09ac27730",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781766290.7222216
+    },
+    {
+      "id": "8a682512-8d1a-4b7a-aae8-9ab010431f3a",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T07:25:05Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781767506.315705
+    },
+    {
+      "id": "e46bf114-3b90-42dd-9900-7dd8ef6a7916",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T07:25:11Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781767516.874923
+    },
+    {
+      "id": "5b9d5dc3-55aa-418b-be03-67e3188d441b",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T07:25:35Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781767536.612787
+    },
+    {
+      "id": "45e17758-f9fd-4ae9-a7e4-67800fc0af40",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781767661.5330675
+    },
+    {
+      "id": "0f80aff9-0cad-4270-b292-af5eaf4c9a44",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781768306.776203
+    },
+    {
+      "id": "f131be9b-5376-4741-9141-e08454005c7a",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T07:57:03Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781769428.8766031
+    },
+    {
+      "id": "b72ea0e0-ca09-4071-bb7e-73948d5409bc",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T07:57:18Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781769444.106607
+    },
+    {
+      "id": "c5f1799d-6437-402f-9a17-62244281193d",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T07:57:34Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781769454.81414
+    },
+    {
+      "id": "e8317cf0-b204-438a-9628-9e1177df569c",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781769566.9494708
+    },
+    {
+      "id": "14400f0d-326a-4815-ab3a-edbc32c69af3",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "environment/image_resolution",
+      "build_log_summary": "Trying to pull docker.io/library/openjdk:8-jdk-slim...\nError: creating build container: initializing source docker://openjdk:8-jdk-slim: reading manifest 8-jdk-slim in docker.io/library/openjdk: manifest unknown",
+      "diff_summary": "",
+      "fix_applied": "refine: Use fully-qualified image names with docker.io/ prefix.",
+      "timestamp": 1781769916.6051328
+    },
+    {
+      "id": "5421b798-b5f8-4de5-8fef-17367e91703c",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T08:23:51Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781771037.5193226
+    },
+    {
+      "id": "4e4e370e-5240-49fa-9be5-9f5499855420",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T08:24:07Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781771052.8585703
+    },
+    {
+      "id": "34a361ee-8ad3-44d8-a067-4ce50fdc622f",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T08:24:26Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781771067.173192
+    },
+    {
+      "id": "e3b2ada8-ae72-45be-ad19-e77e34db1203",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "environment/image_resolution",
+      "build_log_summary": "Trying to pull docker.io/library/openjdk:8-jdk-slim...\nError: creating build container: initializing source docker://openjdk:8-jdk-slim: reading manifest 8-jdk-slim in docker.io/library/openjdk: manifest unknown",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781771073.5947795
+    },
+    {
+      "id": "20055296-a510-4607-8146-80eb486bcd32",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781771376.7964172
+    },
+    {
+      "id": "fd029f3e-b286-4295-97be-447f0b840a49",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T08:50:37Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781772638.5690434
+    },
+    {
+      "id": "54929813-f17b-48c7-b1c6-f21061e3b56f",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T08:50:48Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781772649.027966
+    },
+    {
+      "id": "88dfb662-3d76-4165-a674-ffbdad70ed1d",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T08:51:02Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781772668.2786448
+    },
+    {
+      "id": "befc2bbe-7b54-4283-9041-c885358700bc",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781772738.3021226
+    },
+    {
+      "id": "f7d02b89-59c8-4028-9437-ed4fb15822ca",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781773156.6415927
+    },
+    {
+      "id": "12df8397-336f-404f-9590-3458b9148089",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T09:21:12Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781774473.4745197
+    },
+    {
+      "id": "16879794-71d9-4f27-a4a1-2be176831892",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T09:21:23Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781774484.1993117
+    },
+    {
+      "id": "d8061ad0-4343-480f-acb8-c4bb15e55201",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T09:21:43Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781774509.5601475
+    },
+    {
+      "id": "7e55f329-5269-4007-9ab3-c1b6a057fcc4",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781774572.0289085
+    },
+    {
+      "id": "4169e962-6e87-49a4-a438-846c735d0d05",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781774976.7079604
+    },
+    {
+      "id": "75e9e5a6-c239-403a-a3cd-bc3d1db79fc6",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T09:53:05Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781776390.9950936
+    },
+    {
+      "id": "5d2e5bc5-3821-44df-b527-0089ce069533",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T09:53:26Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781776411.7764204
+    },
+    {
+      "id": "3e1f2f44-1733-40be-acb1-099857f93410",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T09:53:41Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781776427.5701694
+    },
+    {
+      "id": "6e021ad4-ffc6-4a00-85e6-6e439e381adf",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781776483.2352278
+    },
+    {
+      "id": "6693e8dc-3da1-4d90-8890-8201fea67bea",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.\n\nConsider adding these Maven flags to skip optio",
+      "timestamp": 1781776988.341233
+    },
+    {
+      "id": "22db8244-737d-496b-90e3-76745735d69e",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T10:21:58Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781778119.3628047
+    },
+    {
+      "id": "174ff4d1-f26f-4ca6-8220-b21bc3303dd9",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T10:22:10Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781778135.7290037
+    },
+    {
+      "id": "68238956-1982-40b7-a0b3-a7461c53fbd4",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "time=\"2026-06-18T10:22:25Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteractive\\\"}, Command:\\\"&&\\\", Args:[]string{\\\"\\\"}, Flags:[]string{}, Attrs:map[string]bool(nil), Message:\\\"&& \\\", Heredocs:[]parser.Heredoc(nil), Original:\\\"&& rm -rf /var/lib/apt/lists/*\\\"}\"\nError: building at STEP \"&& \": Build error: Unknown instruction: \"&&\" &imagebuilder.Step{Env:[]string{\"PATH=/usr/lo",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781778150.8538723
+    },
+    {
+      "id": "8164b2cb-be43-4ec2-aa01-6506e47d0d55",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781778203.9836211
+    },
+    {
+      "id": "e9590782-329d-44f4-90ba-b0c908bc09ce",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=False, bytecode_match=True",
+      "fix_applied": "",
+      "timestamp": 1781778679.0310419
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "build_tool/wrong_build_system",
+      "approach": "FROM docker.io/library/eclipse-temurin:8-jdk | RUN mvn clean install -B -DskipTests -Dgpg.skip=true -Drat.skip=true -Dproject.build.outputTimestamp=1980-01-01T00:00:00 | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 4,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please veri",
+        "[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please veri",
+        "[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please veri"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM eclipse-temurin:8-jdk | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD_FAILED",
+        "BUILD_FAILED"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.6-jdk-8 | RUN mvn clean install -B -DskipTests -Dgpg.skip=true -Drat.skip=true -Dproject.build.outputTimestamp=1",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "E: The repository 'http://deb.debian.org/debian buster-updates Release' does not have a Release file.\nError: building at STEP \"RUN apt-get update &&     apt-get install -y --no-install-recommends git ",
+        "E: The repository 'http://security.debian.org/debian-security buster/updates Release' does not have a Release file.\nError: building at STEP \"RUN apt-get update &&     apt-get install -y --no-install-r"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM maven:3.9.6-eclipse-temurin-8 | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-8\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+        "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-8\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.9-amazoncorretto-8 | RUN mvn clean install -B -DskipTests -Dgpg.skip=true -Drat.skip=true -Dproject.build.outputTimestamp=1 | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM maven:3.8.6-eclipse-temurin-8 | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "STEP 1/8: FROM maven:3.8.6-eclipse-temurin-8\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+        "STEP 1/8: FROM maven:3.8.6-eclipse-temurin-8\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.8-eclipse-temurin-8 | RUN mvn clean install -B -DskipTests -Dgpg.skip=true -Drat.skip=true \\ | ENV SOURCE_DATE_EPOCH=1565827200",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM maven:3.6.3-jdk-8 | RUN mvn dependency:resolve-plugins -B -q || true -Dproject.build.outputTimestamp=1980-01-01T00:00:00Z | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "STEP 1/8: FROM maven:3.6.3-jdk-8\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+        "STEP 1/8: FROM maven:3.6.3-jdk-8\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.8-amazoncorretto-8 | RUN mvn clean install -B -DskipTests -Dgpg.skip=true -Drat.skip=true \\ | ENV SOURCE_DATE_EPOCH=1565827200",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM maven:3.6.3-jdk-8 | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "STEP 1/8: FROM maven:3.6.3-jdk-8\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+        "STEP 1/8: FROM maven:3.6.3-jdk-8\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.8.8-eclipse-temurin-8 | RUN mvn clean package -B -DskipTests -Dgpg.skip=true -Drat.skip=true \\ | ENV SOURCE_DATE_EPOCH=1565827200",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM maven:3.6.3-jdk-8 | ENV MAVEN_HOME=/opt/apache-maven-3.6.2 | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 4,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "STEP 1/9: FROM maven:3.6.3-jdk-8\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+        "STEP 1/9: FROM maven:3.6.3-jdk-8\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+        "STEP 1/9: FROM maven:3.6.3-jdk-8\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.8.8-eclipse-temurin-8 | RUN mvn clean install -B -DskipTests -Dgpg.skip=true -Drat.skip=true \\ | ENV SOURCE_DATE_EPOCH=1569024000 | ENV TZ=UTC | ENV LC_ALL=C",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/amazoncorretto:8 | RUN mvn clean install -B -DskipTests -Dgpg.skip=true -Drat.skip=true \\ | ENV MAVEN_HOME=/opt/apache-maven-3.8.8 | ENV PATH=/opt/apache-maven-3.8.8/bin:${PATH} | ENV SOURCE_DATE_EPOCH=1569024000 | ENV TZ=UTC | ENV LC_ALL=C",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM ubuntu:24.04 | ENV DEBIAN_FRONTEND=noninteractive | ENV JAVA_HOME=/usr/lib/jvm/jdk-8 | ENV PATH=\"${JAVA_HOME}/bin:${PATH}\" | ENV MAVEN_HOME=/opt/apache-maven-3.6.2 | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 4,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "time=\"2026-06-18T07:25:11Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteracti",
+        "time=\"2026-06-18T07:25:35Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteracti",
+        "time=\"2026-06-18T07:57:18Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteracti"
+      ]
+    },
+    {
+      "error_class": "environment/image_resolution",
+      "approach": "FROM docker.io/library/openjdk:8-jdk-slim | RUN mvn clean install -B -DskipTests -Dgpg.skip=true -Drat.skip=true \\ | ENV MAVEN_HOME=/opt/apache-maven-3.6.2 | ENV PATH=/opt/apache-maven-3.6.2/bin:${PATH} | ENV SOURCE_DATE_EPOCH=1569024000 | ENV TZ=UTC | ENV LC_ALL=C",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "Trying to pull docker.io/library/openjdk:8-jdk-slim...\nError: creating build container: initializing source docker://openjdk:8-jdk-slim: reading manifest 8-jdk-slim in docker.io/library/openjdk: manif",
+        "Trying to pull docker.io/library/openjdk:8-jdk-slim...\nError: creating build container: initializing source docker://openjdk:8-jdk-slim: reading manifest 8-jdk-slim in docker.io/library/openjdk: manif"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM ubuntu:24.04 | ENV DEBIAN_FRONTEND=noninteractive | ENV MAVEN_HOME=/opt/apache-maven-3.8.8 | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "time=\"2026-06-18T08:24:07Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteracti",
+        "time=\"2026-06-18T08:24:26Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteracti"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.8.8-eclipse-temurin-8 | RUN mvn clean package -B -DskipTests -Dgpg.skip=true -Drat.skip=true -Dcheckstyle.skip=true -Dmaven.javadoc.skip=true -D | ENV TZ=UTC | ENV LC_ALL=C | ENV SOURCE_DATE_EPOCH=1569024000",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM ubuntu:24.04 | ENV DEBIAN_FRONTEND=noninteractive | ENV MAVEN_HOME=/opt/apache-maven-3.6.0 | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "time=\"2026-06-18T08:50:48Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteracti",
+        "time=\"2026-06-18T08:51:02Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteracti"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/maven:3.8.8-eclipse-temurin-8 | RUN mvn clean install -B -e -DskipTests -Dgpg.skip=true -Drat.skip=true \\ | ENV TZ=UTC | ENV LC_ALL=C | ENV SOURCE_DATE_EPOCH=1569024000",
+      "failure_count": 3,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM ubuntu:24.04 | ENV DEBIAN_FRONTEND=noninteractive | ENV MAVEN_HOME=/opt/apache-maven-3.6.1 | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "time=\"2026-06-18T09:21:23Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteracti",
+        "time=\"2026-06-18T09:21:43Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteracti"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM ubuntu:24.04 | ENV DEBIAN_FRONTEND=noninteractive | ENV MAVEN_HOME=/opt/apache-maven-3.6.3 | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 4,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "time=\"2026-06-18T09:53:26Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteracti",
+        "time=\"2026-06-18T09:53:41Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteracti",
+        "time=\"2026-06-18T10:22:10Z\" level=error msg=\"+(UNHANDLED LOGLEVEL) &imagebuilder.Step{Env:[]string{\\\"PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin\\\", \\\"DEBIAN_FRONTEND=noninteracti"
+      ]
+    }
+  ]
+}

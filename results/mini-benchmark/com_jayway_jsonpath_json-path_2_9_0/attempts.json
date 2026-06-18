@@ -1,0 +1,981 @@
+{
+  "coordinate": "com.jayway.jsonpath:json-path:2.9.0",
+  "status": "budget_exhausted",
+  "best_reward": 0.5,
+  "iterations": 15,
+  "elapsed_seconds": 18654.1,
+  "attempts": [
+    {
+      "id": "ded36988-21af-4d45-981b-a491ce0c8770",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD FAILED in 9s\nError: building at STEP \"RUN gradle build --warning-mode all -DskipTests\": while running runtime: exit status 1",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781755422.466191
+    },
+    {
+      "id": "7302a81b-a1bb-47a4-83d5-63c8611ad373",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD FAILED in 8s\nError: building at STEP \"RUN gradle build --warning-mode all -DskipTests\": while running runtime: exit status 1",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781755484.5160325
+    },
+    {
+      "id": "0f24400a-59ce-4a35-aa75-61edb13d9c41",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD FAILED in 3s\nError: building at STEP \"RUN gradle build --warning-mode all -DskipTests\": while running runtime: exit status 1",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781755524.6065578
+    },
+    {
+      "id": "a5ae0b33-717b-4f1e-8893-4902c68452bc",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD FAILED in 9s\nError: building at STEP \"RUN gradle build --warning-mode all -DskipTests\": while running runtime: exit status 1",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781755582.298618
+    },
+    {
+      "id": "19ff30c7-db10-449a-b6a4-6dd9e675eceb",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781756230.8980682
+    },
+    {
+      "id": "ca5cd8fa-f49f-44c0-be21-52660086f533",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781756237.6668134
+    },
+    {
+      "id": "34cd8aeb-bfe9-4da0-9bab-e00e4ff30152",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781756244.3997989
+    },
+    {
+      "id": "1fae115c-f1af-47e3-a241-ecc4b0aa7693",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "BUILD FAILED in 9s\nError: building at STEP \"RUN gradle build --warning-mode all -DskipTests\": while running runtime: exit status 1",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781756296.6788647
+    },
+    {
+      "id": "849fd289-6eb6-420f-abd1-4cffe590b4fb",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781756586.2280626
+    },
+    {
+      "id": "1a8caf80-df06-4e91-a853-50463cd89426",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781757301.2170262
+    },
+    {
+      "id": "acae4d37-13c7-40b9-8199-7dc07503f987",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781757312.965415
+    },
+    {
+      "id": "ce4f142a-5ea6-4722-af34-bd4d510e62ab",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781757324.7231166
+    },
+    {
+      "id": "1d7db655-3923-4d55-9712-b11ec469c537",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781757413.5362222
+    },
+    {
+      "id": "0f9dde14-ada1-434d-ba20-ea7ab98d101c",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781757871.6351793
+    },
+    {
+      "id": "6fdb5436-a6fd-4341-9b46-63247758cbea",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.8.8-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781758625.9255412
+    },
+    {
+      "id": "6afabac3-d4b7-4a1f-90b9-713344de9d49",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.8.8-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781758637.635103
+    },
+    {
+      "id": "d570a3df-f14e-4386-9a2c-32c239a2f136",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.8.8-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781758639.3346393
+    },
+    {
+      "id": "9d331cf7-a04d-4eb5-a9f9-297d1e1d3309",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781758709.5618768
+    },
+    {
+      "id": "c4032a5f-66a9-45f3-829b-4123fda23871",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781759031.4108312
+    },
+    {
+      "id": "5287b00c-bc1a-4574-a201-6850d65bcab6",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781759808.968485
+    },
+    {
+      "id": "6132c8fc-52f4-42a3-b154-752d1d8101ce",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781759821.0082796
+    },
+    {
+      "id": "3b0e1275-fa75-4607-ab6b-65b6c2b09aaf",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781759822.95138
+    },
+    {
+      "id": "0ac5532e-91a5-4948-afc5-2814f9185ebb",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781759917.7064219
+    },
+    {
+      "id": "88585257-372e-4d01-b490-3eda33f5d7a4",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781760382.3156974
+    },
+    {
+      "id": "ace8c35a-a03f-4d67-a4ab-c112c270fdad",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781761013.5951
+    },
+    {
+      "id": "3596b39f-378d-4930-8fce-8d39e8672e03",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781761025.546294
+    },
+    {
+      "id": "be670e4a-18b1-4546-9529-3b943f8cdec7",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781761032.5098855
+    },
+    {
+      "id": "160c58c9-21f2-485a-9799-d5c593b26cba",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781761120.3415482
+    },
+    {
+      "id": "23963eac-3002-4d74-bca0-ee13b4ebc7b7",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "gpg: no valid OpenPGP data found.\nError: building at STEP \"RUN apt-get update &&     apt-get install -y --no-install-recommends wget apt-transport-https gpg &&     wget -qO - https://packages.adoptium.net/artifactory/api/gpg/key/public | gpg --dearmor -o /usr/share/keyrings/adoptium.gpg &&     echo \"deb [signed-by=/usr/share/keyrings/adoptium.gpg] https://packages.adoptium.net/artifactory/deb $(. /etc/os-release && echo $VERSION_CODENAME) main\" > /etc/apt/sources.list.d/adoptium.list &&     apt-",
+      "diff_summary": "",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781761364.1233895
+    },
+    {
+      "id": "fa542879-efb1-422c-a1ec-1ad793e47361",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781762127.7018592
+    },
+    {
+      "id": "b9195c07-ef1a-4ecf-9c32-a3c2d033816e",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781762134.7320654
+    },
+    {
+      "id": "b3409610-3fe3-4b52-8703-9f68e1c878e9",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781762141.8394258
+    },
+    {
+      "id": "30edb9ac-886f-4202-b9cf-eb7a4f097610",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "gpg: no valid OpenPGP data found.\nError: building at STEP \"RUN apt-get update &&     apt-get install -y --no-install-recommends wget apt-transport-https gpg &&     wget -qO - https://packages.adoptium.net/artifactory/api/gpg/key/public | gpg --dearmor -o /usr/share/keyrings/adoptium.gpg &&     echo \"deb [signed-by=/usr/share/keyrings/adoptium.gpg] https://packages.adoptium.net/artifactory/deb $(. /etc/os-release && echo $VERSION_CODENAME) main\" > /etc/apt/sources.list.d/adoptium.list &&     apt-",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781762174.0326498
+    },
+    {
+      "id": "719b6de9-9645-4b79-9782-b7d1c7789700",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781762680.581555
+    },
+    {
+      "id": "d3f2ca39-940f-4a10-8eb6-079e7333b0c5",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781763662.5770552
+    },
+    {
+      "id": "f67c2c34-0e9c-47f8-8c97-a0a13e202b0c",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781763664.5178263
+    },
+    {
+      "id": "22b9e329-dfa9-40d4-a838-0fbed9509b7a",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781763671.5623586
+    },
+    {
+      "id": "a85def48-85de-4aa7-89ff-91744af1dd78",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781763741.3560932
+    },
+    {
+      "id": "4d6da16f-d220-4ecc-80a4-f72210f155ad",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781764177.4453452
+    },
+    {
+      "id": "1d4d9d15-35a2-4ecf-9116-666d644cc816",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781765003.347993
+    },
+    {
+      "id": "0b00b9a1-0926-490b-a25d-a157b5a0da1c",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781765010.511854
+    },
+    {
+      "id": "15e25622-200c-42f4-8a34-27a61dc28df6",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781765022.7442887
+    },
+    {
+      "id": "f42ecd4a-b95c-4dbc-bf48-f64b79390fda",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781765093.6722555
+    },
+    {
+      "id": "e7c71f09-4755-4dbc-943b-d40718514f66",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "build_tool/wrong_build_system",
+      "build_log_summary": "[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please verify you invoked Maven from the correct directory. -> [Help 1]\n[ERROR]\n[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.\n[ERROR] Re-run Maven using the -X switch to enable full debug logging.\n[ERROR] For more information about the errors and possible solutions, please",
+      "diff_summary": "",
+      "fix_applied": "refine: This project uses Gradle, not Maven. Switch the build command to use './gradlew build' or install Gr",
+      "timestamp": 1781765378.8456166
+    },
+    {
+      "id": "bd22e1eb-afc7-4a65-a509-f8f8ffd26e5f",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781766242.5656495
+    },
+    {
+      "id": "3b04ba50-619d-4583-9f36-d374fce741e3",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781766250.2664943
+    },
+    {
+      "id": "22b10b21-a40b-4fd7-92a4-f1aa07b7e126",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781766262.281517
+    },
+    {
+      "id": "2f0b3f0b-420f-47a3-8c95-47192138fd24",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781766353.4245675
+    },
+    {
+      "id": "c9e3ca99-de11-4df6-ac18-3d865ed7d5a8",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781766640.2154071
+    },
+    {
+      "id": "3dfc6f86-8bf4-466a-b91f-2e79345e408a",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781767522.505067
+    },
+    {
+      "id": "afe33a3b-2fa7-4fb2-ae74-be2803cefd9d",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781767529.4177058
+    },
+    {
+      "id": "0a2fcef0-fd73-468c-a724-03dec8007ecb",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781767536.3421025
+    },
+    {
+      "id": "f1a19ee0-6293-4a6b-bfee-6b1370e5a9ab",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781767598.105255
+    },
+    {
+      "id": "005241f8-6e39-426e-9a66-8cfd00540528",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781768040.524815
+    },
+    {
+      "id": "632838d0-7ed7-4597-b2d8-d7e6fdc2ec5f",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781768943.957551
+    },
+    {
+      "id": "baa7ef68-2a8d-4172-9bbd-177028abd7f5",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781768950.6566994
+    },
+    {
+      "id": "6a0fd8c7-c058-4875-8a1e-2bf4e254d4b2",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781768957.323956
+    },
+    {
+      "id": "fb409a81-9f4b-445f-8ad4-f224617148ad",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781769013.0573204
+    },
+    {
+      "id": "77bf9797-3ec9-4a7f-a5d0-b842c87608ab",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781769350.225618
+    },
+    {
+      "id": "bc90975d-edc7-4d63-82ef-a68cda93f59e",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781770186.4284306
+    },
+    {
+      "id": "bfdcc134-047b-4ea0-bb3c-0be0a4beb1d6",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781770198.199808
+    },
+    {
+      "id": "24edf27f-1572-40a5-8458-c219d5a39bfc",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781770204.9061978
+    },
+    {
+      "id": "b059adf6-a4ee-4019-b838-684c5d31b861",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781770281.8160722
+    },
+    {
+      "id": "0650f41b-e3cd-4d47-9813-3607faea1738",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781770730.8227
+    },
+    {
+      "id": "82e17563-15c0-4186-9c59-36976282e8b9",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781771599.7761776
+    },
+    {
+      "id": "f0da430c-01f7-4eff-95f2-633db77c538c",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781771606.417255
+    },
+    {
+      "id": "0ffd8d24-3258-41e3-9f8d-270c862b7134",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781771618.0971894
+    },
+    {
+      "id": "b2b8b37c-90d1-444d-81ed-c5fff4401b47",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781771675.1685095
+    },
+    {
+      "id": "bd710ffc-2b77-4390-9423-f4f1b1580f72",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=True",
+      "fix_applied": "refine: Analyze the build log for specific failure details.",
+      "timestamp": 1781772136.468832
+    },
+    {
+      "id": "6baa2a6e-b6fc-4f7d-bcd2-bcca05de8cf5",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781772947.849168
+    },
+    {
+      "id": "5254d781-a525-4dc1-aaa4-c1547fea19fa",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781772954.5148354
+    },
+    {
+      "id": "449fc860-9503-4213-809d-44ec1156fbe5",
+      "parent_id": null,
+      "reward": 0.05,
+      "level_reached": 1,
+      "error_class": "unknown",
+      "build_log_summary": "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781772956.2130826
+    },
+    {
+      "id": "7250838d-c36b-42e0-b4bd-5a162ba71ab6",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "",
+      "fix_applied": "top_k_candidate",
+      "timestamp": 1781773038.2319841
+    },
+    {
+      "id": "d1ddecbd-e33a-46a7-af97-6721c31aac78",
+      "parent_id": null,
+      "reward": 0.5,
+      "level_reached": 3,
+      "error_class": "unknown",
+      "build_log_summary": "",
+      "diff_summary": "verdict=DIVERGENT, structural_match=False, metadata_match=True, bytecode_match=True",
+      "fix_applied": "",
+      "timestamp": 1781773464.1986978
+    }
+  ],
+  "dead_ends": [
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:17-jdk | RUN gradle build --warning-mode all -DskipTests | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 4,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "BUILD FAILED in 8s\nError: building at STEP \"RUN gradle build --warning-mode all -DskipTests\": while running runtime: exit status 1",
+        "BUILD FAILED in 3s\nError: building at STEP \"RUN gradle build --warning-mode all -DskipTests\": while running runtime: exit status 1",
+        "BUILD FAILED in 9s\nError: building at STEP \"RUN gradle build --warning-mode all -DskipTests\": while running runtime: exit status 1"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM maven:3.9-eclipse-temurin-17 | RUN mvn clean install -B -DskipTests -Dproject.build.outputTimestamp=1980-01-01T00:00:00Z | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "STEP 1/8: FROM maven:3.9-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+        "STEP 1/8: FROM maven:3.9-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:17-jdk | RUN ./gradlew build -x test -x javadoc --no-daemon | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM maven:3.9.6-eclipse-temurin-17 | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 4,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+        "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+        "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM maven:3.8.8-eclipse-temurin-17 | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "STEP 1/8: FROM maven:3.8.8-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+        "STEP 1/8: FROM maven:3.8.8-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:11-jdk | RUN ./gradlew :json-path:jar --no-daemon -x test | ENV SOURCE_DATE_EPOCH=1705745070 | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM maven:3.9.6-eclipse-temurin-17 | RUN find . -name 'pom.xml' | head -1 | xargs grep -A2 'maven-bundle-plugin' || true | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 14,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+        "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+        "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM ubuntu:24.04 | RUN RUN mvn clean package -B -DskipTests -Dproject.build.outputTimestamp=2024-01-20T13:04:30Z | ENV DEBIAN_FRONTEND=noninteractive | ENV SOURCE_DATE_EPOCH=1705745070 | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "gpg: no valid OpenPGP data found.\nError: building at STEP \"RUN apt-get update &&     apt-get install -y --no-install-recommends wget apt-transport-https gpg &&     wget -qO - https://packages.adoptium",
+        "gpg: no valid OpenPGP data found.\nError: building at STEP \"RUN apt-get update &&     apt-get install -y --no-install-recommends wget apt-transport-https gpg &&     wget -qO - https://packages.adoptium"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/gradle:7.4.2-jdk17 | RUN ./gradlew :json-path:jar :json-path-assert:jar -x test --no-daemon | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/eclipse-temurin:11-jdk | RUN chmod +x gradlew && \\ | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        ""
+      ]
+    },
+    {
+      "error_class": "build_tool/wrong_build_system",
+      "approach": "FROM docker.io/library/eclipse-temurin:17-jdk | RUN ./gradlew build -x test -x javadoc --no-daemon | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 1,
+      "threshold": 2,
+      "is_exhausted": false,
+      "examples": [
+        "[INFO] ------------------------------------------------------------------------\n[ERROR] The goal you specified requires a project to execute but there is no POM in this directory (/build). Please veri"
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/gradle:7.4.2-jdk17 | RUN chmod +x ./gradlew && \\ | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 2,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM docker.io/library/amazoncorretto:11 | RUN chmod +x ./gradlew && \\ | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 3,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "",
+        "",
+        ""
+      ]
+    },
+    {
+      "error_class": "unknown",
+      "approach": "FROM maven:3.9.6-eclipse-temurin-17 | RUN grep -E '<packaging>|maven-bundle-plugin' pom.xml json-path/pom.xml 2>/dev/null || grep -rE '<packaging>|maven-bundl | ENV SOURCE_DATE_EPOCH=0",
+      "failure_count": 6,
+      "threshold": 2,
+      "is_exhausted": true,
+      "examples": [
+        "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+        "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY",
+        "STEP 1/8: FROM maven:3.9.6-eclipse-temurin-17\nError: creating build container: short-name resolution enforced but cannot prompt without a TTY"
+      ]
+    }
+  ]
+}

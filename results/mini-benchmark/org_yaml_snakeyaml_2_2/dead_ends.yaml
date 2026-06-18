@@ -1,0 +1,57 @@
+- error_class: build_tool/wrong_build_system
+  approach: FROM docker.io/library/eclipse-temurin:11-jdk | RUN mvn clean 
+    install -B -DskipTests -Dproject.build.outputTimestamp=1980-01-01T00:00:00Z 
+    | ENV SOURCE_DATE_EPOCH=0
+  failure_count: 4
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "[INFO] ------------------------------------------------------------------------\n\
+    [ERROR] The goal you specified requires a project to execute but there is no POM
+    in this directory (/build). Please veri"
+  - "[INFO] ------------------------------------------------------------------------\n\
+    [ERROR] The goal you specified requires a project to execute but there is no POM
+    in this directory (/build). Please veri"
+  - "[INFO] ------------------------------------------------------------------------\n\
+    [ERROR] The goal you specified requires a project to execute but there is no POM
+    in this directory (/build). Please veri"
+- error_class: source/wrong_tag
+  approach: FROM eclipse-temurin:11-jdk | RUN bash -c 'D=$(find /build -maxdepth
+    3 -name pom.xml ! -path "*/target/*" | head -1 | xargs dirname); cd "$D" && 
+    mvn c | ENV SOURCE_DATE_EPOCH=0
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "Cloning into '/build'...\nfatal: Remote branch v2.2 not found in upstream origin\n\
+    Error: building at STEP \"RUN git clone --depth 1 --branch 'v2.2' 'https://github.com/snakeyaml/snakeyaml'
+    /build\": while"
+  - "Cloning into '/build'...\nfatal: Remote branch v2.2 not found in upstream origin\n\
+    Error: building at STEP \"RUN git clone --depth 1 --branch 'v2.2' 'https://github.com/snakeyaml/snakeyaml'
+    /build\": while"
+- error_class: source/wrong_tag
+  approach: FROM eclipse-temurin:11-jdk | ENV SOURCE_DATE_EPOCH=0
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "Cloning into '/build'...\nfatal: Remote branch snakeyaml-2.2 not found in upstream
+    origin\nError: building at STEP \"RUN git clone --depth 1 --branch 'snakeyaml-2.2'
+    'https://github.com/snakeyaml/snakeya"
+  - "Cloning into '/build'...\nfatal: Remote branch snakeyaml-2.2 not found in upstream
+    origin\nError: building at STEP \"RUN git clone --depth 1 --branch 'snakeyaml-2.2'
+    'https://github.com/snakeyaml/snakeya"
+- error_class: source/wrong_tag
+  approach: FROM eclipse-temurin:11-jdk | RUN mvn clean install -B -DskipTests 
+    -Dproject.build.outputTimestamp=1980-01-01T00:00:00Z | ENV 
+    SOURCE_DATE_EPOCH=0
+  failure_count: 2
+  threshold: 2
+  is_exhausted: true
+  examples:
+  - "Cloning into '/build'...\nfatal: Remote branch 2.2 not found in upstream origin\n\
+    Error: building at STEP \"RUN git clone --depth 1 --branch '2.2' 'https://github.com/snakeyaml/snakeyaml'
+    /build\": while r"
+  - "Cloning into '/build'...\nfatal: Remote branch 2.2 not found in upstream origin\n\
+    Error: building at STEP \"RUN git clone --depth 1 --branch '2.2' 'https://github.com/snakeyaml/snakeyaml'
+    /build\": while r"
