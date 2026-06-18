@@ -93,11 +93,11 @@ python -m buildroot reconstruct org.apache.commons:commons-lang3:3.14.0 --output
 - src/buildroot/agent/observer.py
 - src/buildroot/agent/outer_loop.py
 - src/buildroot/agent/models.py
+- src/buildroot/agent/evaluator.py
 - src/buildroot/templates/*.j2
 
 ## Fixed Surfaces
 
-- src/buildroot/agent/evaluator.py
 - eval/score.py
 - results/packages_smoke.txt
 - src/buildroot/utils/jar_comparator.py

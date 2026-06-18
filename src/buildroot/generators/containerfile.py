@@ -120,6 +120,9 @@ class ContainerfileGenerator:
     def _select_template(self, spec: BuildrootSpec) -> str:
         if spec.base_image:
             return "custom_base.j2"
+        build_cmd = spec.build_commands[0] if spec.build_commands else ""
+        if self._detect_build_tool(build_cmd) == "gradle":
+            return "gradle_base.j2"
         if spec.system_packages:
             return "jdk_on_ubuntu.j2"
         return "jdk_base.j2"
