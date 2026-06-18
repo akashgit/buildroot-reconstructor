@@ -48,10 +48,10 @@ CANDIDATE_SCHEMA = {
     "required": ["candidates", "field_updated"],
 }
 
-NODE_MODEL = "claude-sonnet-4-6"
-NODE_MAX_TURNS = 10
-NODE_BUDGET_USD = 2.0
-NODE_TIMEOUT = 300
+NODE_MODEL = "claude-opus-4-6"
+NODE_MAX_TURNS = 15
+NODE_BUDGET_USD = 5.0
+NODE_TIMEOUT = 600
 
 
 @dataclass

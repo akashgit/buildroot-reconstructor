@@ -107,10 +107,13 @@ def spawn_claude_agent(
                 output = json.loads(result.stdout)
                 partial_result = output.get("result", "")
                 subtype = output.get("subtype", "")
-                if partial_result and subtype == "error_max_turns":
+                is_error = output.get("is_error", False)
+                if subtype == "error_max_turns":
                     logger.warning(
-                        "Claude agent hit max_turns but produced partial result (%d chars)",
+                        "Claude agent hit max_turns (turns=%s, result=%d chars, structured=%s)",
+                        output.get("num_turns", "?"),
                         len(partial_result),
+                        bool(output.get("structured_output")),
                     )
                     return AgentResult(
                         text=partial_result,
@@ -119,8 +122,21 @@ def spawn_claude_agent(
                         cost_usd=output.get("total_cost_usd", 0.0),
                         num_turns=output.get("num_turns", 0),
                     )
+                # Log the actual error details from the JSON for diagnosis
+                logger.error(
+                    "Claude agent exit code %d: subtype=%s, is_error=%s, "
+                    "result_len=%d, num_turns=%s, cost=$%s",
+                    result.returncode, subtype or "none", is_error,
+                    len(partial_result), output.get("num_turns", "?"),
+                    output.get("total_cost_usd", "?"),
+                )
+                if partial_result:
+                    logger.error("Claude agent partial result: %s", partial_result[:300])
             except (json.JSONDecodeError, KeyError):
-                pass
+                logger.error(
+                    "Claude agent exit code %d, stdout not valid JSON (%d bytes), stderr: %s",
+                    result.returncode, len(result.stdout), result.stderr[:300],
+                )
             error_detail = result.stderr.strip() or f"Exit code {result.returncode}"
             logger.error("Claude agent failed: %s", error_detail[:500])
             return AgentResult(
