@@ -49,7 +49,7 @@ CANDIDATE_SCHEMA = {
 }
 
 NODE_MODEL = "claude-opus-4-6"
-NODE_MAX_TURNS = 15
+NODE_MAX_TURNS = 8
 NODE_BUDGET_USD = 5.0
 NODE_TIMEOUT = 600
 
@@ -102,6 +102,12 @@ class NodeAgent:
                     return True
         return False
 
+    _TURN_BUDGET_SUFFIX = (
+        "\n\nIMPORTANT: You have a strict turn budget. Produce your structured JSON "
+        "output (candidates array) within a few tool calls. Do NOT exhaustively search — "
+        "return your best findings quickly. An empty candidates list is acceptable."
+    )
+
     def review(self, spec: BuildrootSpec, context: dict[str, Any] | None = None) -> list[Candidate]:
         ctx = context or {}
         task = self._build_task(spec, ctx)
@@ -110,7 +116,7 @@ class NodeAgent:
             task += f"\n\n## Build Failure Context\n{build_error_ctx}"
         result = spawn_claude_agent(
             task=task,
-            system_prompt=self.system_prompt,
+            system_prompt=self.system_prompt + self._TURN_BUDGET_SUFFIX,
             model=NODE_MODEL,
             json_schema=CANDIDATE_SCHEMA,
             max_turns=NODE_MAX_TURNS,
