@@ -40,7 +40,7 @@ def build_feedback_context(
 
     # Score section
     sections.append(f"## Iteration {iteration}/{max_iterations} — Feedback\n")
-    sections.append(f"### Score")
+    sections.append("### Score")
     sections.append(
         f"Level: L{level} | Reward: {reward:.4f} | "
         f"Delta: {delta:+.4f} from best ({best_reward:.4f})"
@@ -55,10 +55,9 @@ def build_feedback_context(
 
     # Template-value diff
     if score_history and len(score_history) >= 2:
-        prev_values = best_values if reward < best_reward else current_values
         diff_text = compute_template_value_diff(best_values, current_values)
         if diff_text:
-            sections.append(f"\n### What Changed")
+            sections.append("\n### What Changed")
             sections.append(diff_text)
 
     # Build result

@@ -1,6 +1,5 @@
 """Tests for Containerfile reverse-parse (warm-start)."""
 
-import pytest
 
 from buildroot.agent.pipeline_v3 import reverse_parse_containerfile
 

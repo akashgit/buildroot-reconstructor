@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import io
 import struct
 import tempfile
 import zipfile

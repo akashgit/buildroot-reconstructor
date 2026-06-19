@@ -2,12 +2,8 @@
 
 from __future__ import annotations
 
-import io
-import zipfile
 from pathlib import Path
-from unittest.mock import MagicMock, patch
 
-import pytest
 
 from buildroot.agent.prepass import (
     JDK_BYTECODE_MAJOR,
@@ -18,7 +14,6 @@ from buildroot.agent.prepass import (
     _extract_minor_version,
     _parse_manifest,
     _pom_data_to_dict,
-    run_prepass,
 )
 from buildroot.pipeline.models import PomData
 

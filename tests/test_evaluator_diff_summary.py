@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 from buildroot.agent.evaluator import Evaluator
 from buildroot.utils.jar_comparator import (

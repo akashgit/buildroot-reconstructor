@@ -7,12 +7,12 @@ import logging
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from buildroot.agent.claude_runner import spawn_claude_agent
 from buildroot.agent.evaluator import Evaluator
 from buildroot.agent.models import EvalResult, FailedApproach, RecipeStore
-from buildroot.agent.scorer import ScoreBreakdown, build_score_breakdown, compute_fallback_score
+from buildroot.agent.scorer import build_score_breakdown
 from buildroot.agent.prepass import PrePassFindings, run_prepass
 from buildroot.generators.containerfile import ContainerfileGenerator
 from buildroot.pipeline.models import BuildrootSpec
@@ -611,13 +611,13 @@ def run_v3_pipeline(
 
             if len(all_variants) <= 2:
                 # Single new variant — just use it directly (no parallel overhead)
-                current_values = all_variants[-1]["template_values"]
+                current_values = cast(dict[str, Any], all_variants[-1]["template_values"])
             else:
                 # Multiple variants — build and evaluate all, pick winner
-                variant_results = []
+                variant_results: list[tuple[int, float, EvalResult | None, str]] = []
                 for vi, v in enumerate(all_variants):
                     try:
-                        v_cf = _render_containerfile(v["template_values"])
+                        v_cf = _render_containerfile(cast(dict[str, Any], v["template_values"]))
                         v_eval = evaluator.evaluate(v_cf, coordinate)
                         variant_results.append((vi, v_eval.reward, v_eval, v_cf))
                         logger.info("  Variant %d (%s): reward=%.4f",
@@ -630,7 +630,7 @@ def run_v3_pipeline(
                     winner_idx, winner_reward, winner_eval, winner_cf = max(
                         variant_results, key=lambda x: x[1],
                     )
-                    current_values = all_variants[winner_idx]["template_values"]
+                    current_values = cast(dict[str, Any], all_variants[winner_idx]["template_values"])
                     if winner_eval and winner_reward > reward:
                         eval_result = winner_eval
                         containerfile = winner_cf
