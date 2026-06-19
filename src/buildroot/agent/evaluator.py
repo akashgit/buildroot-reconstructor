@@ -159,20 +159,18 @@ class Evaluator:
                         f"metadata_match={report.metadata.match}",
                         f"bytecode_match={report.bytecode.match}",
                     ]
-                    if not report.structural.match and hasattr(report.structural, 'details'):
-                        details = report.structural.details
-                        if hasattr(details, 'missing_files') and details.missing_files:
-                            parts.append(f"missing_files={details.missing_files[:5]}")
-                        if hasattr(details, 'extra_files') and details.extra_files:
-                            parts.append(f"extra_files={details.extra_files[:5]}")
-                    if not report.metadata.match and hasattr(report.metadata, 'details'):
-                        details = report.metadata.details
-                        if hasattr(details, 'differing_keys') and details.differing_keys:
-                            parts.append(f"metadata_diffs={details.differing_keys[:5]}")
-                    if not report.bytecode.match and hasattr(report.bytecode, 'details'):
-                        details = report.bytecode.details
-                        if hasattr(details, 'divergent_classes') and details.divergent_classes:
-                            parts.append(f"bytecode_diffs={details.divergent_classes[:5]}")
+                    if not report.structural.match and hasattr(report.structural, 'diff'):
+                        diff = report.structural.diff
+                        if hasattr(diff, 'missing') and diff.missing:
+                            parts.append(f"missing_files={diff.missing[:5]}")
+                        if hasattr(diff, 'extra') and diff.extra:
+                            parts.append(f"extra_files={diff.extra[:5]}")
+                    if not report.metadata.match:
+                        if hasattr(report.metadata, 'manifest_diff_keys') and report.metadata.manifest_diff_keys:
+                            parts.append(f"metadata_diffs={report.metadata.manifest_diff_keys[:5]}")
+                    if not report.bytecode.match:
+                        if hasattr(report.bytecode, 'classes_divergent') and report.bytecode.classes_divergent:
+                            parts.append(f"bytecode_diffs={report.bytecode.classes_divergent[:5]}")
                     result.diff_summary = ", ".join(parts)
         except Exception as e:
             result.error_summary = f"L4 comparison error: {e}"
