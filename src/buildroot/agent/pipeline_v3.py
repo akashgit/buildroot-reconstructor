@@ -174,6 +174,30 @@ Include ALL fields — do not output incremental changes. \
 Every iteration must be a complete specification.
 """
 
+MULTI_VARIANT_SCHEMA = {
+    "type": "object",
+    "properties": {
+        "variants": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "reasoning": {
+                        "type": "string",
+                        "description": "Why this variant might work",
+                    },
+                    "template_values": BUILDROOT_SCHEMA,
+                },
+                "required": ["reasoning", "template_values"],
+            },
+            "minItems": 1,
+            "maxItems": 3,
+            "description": "1-3 ranked variants to try (best first)",
+        },
+    },
+    "required": ["variants"],
+}
+
 FEEDBACK_AGENT_SYSTEM = """\
 You are the Analysis Agent continuing to refine a build environment. You have already \
 produced an initial set of template values that were built and evaluated. Review the \
@@ -186,6 +210,10 @@ feedback below and output UPDATED COMPLETE template values.
 - Read the build log and comparison report files for detailed investigation.
 - At L4, use diff -r and javap -v on the unpacked JARs to diagnose divergences.
 - Focus on the specific failing dimension (structural, metadata, or bytecode).
+- You may output 1-3 RANKED variants in the "variants" array.
+  Each variant must contain a "reasoning" field and a complete "template_values" object.
+  The system will automatically prepend the current best as an incumbent — \
+  you only need to output NEW variants to try.
 
 ## Evidence Hierarchy
 
@@ -312,6 +340,7 @@ def run_v3_pipeline(
     host: str = "rh-h100-01",
     workspace: Path | None = None,
     skip_deps: bool = True,
+    warm_start_containerfile: str | None = None,
 ) -> PipelineResult:
     """Run the v3 pipeline: pre-pass → analysis agent → build+eval → feedback loop."""
     import tempfile
@@ -348,32 +377,53 @@ def run_v3_pipeline(
         result.elapsed_seconds = time.time() - start_time
         return result
 
-    # 2. Cross-package hints
-    group_hints = recipe_store.get_group_hints(coordinate) if hasattr(recipe_store, 'get_group_hints') else []
-
-    # 3. Initial analysis agent
-    logger.info("Running initial analysis agent for %s", coordinate)
-    initial_task = _build_initial_task(coordinate, prepass_findings, group_hints)
-
-    agent_result = spawn_claude_agent(
-        task=initial_task,
-        system_prompt=ANALYSIS_AGENT_SYSTEM,
-        model="claude-opus-4-6",
-        json_schema=BUILDROOT_SCHEMA,
-        max_turns=30,
-        max_budget_usd=10.0,
-        timeout=900,
-        allowed_tools=["Bash", "Read", "WebSearch", "WebFetch", "Agent"],
-    )
-
-    if agent_result.is_error or not agent_result.structured_output:
-        logger.warning("Initial analysis agent failed: %s", agent_result.error_message)
-        current_values = _fallback_values_from_prepass(prepass_findings, coordinate)
+    # Warm-start: reverse-parse existing Containerfile and start in feedback mode
+    if warm_start_containerfile:
+        logger.info("Warm-start: reverse-parsing existing Containerfile for %s", coordinate)
+        current_values = reverse_parse_containerfile(warm_start_containerfile)
+        current_values = _ensure_defaults(current_values, prepass_findings)
     else:
-        current_values = agent_result.structured_output
+        # 2. Cross-package hints
+        group_hints = recipe_store.get_group_hints(coordinate)
 
-    # Fill in defaults
-    current_values = _ensure_defaults(current_values, prepass_findings)
+        # 3. Parallel first build: run fallback build AND analysis agent concurrently
+        logger.info("Running initial analysis agent for %s", coordinate)
+        initial_task = _build_initial_task(coordinate, prepass_findings, group_hints)
+
+        fallback_values = _fallback_values_from_prepass(prepass_findings, coordinate)
+        fallback_values = _ensure_defaults(fallback_values, prepass_findings)
+
+        draft_result: EvalResult | None = None
+        try:
+            draft_cf = _render_containerfile(fallback_values)
+            logger.info("Parallel first build: evaluating pre-pass draft while agent analyzes")
+            draft_result = evaluator.evaluate(draft_cf, coordinate)
+            logger.info("  Draft build: reward=%.4f level=%d", draft_result.reward, draft_result.level_reached)
+        except Exception as e:
+            logger.warning("Draft build failed (non-fatal): %s", e)
+
+        agent_result = spawn_claude_agent(
+            task=initial_task,
+            system_prompt=ANALYSIS_AGENT_SYSTEM,
+            model="claude-opus-4-6",
+            json_schema=BUILDROOT_SCHEMA,
+            max_turns=30,
+            max_budget_usd=10.0,
+            timeout=900,
+            allowed_tools=["Bash", "Read", "WebSearch", "WebFetch", "Agent"],
+        )
+
+        if draft_result and draft_result.reward >= 0.98:
+            logger.info("Draft build already near-perfect (%.4f) — using draft values", draft_result.reward)
+            current_values = fallback_values
+        elif agent_result.is_error or not agent_result.structured_output:
+            logger.warning("Initial analysis agent failed: %s", agent_result.error_message)
+            current_values = fallback_values
+        else:
+            current_values = agent_result.structured_output
+
+        # Fill in defaults
+        current_values = _ensure_defaults(current_values, prepass_findings)
 
     best_values = dict(current_values)
     best_reward = 0.0
@@ -526,14 +576,15 @@ def run_v3_pipeline(
         feedback_task = (
             f"Refine the build environment for {coordinate}.\n\n"
             f"{feedback}\n\n"
-            f"Output COMPLETE template values as JSON."
+            f"Output 1-3 ranked variants in the 'variants' array. "
+            f"Each variant must have 'reasoning' and 'template_values' fields."
         )
 
         feedback_result = spawn_claude_agent(
             task=feedback_task,
             system_prompt=FEEDBACK_AGENT_SYSTEM,
             model="claude-opus-4-6",
-            json_schema=BUILDROOT_SCHEMA,
+            json_schema=MULTI_VARIANT_SCHEMA,
             max_turns=15,
             max_budget_usd=5.0,
             timeout=600,
@@ -544,8 +595,49 @@ def run_v3_pipeline(
             logger.warning("Feedback agent failed — retrying with best values")
             current_values = dict(best_values)
         else:
-            current_values = feedback_result.structured_output
-            current_values = _ensure_defaults(current_values, prepass_findings)
+            # Multi-variant elitist: prepend incumbent, eval all, pick winner
+            agent_variants = feedback_result.structured_output.get("variants", [])
+            all_variants = [
+                {"template_values": dict(best_values), "reasoning": "incumbent best", "is_incumbent": True},
+            ]
+            for v in agent_variants[:3]:
+                tv = v.get("template_values", {})
+                tv = _ensure_defaults(tv, prepass_findings)
+                all_variants.append({
+                    "template_values": tv,
+                    "reasoning": v.get("reasoning", ""),
+                    "is_incumbent": False,
+                })
+
+            if len(all_variants) <= 2:
+                # Single new variant — just use it directly (no parallel overhead)
+                current_values = all_variants[-1]["template_values"]
+            else:
+                # Multiple variants — build and evaluate all, pick winner
+                variant_results = []
+                for vi, v in enumerate(all_variants):
+                    try:
+                        v_cf = _render_containerfile(v["template_values"])
+                        v_eval = evaluator.evaluate(v_cf, coordinate)
+                        variant_results.append((vi, v_eval.reward, v_eval, v_cf))
+                        logger.info("  Variant %d (%s): reward=%.4f",
+                                   vi, "incumbent" if v.get("is_incumbent") else "new", v_eval.reward)
+                    except Exception as e:
+                        logger.warning("  Variant %d failed: %s", vi, e)
+                        variant_results.append((vi, 0.0, None, ""))
+
+                if variant_results:
+                    winner_idx, winner_reward, winner_eval, winner_cf = max(
+                        variant_results, key=lambda x: x[1],
+                    )
+                    current_values = all_variants[winner_idx]["template_values"]
+                    if winner_eval and winner_reward > reward:
+                        eval_result = winner_eval
+                        containerfile = winner_cf
+                        reward = winner_reward
+                        logger.info("  Winner: variant %d (reward=%.4f)", winner_idx, winner_reward)
+                else:
+                    current_values = dict(best_values)
 
     result.best_reward = best_reward
     result.best_values = best_values
@@ -632,6 +724,101 @@ def _hash_template_values(values: dict) -> str:
     import hashlib
     serializable = {k: v for k, v in sorted(values.items()) if k != "confidence_notes"}
     return hashlib.sha256(json.dumps(serializable, sort_keys=True, default=str).encode()).hexdigest()[:16]
+
+
+def reverse_parse_containerfile(containerfile: str) -> dict:
+    """Extract template values from an existing Containerfile via regex patterns.
+
+    Used for warm-start: given a previously-working Containerfile, extract
+    structured template values so the pipeline can start in feedback mode.
+    """
+    import re
+
+    values: dict[str, Any] = {
+        "source_repo": "",
+        "git_tag": "",
+        "jdk_version": "",
+        "jdk_minor_version": None,
+        "jdk_distribution": "temurin",
+        "build_command": "",
+        "build_system": "maven",
+        "maven_version": None,
+        "build_tool_version": None,
+        "base_image": None,
+        "system_packages": [],
+        "pre_build_commands": [],
+        "post_build_commands": [],
+        "config_files": [],
+        "env_vars": {},
+        "template_id": None,
+        "module_path": None,
+        "artifact_path_pattern": None,
+        "use_maven_wrapper": False,
+        "confidence_notes": "Reverse-parsed from existing Containerfile",
+    }
+
+    from_match = re.search(r"^FROM\s+(.+)$", containerfile, re.MULTILINE)
+    if from_match:
+        image = from_match.group(1).strip()
+        values["base_image"] = image
+        if "temurin" in image:
+            values["jdk_distribution"] = "temurin"
+        elif "openjdk" in image:
+            values["jdk_distribution"] = "openjdk"
+        elif "corretto" in image:
+            values["jdk_distribution"] = "corretto"
+        version_m = re.search(r":(\d+(?:\.\d+\.\d+)?)", image)
+        if version_m:
+            ver = version_m.group(1)
+            if "." in ver:
+                values["jdk_minor_version"] = ver
+                values["jdk_version"] = ver.split(".")[0]
+            else:
+                values["jdk_version"] = ver
+
+    clone_match = re.search(
+        r"git\s+clone\s+.*?--branch\s+'([^']+)'\s+'([^']+)'",
+        containerfile,
+    )
+    if clone_match:
+        values["git_tag"] = clone_match.group(1)
+        values["source_repo"] = clone_match.group(2)
+
+    env_matches = re.findall(r"^ENV\s+(\S+?)=(.+)$", containerfile, re.MULTILINE)
+    for key, val in env_matches:
+        values["env_vars"][key] = val.strip()
+
+    maven_ver_match = re.search(
+        r"apache-maven-(\d+\.\d+\.\d+)", containerfile,
+    )
+    if maven_ver_match:
+        values["maven_version"] = maven_ver_match.group(1)
+
+    run_lines = re.findall(r"^RUN\s+(.+)$", containerfile, re.MULTILINE)
+    build_cmd = None
+    for line in run_lines:
+        if "mvn " in line or "./mvnw " in line or "gradle " in line or "./gradlew " in line or "ant " in line:
+            if "apt-get" not in line and "install" not in line.lower().split("mvn")[0]:
+                build_cmd = line.strip()
+                break
+
+    if build_cmd:
+        values["build_command"] = build_cmd
+        if "./mvnw" in build_cmd:
+            values["use_maven_wrapper"] = True
+            values["build_system"] = "maven"
+        elif "mvn " in build_cmd:
+            values["build_system"] = "maven"
+        elif "gradlew" in build_cmd or "gradle " in build_cmd:
+            values["build_system"] = "gradle"
+        elif "ant " in build_cmd:
+            values["build_system"] = "ant"
+
+        pl_match = re.search(r"-pl\s+(\S+)", build_cmd)
+        if pl_match:
+            values["module_path"] = pl_match.group(1)
+
+    return values
 
 
 def _record_failed_approaches(

@@ -81,10 +81,20 @@ def _run_single(coordinate, host, max_iterations, model, node_agents, pipeline, 
     """Run a single coordinate through the selected pipeline."""
     if pipeline == "v3":
         from buildroot.agent.pipeline_v3 import run_v3_pipeline
+
+        warm_cf = None
+        if resume:
+            from buildroot.agent.models import RecipeStore
+            store = RecipeStore()
+            best = store.best_level(coordinate)
+            if best >= 2:
+                warm_cf = store.get_containerfile(coordinate, best)
+
         return run_v3_pipeline(
             coordinate,
             max_iterations=max_iterations,
             host=host,
+            warm_start_containerfile=warm_cf,
         )
 
     from buildroot.agent.loop import run_inner_loop

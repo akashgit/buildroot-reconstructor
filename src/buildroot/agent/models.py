@@ -211,6 +211,38 @@ class RecipeStore:
             return level_data.get("containerfile")
         return None
 
+    def get_group_hints(self, coordinate: str) -> list[dict]:
+        """Query solved recipes for same-group artifacts (cross-package transfer)."""
+        group_id = coordinate.split(":")[0]
+        hints = []
+        if not self._dir.exists():
+            return hints
+        for recipe_file in self._dir.glob("*.json"):
+            try:
+                recipe = json.loads(recipe_file.read_text())
+            except (json.JSONDecodeError, OSError):
+                continue
+            recipe_coord = recipe.get("coordinate", "")
+            if recipe_coord == coordinate:
+                continue
+            if recipe_coord.startswith(group_id + ":"):
+                levels = recipe.get("levels", {})
+                best_level_key = max(
+                    (k for k in levels if k.startswith("l")),
+                    key=lambda k: int(k[1:]),
+                    default=None,
+                )
+                if best_level_key:
+                    level_data = levels[best_level_key]
+                    hints.append({
+                        "coordinate": recipe_coord,
+                        "template_id": None,
+                        "build_system": None,
+                        "containerfile": level_data.get("containerfile", ""),
+                        "reward": level_data.get("reward", 0),
+                    })
+        return hints
+
 
 class ProgressSignal:
     """AdaEvolve G_t exponential-decay signal for exploit/explore/meta-shift mode switching.
