@@ -12,6 +12,7 @@ from typing import Any
 from buildroot.agent.claude_runner import spawn_claude_agent
 from buildroot.agent.evaluator import Evaluator
 from buildroot.agent.models import EvalResult, FailedApproach, RecipeStore
+from buildroot.agent.scorer import ScoreBreakdown, build_score_breakdown, compute_fallback_score
 from buildroot.agent.prepass import PrePassFindings, run_prepass
 from buildroot.generators.containerfile import ContainerfileGenerator
 from buildroot.pipeline.models import BuildrootSpec
@@ -382,6 +383,8 @@ def run_v3_pipeline(
     prev_values: dict | None = None
     prev_reward: float = 0.0
     stagnation_count = 0
+    fallback_stagnation = 0
+    no_jar_count = 0
 
     for t in range(max_iterations):
         logger.info("Iteration %d/%d for %s", t + 1, max_iterations, coordinate)
@@ -419,6 +422,31 @@ def run_v3_pipeline(
         build_log_path.write_text(eval_result.build_log or "")
         cf_path = workspace / f"containerfile_iter{t+1}.txt"
         cf_path.write_text(containerfile)
+
+        # Build score breakdown for fallback scoring
+        score_bd = build_score_breakdown(eval_result, coordinate)
+
+        # l3_ceiling termination: no JAR produced, no fallback signals
+        if level <= 2 and not eval_result.l3_command:
+            no_jar_count += 1
+        else:
+            no_jar_count = 0
+
+        if no_jar_count >= 3 and not score_bd.jar_available:
+            logger.info("  l3_ceiling: no JAR produced for %d iterations — terminating", no_jar_count)
+            result.status = "l3_ceiling"
+            break
+
+        # fallback_ceiling_reached: using fallback signals + reward >= 0.85 + stagnation
+        if score_bd.signal_source == "fallback_signals" and reward >= 0.85:
+            fallback_stagnation += 1
+            if fallback_stagnation >= 2:
+                logger.info("  fallback_ceiling: reward=%.4f with fallback signals, stag=%d — terminating",
+                           reward, fallback_stagnation)
+                result.status = "fallback_ceiling_reached"
+                break
+        else:
+            fallback_stagnation = 0
 
         # Save recipe at each level
         if level > 0:

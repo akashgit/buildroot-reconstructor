@@ -240,6 +240,34 @@ class Evaluator:
             logger.warning("Could not extract rebuilt JAR: %s", e)
             return None
 
+    def l4_fallback_signals(
+        self, tag: str, coordinate: str, jdk_version: str = "",
+    ) -> dict:
+        """Compute fallback L4 signals when no original JAR is available.
+
+        Returns dict with bytecode_version_match, manifest_sanity keys.
+        """
+        from buildroot.agent.scorer import check_bytecode_version_match, check_manifest_sanity
+
+        group_id, artifact_id, version = parse_gav(coordinate)
+        signals: dict = {}
+
+        try:
+            with tempfile.TemporaryDirectory(prefix="buildroot-fb-") as tmpdir:
+                rebuilt_jar = self._extract_rebuilt_jar(tag, artifact_id, version, Path(tmpdir))
+                if rebuilt_jar:
+                    if jdk_version:
+                        signals["bytecode_version_match"] = check_bytecode_version_match(
+                            rebuilt_jar, jdk_version,
+                        )
+                    signals["manifest_sanity"] = check_manifest_sanity(
+                        rebuilt_jar, group_id, artifact_id,
+                    )
+        except Exception as e:
+            logger.warning("Fallback signal extraction failed: %s", e)
+
+        return signals
+
     def _cleanup_image(self, tag: str) -> None:
         try:
             subprocess.run(
