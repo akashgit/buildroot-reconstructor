@@ -244,36 +244,6 @@ class RecipeStore:
         return hints
 
 
-class ProgressSignal:
-    """AdaEvolve G_t exponential-decay signal for exploit/explore/meta-shift mode switching.
-
-    G_t tracks marginal improvement. High G_t = making progress (exploit).
-    Low G_t = stagnating (explore). Very low G_t = exhausted (meta-shift).
-    """
-
-    def __init__(self, rho: float = 0.9, tau_m: float = 0.08, tau_s: float = 0.005):
-        self.g_t: float = 1.0
-        self.best_reward: float = 0.0
-        self.rho = rho
-        self.tau_m = tau_m
-        self.tau_s = tau_s
-
-    def update(self, new_reward: float) -> str:
-        delta = min(1.0, max(0, new_reward - self.best_reward) / max(self.best_reward, 1e-6))
-        self.g_t = self.rho * self.g_t + (1 - self.rho) * delta ** 2
-        self.best_reward = max(self.best_reward, new_reward)
-        if self.g_t > self.tau_m:
-            return "exploit"
-        elif self.g_t > self.tau_s:
-            return "explore"
-        else:
-            return "meta_shift"
-
-    def reset(self) -> None:
-        self.g_t = 1.0
-        self.best_reward = 0.0
-
-
 def seed_recipes_from_results(results_dir: Path) -> int:
     """Populate RecipeStore from saved benchmark results for warm-start."""
     recipe_store = RecipeStore()

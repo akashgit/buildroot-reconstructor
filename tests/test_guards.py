@@ -242,8 +242,5 @@ class TestSurfaceConstants:
     def test_jar_comparator_is_fixed(self):
         assert "src/buildroot/utils/jar_comparator.py" in FIXED_SURFACES
 
-    def test_augmented_observer_is_mutable(self):
-        assert "src/buildroot/agent/augmented_observer.py" in MUTABLE_SURFACES
-
     def test_analyzer_is_mutable(self):
         assert "src/buildroot/agent/analyzer.py" in MUTABLE_SURFACES

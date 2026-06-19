@@ -15,7 +15,6 @@ import time
 from pathlib import Path
 
 from buildroot.agent.evaluator import Evaluator
-from buildroot.pipeline.gap_detector import GapDetector
 from buildroot.pipeline.orchestrator import BuildrootOrchestrator, parse_gav
 
 logging.basicConfig(
@@ -58,13 +57,15 @@ def run_single(coordinate: str, output_dir: Path, evaluator: Evaluator) -> dict:
             return result
 
         # Save gap report
-        gap_detector = GapDetector()
-        gap_report = gap_detector.format_machine_readable(spec.gaps)
-        result["gap_report"] = gap_report
-        (pkg_dir / "gap_report.json").write_text(json.dumps(gap_report, indent=2) + "\n")
+        gap_entries = [
+            {"field": e.field, "status": e.status, "reason": e.reason}
+            for e in spec.gaps.entries
+        ]
+        result["gap_report"] = {"entries": gap_entries}
+        (pkg_dir / "gap_report.json").write_text(json.dumps(result["gap_report"], indent=2) + "\n")
         logger.info(
-            "%s: reconstructed (confidence=%s, %d gaps)",
-            coordinate, gap_report.get("overall_confidence", "?"), len(gap_report.get("entries", [])),
+            "%s: reconstructed (%d gaps)",
+            coordinate, len(gap_entries),
         )
     except Exception as e:
         logger.error("%s: reconstruction failed: %s", coordinate, e)
