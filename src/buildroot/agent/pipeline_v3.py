@@ -576,7 +576,7 @@ def run_v3_pipeline(
             current_values=current_values,
             best_values=best_values,
             eval_result=eval_result,
-            comparison_report=None,
+            comparison_report=eval_result.comparison_report,
             score_history=result.score_history,
             failed_approaches=failed_approaches,
             containerfile=containerfile,

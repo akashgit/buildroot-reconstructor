@@ -70,6 +70,37 @@ def build_feedback_context(
             sections.append(f"Comparison verdict: {eval_result.comparison_verdict}")
         if eval_result.diff_summary:
             sections.append(f"Diff summary: {eval_result.diff_summary}")
+        if comparison_report is not None and hasattr(comparison_report, 'to_dict'):
+            report_dict = comparison_report.to_dict()
+            structural = report_dict.get('structural', {})
+            if structural.get('missing_entries'):
+                sections.append(f'Missing entries in rebuilt JAR: {structural["missing_entries"]}')
+            if structural.get('extra_entries'):
+                sections.append(f'Extra entries in rebuilt JAR: {structural["extra_entries"]}')
+            if structural.get('size_mismatches'):
+                sections.append(f'Size mismatches: {structural["size_mismatches"][:10]}')
+            if structural.get('crc_mismatches'):
+                sections.append(f'CRC mismatches: {structural["crc_mismatches"][:10]}')
+            bytecode = report_dict.get('bytecode', {})
+            if bytecode.get('classes_compared', 0) > 0:
+                sections.append(f'Bytecode: {bytecode.get("classes_identical", 0)}/{bytecode.get("classes_compared", 0)} classes identical')
+            if bytecode.get('classes_divergent'):
+                sections.append(f'Divergent classes: {bytecode["classes_divergent"][:15]}')
+            metadata = report_dict.get('metadata', {})
+            if metadata.get('manifest_diff_keys'):
+                sections.append(f'Manifest diff keys: {metadata["manifest_diff_keys"]}')
+            if metadata.get('resource_mismatches'):
+                sections.append(f'Resource mismatches: {metadata["resource_mismatches"][:10]}')
+            equiv = comparison_report.equivalence_score()
+            sections.append(f'\nEquivalence score breakdown: {equiv:.4f}')
+            if bytecode.get('classes_compared', 0) > 0:
+                br = bytecode['classes_identical'] / bytecode['classes_compared']
+                sections.append(f'  bytecode_ratio: {br:.4f} (weight: 0.70)')
+            total_res = metadata.get('resource_matches', 0) + len(metadata.get('resource_mismatches', []))
+            if total_res > 0:
+                rr = metadata['resource_matches'] / total_res
+                sections.append(f'  resource_ratio: {rr:.4f} (weight: 0.15)')
+            sections.append(f'  entry_set completeness: (weight: 0.15)')
 
     # Build log path
     build_log_path = workspace / f"build_iter{iteration}.log"

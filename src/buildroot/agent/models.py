@@ -8,6 +8,7 @@ import uuid
 import time
 from dataclasses import dataclass, field
 from pathlib import Path
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -109,6 +110,7 @@ class EvalResult:
     error_summary: str = ""
     comparison_verdict: str = ""
     diff_summary: str = ""
+    comparison_report: Any | None = None
     level_reached: int = 0
 
     def compute_reward(self) -> float:
