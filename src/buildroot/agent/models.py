@@ -44,6 +44,28 @@ class BuildAttempt:
 
 
 @dataclass
+class FailedApproach:
+    """A specific template-value change that was tried and failed."""
+
+    what_changed: str
+    from_value: str
+    to_value: str
+    result: str
+    why_it_failed: str
+    iteration: int = 0
+
+    def to_dict(self) -> dict:
+        return {
+            "what_changed": self.what_changed,
+            "from_value": self.from_value,
+            "to_value": self.to_value,
+            "result": self.result,
+            "why_it_failed": self.why_it_failed,
+            "iteration": self.iteration,
+        }
+
+
+@dataclass
 class DeadEndEntry:
     """An approach that has been tried and failed enough times to be marked exhausted."""
 
