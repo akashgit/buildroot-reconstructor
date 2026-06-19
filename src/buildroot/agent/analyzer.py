@@ -530,7 +530,8 @@ def classify_error(error_summary: str, build_log: str = "", *, diff_summary: str
 def analyze(eval_result: EvalResult, dead_ends: list[DeadEndEntry]) -> AnalysisResult:
     """Full analysis: classify error, check dead-ends, suggest fix."""
     error_class = classify_error(
-        eval_result.error_summary, eval_result.build_log
+        eval_result.error_summary, eval_result.build_log,
+        diff_summary=eval_result.diff_summary,
     )
 
     fix_suggestion = _suggest_fix(error_class, eval_result.error_summary)
