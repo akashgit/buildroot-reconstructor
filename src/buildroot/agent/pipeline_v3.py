@@ -124,6 +124,9 @@ BUILDROOT_SCHEMA = {
 }
 
 ANALYSIS_AGENT_SYSTEM = """\
+CRITICAL: You MUST produce your structured output JSON within your first 20 tool uses. \
+Investigate efficiently, then output your complete template values. Do not run out of turns.
+
 You are the Analysis Agent for the buildroot reconstruction pipeline. Your goal is to \
 determine the exact build environment needed to reproduce a Maven Central artifact \
 as a Containerfile.
@@ -199,6 +202,11 @@ MULTI_VARIANT_SCHEMA = {
 }
 
 FEEDBACK_AGENT_SYSTEM = """\
+CRITICAL: You MUST produce your structured output (variants JSON) within your first 10 tool uses. \
+Do NOT exhaustively investigate before producing output — read the build log, form a hypothesis, \
+output your variants, then investigate further if turns remain. Running out of turns without \
+producing output wastes the entire iteration.
+
 You are the Analysis Agent continuing to refine a build environment. You have already \
 produced an initial set of template values that were built and evaluated. Review the \
 feedback below and output UPDATED COMPLETE template values.
@@ -412,7 +420,7 @@ def run_v3_pipeline(
             json_schema=BUILDROOT_SCHEMA,
             max_turns=30,
             max_budget_usd=10.0,
-            timeout=900,
+            timeout=1800,
             allowed_tools=["Bash", "Read", "WebSearch", "WebFetch", "Agent"],
         )
 
@@ -589,9 +597,9 @@ def run_v3_pipeline(
             system_prompt=FEEDBACK_AGENT_SYSTEM,
             model="claude-opus-4-6",
             json_schema=MULTI_VARIANT_SCHEMA,
-            max_turns=15,
-            max_budget_usd=5.0,
-            timeout=600,
+            max_turns=50,
+            max_budget_usd=15.0,
+            timeout=1800,
             allowed_tools=["Bash", "Read", "WebSearch", "WebFetch", "Agent"],
         )
 

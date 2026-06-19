@@ -403,7 +403,8 @@ def _try_parse_ci(ci_parser: CIParser, owner: str, name: str) -> Any:
     if not workflow_files:
         return None
 
-    for wf_file in workflow_files[:3]:
+    for wf_entry in workflow_files[:3]:
+        wf_file = wf_entry["name"] if isinstance(wf_entry, dict) else wf_entry
         if not wf_file.endswith((".yml", ".yaml")):
             continue
         content = fetch_file_content(owner, name, f".github/workflows/{wf_file}")
