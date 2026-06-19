@@ -15,7 +15,7 @@ import click
 @click.option("--max-iterations", default=15, type=int, help="Max inner loop iterations")
 @click.option("--model", default="claude-opus-4-6", help="LLM model for Containerfile mutation")
 @click.option("--node-agents", "node_agents", is_flag=True, help="Enable node-scoped Claude Code reviewer agents at each pipeline step")
-@click.option("--pipeline", default="v1", type=click.Choice(["v1", "v3"]), help="Pipeline version: v1 (legacy) or v3 (agent system v3)")
+@click.option("--pipeline", default="v3", help="Pipeline version")
 @click.option("--batch", "batch_file", type=click.Path(exists=True), help="File with one coordinate per line for batch processing")
 @click.option("--output", "output_dir", type=click.Path(), help="Output directory for batch results")
 @click.option("--resume", type=click.Path(exists=True), help="Resume from prior results directory (seeds RecipeStore for warm-start)")
@@ -112,6 +112,5 @@ def _run_single(coordinate, host, max_iterations, model, node_agents, pipeline, 
         max_iterations=max_iterations,
         host=host,
         model=model,
-        node_agents=node_agents,
         initial_containerfile=initial_cf,
     )

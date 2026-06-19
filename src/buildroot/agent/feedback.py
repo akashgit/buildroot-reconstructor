@@ -24,6 +24,7 @@ def build_feedback_context(
     containerfile: str,
     workspace: Path,
     iteration: int,
+    max_iterations: int = 10,
 ) -> str:
     """Build structured feedback for the Analysis Agent.
 
@@ -31,7 +32,6 @@ def build_feedback_context(
     with explicit Read instructions for full artifacts.
     """
     sections: list[str] = []
-    max_iterations = 10
 
     reward = eval_result.reward
     level = eval_result.level_reached

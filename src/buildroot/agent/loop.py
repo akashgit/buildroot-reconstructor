@@ -41,9 +41,7 @@ def run_inner_loop(
     host: str = "rh-h100-01",
     model: str = "claude-opus-4-6",
     skip_deps: bool = True,
-    node_agents: bool = False,
     initial_containerfile: str | None = None,
-    pipeline: str = "v1",
 ) -> LoopResult:
     """Run the inner loop — delegates to pipeline v3."""
     from buildroot.agent.pipeline_v3 import run_v3_pipeline

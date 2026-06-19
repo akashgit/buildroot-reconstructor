@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import shlex
 import subprocess
 import zipfile
 from dataclasses import dataclass
@@ -187,12 +188,12 @@ def check_unit_tests_pass(
     """
     test_cmd = "mvn test -B"
     if module_path:
-        test_cmd = f"mvn test -B -pl {module_path}"
+        test_cmd = f"mvn test -B -pl {shlex.quote(module_path)}"
 
     try:
         proc = subprocess.run(
             ["ssh", "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=no",
-             host, f"podman run --rm {tag} sh -c '{test_cmd}'"],
+             host, f"podman run --rm {shlex.quote(tag)} sh -c {shlex.quote(test_cmd)}"],
             capture_output=True, text=True, timeout=300,
         )
         if proc.returncode == 0 and "BUILD SUCCESS" in proc.stdout:

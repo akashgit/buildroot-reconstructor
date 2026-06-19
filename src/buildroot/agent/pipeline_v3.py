@@ -312,6 +312,9 @@ def _dict_to_spec(values: dict) -> BuildrootSpec:
         use_maven_wrapper=values.get("use_maven_wrapper", False),
     )
 
+    if values.get("base_image"):
+        spec.jdk_spec.base_image = values["base_image"]
+
     if spec.jdk_spec.version and not spec.jdk_spec.base_image:
         minor = spec.jdk_minor_version
         if minor:
@@ -571,6 +574,7 @@ def run_v3_pipeline(
             containerfile=containerfile,
             workspace=workspace,
             iteration=t + 1,
+            max_iterations=max_iterations,
         )
 
         feedback_task = (
@@ -798,9 +802,12 @@ def reverse_parse_containerfile(containerfile: str) -> dict:
     build_cmd = None
     for line in run_lines:
         if "mvn " in line or "./mvnw " in line or "gradle " in line or "./gradlew " in line or "ant " in line:
-            if "apt-get" not in line and "install" not in line.lower().split("mvn")[0]:
-                build_cmd = line.strip()
-                break
+            if "apt-get" in line:
+                continue
+            if ("mvn" in line.lower() or "maven" in line.lower()) and "install" in line.lower().split("mvn")[0]:
+                continue
+            build_cmd = line.strip()
+            break
 
     if build_cmd:
         values["build_command"] = build_cmd
