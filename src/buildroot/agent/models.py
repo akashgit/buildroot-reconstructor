@@ -218,3 +218,32 @@ class ProgressSignal:
     def reset(self) -> None:
         self.g_t = 1.0
         self.best_reward = 0.0
+
+
+def seed_recipes_from_results(results_dir: Path) -> int:
+    """Populate RecipeStore from saved benchmark results for warm-start."""
+    recipe_store = RecipeStore()
+    count = 0
+    for pkg_dir in sorted(results_dir.iterdir()):
+        if not pkg_dir.is_dir():
+            continue
+        cf_best = pkg_dir / "Containerfile.best"
+        attempts = pkg_dir / "attempts.json"
+        if cf_best.exists() and attempts.exists():
+            try:
+                data = json.loads(attempts.read_text())
+            except (json.JSONDecodeError, OSError):
+                continue
+            coordinate = data.get("coordinate", "")
+            best_reward = data.get("best_reward", 0)
+            level = (
+                4 if best_reward >= 0.98
+                else 3 if best_reward >= 0.5
+                else 2 if best_reward >= 0.15
+                else 1
+            )
+            if coordinate and level >= 2:
+                recipe_store.save(coordinate, level, cf_best.read_text(), best_reward)
+                count += 1
+                logger.info("Seeded recipe: %s at L%d (reward=%.2f)", coordinate, level, best_reward)
+    return count

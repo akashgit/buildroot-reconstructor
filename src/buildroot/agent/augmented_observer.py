@@ -8,12 +8,6 @@ from pathlib import Path
 from typing import Any
 
 from buildroot.agent.node_agents import ALL_NODE_AGENTS
-from buildroot.agent.node_agents.failure_agents import (
-    FailureDiagnosis,
-    L2FailureAgent,
-    L3FailureAgent,
-    L4FailureAgent,
-)
 from buildroot.agent.observer import Observer
 from buildroot.generators.containerfile import ContainerfileGenerator
 from buildroot.pipeline.gap_detector import GapDetector
@@ -228,45 +222,3 @@ class AgentAugmentedObserver(Observer):
             else:
                 logger.warning("Unknown spec_override field: %s", field_name)
 
-    def run_failure_agents(
-        self,
-        spec: BuildrootSpec,
-        containerfile: str,
-        level_reached: int,
-        build_log: str,
-        diff_summary: str = "",
-        comparison_verdict: str = "",
-    ) -> tuple[BuildrootSpec, str] | None:
-        """Run post-build failure agents based on the evaluation level reached."""
-        diagnosis: FailureDiagnosis | None = None
-
-        if level_reached < 2:
-            l2_agent = L2FailureAgent()
-            diagnosis = l2_agent.diagnose(spec, containerfile, build_log)
-            if diagnosis:
-                l2_agent.apply_fixes(spec, diagnosis)
-        elif level_reached < 3:
-            l3_agent = L3FailureAgent()
-            diagnosis = l3_agent.diagnose(spec, containerfile, build_log)
-            if diagnosis:
-                l3_agent.apply_fixes(spec, diagnosis)
-        elif level_reached < 4:
-            l4_agent = L4FailureAgent()
-            diagnosis = l4_agent.diagnose(
-                spec, containerfile, build_log,
-                diff_summary=diff_summary,
-                comparison_verdict=comparison_verdict,
-            )
-            if diagnosis:
-                l4_agent.apply_fixes(spec, diagnosis)
-
-        if diagnosis and diagnosis.fixes:
-            new_containerfile = self._re_render(spec)
-            new_containerfile = self._apply_subdir(spec, new_containerfile)
-            logger.info(
-                "Failure agent produced %d fixes for level %d",
-                len(diagnosis.fixes), level_reached,
-            )
-            return spec, new_containerfile
-
-        return None

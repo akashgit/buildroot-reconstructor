@@ -1,9 +1,9 @@
 """Tests for knowledge base — read/write patterns, taxonomy updates, section extraction."""
 
+from dataclasses import dataclass, field
 from pathlib import Path
 from unittest.mock import patch
 
-from buildroot.agent.failure_analyst import ErrorClassFrequency, FailureAnalysis
 from buildroot.agent.knowledge.knowledge_base import (
     _extract_section,
     read_patterns,
@@ -11,6 +11,19 @@ from buildroot.agent.knowledge.knowledge_base import (
     record_pattern,
     update_taxonomy,
 )
+
+
+@dataclass
+class ErrorClassFrequency:
+    error_class: str = ""
+    count: int = 0
+    exhausted_count: int = 0
+    under_explored_count: int = 0
+
+
+@dataclass
+class FailureAnalysis:
+    error_frequencies: list[ErrorClassFrequency] = field(default_factory=list)
 
 
 class TestReadPatterns:

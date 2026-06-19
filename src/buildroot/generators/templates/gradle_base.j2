@@ -53,7 +53,7 @@ RUN {{ cmd }}
 {% endif %}
 
 # Reproducible build: pin timestamps
-ENV SOURCE_DATE_EPOCH=0
+ENV SOURCE_DATE_EPOCH=946684800
 
 # Build command: {{ build_command }} (source: {{ build_source }}, confidence: {{ build_confidence }})
 RUN {{ build_command }}{% if extra_build_flags %} {{ extra_build_flags | join(' ') }}{% endif %}
