@@ -228,7 +228,7 @@ class RecipeStore:
             if recipe_coord.startswith(group_id + ":"):
                 levels = recipe.get("levels", {})
                 best_level_key = max(
-                    (k for k in levels if k.startswith("l")),
+                    (k for k in levels if k.startswith("l") and k[1:].isdigit()),
                     key=lambda k: int(k[1:]),
                     default=None,
                 )
