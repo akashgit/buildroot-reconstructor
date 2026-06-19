@@ -124,8 +124,8 @@ BUILDROOT_SCHEMA = {
 }
 
 ANALYSIS_AGENT_SYSTEM = """\
-CRITICAL: You MUST produce your structured output JSON within your first 20 tool uses. \
-Investigate efficiently, then output your complete template values. Do not run out of turns.
+CRITICAL: You MUST produce your structured output JSON before your session ends. \
+Investigate efficiently, then output your complete template values.
 
 You are the Analysis Agent for the buildroot reconstruction pipeline. Your goal is to \
 determine the exact build environment needed to reproduce a Maven Central artifact \
@@ -202,9 +202,9 @@ MULTI_VARIANT_SCHEMA = {
 }
 
 FEEDBACK_AGENT_SYSTEM = """\
-CRITICAL: You MUST produce your structured output (variants JSON) within your first 10 tool uses. \
+CRITICAL: You MUST produce your structured output (variants JSON) before your session ends. \
 Do NOT exhaustively investigate before producing output — read the build log, form a hypothesis, \
-output your variants, then investigate further if turns remain. Running out of turns without \
+output your variants. Running out of turns without \
 producing output wastes the entire iteration.
 
 You are the Analysis Agent continuing to refine a build environment. You have already \
