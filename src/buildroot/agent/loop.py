@@ -48,8 +48,26 @@ def run_inner_loop(
     skip_deps: bool = True,
     node_agents: bool = False,
     initial_containerfile: str | None = None,
+    pipeline: str = "v1",
 ) -> LoopResult:
     """Run the inner loop: Observer → [AnalyzeAgent → spec_overrides → re-observe → Evaluator]* → result."""
+    if pipeline == "v3":
+        from buildroot.agent.pipeline_v3 import run_v3_pipeline
+        v3_result = run_v3_pipeline(
+            coordinate,
+            max_iterations=max_iterations,
+            host=host,
+            skip_deps=skip_deps,
+        )
+        return LoopResult(
+            coordinate=v3_result.coordinate,
+            status=v3_result.status,
+            best_reward=v3_result.best_reward,
+            iterations=v3_result.iterations,
+            elapsed_seconds=v3_result.elapsed_seconds,
+            error_message=v3_result.error_message,
+        )
+
     if node_agents:
         return _run_agent_loop(
             coordinate,
