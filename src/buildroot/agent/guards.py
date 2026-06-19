@@ -16,7 +16,6 @@ MUTABLE_SURFACES = frozenset({
     "src/buildroot/agent/models.py",
     "src/buildroot/agent/guards.py",
     "src/buildroot/agent/claude_runner.py",
-    "src/buildroot/agent/augmented_observer.py",
     "src/buildroot/agent/knowledge/knowledge_base.py",
     "src/buildroot/agent/knowledge/__init__.py",
     "src/buildroot/agent/__init__.py",

@@ -9,7 +9,6 @@ from pathlib import Path
 import pytest
 import requests
 
-from buildroot.pipeline.gap_detector import GapDetector
 from buildroot.pipeline.orchestrator import BuildrootOrchestrator
 
 _SPEC_CACHE: dict[str, tuple] = {}
@@ -166,11 +165,6 @@ class TestLevel1InferenceCorrectness:
     ):
         spec, _out = self._run_pipeline(group_id, artifact_id, version)
         assert spec.gaps is not None, "Gap report was not generated"
-        detector = GapDetector()
-        confidence = detector.compute_overall_confidence(spec.gaps)
-        assert confidence in {"HIGH", "MEDIUM", "LOW"}, (
-            f"Invalid confidence level: {confidence}"
-        )
 
     def test_build_command_present(
         self, group_id, artifact_id, version, valid_jdks, expect_parent_chain

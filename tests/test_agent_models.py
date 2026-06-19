@@ -1,75 +1,10 @@
-"""Tests for agent data models — ProgressSignal, BuildAttempt, DeadEndEntry, EvalResult."""
+"""Tests for agent data models — BuildAttempt, DeadEndEntry, EvalResult."""
 
 from buildroot.agent.models import (
     BuildAttempt,
     DeadEndEntry,
     EvalResult,
-    ProgressSignal,
 )
-
-
-class TestProgressSignal:
-    def test_initial_state_returns_exploit(self):
-        ps = ProgressSignal()
-        assert ps.g_t == 1.0
-        assert ps.best_reward == 0.0
-        mode = ps.update(0.05)
-        assert mode == "exploit"
-
-    def test_stagnation_decays_g_t(self):
-        ps = ProgressSignal()
-        ps.update(0.15)
-        initial_g = ps.g_t
-        for _ in range(10):
-            ps.update(0.15)
-        assert ps.g_t < initial_g
-
-    def test_repeated_stagnation_reaches_meta_shift(self):
-        ps = ProgressSignal()
-        ps.g_t = 0.5
-        ps.best_reward = 0.15
-        for _ in range(200):
-            mode = ps.update(0.15)
-        assert mode == "meta_shift"
-        assert ps.g_t < ps.tau_s
-
-    def test_improvement_keeps_exploit(self):
-        ps = ProgressSignal()
-        rewards = [0.05, 0.15, 0.50, 0.85]
-        for r in rewards:
-            mode = ps.update(r)
-        assert mode == "exploit"
-
-    def test_best_reward_tracks_max(self):
-        ps = ProgressSignal()
-        ps.update(0.5)
-        ps.update(0.3)
-        ps.update(0.8)
-        assert ps.best_reward == 0.8
-
-    def test_reset(self):
-        ps = ProgressSignal()
-        ps.update(0.5)
-        ps.reset()
-        assert ps.g_t == 1.0
-        assert ps.best_reward == 0.0
-
-    def test_custom_parameters(self):
-        ps = ProgressSignal(rho=0.5, tau_m=0.2, tau_s=0.05)
-        assert ps.rho == 0.5
-        assert ps.tau_m == 0.2
-        assert ps.tau_s == 0.05
-
-    def test_zero_reward_does_not_crash(self):
-        ps = ProgressSignal()
-        mode = ps.update(0.0)
-        assert mode in ("exploit", "explore", "meta_shift")
-
-    def test_cold_start_no_spike(self):
-        ps = ProgressSignal()
-        assert ps.best_reward == 0.0
-        ps.update(0.05)
-        assert ps.g_t <= 1.0
 
 
 class TestDeadEndEntry:

@@ -3,7 +3,6 @@
 
 import click
 
-from buildroot.pipeline.gap_detector import GapDetector
 from buildroot.pipeline.orchestrator import BuildrootOrchestrator, parse_gav
 
 
@@ -47,8 +46,10 @@ def reconstruct(coordinate, repo_url, ci_type, no_cache, skip_deps, output_dir, 
         click.echo(f"Error: {e}", err=True)
         raise SystemExit(1) from e
 
-    gap_detector = GapDetector()
-    click.echo(gap_detector.format_human_readable(spec.gaps), err=True)
+    if spec.gaps.entries:
+        click.echo(f"Gaps detected: {len(spec.gaps.entries)}", err=True)
+        for entry in spec.gaps.entries:
+            click.echo(f"  [{entry.status}] {entry.field}: {entry.reason}", err=True)
 
     click.echo(f"Containerfile: {output_dir}/Containerfile")
     click.echo(f"buildroot.json: {output_dir}/buildroot.json")

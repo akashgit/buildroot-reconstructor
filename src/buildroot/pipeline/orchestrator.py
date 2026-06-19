@@ -16,8 +16,7 @@ from buildroot.generators.containerfile import ContainerfileGenerator
 from buildroot.parsers.ci import CIParser
 from buildroot.parsers.pom import PomParser
 from buildroot.parsers.properties import PropertyResolver
-from buildroot.pipeline.gap_detector import GapDetector
-from buildroot.pipeline.models import BuildrootSpec, CIData, PomData
+from buildroot.pipeline.models import BuildrootSpec, CIData, GapReport, PomData
 from buildroot.resolvers.container_image import ContainerImageResolver
 from buildroot.resolvers.dependencies import DependencyResolver
 from buildroot.resolvers.jdk import JdkResolver
@@ -215,9 +214,8 @@ class BuildrootOrchestrator:
         if container_result:
             spec.base_image = container_result.get("base_image", "")
 
-        # 12. Run gap detection
-        gap_detector = GapDetector()
-        gap_report = gap_detector.analyze(spec)
+        # 12. Collect property gaps
+        gap_report = GapReport()
         for entry in prop_gaps:
             gap_report.entries.append(entry)
         spec.gaps = gap_report

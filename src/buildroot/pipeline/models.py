@@ -129,3 +129,8 @@ class BuildrootSpec:
     config_files: list[dict[str, str]] = field(default_factory=list)
     template_id: str = ""
     build_system: str = ""
+    module_path: str | None = None
+    artifact_path_pattern: str | None = None
+    build_tool_version: str | None = None
+    jdk_minor_version: str | None = None
+    use_maven_wrapper: bool = False

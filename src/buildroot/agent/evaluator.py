@@ -148,6 +148,7 @@ class Evaluator:
                     return
 
                 report = compare_jars(original_jar, rebuilt_jar, coordinate)
+                result.comparison_report = report
                 result.comparison_verdict = report.verdict
                 result.l4_score = report.equivalence_score()
                 if report.verdict in ("IDENTICAL", "EQUIVALENT"):
@@ -159,20 +160,18 @@ class Evaluator:
                         f"metadata_match={report.metadata.match}",
                         f"bytecode_match={report.bytecode.match}",
                     ]
-                    if not report.structural.match and hasattr(report.structural, 'details'):
-                        details = report.structural.details
-                        if hasattr(details, 'missing_files') and details.missing_files:
-                            parts.append(f"missing_files={details.missing_files[:5]}")
-                        if hasattr(details, 'extra_files') and details.extra_files:
-                            parts.append(f"extra_files={details.extra_files[:5]}")
-                    if not report.metadata.match and hasattr(report.metadata, 'details'):
-                        details = report.metadata.details
-                        if hasattr(details, 'differing_keys') and details.differing_keys:
-                            parts.append(f"metadata_diffs={details.differing_keys[:5]}")
-                    if not report.bytecode.match and hasattr(report.bytecode, 'details'):
-                        details = report.bytecode.details
-                        if hasattr(details, 'divergent_classes') and details.divergent_classes:
-                            parts.append(f"bytecode_diffs={details.divergent_classes[:5]}")
+                    if not report.structural.match and hasattr(report.structural, 'diff'):
+                        diff = report.structural.diff
+                        if hasattr(diff, 'missing') and diff.missing:
+                            parts.append(f"missing_files={diff.missing[:5]}")
+                        if hasattr(diff, 'extra') and diff.extra:
+                            parts.append(f"extra_files={diff.extra[:5]}")
+                    if not report.metadata.match:
+                        if hasattr(report.metadata, 'manifest_diff_keys') and report.metadata.manifest_diff_keys:
+                            parts.append(f"metadata_diffs={report.metadata.manifest_diff_keys[:5]}")
+                    if not report.bytecode.match:
+                        if hasattr(report.bytecode, 'classes_divergent') and report.bytecode.classes_divergent:
+                            parts.append(f"bytecode_diffs={report.bytecode.classes_divergent[:5]}")
                     result.diff_summary = ", ".join(parts)
         except Exception as e:
             result.error_summary = f"L4 comparison error: {e}"
@@ -241,6 +240,34 @@ class Evaluator:
         except Exception as e:
             logger.warning("Could not extract rebuilt JAR: %s", e)
             return None
+
+    def l4_fallback_signals(
+        self, tag: str, coordinate: str, jdk_version: str = "",
+    ) -> dict:
+        """Compute fallback L4 signals when no original JAR is available.
+
+        Returns dict with bytecode_version_match, manifest_sanity keys.
+        """
+        from buildroot.agent.scorer import check_bytecode_version_match, check_manifest_sanity
+
+        group_id, artifact_id, version = parse_gav(coordinate)
+        signals: dict = {}
+
+        try:
+            with tempfile.TemporaryDirectory(prefix="buildroot-fb-") as tmpdir:
+                rebuilt_jar = self._extract_rebuilt_jar(tag, artifact_id, version, Path(tmpdir))
+                if rebuilt_jar:
+                    if jdk_version:
+                        signals["bytecode_version_match"] = check_bytecode_version_match(
+                            rebuilt_jar, jdk_version,
+                        )
+                    signals["manifest_sanity"] = check_manifest_sanity(
+                        rebuilt_jar, group_id, artifact_id,
+                    )
+        except Exception as e:
+            logger.warning("Fallback signal extraction failed: %s", e)
+
+        return signals
 
     def _cleanup_image(self, tag: str) -> None:
         try:
