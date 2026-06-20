@@ -1,0 +1,4 @@
+org.apache.kafka:kafka-clients:3.6.1
+com.sun.mail:jakarta.mail:2.0.1
+net.minidev:json-smart:2.5.0
+org.codehaus.plexus:plexus-utils:4.0.0

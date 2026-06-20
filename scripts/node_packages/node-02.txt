@@ -1,0 +1,5 @@
+org.apache.commons:commons-lang3:3.14.0
+ch.qos.logback:logback-classic:1.4.14
+org.yaml:snakeyaml:2.2
+org.postgresql:postgresql:42.7.1
+org.apache:apache:31

@@ -1,0 +1,5 @@
+org.hibernate.orm:hibernate-core:6.4.2.Final
+org.assertj:assertj-core:3.25.1
+com.google.protobuf:protobuf-java:3.25.2
+com.jayway.jsonpath:json-path:2.9.0
+junit:junit:4.13.2

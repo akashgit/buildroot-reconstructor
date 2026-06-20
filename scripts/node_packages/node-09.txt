@@ -1,0 +1,6 @@
+org.springframework.boot:spring-boot:2.7.18
+org.apache.tomcat:tomcat-catalina:10.1.18
+org.glassfish.jersey.core:jersey-common:3.1.5
+org.hibernate.validator:hibernate-validator:8.0.1.Final
+org.junit.jupiter:junit-jupiter-api:5.10.1
+org.sonatype.oss:oss-parent:9
