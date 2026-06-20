@@ -1,0 +1,5 @@
+org.apache.avro:avro:1.11.3
+org.lz4:lz4-java:1.8.0
+com.google.guava:guava:33.0.0-jre
+org.xerial.snappy:snappy-java:1.1.10.5
+org.apache.maven:maven:4.0.0-alpha-12

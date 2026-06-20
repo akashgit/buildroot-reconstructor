@@ -1,0 +1,5 @@
+io.netty:netty-buffer:4.1.104.Final
+com.nimbusds:nimbus-jose-jwt:9.37.3
+org.eclipse.jetty:jetty-server:11.0.20
+commons-beanutils:commons-beanutils:1.9.4
+org.apache.maven:maven-parent:41

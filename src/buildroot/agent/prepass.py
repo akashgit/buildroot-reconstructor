@@ -98,8 +98,17 @@ class PrePassFindings:
 
         if self.jar_manifest:
             sections.append("\n### JAR Manifest")
+            build_relevant = {
+                "Build-Jdk", "Build-Jdk-Spec", "Created-By", "Bundle-Version",
+                "Implementation-Version", "Specification-Version",
+                "Maven-Version", "Built-By", "Manifest-Version",
+            }
             for k, v in self.jar_manifest.items():
-                sections.append(f"- {k}: {v}")
+                v_str = str(v)
+                if k in build_relevant or len(v_str) <= 200:
+                    sections.append(f"- {k}: {v_str[:500]}")
+                else:
+                    sections.append(f"- {k}: [{len(v_str)} chars, truncated]")
 
         if self.bytecode_major_version is not None:
             jdk_label = JDK_BYTECODE_MAJOR.get(

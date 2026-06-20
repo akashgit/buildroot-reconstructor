@@ -321,14 +321,19 @@ def _dict_to_spec(values: dict) -> BuildrootSpec:
     )
 
     if values.get("base_image"):
-        spec.jdk_spec.base_image = values["base_image"]
+        img = str(values["base_image"])
+        if img.lower() == "none":
+            img = ""
+        if img and "/" not in img:
+            img = f"docker.io/{img}"
+        if img:
+            spec.jdk_spec.base_image = img
 
     if spec.jdk_spec.version and not spec.jdk_spec.base_image:
-        minor = spec.jdk_minor_version
-        if minor:
-            spec.jdk_spec.base_image = f"eclipse-temurin:{minor}-jdk"
-        else:
-            spec.jdk_spec.base_image = f"eclipse-temurin:{spec.jdk_spec.version}-jdk"
+        spec.jdk_spec.base_image = f"docker.io/eclipse-temurin:{spec.jdk_spec.version}-jdk"
+
+    if not spec.jdk_spec.base_image:
+        spec.jdk_spec.base_image = "docker.io/eclipse-temurin:17-jdk"
 
     return spec
 
