@@ -511,14 +511,6 @@ src/buildroot/
     └── accuracy_scorer.py  # Accuracy scoring utilities
 ```
 
-## Benchmark Results (v3 Pipeline)
+## Benchmark Results
 
-Tested on 31 Maven Central packages:
-
-| Category | Count | Details |
-|----------|-------|---------|
-| **Solved** (L4 ≥ 0.98) | **9** | commons-lang3, jackson-databind, jettison, json, json-smart, plexus-utils, snakeyaml, snappy-java, avro |
-| **L3 stuck** (JAR produced, comparison failed) | **21** | jackson-core, commons-beanutils, guava, protobuf-java, kafka-clients, and others |
-| **L2 stuck** (build failed) | **1** | hibernate-core |
-
-The 9 solved packages are standard Maven builds where the template pipeline works. The 22 stuck packages require capabilities beyond what the v3 template can express — multi-stage builds, custom tooling, exact JDK version matching, OSGI wrapping. The v4 agent takeover path addresses these by writing Containerfiles directly and iterating with the L1–L4 eval harness.
+*Pending — full v4 benchmark run on 31 packages + Bouncy Castle.*
