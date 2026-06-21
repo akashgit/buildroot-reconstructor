@@ -42,10 +42,10 @@ def eval_cmd(containerfile, coordinate, host, timeout, pretty):
         "level_reached": result.level_reached,
         "comparison_verdict": result.comparison_verdict,
         "error_summary": result.error_summary or None,
-        "diff_summary": result.diff_summary if hasattr(result, "diff_summary") else None,
+        "diff_summary": getattr(result, "diff_summary", None),
     }
 
-    if result.comparison_report:
+    if hasattr(result, "comparison_report") and result.comparison_report:
         report = result.comparison_report
         output["comparison_report"] = {
             "verdict": report.verdict,
