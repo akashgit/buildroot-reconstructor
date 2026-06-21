@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import json
 import logging
-import os
 import tempfile
 import time
 from dataclasses import dataclass
@@ -50,17 +49,27 @@ class OrchestratorResult:
         }
 
 
+_BANNER = """\
+\033[1;36m  ┏┓ ╻ ╻╻╻  ┏┓ ┏━┓┏━┓┏━┓╺┳╸\033[0m
+\033[1;36m  ┣┻┓┃ ┃┃┃  ┃┃ ┣┳┛┃ ┃┃ ┃ ┃\033[0m
+\033[1;36m  ┗━┛┗━┛╹┗━╸┗┛╸╹┗╸┗━┛┗━┛ ╹\033[0m
+\033[2m  powered by re:factory\033[0m
+"""
+
+
 def launch_interactive_orchestrator(
     coordinate: str,
     *,
     host: str = "rh-h100-01",
     workspace: Path | None = None,
     target_score: float = 0.98,
-) -> None:
-    """Run prepass + KB query, then exec into an interactive Claude session with full context.
+) -> int:
+    """Run prepass + KB query, then launch an interactive Claude session with full context.
 
-    This function does NOT return — it replaces the process via os.execvp.
+    Returns the claude process exit code.
     """
+    import subprocess
+
     if workspace is None:
         workspace = Path(tempfile.mkdtemp(prefix="buildroot-interactive-"))
     workspace.mkdir(parents=True, exist_ok=True)
@@ -106,23 +115,27 @@ def launch_interactive_orchestrator(
     prepass_json = workspace / "prepass_findings.json"
     prepass_json.write_text(json.dumps(prepass_findings.to_dict(), indent=2))
 
-    # 6. Write system prompt + task to file (NOT deleted — process will be replaced)
+    # 6. Write system prompt + task to temp file
     prompt_file = Path(tempfile.mktemp(prefix="buildroot-prompt-", suffix=".md"))
     prompt_file.write_text(system_prompt + "\n\n---\n\n# Task\n\n" + task)
 
-    logger.info("Launching interactive orchestrator for %s...", coordinate)
-    logger.info("Workspace: %s", workspace)
+    # 7. Print banner then launch interactive claude as a subprocess.
+    import sys
+    print(_BANNER, file=sys.stderr)
 
-    # 7. Replace this process with an interactive claude session.
-    # Full task is in the system prompt file. A short positional arg triggers
-    # the greeting as the first user message so the agent responds immediately.
-    os.execvp("claude", [
+    cmd = [
         "claude",
         f"Reconstruct {coordinate}",
         "--append-system-prompt-file", str(prompt_file),
         "--model", "claude-opus-4-6",
         "--dangerously-skip-permissions",
-    ])
+    ]
+
+    try:
+        result = subprocess.run(cmd)
+        return result.returncode
+    finally:
+        prompt_file.unlink(missing_ok=True)
 
 
 def _extract_jdk_version(prepass_findings: PrePassFindings) -> str:

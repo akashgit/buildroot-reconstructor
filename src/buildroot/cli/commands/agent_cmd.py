@@ -119,7 +119,8 @@ def _run_interactive(coordinate, host):
     """Launch an interactive Claude session with orchestrator context."""
     from buildroot.agent.meta_agent import launch_interactive_orchestrator
 
-    launch_interactive_orchestrator(coordinate, host=host)
+    rc = launch_interactive_orchestrator(coordinate, host=host)
+    sys.exit(rc)
 
 
 def _run_orchestrator(coordinate, host, max_budget, max_turns):
