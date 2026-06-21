@@ -18,8 +18,9 @@ import click
 @click.option("--resume", type=click.Path(exists=True), help="Resume from prior results directory (seeds RecipeStore for warm-start)")
 @click.option("--v3-only", is_flag=True, help="Use v3 template pipeline only (no orchestrator)")
 @click.option("--max-budget", default=15.0, type=float, help="Max budget in USD for orchestrator agent")
+@click.option("--max-turns", default=0, type=int, help="Max agent turns (0 = unlimited, constrained by timeout/budget only)")
 @click.option("-v", "--verbose", is_flag=True, help="Enable debug logging")
-def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, v3_only, max_budget, verbose):
+def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, v3_only, max_budget, max_turns, verbose):
     """Run agentic reconstruction loop for a Maven COORDINATE.
 
     Default mode uses the v4 orchestrator agent. Use --v3-only for the template pipeline.
@@ -80,7 +81,7 @@ def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, 
         click.echo(json.dumps(result.to_dict(), indent=2))
         sys.exit(0 if result.status == "success" else 1)
     else:
-        result = _run_orchestrator(coordinate, host, max_budget)
+        result = _run_orchestrator(coordinate, host, max_budget, max_turns)
         click.echo(json.dumps(result.to_dict(), indent=2))
         sys.exit(0 if result.status == "success" else 1)
 
@@ -105,7 +106,7 @@ def _run_v3(coordinate, host, max_iterations, resume):
     )
 
 
-def _run_orchestrator(coordinate, host, max_budget):
+def _run_orchestrator(coordinate, host, max_budget, max_turns):
     """Run a single coordinate through the v4 orchestrator."""
     from buildroot.agent.meta_agent import run_orchestrator
 
@@ -113,4 +114,5 @@ def _run_orchestrator(coordinate, host, max_budget):
         coordinate,
         host=host,
         max_budget_usd=max_budget,
+        max_agent_turns=max_turns,
     )

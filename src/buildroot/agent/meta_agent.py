@@ -56,7 +56,7 @@ def run_orchestrator(
     workspace: Path | None = None,
     target_score: float = 0.98,
     max_budget_usd: float = 15.0,
-    max_agent_turns: int = 80,
+    max_agent_turns: int = 0,
     agent_timeout: int = 3600,
 ) -> OrchestratorResult:
     """Run the orchestrator: prepass → KB query → spawn Claude Code agent → parse result."""

@@ -73,9 +73,11 @@ def spawn_claude_agent(
             "--append-system-prompt-file", prompt_file,
             "--output-format", "json",
             "--model", model,
-            "--max-turns", str(max_turns),
             "--dangerously-skip-permissions",
         ]
+
+        if max_turns > 0:
+            cmd.extend(["--max-turns", str(max_turns)])
 
         if max_budget_usd > 0:
             cmd.extend(["--max-budget-usd", str(max_budget_usd)])
@@ -89,7 +91,7 @@ def spawn_claude_agent(
         if disallowed_tools:
             cmd.extend(["--disallowedTools", ",".join(disallowed_tools)])
 
-        logger.info("Spawning Claude agent: model=%s, max_turns=%d, timeout=%ds", model, max_turns, timeout)
+        logger.info("Spawning Claude agent: model=%s, max_turns=%s, timeout=%ds", model, max_turns or "unlimited", timeout)
         logger.debug("Agent task: %s", task[:200])
 
         result = subprocess.run(
