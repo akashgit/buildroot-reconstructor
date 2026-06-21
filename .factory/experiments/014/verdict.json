@@ -1,0 +1,15 @@
+{
+  "id": 14,
+  "timestamp": "2026-06-17 23:11:30.126248",
+  "hypothesis": "Fix allowed_tools Field bug and re-run 31-package benchmark on rh-h100 nodes",
+  "change_summary": "Reverted NodeAgent.allowed_tools from field(default_factory=...) to plain tuple \u2014 NodeAgent is not a dataclass so field() assigned a non-iterable Field object. Fix committed, merged to main, deployed to 8 rh-h100 nodes. 31-package benchmark launched with node agents working correctly.",
+  "issue_number": 38,
+  "pr_number": null,
+  "score_before": null,
+  "score_after": null,
+  "delta": null,
+  "verdict": "keep",
+  "cost_usd": null,
+  "notes": "ceo:keep mode=improve score_delta=0.0 precheck=skipped agents_spawned=B hypothesis_type=operational execution_artifacts=present e2e=pass backlog_cleared=yes review_pipeline=abbreviated review_iterations=1 final_review_iterations=0 benchmark_status=running",
+  "research_citations": []
+}

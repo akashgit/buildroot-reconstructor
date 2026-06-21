@@ -1,0 +1,7 @@
+{
+  "results": [
+    {"name": "Build and run the project's primary entry point without errors", "passed": true}
+  ],
+  "total": 1,
+  "passed": 1
+}

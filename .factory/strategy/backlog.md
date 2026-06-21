@@ -1,0 +1,32 @@
+- Level 3 full rebuild verification for spring-core 5.3.18 — build inside reconstructed container, compare output JAR against Maven Central artifact
+- Level 3 full rebuild verification for spring-security-web 5.7.11
+- Level 3 full rebuild verification for spring-boot 2.7.18
+- Level 3 full rebuild verification for spring-expression 5.3.18
+- Level 3 full rebuild verification for spring-security-core 5.7.11
+- Level 3 full rebuild verification for spring-cloud-config-server 4.3.0
+- Level 3 full rebuild verification for spring-web 5.3.18
+- Level 3 full rebuild verification for spring-webflux 5.3.31
+- Level 3 full rebuild verification for spring-webmvc 5.3.18
+- Level 3 full rebuild verification for thymeleaf-spring5 3.0.15.RELEASE
+- Deep Gradle build file parsing (build.gradle, settings.gradle) for accurate task/plugin detection
+- Recursive composite GitHub Actions resolution (beyond 1 level deep)
+- Dynamic ubuntu-latest version lookup from actions/runner-images repo instead of static table
+- CircleCI orb resolution for environment inference
+- Private container registry authentication (ECR, GCR, Artifactory)
+- Per-module Containerfile generation for multi-module projects
+- Profile-activated Maven property resolution
+- GitLab CI / Jenkins / Travis CI workflow parsing
+- Multi-Release JAR support — detect Multi-Release: true in published manifest and configure maven-jar-plugin with multi-release profile so module-info.class is generated for Java 9+
+- Execute Level 3 container builds for all 10 test packages — code fixes complete (PR #3), Containerfiles generate correctly, but actual podman/docker build and artifact comparison not yet verified for each package
+- Level 4: Re-run artifact comparison on rh-h100 nodes — comparison pipeline code is complete (PR #7), but 0/10 builds succeeded due to upstream Containerfile issues (secrets in ARGs, wrong git tags, multi-module builds, podman short-name resolution). Fix Containerfile generation for these 5 failure classes, then re-run comparison. GitHub issue #5.
+- Node-scoped agents: Claude Code reviewer at every pipeline step (issue #24)
+- Implement top-K parallel builds, per-cycle AnalyzeAgent with ACE-like playbooks, tiered recipe store, and spec overrides persistence (issue #27)
+- Agent architecture: fix feedback loops, multi-candidate builds, and runtime awareness (issue #27)
+- Remove Builder agent, add controlled template modification to AnalyzeAgent (issue #42)
+- JAR discovery improvement: AnalyzeAgent uses post_build_commands to stage the correct JAR to a known path (/output/rebuilt.jar) for multi-module projects, shaded JARs, and non-standard output dirs — compensating for the fixed-surface evaluator heuristic (issue #42 injection points enable this)
+- Switch all node agents (POM, JDK, Tag, Repo, CI, Image, Property, Template, Parent Chain, Build System) from opus to sonnet-4-6 to reduce cost per iteration, keep AnalyzeAgent on opus-4-6 as the critical reasoning bottleneck — the node agents do structured field extraction (sonnet-capable) while AnalyzeAgent does failure diagnosis and multi-tier spec_overrides (opus-required)
+- Node agent prompt hardening: strengthen system prompts to ensure structured output is produced within turn budget — property_agent observed burning all 15 turns without calling StructuredOutput, wasting ~$0.50 of Opus per occurrence. Consider reducing NODE_MAX_TURNS from 15 to 8 and adding explicit 'you MUST produce your candidates JSON before your final turn' instruction to base prompt
+- Fix discover_repo_from_pom() for Apache Commons projects — POM SCM metadata uses old-style URLs that the discovery function can't parse, so commons-beanutils (and likely other Apache Commons packages) get no source_repo during initial orchestration. The Containerfile falls through to COPY-based template (no git clone), /build is empty, Maven says 'no POM in this directory', and iteration 1 is wasted. The repo_agent finds the repo easily via web/GitHub API — either improve POM SCM parsing or fall back to repo_agent discovery before generating the initial Containerfile
+- Add spec_overrides rollback safety — when AnalyzeAgent spec_overrides cause reward regression (e.g. assertj-core L3/0.97 → L1/0.05 in run1), the elitist gate at loop.py:458 only restores after patience_counter >= 2 (2 consecutive drops). This wastes 1-2 iterations. Add immediate rollback: if the re-observed+evaluated best variant scores lower than the current best, discard the new variants and keep the current Containerfile. The current code at loop.py:538-542 appends the current best as a candidate but _evaluate_candidates may still pick a worse variant if its lighter evaluation disagrees with the full evaluator
+- solve issue 51, please make sure that the strategist does not drop anything from the scope of the issue. testing needs to be done using the 3 package benchmark and the iteration needs to happen until the 3 packages are at least scoring .9
+- solve issue 60, read it carefully and make sure you implement it in full and test it as the issue describes, dont allow any agent to take shortcuts

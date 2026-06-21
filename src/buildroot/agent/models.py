@@ -216,7 +216,7 @@ class RecipeStore:
     def get_group_hints(self, coordinate: str) -> list[dict]:
         """Query solved recipes for same-group artifacts (cross-package transfer)."""
         group_id = coordinate.split(":")[0]
-        hints = []
+        hints: list[dict] = []
         if not self._dir.exists():
             return hints
         for recipe_file in self._dir.glob("*.json"):

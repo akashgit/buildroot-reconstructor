@@ -1,0 +1,91 @@
+{
+  "total": 0.648018,
+  "results": [
+    {
+      "name": "tests",
+      "score": 0.5,
+      "weight": 0.15,
+      "passed": true,
+      "details": "Not detected: no test suite detected"
+    },
+    {
+      "name": "lint",
+      "score": 1.0,
+      "weight": 0.075,
+      "passed": true,
+      "details": "buildroot-reconstructor: clean"
+    },
+    {
+      "name": "type_check",
+      "score": 1.0,
+      "weight": 0.05,
+      "passed": true,
+      "details": "buildroot-reconstructor: clean"
+    },
+    {
+      "name": "coverage",
+      "score": 0.5,
+      "weight": 0.125,
+      "passed": true,
+      "details": "Not detected: no coverage tool detected"
+    },
+    {
+      "name": "guard_patterns",
+      "score": 0.75,
+      "weight": 0.05,
+      "passed": false,
+      "details": "9/12 pattern tests passed; FAIL: src/**/*.j2 vs src/example.py expected=True got=False; FAIL: src/**/*.md vs src/example.py expected=True got=False; FAIL: src/**/.gitkeep vs src/example.py expected=True got=False"
+    },
+    {
+      "name": "config_parser",
+      "score": 1.0,
+      "weight": 0.05,
+      "passed": true,
+      "details": "OK: goal is non-empty; OK: scope has entries; OK: eval_command is non-empty; OK: eval_threshold is positive"
+    },
+    {
+      "name": "capability_surface",
+      "score": 0.4167,
+      "weight": 0.125,
+      "passed": false,
+      "details": "surface=350 (modules=84, public_fns=244, entry_points=22), target=840"
+    },
+    {
+      "name": "experiment_diversity",
+      "score": 0.6857,
+      "weight": 0.1,
+      "passed": true,
+      "details": "3 distinct categories in last 10 experiments; dominant=agent_improvement (50%); last 3: ['agent_improvement', 'agent_improvement', 'testing']"
+    },
+    {
+      "name": "observability",
+      "score": 0.397,
+      "weight": 0.09,
+      "passed": false,
+      "details": "observability_score=0.40, function_coverage=0.16, structured_logging=False"
+    },
+    {
+      "name": "research_grounding",
+      "score": 0.572,
+      "weight": 0.07,
+      "passed": true,
+      "details": "sources=50 (vault), utilization=0.90, research_report=yes, doc_ratio=0.00 (0/18), citation_ratio=0.00"
+    },
+    {
+      "name": "factory_effectiveness",
+      "score": 0.7937,
+      "weight": 0.065,
+      "passed": true,
+      "details": "keep_rate=0.88 (7/8), delta_score=0.50, managed_projects=8"
+    },
+    {
+      "name": "spec_compliance",
+      "score": 1.0,
+      "weight": 0.05,
+      "passed": true,
+      "details": "1/1 spec checks passed"
+    }
+  ],
+  "guard_violations": [],
+  "passed": true
+}

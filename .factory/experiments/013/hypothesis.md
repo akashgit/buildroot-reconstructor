@@ -1,0 +1,1 @@
+Implement all 8 pipeline fixes from critique report: P0-A L3 detection, P0-B elitist gate, P1-A L3/L4 patterns, P1-B comparison feedback, P1-C SOURCE_DATE_EPOCH, P2-A signal tuning, P2-B dead-end granularity, P2-C build system detection

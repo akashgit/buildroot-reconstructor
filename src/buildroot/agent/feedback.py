@@ -100,7 +100,7 @@ def build_feedback_context(
             if total_res > 0:
                 rr = metadata['resource_matches'] / total_res
                 sections.append(f'  resource_ratio: {rr:.4f} (weight: 0.15)')
-            sections.append(f'  entry_set completeness: (weight: 0.15)')
+            sections.append('  entry_set completeness: (weight: 0.15)')
 
     # Build log path
     build_log_path = workspace / f"build_iter{iteration}.log"
