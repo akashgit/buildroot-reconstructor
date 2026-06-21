@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 import tempfile
 import time
 from dataclasses import dataclass
@@ -47,6 +48,81 @@ class OrchestratorResult:
             "elapsed_seconds": round(self.elapsed_seconds, 1),
             "cost_usd": round(self.cost_usd, 4),
         }
+
+
+def launch_interactive_orchestrator(
+    coordinate: str,
+    *,
+    host: str = "rh-h100-01",
+    workspace: Path | None = None,
+    target_score: float = 0.98,
+) -> None:
+    """Run prepass + KB query, then exec into an interactive Claude session with full context.
+
+    This function does NOT return — it replaces the process via os.execvp.
+    """
+    if workspace is None:
+        workspace = Path(tempfile.mkdtemp(prefix="buildroot-interactive-"))
+    workspace.mkdir(parents=True, exist_ok=True)
+
+    group_id, artifact_id, version = parse_gav(coordinate)
+
+    # 1. Pre-pass
+    logger.info("Running pre-pass for %s", coordinate)
+    prepass_findings = run_prepass(coordinate, workspace / "prepass")
+    prepass_summary = prepass_findings.to_prompt()
+
+    # 2. KB query
+    build_system = None
+    if prepass_findings.build_system:
+        build_system = prepass_findings.build_system.value
+
+    manifest_tags = []
+    if prepass_findings.jar_manifest:
+        if any(k.startswith("Bundle-") for k in prepass_findings.jar_manifest):
+            manifest_tags.append("osgi")
+        if prepass_findings.jar_manifest.get("Multi-Release") == "true":
+            manifest_tags.append("multi-release")
+
+    kb_context = query_kb_for_prompt(
+        build_system=build_system,
+        tags=manifest_tags or None,
+        group_id=group_id,
+        kb_dir=DEFAULT_KB_DIR,
+    )
+
+    # 3. Build system prompt
+    system_prompt = build_orchestrator_prompt(
+        coordinate=coordinate,
+        prepass_summary=prepass_summary,
+        kb_context=kb_context,
+        v3_available=True,
+    )
+
+    # 4. Build task prompt
+    task = _build_task_prompt(coordinate, host, workspace, target_score)
+
+    # 5. Write prepass data to workspace
+    prepass_json = workspace / "prepass_findings.json"
+    prepass_json.write_text(json.dumps(prepass_findings.to_dict(), indent=2))
+
+    # 6. Write combined system prompt + task to a temp file (NOT deleted — process will be replaced)
+    prompt_file = Path(tempfile.mktemp(prefix="buildroot-prompt-", suffix=".md"))
+    prompt_file.write_text(system_prompt + "\n\n---\n\n# Task\n\n" + task)
+
+    logger.info("Launching interactive orchestrator for %s...", coordinate)
+    logger.info("System prompt loaded with prepass findings and KB context.")
+    logger.info("Workspace: %s", workspace)
+    logger.info("Prompt file: %s", prompt_file)
+
+    # 7. Replace this process with an interactive claude session
+    os.execvp("claude", [
+        "claude",
+        "--append-system-prompt-file", str(prompt_file),
+        "--model", "claude-opus-4-6",
+        "--dangerously-skip-permissions",
+        "--allowedTools", "Bash,Read,Write,Edit,WebSearch,WebFetch",
+    ])
 
 
 def run_orchestrator(
