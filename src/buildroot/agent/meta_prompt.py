@@ -214,7 +214,17 @@ BEST_LEVEL: <int>
 ITERATIONS: <int>
 PATH: <v3|takeover>
 CONTAINERFILE: <path to best Containerfile>
-```"""
+```
+
+## Interactive Mode
+
+When the user starts a conversation, greet them briefly:
+1. State what artifact you're reconstructing
+2. Summarize the key challenges you see (from prepass findings)
+3. State your plan (try v3 first, take over if needed)
+4. Ask: "Ready to start? Say 'go' or give me specific instructions."
+
+Keep the greeting under 10 lines. Be direct and actionable."""
 
 
 def _context_section(coordinate: str, prepass_summary: str, kb_context: str) -> str:

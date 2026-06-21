@@ -10,9 +10,11 @@ import time
 from dataclasses import dataclass
 from pathlib import Path
 
+import click
+
 from buildroot.agent.claude_runner import spawn_claude_agent
 from buildroot.agent.evaluator import Evaluator
-from buildroot.agent.knowledge.retrieval import DEFAULT_KB_DIR, query_kb_for_prompt
+from buildroot.agent.knowledge.retrieval import DEFAULT_KB_DIR, query_kb, query_kb_for_prompt
 from buildroot.agent.meta_prompt import build_orchestrator_prompt
 from buildroot.agent.models import RecipeStore
 from buildroot.agent.prepass import PrePassFindings, run_prepass
@@ -110,6 +112,28 @@ def launch_interactive_orchestrator(
     prompt_file = Path(tempfile.mktemp(prefix="buildroot-prompt-", suffix=".md"))
     prompt_file.write_text(system_prompt + "\n\n---\n\n# Task\n\n" + task)
 
+    # 6b. Count KB entries
+    kb_entries = query_kb(
+        build_system=build_system,
+        tags=manifest_tags or None,
+        group_id=group_id,
+        kb_dir=DEFAULT_KB_DIR,
+    )
+    kb_count = len(kb_entries)
+
+    # 6c. Extract JDK version from manifest
+    jdk_version = _extract_jdk_version(prepass_findings)
+
+    # 6d. Print banner
+    _print_interactive_banner(
+        coordinate=coordinate,
+        build_system=build_system,
+        jdk_version=jdk_version,
+        features=manifest_tags,
+        kb_count=kb_count,
+        workspace=workspace,
+    )
+
     logger.info("Launching interactive orchestrator for %s...", coordinate)
     logger.info("System prompt loaded with prepass findings and KB context.")
     logger.info("Workspace: %s", workspace)
@@ -123,6 +147,52 @@ def launch_interactive_orchestrator(
         "--dangerously-skip-permissions",
         "--allowedTools", "Bash,Read,Write,Edit,WebSearch,WebFetch",
     ])
+
+
+def _extract_jdk_version(prepass_findings: PrePassFindings) -> str:
+    """Extract JDK version string from prepass manifest data."""
+    manifest = prepass_findings.jar_manifest or {}
+    jdk = manifest.get("Build-Jdk-Spec", "")
+    if not jdk:
+        created_by = manifest.get("Created-By", "")
+        if created_by:
+            for part in created_by.replace("(", " ").replace(")", " ").split():
+                if part and part[0].isdigit():
+                    jdk = part
+                    break
+    return jdk or "unknown"
+
+
+def _print_interactive_banner(
+    *,
+    coordinate: str,
+    build_system: str | None,
+    jdk_version: str,
+    features: list[str],
+    kb_count: int,
+    workspace: Path,
+) -> None:
+    """Print a context banner to the terminal before launching the interactive session."""
+    width = 56
+    bar = "=" * width
+
+    click.echo()
+    click.echo(f"+{'-' * (width - 2)}+")
+    click.echo(f"|{'BUILDROOT ORCHESTRATOR':^{width - 2}}|")
+    click.echo(f"|{'Interactive Mode':^{width - 2}}|")
+    click.echo(f"+{'-' * (width - 2)}+")
+    click.echo()
+    click.echo(f"  Artifact:     {coordinate}")
+    click.echo(f"  Build system: {build_system or 'unknown'}")
+    click.echo(f"  JDK:          {jdk_version}")
+    if features:
+        click.echo(f"  Features:     {', '.join(features)}")
+    click.echo(f"  KB entries:   {kb_count} loaded")
+    click.echo(f"  Workspace:    {workspace}")
+    click.echo()
+    click.echo("  Ready. The agent will greet you momentarily.")
+    click.echo(bar)
+    click.echo()
 
 
 def run_orchestrator(
