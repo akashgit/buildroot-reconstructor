@@ -26,7 +26,7 @@ def kb_dir(tmp_path: Path) -> Path:
 def populated_kb(kb_dir: Path) -> Path:
     save_entry(TipEntry(
         name="maven-encoding",
-        entry_type=None,
+
         description="Set UTF-8 encoding for Maven builds",
         tags=["maven", "encoding", "utf8"],
         build_systems=["maven"],
@@ -35,7 +35,7 @@ def populated_kb(kb_dir: Path) -> Path:
     ), kb_dir)
     save_entry(TrickEntry(
         name="osgi-bundle-fix",
-        entry_type=None,
+
         description="Fix OSGI bundle headers",
         tags=["osgi", "manifest", "bundle"],
         build_systems=["maven", "ant"],
@@ -44,7 +44,7 @@ def populated_kb(kb_dir: Path) -> Path:
     ), kb_dir)
     save_entry(TemplateEntry(
         name="commons-lang-tpl",
-        entry_type=None,
+
         description="Template for commons-lang3",
         tags=["maven", "reproducibility"],
         build_systems=["maven"],
@@ -54,7 +54,7 @@ def populated_kb(kb_dir: Path) -> Path:
     ), kb_dir)
     save_entry(TipEntry(
         name="gradle-daemon",
-        entry_type=None,
+
         description="Disable Gradle daemon for reproducible builds",
         tags=["gradle", "daemon"],
         build_systems=["gradle"],
@@ -118,7 +118,7 @@ class TestQueryKB:
     def test_success_rate_boosts_score(self, kb_dir: Path):
         save_entry(TipEntry(
             name="popular-tip",
-            entry_type=None,
+    
             description="A well-used tip about builds",
             tags=["maven"],
             build_systems=["maven"],
@@ -127,7 +127,7 @@ class TestQueryKB:
         ), kb_dir)
         save_entry(TipEntry(
             name="new-tip",
-            entry_type=None,
+    
             description="A fresh tip about builds",
             tags=["maven"],
             build_systems=["maven"],

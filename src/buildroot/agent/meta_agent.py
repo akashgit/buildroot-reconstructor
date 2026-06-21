@@ -6,7 +6,7 @@ import json
 import logging
 import tempfile
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from pathlib import Path
 
 from buildroot.agent.claude_runner import spawn_claude_agent
@@ -308,7 +308,6 @@ def _record_learnings(
     safe_name = f"template-{artifact_id}-{version}".replace(".", "-")
     template = TemplateEntry(
         name=safe_name,
-        entry_type=None,
         description=f"Winning Containerfile for {coordinate} (L4={reward:.4f})",
         tags=tags,
         build_systems=[build_system],

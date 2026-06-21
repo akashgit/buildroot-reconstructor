@@ -16,7 +16,7 @@ def seed_bouncy_castle_entries(kb_dir: Path) -> int:
     entries = [
         TipEntry(
             name="ant-exact-version",
-            entry_type=None,  # set by __post_init__
+
             description="Bouncy Castle requires exact Ant version matching for reproducible builds",
             tags=["ant", "bouncy-castle", "reproducibility", "version-pinning"],
             build_systems=["ant"],
@@ -27,7 +27,7 @@ def seed_bouncy_castle_entries(kb_dir: Path) -> int:
         ),
         TipEntry(
             name="bnd-osgi-wrap",
-            entry_type=None,
+
             description="Use Bnd tool to generate correct OSGI bundle headers in MANIFEST.MF",
             tags=["osgi", "bnd", "manifest", "bouncy-castle", "bundle"],
             build_systems=["ant", "maven", "gradle"],
@@ -40,7 +40,7 @@ def seed_bouncy_castle_entries(kb_dir: Path) -> int:
         ),
         TipEntry(
             name="bnd-before-multirelease",
-            entry_type=None,
+
             description="Bnd wrap must happen BEFORE adding multi-release class files",
             tags=["osgi", "bnd", "multi-release", "ordering", "bouncy-castle"],
             build_systems=["ant"],
@@ -53,7 +53,7 @@ def seed_bouncy_castle_entries(kb_dir: Path) -> int:
         ),
         TipEntry(
             name="real-jdk9-binary",
-            entry_type=None,
+
             description="Multi-release JARs need actual JDK 9 for compiling META-INF/versions/9/ classes",
             tags=["multi-release", "jdk9", "bouncy-castle", "bytecode"],
             build_systems=["ant", "maven", "gradle"],
@@ -66,7 +66,7 @@ def seed_bouncy_castle_entries(kb_dir: Path) -> int:
         ),
         TrickEntry(
             name="jdk9-jar-strict",
-            entry_type=None,
+
             description="JDK 9 jar tool is strict about multi-release structure",
             tags=["multi-release", "jdk9", "jar-tool", "bouncy-castle"],
             build_systems=["ant"],
@@ -78,7 +78,7 @@ def seed_bouncy_castle_entries(kb_dir: Path) -> int:
         ),
         TrickEntry(
             name="encoding-utf8",
-            entry_type=None,
+
             description="Add -encoding UTF-8 to javac for source files with non-ASCII characters",
             tags=["javac", "encoding", "utf8", "bouncy-castle"],
             build_systems=["ant", "maven", "gradle"],
@@ -90,7 +90,7 @@ def seed_bouncy_castle_entries(kb_dir: Path) -> int:
         ),
         TrickEntry(
             name="jar-uf-not-cf",
-            entry_type=None,
+
             description="Use jar uf (update) not jar cf (create) when adding entries to existing JARs",
             tags=["jar-tool", "update", "bouncy-castle"],
             build_systems=["ant", "maven"],
@@ -102,7 +102,7 @@ def seed_bouncy_castle_entries(kb_dir: Path) -> int:
         ),
         TipEntry(
             name="signing-irreducible",
-            entry_type=None,
+
             description="Cryptographic signatures in JARs cannot be reproduced — strip or accept the diff",
             tags=["signing", "gpg", "bouncy-castle", "reproducibility"],
             build_systems=["ant", "maven", "gradle"],
@@ -115,7 +115,7 @@ def seed_bouncy_castle_entries(kb_dir: Path) -> int:
         ),
         TrickEntry(
             name="hsperfdata-suppress",
-            entry_type=None,
+
             description="Suppress JVM hsperfdata files that leak into container builds",
             tags=["jvm", "hsperfdata", "container", "bouncy-castle"],
             build_systems=["ant", "maven", "gradle"],
@@ -127,7 +127,7 @@ def seed_bouncy_castle_entries(kb_dir: Path) -> int:
         ),
         TipEntry(
             name="source-date-epoch",
-            entry_type=None,
+
             description="Set SOURCE_DATE_EPOCH=0 for reproducible timestamps in all build tools",
             tags=["reproducibility", "timestamps", "epoch", "bouncy-castle"],
             build_systems=["ant", "maven", "gradle"],

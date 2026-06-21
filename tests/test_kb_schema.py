@@ -8,7 +8,6 @@ import pytest
 
 from buildroot.agent.knowledge.schema import (
     EntryType,
-    KBEntry,
     TemplateEntry,
     TipEntry,
     TrickEntry,
@@ -25,21 +24,21 @@ def kb_dir(tmp_path: Path) -> Path:
 
 class TestEntryTypes:
     def test_template_post_init_sets_type(self):
-        entry = TemplateEntry(name="t", entry_type=None, description="d")
+        entry = TemplateEntry(name="t", description="d")
         assert entry.entry_type == EntryType.TEMPLATE
 
     def test_tip_post_init_sets_type(self):
-        entry = TipEntry(name="t", entry_type=None, description="d")
+        entry = TipEntry(name="t", description="d")
         assert entry.entry_type == EntryType.TIP
 
     def test_trick_post_init_sets_type(self):
-        entry = TrickEntry(name="t", entry_type=None, description="d")
+        entry = TrickEntry(name="t", description="d")
         assert entry.entry_type == EntryType.TRICK
 
     def test_template_to_dict_includes_containerfile(self):
         entry = TemplateEntry(
             name="tpl",
-            entry_type=None,
+
             description="a template",
             containerfile="FROM ubuntu",
             coordinate="g:a:1.0",
@@ -54,7 +53,7 @@ class TestEntryTypes:
     def test_tip_to_dict_includes_trigger_solution(self):
         entry = TipEntry(
             name="tip1",
-            entry_type=None,
+
             description="a tip",
             trigger="something fails",
             solution="do this",
@@ -69,7 +68,7 @@ class TestEntryTypes:
     def test_trick_to_dict_includes_error_fix(self):
         entry = TrickEntry(
             name="trick1",
-            entry_type=None,
+
             description="a trick",
             error_pattern="NoSuchMethod",
             fix="add dependency",
@@ -83,7 +82,7 @@ class TestEntryTypes:
 
 class TestSaveAndLoad:
     def test_save_creates_yaml_file(self, kb_dir: Path):
-        entry = TipEntry(name="my-tip", entry_type=None, description="desc")
+        entry = TipEntry(name="my-tip", description="desc")
         path = save_entry(entry, kb_dir)
         assert path.exists()
         assert path.name == "my-tip.yaml"
@@ -91,7 +90,7 @@ class TestSaveAndLoad:
     def test_roundtrip_tip(self, kb_dir: Path):
         original = TipEntry(
             name="roundtrip-tip",
-            entry_type=None,
+
             description="round trip test",
             tags=["tag1", "tag2"],
             build_systems=["maven"],
@@ -114,7 +113,7 @@ class TestSaveAndLoad:
     def test_roundtrip_template(self, kb_dir: Path):
         original = TemplateEntry(
             name="roundtrip-tpl",
-            entry_type=None,
+
             description="template test",
             containerfile="FROM fedora:39\nRUN dnf install -y java",
             coordinate="org.example:lib:1.0",
@@ -130,7 +129,7 @@ class TestSaveAndLoad:
     def test_roundtrip_trick(self, kb_dir: Path):
         original = TrickEntry(
             name="roundtrip-trick",
-            entry_type=None,
+
             description="trick test",
             error_pattern="ClassNotFound",
             fix="add jar to classpath",
@@ -149,16 +148,16 @@ class TestSaveAndLoad:
         assert load_all_entries(kb_dir) == []
 
     def test_load_all_entries_multiple(self, kb_dir: Path):
-        save_entry(TipEntry(name="a-tip", entry_type=None, description="d1"), kb_dir)
-        save_entry(TrickEntry(name="b-trick", entry_type=None, description="d2"), kb_dir)
-        save_entry(TemplateEntry(name="c-tpl", entry_type=None, description="d3"), kb_dir)
+        save_entry(TipEntry(name="a-tip", description="d1"), kb_dir)
+        save_entry(TrickEntry(name="b-trick", description="d2"), kb_dir)
+        save_entry(TemplateEntry(name="c-tpl", description="d3"), kb_dir)
         entries = load_all_entries(kb_dir)
         assert len(entries) == 3
         names = {e.name for e in entries}
         assert names == {"a-tip", "b-trick", "c-tpl"}
 
     def test_save_updates_updated_at(self, kb_dir: Path):
-        entry = TipEntry(name="ts-test", entry_type=None, description="d")
+        entry = TipEntry(name="ts-test", description="d")
         old_ts = entry.updated_at
         save_entry(entry, kb_dir)
         assert entry.updated_at >= old_ts

@@ -21,7 +21,7 @@ class KBEntry:
     """Base knowledge base entry."""
 
     name: str
-    entry_type: EntryType
+    entry_type: EntryType = field(init=False, default=EntryType.TIP)
     description: str
     tags: list[str] = field(default_factory=list)
     build_systems: list[str] = field(default_factory=list)
@@ -125,7 +125,6 @@ def load_entry(path: Path) -> KBEntry | None:
     entry_type = EntryType(data.get("type", "tip"))
     common = dict(
         name=data.get("name", path.stem),
-        entry_type=entry_type,
         description=data.get("description", ""),
         tags=data.get("tags", []),
         build_systems=data.get("build_systems", []),

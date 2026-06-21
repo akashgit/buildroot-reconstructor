@@ -6,7 +6,6 @@ import logging
 from pathlib import Path
 
 from buildroot.agent.knowledge.schema import (
-    EntryType,
     KBEntry,
     TemplateEntry,
     TipEntry,
