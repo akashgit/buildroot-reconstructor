@@ -118,12 +118,11 @@ def launch_interactive_orchestrator(
     # the greeting as the first user message so the agent responds immediately.
     os.execvp("claude", [
         "claude",
+        "Greet me with the buildroot banner and ask if I want to start.",
         "--append-system-prompt-file", str(prompt_file),
         "--model", "claude-opus-4-6",
         "--dangerously-skip-permissions",
-        "--ax-screen-reader",
         "--allowedTools", "Bash,Read,Write,Edit,WebSearch,WebFetch",
-        "Greet me with the buildroot banner and ask if I want to start.",
     ])
 
 
