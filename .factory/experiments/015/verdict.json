@@ -1,0 +1,15 @@
+{
+  "id": 15,
+  "timestamp": "2026-06-18 13:31:53.906944",
+  "hypothesis": "Remove Builder agent (net-zero, 89% budget waste), expand AnalyzeAgent with 3-tier spec_overrides, fix L4 classification",
+  "change_summary": "Deleted builder.py (595 lines). Relocated sanitize_gha_expressions to analyzer.py. Added 3-tier spec_overrides (params, template selection, injection points) to AnalyzeAgent. Fixed L4 classification (diff_summary not passed). Added template injection points to all 4 templates. Added --legacy-builder CLI flag. Updated guards, outer_strategist, evaluator imports.",
+  "issue_number": 42,
+  "pr_number": 43,
+  "score_before": null,
+  "score_after": null,
+  "delta": null,
+  "verdict": "keep",
+  "cost_usd": null,
+  "notes": "ceo:keep score_delta=-0.0728 precheck=override(expected_regression_from_code_deletion) agents_spawned=R,S,B,R,E hypothesis_type=code execution_artifacts=na e2e=pass backlog_cleared=na review_pipeline=full review_iterations=1 final_review_iterations=1 pr_status=open_for_review capability_surface_regression=intentional",
+  "research_citations": []
+}

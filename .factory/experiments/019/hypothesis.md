@@ -1,0 +1,1 @@
+Implement v4 agent-as-orchestrator — all 4 phases: eval CLI, orchestrator agent, knowledge base, learning loop (issue #60)

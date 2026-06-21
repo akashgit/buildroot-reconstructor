@@ -1,0 +1,25 @@
+{
+  "entries": [
+    {
+      "sequence": 1,
+      "request": "Update smoke test to run actual podman build on generated Containerfile, then execute Level 3 container builds for all 10 test packages",
+      "started_at": "2026-06-08T15:58:34Z",
+      "completed_at": "2026-06-09T02:24:18Z",
+      "verdict": "keep"
+    },
+    {
+      "sequence": 2,
+      "request": "Run the PNC ground-truth validation pipeline on rh-h100-01 for 3 packages (commons-lang3, jackson-core, snakeyaml) \u2014 SSH to rh-h100-01, checkout the PR branch, run buildroot validate against the real builders-image repo, commit results to results/pnc-validation/",
+      "started_at": "2026-06-13T15:51:00Z",
+      "completed_at": "2026-06-13T16:10:39Z",
+      "verdict": "keep"
+    },
+    {
+      "sequence": 3,
+      "request": "Update issue #51 to add: (1) multi-variant elitist constraint \u2014 one of K variants MUST be the current best template values, (2) explicit 'start from best' rule for each iteration",
+      "started_at": "2026-06-19T14:59:50Z",
+      "completed_at": "2026-06-19T15:01:34Z",
+      "verdict": "keep"
+    }
+  ]
+}

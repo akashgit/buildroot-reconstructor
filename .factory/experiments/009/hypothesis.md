@@ -1,0 +1,1 @@
+Node-scoped agents: Claude Code reviewer at every pipeline step — 10 node agents + 3 post-build failure agents + AgentAugmentedObserver + CLI integration + full 31-package benchmark on rh-h100-01 (issue #24)

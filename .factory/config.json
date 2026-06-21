@@ -1,0 +1,52 @@
+{
+  "goal": "Reconstruct build environments (buildroots) for Maven Central artifacts as Containerfiles, working from the package's pom.xml and CI workflows \u2014 consumer-side build provenance reconstruction for supply chain security.",
+  "scope": [
+    "src/**/*.py",
+    "src/**/*.j2",
+    "src/**/*.md",
+    "src/**/.gitkeep",
+    "tests/**/*.py",
+    "results/**",
+    "factory.md"
+  ],
+  "guards": [
+    "Do not delete or overwrite existing tests",
+    "Do not modify files outside the declared scope",
+    "Do not introduce secrets or credentials into the repository",
+    "Do not modify eval/score.py or .factory/ directory"
+  ],
+  "eval_command": "python eval/score.py",
+  "eval_threshold": 0.55,
+  "constraints": [
+    "Prefer small, incremental changes over large rewrites",
+    "Each change should be accompanied by at least one test",
+    "Follow the existing code style and conventions",
+    "Use Podman (not Docker) for container operations"
+  ],
+  "hypothesis_budget": {
+    "min_growth": 2,
+    "max_new": 2
+  },
+  "target_branch": "main",
+  "smoke_test": "python -m buildroot reconstruct org.apache.commons:commons-lang3:3.14.0 --output-dir /tmp/buildroot-smoke-test --skip-deps",
+  "project_eval": [],
+  "eval_weights": {
+    "hygiene": 0.5,
+    "growth": 0.5,
+    "project": 0.0
+  },
+  "research_target": null,
+  "inner_loop": null,
+  "outer_loop": null,
+  "mutable_surfaces": [],
+  "fixed_surfaces": [],
+  "research_constraints": [],
+  "cost_budget": null,
+  "hard_constraints": [],
+  "eval_spec": [],
+  "hygiene_weights": null,
+  "growth_weights": null,
+  "clean_pr": false,
+  "clean_pr_include": [],
+  "clean_pr_exclude": []
+}

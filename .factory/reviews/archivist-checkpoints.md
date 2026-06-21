@@ -1,0 +1,84 @@
+- [x] archivist after research — 2026-06-08T01:37:10Z
+- [x] archivist after strategy — 2026-06-08T01:43:06Z
+- [x] archivist after build phase 2+3 — 2026-06-08T02:00:06Z
+- [x] archivist after build phase 4+5 — 2026-06-08T02:05:54Z
+- [x] archivist after build phase 6+7 — 2026-06-08T02:10:46Z
+- [x] archivist after build phase 8+9 — 2026-06-08T02:16:19Z
+- [x] archivist after build phase 10 — 2026-06-08T02:21:18Z
+- [x] FINAL archivist — 2026-06-08T03:41:25Z
+- [x] archivist after research — 2026-06-08T14:09:15Z
+- [x] archivist after strategy — 2026-06-08T14:36:58Z
+- [x] archivist after build — 2026-06-08T15:00:22Z
+- [x] archivist after experiment 1 (keep) — 2026-06-08T15:51:24Z
+- [x] FINAL archivist — 2026-06-08T15:53:07Z
+- [x] archivist after refinement experiment 2 (KEEP) — 2026-06-09T02:22:25Z
+- [x] archivist after research — 2026-06-09T16:31:48Z
+- [x] archivist after strategy — 2026-06-09T16:37:11Z
+- [x] archivist after build — 2026-06-09T17:02:05Z
+- [x] archivist after experiment 3 (KEEP) — 2026-06-09T19:13:01Z
+- [x] FINAL archivist — 2026-06-09T19:14:48Z
+- [x] archivist after research — 2026-06-13T00:59:50Z
+- [x] archivist after strategy — 2026-06-13T01:05:18Z
+- [x] archivist after build — 2026-06-13T01:17:25Z
+- [x] archivist after experiment 4 (KEEP) — 2026-06-13T02:24:40Z
+- [x] FINAL archivist — 2026-06-13T02:25:37Z
+- [x] archivist after refinement experiment 5 (KEEP) — 2026-06-13T16:10:34Z
+- [x] archivist after research — 2026-06-13T18:41:15Z
+- [x] archivist after strategy — 2026-06-13T18:51:53Z
+- [x] archivist after build — 2026-06-13T19:29:29Z
+- [x] archivist after experiment 6 (keep) — 2026-06-13T20:48:17Z
+- [x] FINAL archivist — 2026-06-13T20:56:40Z
+- [x] archivist after research — 2026-06-13T21:21:06Z
+- [x] archivist after strategy — 2026-06-13T21:28:29Z
+- [x] archivist after build — 2026-06-13T22:15:48Z
+- [x] archivist after experiment 7 (keep) — 2026-06-14T00:00:41Z
+- [x] FINAL archivist — 2026-06-14T00:04:53Z
+- [x] archivist after research — 2026-06-14T00:41:08Z
+- [x] archivist after strategy — 2026-06-14T00:47:37Z
+- [x] archivist after build — 2026-06-14T01:27:11Z
+- [x] archivist after experiment 8 (keep) — 2026-06-14T01:54:06Z
+- [x] FINAL archivist — 2026-06-14T01:55:56Z
+- [x] archivist after research — 2026-06-16T02:06:59Z
+- [x] archivist after strategy — 2026-06-16T02:10:55Z
+- [x] archivist after build — 2026-06-16T02:47:04Z
+- [x] archivist after experiment 9 (KEEP) — 2026-06-16T03:34:20Z
+- [x] FINAL archivist — 2026-06-16T03:35:54Z
+- [x] archivist after research — 2026-06-17T02:08:42Z
+- [x] archivist after strategy — 2026-06-17T02:13:03Z
+- [x] archivist after build — 2026-06-17T03:12:25Z
+- [x] archivist after experiment 10 (REVERT) — 2026-06-17T09:24:47Z
+- [x] FINAL archivist — 2026-06-17T09:26:29Z
+- [x] archivist after experiment 12 (keep) — 2026-06-18T01:30:28Z
+- [x] FINAL archivist — cycle close, all notes written — 2026-06-18T01:45:00Z
+- [x] FINAL archivist — 2026-06-18T01:35:12Z
+- [x] archivist after build — 2026-06-18T02:04:02Z
+- [x] archivist after experiment 13 (KEEP) — 2026-06-18T02:14:18Z
+- [x] FINAL archivist — 2026-06-18T02:16:12Z
+- [x] archivist after build — 2026-06-18T03:11:43Z
+- [x] archivist after experiment 14 (keep) — 2026-06-18T03:11:43Z
+- [x] FINAL archivist — 2026-06-18T03:11:43Z
+- [x] archivist after research — 2026-06-18T16:21:16Z
+- [x] archivist after strategy — 2026-06-18T16:37:26Z
+- [x] archivist after build — 2026-06-18T17:24:37Z
+- [x] archivist after experiment 15 (keep) — 2026-06-18T17:34:47Z
+- [x] FINAL archivist — 2026-06-18T17:38:42Z
+- [x] archivist after research — 2026-06-18T23:02:18Z
+- [x] archivist after strategy — 2026-06-18T23:07:02Z
+- [x] archivist after build — 2026-06-18T23:20:02Z
+- [x] archivist after experiment 16 (keep) — 2026-06-18T23:38:29Z
+- [x] FINAL archivist — 2026-06-18T23:40:25Z
+- [x] archivist after research — 2026-06-19T13:46:13Z
+- [x] archivist after strategy — 2026-06-19T14:04:45Z
+- [x] archivist after build — 2026-06-19T14:27:23Z
+- [x] archivist after experiment 17 (keep) — 2026-06-19T14:44:20Z
+- [x] FINAL archivist — 2026-06-19T14:46:26Z
+- [x] archivist after research — 2026-06-19T17:03:50Z
+- [x] archivist after strategy — 2026-06-19T17:16:34Z
+- [x] archivist after build — 2026-06-19T18:34:02Z
+- [x] archivist after experiment 18 (KEEP) — 2026-06-19T19:27:21Z
+- [x] FINAL archivist — 2026-06-19T19:30:11Z
+- [x] archivist after research — 2026-06-21T03:21:55Z
+- [x] archivist after strategy — 2026-06-21T03:29:26Z
+- [x] archivist after build — 2026-06-21T07:02:57Z
+- [x] archivist after experiment 19 (keep) — 2026-06-21T07:08:11Z
+- [x] FINAL archivist — 2026-06-21T07:11:41Z

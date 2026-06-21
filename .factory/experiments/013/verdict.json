@@ -1,0 +1,15 @@
+{
+  "id": 13,
+  "timestamp": "2026-06-17 22:11:09.723238",
+  "hypothesis": "Implement 8 pipeline fixes from critique report: elitist gate, L3/L4 patterns, evaluator improvements, SOURCE_DATE_EPOCH, tau tuning, dead-end signatures, build system detection, Gradle template",
+  "change_summary": "All 8 critique fixes implemented: P0-B elitist gate (patience-based containerfile restoration), P1-A L3/L4 error patterns in analyzer, P1-B evaluator L3 find+L4 diff enrichment, P1-C SOURCE_DATE_EPOCH in all templates, P2-A ProgressSignal tau tuning, P2-B rich dead-end signatures, P2-C build system detection + Gradle template",
+  "issue_number": 36,
+  "pr_number": 37,
+  "score_before": null,
+  "score_after": null,
+  "delta": null,
+  "verdict": "keep",
+  "cost_usd": null,
+  "notes": "ceo:keep score_delta=+0.2900 precheck=overridden(worktree_artifacts+false_leakage) agents_spawned=B,R,E,A pr_status=open_for_review hypothesis_type=code execution_artifacts=na e2e=pass backlog_cleared=na review_pipeline=full review_iterations=1 final_review_iterations=1",
+  "research_citations": []
+}

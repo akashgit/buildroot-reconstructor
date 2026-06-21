@@ -1,0 +1,1 @@
+Wire up diagnostic feedback loop: error history tracking, build_remediation_context() injection into AnalyzeAgent, and build error context propagation to node agents (issue #45)

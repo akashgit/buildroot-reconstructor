@@ -1,0 +1,53 @@
+{
+  "project_type": "unknown",
+  "dimensions": [
+    {
+      "name": "tests",
+      "command": "python -m pytest tests/ -v --ignore=tests/test_level1.py --ignore=tests/test_level2.py",
+      "weight": 0.4166666666666667,
+      "parser": "exit_code",
+      "regex_pattern": null,
+      "description": "Run test suite: python -m pytest -v",
+      "source": "discovered"
+    },
+    {
+      "name": "lint",
+      "command": "python -m ruff check .",
+      "weight": 0.25,
+      "parser": "exit_code",
+      "regex_pattern": null,
+      "description": "Run linter: python -m ruff check .",
+      "source": "discovered"
+    },
+    {
+      "name": "type_check",
+      "command": "python -m mypy src/",
+      "weight": 0.125,
+      "parser": "exit_code",
+      "regex_pattern": null,
+      "description": "Run type checker: python -m mypy ./",
+      "source": "researched"
+    },
+    {
+      "name": "coverage",
+      "command": "python -m pytest tests/ --cov=buildroot --cov-report=term -q --ignore=tests/test_level1.py --ignore=tests/test_level2.py",
+      "weight": 0.125,
+      "parser": "exit_code",
+      "regex_pattern": null,
+      "description": "Measure test coverage",
+      "source": "researched"
+    },
+    {
+      "name": "observability",
+      "command": "(inline)",
+      "weight": 0.08333333333333334,
+      "parser": "json",
+      "regex_pattern": null,
+      "description": "Analyze logging coverage, structured logging, and request tracing",
+      "source": "researched"
+    }
+  ],
+  "tier": "discovered",
+  "confidence": 0.8,
+  "human_reviewed": true
+}

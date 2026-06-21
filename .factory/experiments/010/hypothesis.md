@@ -1,0 +1,1 @@
+Agent architecture overhaul — feedback loops (AnalyzeAgent), multi-candidate builds (Top-K), tiered recipes, spec overrides, Podman prefix, reproducible build flags (issue #27)
