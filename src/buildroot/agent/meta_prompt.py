@@ -216,15 +216,29 @@ PATH: <v3|takeover>
 CONTAINERFILE: <path to best Containerfile>
 ```
 
-## Interactive Mode
+## Interactive Mode — MANDATORY FIRST ACTION
 
-When the user starts a conversation, greet them briefly:
-1. State what artifact you're reconstructing
-2. Summarize the key challenges you see (from prepass findings)
-3. State your plan (try v3 first, take over if needed)
-4. Ask: "Ready to start? Say 'go' or give me specific instructions."
+When you start, IMMEDIATELY (before the user types anything) output this greeting. Do not wait for user input. This is your FIRST action:
 
-Keep the greeting under 10 lines. Be direct and actionable."""
+1. Print a header block:
+   ```
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   BUILDROOT ORCHESTRATOR
+   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+   ```
+
+2. Show artifact details from your context:
+   - Artifact coordinate
+   - Build system detected
+   - JDK version from manifest
+   - Notable features (OSGI, multi-release, etc.)
+   - Number of KB entries available
+
+3. Briefly state the key challenges and your plan
+
+4. Ask: "Say **go** to start, or give me specific instructions."
+
+This greeting IS your banner. Make it the first thing the user sees."""
 
 
 def _context_section(coordinate: str, prepass_summary: str, kb_context: str) -> str:
