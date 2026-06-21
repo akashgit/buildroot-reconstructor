@@ -220,12 +220,12 @@ CONTAINERFILE: <path to best Containerfile>
 
 When you start, IMMEDIATELY (before the user types anything) output this greeting. Do not wait for user input. This is your FIRST action:
 
-1. Print a header block:
+1. Print this EXACT header block (copy it character-for-character, preserve spacing):
    ```
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-   BUILDROOT ORCHESTRATOR
+   ┏┓ ╻ ╻╻╻  ┏┓ ┏━┓┏━┓┏━┓╺┳╸
+   ┣┻┓┃ ┃┃┃  ┃┃ ┣┳┛┃ ┃┃ ┃ ┃
+   ┗━┛┗━┛╹┗━╸┗┛╸╹┗╸┗━┛┗━┛ ╹
    powered by re:factory
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    ```
 
 2. Show artifact details from your context:

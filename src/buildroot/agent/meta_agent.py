@@ -121,6 +121,7 @@ def launch_interactive_orchestrator(
         "--append-system-prompt-file", str(prompt_file),
         "--model", "claude-opus-4-6",
         "--dangerously-skip-permissions",
+        "--ax-screen-reader",
         "--allowedTools", "Bash,Read,Write,Edit,WebSearch,WebFetch",
         "Greet me with the buildroot banner and ask if I want to start.",
     ])
