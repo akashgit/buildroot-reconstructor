@@ -106,22 +106,23 @@ def launch_interactive_orchestrator(
     prepass_json = workspace / "prepass_findings.json"
     prepass_json.write_text(json.dumps(prepass_findings.to_dict(), indent=2))
 
-    # 6. Write combined system prompt + task to a temp file (NOT deleted — process will be replaced)
+    # 6. Write system prompt to a temp file (NOT deleted — process will be replaced)
     prompt_file = Path(tempfile.mktemp(prefix="buildroot-prompt-", suffix=".md"))
-    prompt_file.write_text(system_prompt + "\n\n---\n\n# Task\n\n" + task)
+    prompt_file.write_text(system_prompt)
 
     logger.info("Launching interactive orchestrator for %s...", coordinate)
-    logger.info("System prompt loaded with prepass findings and KB context.")
     logger.info("Workspace: %s", workspace)
-    logger.info("Prompt file: %s", prompt_file)
 
-    # 7. Replace this process with an interactive claude session
+    # 7. Replace this process with an interactive claude session.
+    # The task is passed as a positional arg (initial prompt) — this makes claude
+    # process it as the first message but keep the session interactive afterward.
     os.execvp("claude", [
         "claude",
         "--append-system-prompt-file", str(prompt_file),
         "--model", "claude-opus-4-6",
         "--dangerously-skip-permissions",
         "--allowedTools", "Bash,Read,Write,Edit,WebSearch,WebFetch",
+        task,
     ])
 
 
