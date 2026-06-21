@@ -106,23 +106,23 @@ def launch_interactive_orchestrator(
     prepass_json = workspace / "prepass_findings.json"
     prepass_json.write_text(json.dumps(prepass_findings.to_dict(), indent=2))
 
-    # 6. Write system prompt to a temp file (NOT deleted — process will be replaced)
+    # 6. Write system prompt + task to file (NOT deleted — process will be replaced)
     prompt_file = Path(tempfile.mktemp(prefix="buildroot-prompt-", suffix=".md"))
-    prompt_file.write_text(system_prompt)
+    prompt_file.write_text(system_prompt + "\n\n---\n\n# Task\n\n" + task)
 
     logger.info("Launching interactive orchestrator for %s...", coordinate)
     logger.info("Workspace: %s", workspace)
 
     # 7. Replace this process with an interactive claude session.
-    # The task is passed as a positional arg (initial prompt) — this makes claude
-    # process it as the first message but keep the session interactive afterward.
+    # Full task is in the system prompt file. A short positional arg triggers
+    # the greeting as the first user message so the agent responds immediately.
     os.execvp("claude", [
         "claude",
         "--append-system-prompt-file", str(prompt_file),
         "--model", "claude-opus-4-6",
         "--dangerously-skip-permissions",
         "--allowedTools", "Bash,Read,Write,Edit,WebSearch,WebFetch",
-        task,
+        "Greet me with the buildroot banner and ask if I want to start.",
     ])
 
 
