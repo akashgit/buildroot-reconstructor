@@ -17,7 +17,7 @@ import click
 @click.option("--output", "output_dir", type=click.Path(), help="Output directory for batch results")
 @click.option("--resume", type=click.Path(exists=True), help="Resume from prior results directory (seeds RecipeStore for warm-start)")
 @click.option("--v3-only", is_flag=True, help="Use v3 template pipeline only (no orchestrator)")
-@click.option("--max-budget", default=15.0, type=float, help="Max budget in USD for orchestrator agent")
+@click.option("--max-budget", default=0, type=float, help="Max budget in USD (0 = unlimited, constrained by timeout only)")
 @click.option("--max-turns", default=0, type=int, help="Max agent turns (0 = unlimited, constrained by timeout/budget only)")
 @click.option("-v", "--verbose", is_flag=True, help="Enable debug logging")
 def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, v3_only, max_budget, max_turns, verbose):

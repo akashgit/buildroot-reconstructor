@@ -37,7 +37,7 @@ def spawn_claude_agent(
     model: str = DEFAULT_MODEL,
     json_schema: dict | None = None,
     max_turns: int = 30,
-    max_budget_usd: float = 5.0,
+    max_budget_usd: float = 0,
     timeout: int = 600,
     cwd: str | None = None,
     allowed_tools: list[str] | None = None,

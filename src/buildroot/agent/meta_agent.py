@@ -55,7 +55,7 @@ def run_orchestrator(
     host: str = "rh-h100-01",
     workspace: Path | None = None,
     target_score: float = 0.98,
-    max_budget_usd: float = 15.0,
+    max_budget_usd: float = 0,
     max_agent_turns: int = 0,
     agent_timeout: int = 3600,
 ) -> OrchestratorResult:
