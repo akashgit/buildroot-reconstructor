@@ -91,14 +91,15 @@ def spawn_claude_agent(
         if disallowed_tools:
             cmd.extend(["--disallowedTools", ",".join(disallowed_tools)])
 
-        logger.info("Spawning Claude agent: model=%s, max_turns=%s, timeout=%ds", model, max_turns or "unlimited", timeout)
+        effective_timeout = timeout if timeout > 0 else None
+        logger.info("Spawning Claude agent: model=%s, max_turns=%s, timeout=%s", model, max_turns or "unlimited", f"{timeout}s" if timeout > 0 else "unlimited")
         logger.debug("Agent task: %s", task[:200])
 
         result = subprocess.run(
             cmd,
             capture_output=True,
             text=True,
-            timeout=timeout,
+            timeout=effective_timeout,
             cwd=cwd,
         )
 
@@ -164,7 +165,7 @@ def spawn_claude_agent(
         return AgentResult(text="", is_error=True, error_message=msg)
 
     except subprocess.TimeoutExpired:
-        msg = f"Claude agent timed out after {timeout}s"
+        msg = f"Claude agent timed out after {effective_timeout}s"
         logger.error(msg)
         return AgentResult(text="", is_error=True, error_message=msg)
 

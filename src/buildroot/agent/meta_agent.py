@@ -160,7 +160,7 @@ def run_orchestrator(
     target_score: float = 0.98,
     max_budget_usd: float = 0,
     max_agent_turns: int = 0,
-    agent_timeout: int = 3600,
+    agent_timeout: int = 0,
 ) -> OrchestratorResult:
     """Run the orchestrator: prepass → KB query → spawn Claude Code agent → parse result."""
     start_time = time.time()
@@ -233,8 +233,8 @@ def run_orchestrator(
     prepass_json.write_text(json.dumps(prepass_findings.to_dict(), indent=2))
 
     # 6. Spawn the orchestrator agent
-    logger.info("Spawning orchestrator agent for %s (budget=$%.2f, timeout=%ds)",
-                coordinate, max_budget_usd, agent_timeout)
+    logger.info("Spawning orchestrator agent for %s (budget=$%.2f, timeout=%s)",
+                coordinate, max_budget_usd, f"{agent_timeout}s" if agent_timeout > 0 else "unlimited")
 
     agent_result = spawn_claude_agent(
         task=task,
