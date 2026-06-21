@@ -224,6 +224,7 @@ When you start, IMMEDIATELY (before the user types anything) output this greetin
    ```
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    BUILDROOT ORCHESTRATOR
+   powered by re:factory
    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
    ```
 
