@@ -28,10 +28,17 @@ class Evaluator:
     def __init__(self, host: str = "rh-h100-01", timeout: int = 900) -> None:
         self._host = host
         self._timeout = timeout
+        self._capture_full_log = False
 
-    def evaluate(self, containerfile: str, coordinate: str) -> EvalResult:
+    def evaluate(
+        self,
+        containerfile: str,
+        coordinate: str,
+        capture_full_log: bool = False,
+    ) -> EvalResult:
         containerfile = sanitize_gha_expressions(containerfile)
         result = EvalResult()
+        self._capture_full_log = capture_full_log
 
         if not self._l1_parse(containerfile, result):
             result.compute_reward()
@@ -48,6 +55,9 @@ class Evaluator:
             self._cleanup_image(tag)
             result.compute_reward()
             return result
+
+        from buildroot.eval.test_runner import run_tests
+        result.test_result = run_tests(tag, self._host, containerfile, timeout=300)
 
         self._l4_match(tag, coordinate, result)
         self._cleanup_image(tag)
@@ -80,7 +90,10 @@ class Evaluator:
                 capture_output=True, text=True, timeout=self._timeout,
             )
             build_log = proc.stdout + proc.stderr
-            result.build_log = build_log[-5000:]
+            if self._capture_full_log:
+                result.build_log = build_log
+            else:
+                result.build_log = build_log[-5000:]
 
             if proc.returncode == 0:
                 result.l2_build = True
