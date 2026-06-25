@@ -409,6 +409,53 @@ buildroot validate COORDINATE --builders-image-dir DIR --pnc-image IMAGE [OPTION
 | `--output-dir` | `results/pnc-validation` | Output directory |
 | `--skip-deps` | `false` | Skip dependency resolution |
 
+#### `buildroot regression` — Run regression tests against golden Containerfiles
+
+```
+buildroot regression [OPTIONS]
+```
+
+| Option | Default | Description |
+|--------|---------|-------------|
+| `--quick` | `false` | Run only the canary package (commons-lang3) |
+| `--package TEXT` | — | Run a single package by short name |
+| `--host` | `rh-h100-01` | SSH host for remote builds |
+| `--report` | `false` | Write detailed results to `results/regression/<timestamp>/` |
+| `--status` | `false` | Show suite status and baselines |
+| `--timeout` | `900` | Eval timeout per package in seconds |
+| `--e2e` | `false` | Run end-to-end pipeline test on the canary (commons-lang3) |
+
+The regression suite validates that pipeline changes don't break what already works. It re-evaluates golden Containerfiles (checked into `tests/regression/golden/`) against their established baselines. Exit code 0 means all clear; exit code 1 means a regression was detected.
+
+**Golden packages:**
+
+| Package | Build System | Baseline | Challenge |
+|---------|-------------|----------|-----------|
+| commons-lang3:3.14.0 | Maven | 1.0 | Canary — simplest, must always pass |
+| jackson-core:2.15.3 | Maven | 0.5 | Multi-module Maven, L3 match |
+| json-path:2.9.0 | Gradle | 0.5 | Gradle + Bnd/OSGi, L3 match |
+| bcprov-jdk15on:1.70 | Ant | 1.0 | Proprietary toolchain, JAR download |
+| protobuf-java:3.25.2 | Maven | 0.15 | Google mergejars post-processing |
+
+```bash
+# Quick smoke test (canary only — fast)
+buildroot regression --quick
+
+# Full suite — all 5 packages
+buildroot regression
+
+# Check which packages are ready
+buildroot regression --status
+
+# Full pipeline E2E — runs buildroot agent on the canary from scratch
+buildroot regression --e2e
+
+# Write detailed JSON report
+buildroot regression --report
+```
+
+**Adding new golden packages:** When a package reaches a stable score and covers a distinct challenge type, save its Containerfile to `tests/regression/golden/<name>.Containerfile` with a companion `<name>.json` metadata file containing `coordinate`, `baseline_reward`, `baseline_l4_score`, `build_system`, `difficulty`, and `has_golden_containerfile: true`. Run `buildroot regression --package <name>` to verify, then commit both files.
+
 #### `buildroot kb` — Manage the knowledge base
 
 ```bash
@@ -478,9 +525,10 @@ src/buildroot/
 │       ├── kb_cmd.py       # buildroot kb
 │       ├── compare.py      # buildroot compare
 │       ├── inspect_cmd.py  # buildroot inspect
-│       ├── reconstruct.py  # buildroot reconstruct
-│       ├── validate.py     # buildroot validate
-│       └── verify.py       # buildroot verify
+│       ├── reconstruct.py     # buildroot reconstruct
+│       ├── regression_cmd.py  # buildroot regression
+│       ├── validate.py        # buildroot validate
+│       └── verify.py          # buildroot verify
 ├── agent/
 │   ├── meta_agent.py       # v4 orchestrator (interactive + headless)
 │   ├── meta_prompt.py      # Domain expert system prompt builder
