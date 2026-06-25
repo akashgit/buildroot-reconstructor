@@ -28,7 +28,6 @@ class Evaluator:
     def __init__(self, host: str = "rh-h100-01", timeout: int = 900) -> None:
         self._host = host
         self._timeout = timeout
-        self._capture_full_log = False
 
     def evaluate(
         self,
@@ -38,7 +37,6 @@ class Evaluator:
     ) -> EvalResult:
         containerfile = sanitize_gha_expressions(containerfile)
         result = EvalResult()
-        self._capture_full_log = capture_full_log
 
         if not self._l1_parse(containerfile, result):
             result.compute_reward()
@@ -46,7 +44,7 @@ class Evaluator:
 
         tag = f"buildroot-agent-{uuid.uuid4().hex[:8]}"
 
-        if not self._l2_build(containerfile, tag, result):
+        if not self._l2_build(containerfile, tag, result, capture_full_log):
             self._cleanup_image(tag)
             result.compute_reward()
             return result
@@ -75,7 +73,7 @@ class Evaluator:
             result.error_summary = f"L1 parse error: {e}"
             return False
 
-    def _l2_build(self, containerfile: str, tag: str, result: EvalResult) -> bool:
+    def _l2_build(self, containerfile: str, tag: str, result: EvalResult, capture_full_log: bool = False) -> bool:
         try:
             delimiter = f"CONTAINERFILE_EOF_{uuid.uuid4().hex[:8]}"
             safe_containerfile = containerfile.replace(delimiter, "")
@@ -90,7 +88,7 @@ class Evaluator:
                 capture_output=True, text=True, timeout=self._timeout,
             )
             build_log = proc.stdout + proc.stderr
-            if self._capture_full_log:
+            if capture_full_log:
                 result.build_log = build_log
             else:
                 result.build_log = build_log[-5000:]

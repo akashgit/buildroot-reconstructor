@@ -57,7 +57,7 @@ def build_test_command(framework: str, module_path: str | None = None) -> str:
         return "mvn test -B"
     if framework == "gradle":
         if module_path:
-            return f"./gradlew :{module_path}:test"
+            return f"./gradlew :{shlex.quote(module_path)}:test"
         return "./gradlew test"
     if framework == "ant":
         return "ant test"
