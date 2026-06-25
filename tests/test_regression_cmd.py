@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 from click.testing import CliRunner
 
@@ -72,12 +72,12 @@ class TestDiscoverPackages:
 class TestPrintStatus:
     def test_prints_all_packages(self, tmp_path):
         golden = _setup_golden(tmp_path)
-        packages = _discover_packages(golden)
+        _discover_packages(golden)
 
         runner = CliRunner()
         with runner.isolated_filesystem():
-            result = runner.invoke(cli, ["regression", "--status"], catch_exceptions=False,
-                                  obj=None)
+            _result = runner.invoke(cli, ["regression", "--status"], catch_exceptions=False,
+                                   obj=None)
 
     def test_print_status_with_mock_packages(self, capsys):
         packages = [
@@ -112,7 +112,7 @@ class TestSolveFlag:
 
         runner = CliRunner()
         with patch(_ROOT_PATCH, return_value=tmp_path), \
-             patch("buildroot.cli.commands.regression_cmd._run_solve") as mock_solve:
+             patch("buildroot.cli.commands.regression_cmd._run_solve", return_value=0) as mock_solve:
             result = runner.invoke(cli, ["regression", "--solve"])
             assert result.exit_code == 0, f"Output: {result.output}"
             mock_solve.assert_called_once()
@@ -122,7 +122,7 @@ class TestSolveFlag:
 
         runner = CliRunner()
         with patch(_ROOT_PATCH, return_value=tmp_path), \
-             patch("buildroot.cli.commands.regression_cmd._run_solve") as mock_solve:
+             patch("buildroot.cli.commands.regression_cmd._run_solve", return_value=0) as mock_solve:
             result = runner.invoke(cli, ["regression", "--solve", "--package", "pkg-a"])
             assert result.exit_code == 0, f"Output: {result.output}"
             args = mock_solve.call_args
@@ -135,7 +135,7 @@ class TestSolveFlag:
 
         runner = CliRunner()
         with patch(_ROOT_PATCH, return_value=tmp_path), \
-             patch("buildroot.cli.commands.regression_cmd._run_solve") as mock_solve:
+             patch("buildroot.cli.commands.regression_cmd._run_solve", return_value=0) as mock_solve:
             result = runner.invoke(cli, [
                 "regression", "--solve",
                 "--solve-timeout", "3600",

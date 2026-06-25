@@ -92,8 +92,8 @@ def regression_cmd(quick, pkg_name, host, report, show_status, timeout, run_e2e,
         if not runnable:
             click.echo("ERROR: No packages with Containerfiles to solve", err=True)
             sys.exit(1)
-        _run_solve(runnable, host, solve_timeout, max_iterations, golden_dir)
-        sys.exit(0)
+        failures = _run_solve(runnable, host, solve_timeout, max_iterations, golden_dir)
+        sys.exit(1 if failures > 0 else 0)
 
     from buildroot.agent.evaluator import Evaluator
 
@@ -248,6 +248,8 @@ def _run_solve(packages, host, solve_timeout, max_iterations, golden_dir):
     click.echo(f"SOLVE RESULT: {passed}/{total} achieved L4>=0.98")
     if failed > 0:
         click.echo(f"  {failed} package(s) still below threshold")
+
+    return failed
 
 
 def _run_e2e(host, timeout):
