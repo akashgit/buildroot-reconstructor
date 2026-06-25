@@ -15,7 +15,7 @@ CANARY_PACKAGE = "commons-lang3"
 
 
 def _get_project_root() -> Path:
-    return Path(__file__).resolve().parents[3]
+    return Path(__file__).resolve().parents[4]
 
 
 def _discover_packages(golden_dir):
