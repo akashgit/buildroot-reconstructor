@@ -38,12 +38,13 @@ def detect_test_framework(containerfile: str) -> str | None:
     """Detect the build/test framework from a Containerfile's content.
 
     Returns 'maven', 'gradle', 'ant', or None.
+    Gradle is checked before Maven so mixed projects default to Gradle.
     """
     lower = containerfile.lower()
-    if "mvn " in lower or "maven" in lower or "pom.xml" in lower:
-        return "maven"
-    if "gradlew" in lower or "gradle" in lower or "build.gradle" in lower:
+    if "gradlew" in lower or "build.gradle" in lower or "gradle " in lower:
         return "gradle"
+    if "mvn " in lower or "pom.xml" in lower:
+        return "maven"
     if "ant " in lower or "build.xml" in lower:
         return "ant"
     return None
