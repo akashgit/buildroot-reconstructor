@@ -1,0 +1,9 @@
+{
+  "coordinate": "com.google.protobuf:protobuf-java:3.25.2",
+  "baseline_reward": 0.15,
+  "baseline_l4_score": 0.0,
+  "build_system": "maven",
+  "difficulty": "hard",
+  "has_golden_containerfile": false,
+  "notes": "Build failed in benchmarks. Google mergejars post-processing. Pending golden Containerfile."
+}

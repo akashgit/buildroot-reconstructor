@@ -1,0 +1,9 @@
+{
+  "coordinate": "org.bouncycastle:bcprov-jdk15on:1.70",
+  "baseline_reward": 0.0,
+  "baseline_l4_score": 0.0,
+  "build_system": "ant",
+  "difficulty": "hard",
+  "has_golden_containerfile": false,
+  "notes": "No existing results. Ant-origin build, requires Sun JDK 1.5.0_08."
+}

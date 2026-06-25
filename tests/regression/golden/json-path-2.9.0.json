@@ -1,0 +1,9 @@
+{
+  "coordinate": "com.jayway.jsonpath:json-path:2.9.0",
+  "baseline_reward": 0.5,
+  "baseline_l4_score": 0.0,
+  "build_system": "gradle",
+  "difficulty": "medium",
+  "has_golden_containerfile": false,
+  "notes": "L3 only — Gradle + Bnd/OSGi. Pending golden Containerfile."
+}
