@@ -4,6 +4,6 @@
   "baseline_l4_score": 0.0,
   "build_system": "maven",
   "difficulty": "medium",
-  "has_golden_containerfile": false,
-  "notes": "L3 only — 57 successful builds but no L4 match. Pending golden Containerfile."
+  "has_golden_containerfile": true,
+  "notes": "L3 only — 57 successful builds but no L4 match. Best available Containerfile from benchmark-agents."
 }

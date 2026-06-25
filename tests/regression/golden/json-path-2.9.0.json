@@ -4,6 +4,6 @@
   "baseline_l4_score": 0.0,
   "build_system": "gradle",
   "difficulty": "medium",
-  "has_golden_containerfile": false,
-  "notes": "L3 only — Gradle + Bnd/OSGi. Pending golden Containerfile."
+  "has_golden_containerfile": true,
+  "notes": "L3 only — Gradle + Bnd/OSGi. Best available Containerfile from benchmark-agents-merged."
 }

@@ -4,6 +4,6 @@
   "baseline_l4_score": 0.0,
   "build_system": "maven",
   "difficulty": "hard",
-  "has_golden_containerfile": false,
-  "notes": "Build failed in benchmarks. Google mergejars post-processing. Pending golden Containerfile."
+  "has_golden_containerfile": true,
+  "notes": "Build may fail. Google mergejars post-processing. Best available Containerfile from benchmark-agents-merged."
 }

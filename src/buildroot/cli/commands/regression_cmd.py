@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import subprocess
 import sys
 import time
 from pathlib import Path
@@ -37,9 +38,10 @@ def _discover_packages(golden_dir):
 @click.option("--package", "pkg_name", default=None, help="Run a single package by short name")
 @click.option("--host", default="rh-h100-01", help="SSH host for remote builds")
 @click.option("--report", is_flag=True, help="Write detailed results to results/regression/<timestamp>/")
-@click.option("--status", "show_status", is_flag=True, help="Show suite status — golden vs stub packages")
+@click.option("--status", "show_status", is_flag=True, help="Show suite status and baselines")
 @click.option("--timeout", default=900, type=int, help="Eval timeout per package in seconds")
-def regression_cmd(quick, pkg_name, host, report, show_status, timeout):
+@click.option("--e2e", "run_e2e", is_flag=True, help="Run end-to-end pipeline test on the canary (commons-lang3)")
+def regression_cmd(quick, pkg_name, host, report, show_status, timeout, run_e2e):
     """Run regression tests against golden Containerfiles.
 
     Validates that pipeline changes don't degrade evaluation scores
@@ -51,9 +53,8 @@ def regression_cmd(quick, pkg_name, host, report, show_status, timeout):
         buildroot regression --package commons-lang3
         buildroot regression --status
         buildroot regression --report
+        buildroot regression --e2e --host rh-h100-01
     """
-    from buildroot.agent.evaluator import Evaluator
-
     project_root = _get_project_root()
     golden_dir = project_root / GOLDEN_DIR_REL
 
@@ -70,6 +71,15 @@ def regression_cmd(quick, pkg_name, host, report, show_status, timeout):
         _print_status(packages)
         sys.exit(0)
 
+    if run_e2e:
+        success, elapsed = _run_e2e(host, timeout)
+        if not success:
+            sys.exit(1)
+        if not quick and not pkg_name and not report:
+            sys.exit(0)
+
+    from buildroot.agent.evaluator import Evaluator
+
     if quick:
         packages = [(n, m, c) for n, m, c in packages if CANARY_PACKAGE in n]
         if not packages:
@@ -82,12 +92,18 @@ def regression_cmd(quick, pkg_name, host, report, show_status, timeout):
             click.echo(f"ERROR: Package '{pkg_name}' not found", err=True)
             sys.exit(1)
 
-    runnable = [(n, m, c) for n, m, c in packages if m.get("has_golden_containerfile") and c]
-    skipped = [(n, m) for n, m, c in packages if not m.get("has_golden_containerfile") or not c]
+    runnable = [(n, m, c) for n, m, c in packages if c]
+    missing = [(n, m) for n, m, c in packages if not c]
+
+    if missing:
+        click.echo("ERROR: The following packages are missing Containerfiles:", err=True)
+        for name, metadata in missing:
+            click.echo(f"  - {name}", err=True)
+        sys.exit(1)
 
     ts = time.strftime("%Y-%m-%dT%H:%M:%S")
     click.echo(f"REGRESSION SUITE — {ts}")
-    click.echo(f"Running {len(runnable)} package(s), skipping {len(skipped)} stub(s)\n")
+    click.echo(f"Running {len(runnable)} package(s)\n")
 
     evaluator = Evaluator(host=host, timeout=timeout)
     results = []
@@ -135,34 +151,59 @@ def regression_cmd(quick, pkg_name, host, report, show_status, timeout):
     else:
         click.echo(f"RESULT: {passed}/{total} passed, all clear")
 
-    if skipped:
-        click.echo(f"\nSkipped {len(skipped)} stub(s) without golden Containerfiles:")
-        for name, metadata in skipped:
-            click.echo(f"  - {name} ({metadata['difficulty']})")
-
     if report:
-        _write_report(results, skipped, ts)
+        _write_report(results, ts)
 
     sys.exit(1 if regressions > 0 else 0)
 
 
+def _run_e2e(host, timeout):
+    """Run end-to-end pipeline test on the canary package."""
+    click.echo("E2E PIPELINE TEST — commons-lang3:3.14.0")
+    click.echo("  Running full agent pipeline (v3)...")
+
+    cmd = [
+        sys.executable, "-m", "buildroot", "agent",
+        "org.apache.commons:commons-lang3:3.14.0",
+        "--v3-only", "--max-iterations", "5", "--host", host,
+    ]
+
+    t0 = time.time()
+    try:
+        proc = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
+        elapsed = time.time() - t0
+
+        if proc.returncode == 0:
+            click.echo(f"  Pipeline completed successfully ({elapsed:.0f}s)")
+            return True, elapsed
+        else:
+            click.echo(f"  Pipeline FAILED (exit code {proc.returncode}, {elapsed:.0f}s)")
+            if proc.stderr:
+                click.echo(f"  Error: {proc.stderr[:500]}")
+            return False, elapsed
+    except subprocess.TimeoutExpired:
+        elapsed = time.time() - t0
+        click.echo(f"  Pipeline TIMED OUT ({elapsed:.0f}s)")
+        return False, elapsed
+
+
 def _print_status(packages):
-    """Print suite status showing golden vs stub packages."""
+    """Print suite status showing all packages and their baselines."""
     click.echo("REGRESSION SUITE STATUS\n")
     for name, metadata, cf_path in packages:
-        has_golden = metadata.get("has_golden_containerfile", False) and cf_path is not None
-        status = "GOLDEN" if has_golden else "STUB"
+        has_cf = cf_path is not None
+        status = "READY" if has_cf else "MISSING"
         click.echo(
-            f"  [{status:6s}] {name}: "
+            f"  [{status:7s}] {name}: "
             f"baseline={metadata['baseline_reward']:.2f} "
             f"L4={metadata['baseline_l4_score']:.2f} "
             f"({metadata['build_system']}, {metadata['difficulty']})"
         )
-    golden_count = sum(1 for _, m, c in packages if m.get("has_golden_containerfile") and c)
-    click.echo(f"\n{golden_count}/{len(packages)} packages have golden Containerfiles")
+    ready_count = sum(1 for _, _, c in packages if c)
+    click.echo(f"\n{ready_count}/{len(packages)} packages ready")
 
 
-def _write_report(results, skipped, ts):
+def _write_report(results, ts):
     """Write detailed results to results/regression/<timestamp>/."""
     project_root = _get_project_root()
     report_dir = project_root / "results" / "regression" / ts.replace(":", "-")
@@ -173,7 +214,6 @@ def _write_report(results, skipped, ts):
         "total": len(results),
         "passed": sum(1 for r in results if not r["regression"]),
         "regressions": sum(1 for r in results if r["regression"]),
-        "skipped_stubs": len(skipped),
         "results": results,
     }
     (report_dir / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")

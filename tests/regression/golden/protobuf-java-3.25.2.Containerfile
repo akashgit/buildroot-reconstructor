@@ -1,0 +1,20 @@
+FROM docker.io/library/eclipse-temurin:11-jdk
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends maven git ca-certificates curl unzip && \
+    rm -rf /var/lib/apt/lists/*
+
+RUN git clone --depth 1 --branch 'v3.25.2' 'https://github.com/protocolbuffers/protobuf' /build
+
+RUN curl -fL -o /tmp/protoc.zip https://github.com/protocolbuffers/protobuf/releases/download/v25.2/protoc-25.2-linux-x86_64.zip && \
+    unzip -o /tmp/protoc.zip -d /tmp/protoc && \
+    cp /tmp/protoc/bin/protoc /build/protoc && \
+    chmod +x /build/protoc && \
+    rm -rf /tmp/protoc /tmp/protoc.zip
+
+WORKDIR /build/java
+
+RUN mvn clean install -B -Dmaven.test.skip=true \
+    -Dcheckstyle.skip=true -Denforcer.skip=true -Danimal.sniffer.skip=true \
+    -Dmaven.javadoc.skip=true -Dpmd.skip=true -Dspotbugs.skip=true \
+    -Drat.skip=true -Djacoco.skip=true

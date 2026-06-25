@@ -1,0 +1,25 @@
+FROM docker.io/library/eclipse-temurin:8-jdk
+
+# Maven version: 3.9.11 (source: observed, confidence: OBSERVED)
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends wget tar && \
+    wget -q https://archive.apache.org/dist/maven/maven-3/3.9.11/binaries/apache-maven-3.9.11-bin.tar.gz -O /tmp/maven.tar.gz && \
+    tar xzf /tmp/maven.tar.gz -C /opt && \
+    ln -s /opt/apache-maven-3.9.11/bin/mvn /usr/local/bin/mvn && \
+    rm /tmp/maven.tar.gz && \
+    apt-get purge -y wget && \
+    apt-get autoremove -y && \
+    rm -rf /var/lib/apt/lists/*
+ENV MAVEN_HOME=/opt/apache-maven-3.9.11
+
+# Environment variables (CI secrets removed — not available in container builds)
+ENV JAVA_OPTS="-XX:+TieredCompilation -XX:TieredStopAtLevel=1"
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends git ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+RUN git clone --depth 1 --branch 'jackson-core-2.15.3' 'https://github.com/FasterXML/jackson-core' /build
+WORKDIR /build
+
+# Build command: ./mvnw -B -ff -ntp verify -DskipTests -Dgpg.skip=true (source: observed, confidence: OBSERVED)
+RUN ./mvnw -B -ff -ntp verify -DskipTests -Dgpg.skip=true
