@@ -160,6 +160,7 @@ class TestEvalCmd:
         mock_result.error_summary = ""
         del mock_result.diff_summary
         del mock_result.comparison_report
+        mock_result.test_result = None
         MockEvaluator.return_value.evaluate.return_value = mock_result
 
         runner = CliRunner()

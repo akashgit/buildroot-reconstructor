@@ -29,7 +29,12 @@ class Evaluator:
         self._host = host
         self._timeout = timeout
 
-    def evaluate(self, containerfile: str, coordinate: str) -> EvalResult:
+    def evaluate(
+        self,
+        containerfile: str,
+        coordinate: str,
+        capture_full_log: bool = False,
+    ) -> EvalResult:
         containerfile = sanitize_gha_expressions(containerfile)
         result = EvalResult()
 
@@ -39,7 +44,7 @@ class Evaluator:
 
         tag = f"buildroot-agent-{uuid.uuid4().hex[:8]}"
 
-        if not self._l2_build(containerfile, tag, result):
+        if not self._l2_build(containerfile, tag, result, capture_full_log):
             self._cleanup_image(tag)
             result.compute_reward()
             return result
@@ -48,6 +53,9 @@ class Evaluator:
             self._cleanup_image(tag)
             result.compute_reward()
             return result
+
+        from buildroot.eval.test_runner import run_tests
+        result.test_result = run_tests(tag, self._host, containerfile, timeout=300)
 
         self._l4_match(tag, coordinate, result)
         self._cleanup_image(tag)
@@ -65,7 +73,7 @@ class Evaluator:
             result.error_summary = f"L1 parse error: {e}"
             return False
 
-    def _l2_build(self, containerfile: str, tag: str, result: EvalResult) -> bool:
+    def _l2_build(self, containerfile: str, tag: str, result: EvalResult, capture_full_log: bool = False) -> bool:
         try:
             delimiter = f"CONTAINERFILE_EOF_{uuid.uuid4().hex[:8]}"
             safe_containerfile = containerfile.replace(delimiter, "")
@@ -80,7 +88,10 @@ class Evaluator:
                 capture_output=True, text=True, timeout=self._timeout,
             )
             build_log = proc.stdout + proc.stderr
-            result.build_log = build_log[-5000:]
+            if capture_full_log:
+                result.build_log = build_log
+            else:
+                result.build_log = build_log[-5000:]
 
             if proc.returncode == 0:
                 result.l2_build = True
