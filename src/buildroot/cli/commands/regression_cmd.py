@@ -41,7 +41,10 @@ def _discover_packages(golden_dir):
 @click.option("--status", "show_status", is_flag=True, help="Show suite status and baselines")
 @click.option("--timeout", default=900, type=int, help="Eval timeout per package in seconds")
 @click.option("--e2e", "run_e2e", is_flag=True, help="Run end-to-end pipeline test on the canary (commons-lang3)")
-def regression_cmd(quick, pkg_name, host, report, show_status, timeout, run_e2e):
+@click.option("--solve", is_flag=True, help="Run full agent pipeline with warm-start from golden Containerfile to close L4 gap")
+@click.option("--solve-timeout", default=5400, type=int, help="Timeout per package for --solve mode in seconds (default: 90 min)")
+@click.option("--max-iterations", default=15, type=int, help="Max inner loop iterations for --solve mode")
+def regression_cmd(quick, pkg_name, host, report, show_status, timeout, run_e2e, solve, solve_timeout, max_iterations):
     """Run regression tests against golden Containerfiles.
 
     Validates that pipeline changes don't degrade evaluation scores
@@ -54,6 +57,8 @@ def regression_cmd(quick, pkg_name, host, report, show_status, timeout, run_e2e)
         buildroot regression --status
         buildroot regression --report
         buildroot regression --e2e --host rh-h100-01
+        buildroot regression --solve --host rh-h100-01
+        buildroot regression --solve --package protobuf-java --host rh-h100-01
     """
     project_root = _get_project_root()
     golden_dir = project_root / GOLDEN_DIR_REL
@@ -77,6 +82,18 @@ def regression_cmd(quick, pkg_name, host, report, show_status, timeout, run_e2e)
             sys.exit(1)
         if not quick and not pkg_name and not report:
             sys.exit(0)
+
+    if solve:
+        if quick:
+            packages = [(n, m, c) for n, m, c in packages if CANARY_PACKAGE in n]
+        if pkg_name:
+            packages = [(n, m, c) for n, m, c in packages if pkg_name in n]
+        runnable = [(n, m, c) for n, m, c in packages if c]
+        if not runnable:
+            click.echo("ERROR: No packages with Containerfiles to solve", err=True)
+            sys.exit(1)
+        failures = _run_solve(runnable, host, solve_timeout, max_iterations, golden_dir)
+        sys.exit(1 if failures > 0 else 0)
 
     from buildroot.agent.evaluator import Evaluator
 
@@ -155,6 +172,84 @@ def regression_cmd(quick, pkg_name, host, report, show_status, timeout, run_e2e)
         _write_report(results, ts)
 
     sys.exit(1 if regressions > 0 else 0)
+
+
+def _run_solve(packages, host, solve_timeout, max_iterations, golden_dir):
+    """Run full agent pipeline with warm-start from golden Containerfiles."""
+    from buildroot.agent.models import RecipeStore
+    from buildroot.agent.meta_agent import run_orchestrator
+
+    ts = time.strftime("%Y-%m-%dT%H:%M:%S")
+    click.echo(f"SOLVE MODE — {ts}")
+    click.echo(f"Running {len(packages)} package(s) through full v4 orchestrator\n")
+
+    passed = 0
+    failed = 0
+
+    for name, metadata, cf_path in packages:
+        coordinate = metadata["coordinate"]
+        baseline_reward = metadata["baseline_reward"]
+        baseline_l4 = metadata["baseline_l4_score"]
+        cf_text = cf_path.read_text()
+
+        click.echo(f"  Solving {name} ({coordinate})...")
+        click.echo(f"    Baseline: reward={baseline_reward:.4f} L4={baseline_l4:.4f}")
+
+        store = RecipeStore()
+        level = (
+            4 if baseline_l4 >= 0.98
+            else 3 if baseline_reward >= 0.5
+            else 2 if baseline_reward >= 0.15
+            else 1
+        )
+        store.save(coordinate, level, cf_text, baseline_reward)
+        click.echo(f"    Seeded RecipeStore at L{level}")
+
+        t0 = time.time()
+        try:
+            result = run_orchestrator(
+                coordinate,
+                host=host,
+                max_budget_usd=0,
+                max_agent_turns=max_iterations,
+                agent_timeout=solve_timeout,
+            )
+            elapsed = time.time() - t0
+
+            is_pass = result.best_reward >= 0.98
+            status_char = "✓" if is_pass else "✗"
+
+            if is_pass:
+                passed += 1
+            else:
+                failed += 1
+
+            click.echo(
+                f"    {status_char} Result: reward={result.best_reward:.4f} "
+                f"L{result.best_level} status={result.status} ({elapsed:.0f}s)"
+            )
+
+            if result.best_reward > baseline_reward:
+                meta_path = golden_dir / f"{name}.json"
+                metadata["baseline_reward"] = round(result.best_reward, 4)
+                if result.best_reward >= 0.98:
+                    metadata["baseline_l4_score"] = round(result.best_reward, 4)
+                meta_path.write_text(json.dumps(metadata, indent=2) + "\n")
+                click.echo(f"    Updated golden metadata: reward={result.best_reward:.4f}")
+
+        except Exception as e:
+            elapsed = time.time() - t0
+            failed += 1
+            click.echo(f"    ✗ Error: {e} ({elapsed:.0f}s)")
+
+        click.echo()
+
+    total = passed + failed
+    click.echo(f"SOLVE RESULT: {passed}/{total} achieved L4>=0.98")
+    if failed > 0:
+        click.echo(f"  {failed} package(s) still below threshold")
+
+    return failed
 
 
 def _run_e2e(host, timeout):

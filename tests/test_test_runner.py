@@ -43,6 +43,18 @@ class TestDetectTestFramework:
         cf = "FROM python:3.11\nRUN pip install ."
         assert detect_test_framework(cf) is None
 
+    def test_gradle_not_maven_when_meta_inf_maven(self):
+        cf = (
+            "FROM eclipse-temurin:17-jdk\n"
+            "RUN ./gradlew build\n"
+            "RUN jar xf app.jar META-INF/maven\n"
+        )
+        assert detect_test_framework(cf) == "gradle"
+
+    def test_maven_substring_not_matched(self):
+        cf = "FROM fedora:39\nRUN echo META-INF/maven/something"
+        assert detect_test_framework(cf) is None
+
     def test_empty_containerfile(self):
         assert detect_test_framework("") is None
 
