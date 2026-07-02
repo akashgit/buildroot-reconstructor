@@ -11,7 +11,7 @@ import click
 @click.command("eval")
 @click.argument("containerfile", type=click.Path(exists=True))
 @click.argument("coordinate")
-@click.option("--host", default="rh-h100-01", help="SSH host for remote builds")
+@click.option("--host", default=None, help="SSH host for remote builds (default: run locally)")
 @click.option("--timeout", default=900, type=int, help="Build timeout in seconds")
 @click.option("--pretty/--no-pretty", default=True, help="Pretty-print JSON output")
 @click.option(
@@ -24,11 +24,12 @@ def eval_cmd(containerfile, coordinate, host, timeout, pretty, report):
     """Evaluate a Containerfile against a Maven Central artifact.
 
     Returns JSON with L1-L4 scores, comparison report, and reward.
+    Builds run locally via podman by default; pass --host to use a remote SSH host.
 
     \b
     Examples:
         buildroot eval Containerfile org.apache.commons:commons-lang3:3.14.0
-        buildroot eval my.Containerfile com.fasterxml.jackson.core:jackson-core:2.16.1 --host rh-h100-01
+        buildroot eval my.Containerfile com.fasterxml.jackson.core:jackson-core:2.16.1 --host myserver
     """
     from pathlib import Path
 

@@ -139,8 +139,8 @@ def parse_gradle_test_output(stdout: str) -> dict:
 
 def run_tests(
     tag: str,
-    host: str,
     containerfile: str,
+    host: str | None = None,
     timeout: int = 300,
 ) -> TestResult | None:
     """Run the project's test suite inside the build container.
@@ -158,16 +158,19 @@ def run_tests(
         command=command,
     )
 
-    ssh_cmd = [
-        "ssh", "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=no",
-        host,
-        f"podman run --rm {shlex.quote(tag)} sh -c {shlex.quote(command)}",
-    ]
+    podman_cmd = f"podman run --rm {shlex.quote(tag)} sh -c {shlex.quote(command)}"
+    if host:
+        cmd = [
+            "ssh", "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=no",
+            host, podman_cmd,
+        ]
+    else:
+        cmd = ["podman", "run", "--rm", tag, "sh", "-c", command]
 
     start = time.monotonic()
     try:
         proc = subprocess.run(
-            ssh_cmd, capture_output=True, text=True, timeout=timeout,
+            cmd, capture_output=True, text=True, timeout=timeout,
         )
         elapsed = time.monotonic() - start
         result.duration_seconds = round(elapsed, 1)

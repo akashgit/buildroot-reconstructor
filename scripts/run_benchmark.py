@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Run the original deterministic reconstructor on a package list with full L1-L4 evaluation.
 
-Builds happen on the remote host (rh-h100-01) via SSH, not locally.
+Builds run locally via podman.
 
 Usage:
     python scripts/run_benchmark.py results/packages_benchmark.txt --output results/benchmark-full
@@ -109,7 +109,7 @@ def main():
 
     packages_file = sys.argv[1]
     output_dir = Path("results/benchmark-full")
-    host = "rh-h100-01"
+    host = None
 
     i = 2
     while i < len(sys.argv):
@@ -135,7 +135,7 @@ def main():
         sys.exit(1)
 
     output_dir.mkdir(parents=True, exist_ok=True)
-    logger.info("Benchmark: %d packages, host=%s, output=%s", len(packages), host, output_dir)
+    logger.info("Benchmark: %d packages, host=%s, output=%s", len(packages), host or "local", output_dir)
 
     # Add file handler for the log
     fh = logging.FileHandler(str(output_dir / "benchmark.log"))
