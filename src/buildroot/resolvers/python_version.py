@@ -19,8 +19,47 @@ CLASSIFIER_VERSION_RE = re.compile(
 SETUP_PYTHON_RE = re.compile(r"setup-python.*?python-version[:\s]+['\"]?(\d+\.\d+)")
 
 PEP_440_GTE_RE = re.compile(r">=\s*(\d+\.\d+)")
+PEP_440_LT_RE = re.compile(r"<\s*(\d+(?:\.\d+)?)")
 PEP_440_EQ_RE = re.compile(r"==\s*(\d+\.\d+)")
 PEP_440_COMPAT_RE = re.compile(r"~=\s*(\d+\.\d+)")
+
+MIN_SUPPORTED_PYTHON = "3.8"
+SUPPORTED_PYTHON_VERSIONS = ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
+
+
+def _version_tuple(version: str) -> tuple[int, ...]:
+    """Parse '3.11' into (3, 11) for comparison."""
+    return tuple(int(x) for x in version.split("."))
+
+
+def _clamp_python_version(version: str) -> str:
+    """Clamp a Python version to at least MIN_SUPPORTED_PYTHON.
+
+    Versions below MIN_SUPPORTED_PYTHON are replaced with the default
+    (3.11) because their Docker images rely on EOL Debian releases whose
+    apt repos return 404.
+    """
+    if _version_tuple(version) < _version_tuple(MIN_SUPPORTED_PYTHON):
+        return DEFAULT_PYTHON_VERSION
+    return version
+
+
+def _pick_best_python_version(min_version: str, upper_bound: str) -> str:
+    """Pick the highest supported Python version in [min_version, upper_bound).
+
+    The lower bound is clamped to at least MIN_SUPPORTED_PYTHON.
+    Falls back to DEFAULT_PYTHON_VERSION if no supported version satisfies.
+    """
+    min_t = max(_version_tuple(min_version), _version_tuple(MIN_SUPPORTED_PYTHON))
+    upper_t = _version_tuple(upper_bound)
+
+    best = ""
+    for v in SUPPORTED_PYTHON_VERSIONS:
+        v_t = _version_tuple(v)
+        if min_t <= v_t < upper_t:
+            best = v
+
+    return best or DEFAULT_PYTHON_VERSION
 
 
 class PythonVersionResolver:
@@ -157,19 +196,23 @@ class PythonVersionResolver:
 
         m = PEP_440_EQ_RE.search(requires_python)
         if m:
-            return m.group(1)
+            return _clamp_python_version(m.group(1))
 
         m = PEP_440_COMPAT_RE.search(requires_python)
         if m:
-            return m.group(1)
+            return _clamp_python_version(m.group(1))
 
         m = PEP_440_GTE_RE.search(requires_python)
         if m:
-            return m.group(1)
+            min_ver = m.group(1)
+            upper_m = PEP_440_LT_RE.search(requires_python)
+            if upper_m:
+                return _pick_best_python_version(min_ver, upper_m.group(1))
+            return _clamp_python_version(min_ver)
 
         bare = re.match(r"^(\d+\.\d+)$", requires_python.strip())
         if bare:
-            return bare.group(1)
+            return _clamp_python_version(bare.group(1))
 
         return ""
 
@@ -231,6 +274,9 @@ class PythonVersionResolver:
 
     @staticmethod
     def _map_version_to_image(version: str, has_c_extensions: bool) -> str:
+        # Safety net: ensure the image version is at least MIN_SUPPORTED_PYTHON
+        if _version_tuple(version) < _version_tuple(MIN_SUPPORTED_PYTHON):
+            version = DEFAULT_PYTHON_VERSION
         if has_c_extensions:
             return f"docker.io/library/python:{version}-bookworm"
         return f"docker.io/library/python:{version}-slim"

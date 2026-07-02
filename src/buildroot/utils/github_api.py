@@ -158,6 +158,36 @@ def discover_repo_from_pom(pom_data) -> tuple[str, str] | None:
     return None
 
 
+def _generate_date_tag_candidates(version: str) -> list[str]:
+    """Generate zero-padded tag candidates for date-based versions.
+
+    For a version like ``2021.10.8`` (year.month.day), the actual git
+    tag is often ``2021.10.08`` (zero-padded day/month).  This helper
+    detects the pattern and returns the padded variants.
+    """
+    parts = version.split(".")
+    if len(parts) < 3:
+        return []
+    # First part must look like a year (4 digits starting with 19 or 20)
+    if not re.match(r"^(19|20)\d{2}$", parts[0]):
+        return []
+
+    padded_parts = [parts[0]]
+    changed = False
+    for p in parts[1:]:
+        if len(p) == 1 and p.isdigit():
+            padded_parts.append(p.zfill(2))
+            changed = True
+        else:
+            padded_parts.append(p)
+
+    if not changed:
+        return []
+
+    padded_version = ".".join(padded_parts)
+    return [padded_version, f"v{padded_version}"]
+
+
 def discover_git_tag(
     repo_owner: str,
     repo_name: str,
@@ -167,7 +197,8 @@ def discover_git_tag(
     """Discover the correct git tag for a version by querying GitHub API.
 
     Tries patterns: v{version}, {artifactId}-{version},
-    rel/{artifactId}-{version}, bare {version}. Falls back to v{version}.
+    rel/{artifactId}-{version}, bare {version}, plus zero-padded date
+    variants for date-based versions.  Falls back to v{version}.
     """
     candidates = [
         f"v{version}",
@@ -175,6 +206,8 @@ def discover_git_tag(
         f"rel/{artifact_id}-{version}",
         version,
     ]
+    # Add zero-padded candidates for date-based versions (e.g. 2021.10.8 -> 2021.10.08)
+    candidates.extend(_generate_date_tag_candidates(version))
 
     url = f"{GITHUB_API}/repos/{repo_owner}/{repo_name}/tags?per_page=100"
     resp = _get(url)

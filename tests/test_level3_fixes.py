@@ -198,6 +198,47 @@ class TestDiscoverGitTag:
         tag = discover_git_tag("owner", "repo", "thymeleaf", "3.1.2.RELEASE")
         assert tag == "thymeleaf-3.1.2.RELEASE"
 
+    @patch("buildroot.utils.github_api._get")
+    def test_date_based_version_zero_padded(self, mock_get):
+        """certifi==2021.10.8 should find tag 2021.10.08 (zero-padded day)."""
+        resp = MagicMock()
+        resp.json.return_value = [
+            {"name": "2021.10.08"},
+            {"name": "2021.05.30"},
+        ]
+        resp.headers = {"Link": ""}
+        mock_get.return_value = resp
+
+        tag = discover_git_tag("owner", "certifi", "certifi", "2021.10.8")
+        assert tag == "2021.10.08"
+
+    @patch("buildroot.utils.github_api._get")
+    def test_date_based_version_v_prefix_zero_padded(self, mock_get):
+        """Date-based version should also try v-prefixed zero-padded variant."""
+        resp = MagicMock()
+        resp.json.return_value = [
+            {"name": "v2021.10.08"},
+        ]
+        resp.headers = {"Link": ""}
+        mock_get.return_value = resp
+
+        tag = discover_git_tag("owner", "certifi", "certifi", "2021.10.8")
+        assert tag == "v2021.10.08"
+
+    @patch("buildroot.utils.github_api._get")
+    def test_date_based_version_no_padding_needed(self, mock_get):
+        """Version 2021.10.18 has no single-digit parts -- no date candidates added."""
+        resp = MagicMock()
+        resp.json.return_value = [
+            {"name": "2021.10.18"},
+        ]
+        resp.headers = {"Link": ""}
+        mock_get.return_value = resp
+
+        # bare version is already a candidate, so it should still match
+        tag = discover_git_tag("owner", "certifi", "certifi", "2021.10.18")
+        assert tag == "2021.10.18"
+
 
 # ==========================================================================
 # Fix 3: Template source acquisition

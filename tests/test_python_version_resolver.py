@@ -39,11 +39,39 @@ class TestPythonRequiresSignal:
     def test_combined_specifier(self):
         resolver = PythonVersionResolver()
         spec = resolver.resolve(_py_data(requires_python=">=3.8,<4"))
-        assert spec.version == "3.8"
+        # Picks highest supported version below 4.0
+        assert spec.version == "3.13"
+
+    def test_combined_specifier_with_upper_bound(self):
+        resolver = PythonVersionResolver()
+        spec = resolver.resolve(_py_data(requires_python=">=3.8,<3.12"))
+        assert spec.version == "3.11"
 
     def test_bare_version(self):
         resolver = PythonVersionResolver()
         spec = resolver.resolve(_py_data(requires_python="3.12"))
+        assert spec.version == "3.12"
+
+    def test_eol_python27_clamped(self):
+        """>=2.7 must resolve to 3.11 — Python 2.7 images use dead Debian repos."""
+        resolver = PythonVersionResolver()
+        spec = resolver.resolve(_py_data(requires_python=">=2.7"))
+        assert spec.version == "3.11"
+
+    def test_eol_python36_clamped(self):
+        """>=3.6 must resolve to 3.11 — Python 3.6 images use dead Debian repos."""
+        resolver = PythonVersionResolver()
+        spec = resolver.resolve(_py_data(requires_python=">=3.6"))
+        assert spec.version == "3.11"
+
+    def test_supported_gte_38(self):
+        resolver = PythonVersionResolver()
+        spec = resolver.resolve(_py_data(requires_python=">=3.8"))
+        assert spec.version == "3.8"
+
+    def test_supported_gte_312(self):
+        resolver = PythonVersionResolver()
+        spec = resolver.resolve(_py_data(requires_python=">=3.12"))
         assert spec.version == "3.12"
 
 
