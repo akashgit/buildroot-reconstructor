@@ -10,14 +10,19 @@ from pathlib import Path
     "--output-dir", "-o", default=".", type=click.Path(), help="Output directory for Containerfile"
 )
 @click.option("--no-cache", is_flag=True, help="Skip PyPI cache")
-@click.option("--skip-deps", is_flag=True, help="Skip dependency resolution")
-def reconstruct_python(coordinate, output_dir, no_cache, skip_deps):
+def reconstruct_python(coordinate, output_dir, no_cache):
     """Reconstruct build environment for a Python COORDINATE (e.g., requests==2.31.0)."""
     from buildroot.agent.prepass_python import run_python_prepass, parse_python_coordinate
     from buildroot.generators.containerfile import ContainerfileGenerator
     from buildroot.pipeline.models_python import PyBuildrootSpec, PythonSpec
 
     click.echo(f"Reconstructing: {coordinate}")
+
+    # Validate coordinate early with a user-friendly error
+    try:
+        pkg, ver = parse_python_coordinate(coordinate)
+    except ValueError as e:
+        raise click.ClickException(str(e))
 
     output_path = Path(output_dir)
     output_path.mkdir(parents=True, exist_ok=True)
@@ -26,10 +31,7 @@ def reconstruct_python(coordinate, output_dir, no_cache, skip_deps):
 
     # Run prepass
     click.echo("Running pre-pass analysis...")
-    findings = run_python_prepass(coordinate, workspace)
-
-    # Build spec from findings
-    pkg, ver = parse_python_coordinate(coordinate)
+    findings = run_python_prepass(coordinate, workspace, no_cache=no_cache)
     spec = PyBuildrootSpec(
         pyproject_data=findings.pyproject_data,
         source_repo=findings.source_repo.value if findings.source_repo else "",

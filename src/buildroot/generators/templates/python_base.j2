@@ -28,7 +28,8 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 {% if source_repo and git_tag %}
-RUN git clone --depth 1 --branch '{{ git_tag }}' '{{ source_repo }}' /build
+RUN git clone --branch '{{ git_tag }}' '{{ source_repo }}' /build && \
+    cd /build && git fetch --tags
 {% else %}
 RUN mkdir -p /build
 COPY . /build

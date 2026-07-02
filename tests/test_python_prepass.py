@@ -131,13 +131,13 @@ class TestBuildCommandForBackend:
         assert _build_command_for_backend("poetry") == "poetry build --format sdist"
 
     def test_flit(self):
-        assert _build_command_for_backend("flit") == "flit build --format sdist"
+        assert _build_command_for_backend("flit") == "python -m build --sdist"
 
     def test_hatch(self):
-        assert _build_command_for_backend("hatch") == "hatch build -t sdist"
+        assert _build_command_for_backend("hatch") == "python -m build --sdist"
 
     def test_maturin(self):
-        assert _build_command_for_backend("maturin") == "maturin build --sdist"
+        assert _build_command_for_backend("maturin") == "python -m build --sdist"
 
     def test_unknown_defaults(self):
         assert _build_command_for_backend("weird-backend") == "python -m build --sdist"

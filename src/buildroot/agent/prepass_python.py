@@ -175,10 +175,17 @@ def parse_python_coordinate(coordinate: str) -> tuple[str, str]:
     )
 
 
-def run_python_prepass(coordinate: str, workspace: Path) -> PyPrePassFindings:
+def run_python_prepass(
+    coordinate: str, workspace: Path, *, no_cache: bool = False
+) -> PyPrePassFindings:
     """Run the Python pre-pass pipeline.
 
     Data-gathering only -- no template rendering, no spec decisions.
+
+    Args:
+        coordinate: Python package coordinate (e.g. 'requests==2.31.0').
+        workspace: Directory for downloaded artefacts.
+        no_cache: When True, bypass any local PyPI cache.
     """
     findings = PyPrePassFindings()
     workspace.mkdir(parents=True, exist_ok=True)
@@ -472,15 +479,16 @@ def _extract_file_from_sdist(sdist_path: Path, filename: str) -> str | None:
 
 
 def _build_command_for_backend(backend: str) -> str:
-    """Return default build command for a given backend."""
-    commands = {
-        "setuptools": "python -m build --sdist",
-        "poetry": "poetry build --format sdist",
-        "flit": "flit build --format sdist",
-        "hatch": "hatch build -t sdist",
-        "maturin": "maturin build --sdist",
-    }
-    return commands.get(backend, "python -m build --sdist")
+    """Return default build command for a given backend.
+
+    All PEP 517 backends (setuptools, flit, hatch, maturin, scikit-build)
+    use ``python -m build --sdist`` which invokes the backend's hooks directly
+    — no CLI tool needed.  Only Poetry requires its own CLI because its build
+    system is non-standard and the template already installs the poetry CLI.
+    """
+    if backend == "poetry":
+        return "poetry build --format sdist"
+    return "python -m build --sdist"
 
 
 def _parse_pkg_info(content: str) -> dict[str, str]:

@@ -16,6 +16,7 @@ from dockerfile_parse import DockerfileParser
 
 from buildroot.agent.analyzer import sanitize_gha_expressions
 from buildroot.agent.models import EvalResult
+from buildroot.agent.prepass_python import parse_python_coordinate
 from buildroot.pipeline.orchestrator import parse_gav
 from buildroot.utils.jar_comparator import compare_jars
 from buildroot.utils.maven_central import MAVEN_CENTRAL_BASE
@@ -402,7 +403,7 @@ class Evaluator:
         6. Populate ``result.l4_match``, ``result.l4_score``,
            ``result.comparison_verdict``, ``result.diff_summary``
         """
-        package, version = self._parse_python_coordinate(coordinate)
+        package, version = parse_python_coordinate(coordinate)
 
         # Find the artifact path recorded by _l3_python_command
         artifact_path = self._extract_artifact_path(result.build_log)
@@ -493,21 +494,6 @@ class Evaluator:
         except Exception as e:
             result.error_summary = f"L4 python comparison error: {e}"
             pylogger.exception("L4 python comparison failed", coordinate=coordinate)
-
-    def _parse_python_coordinate(self, coordinate: str) -> tuple[str, str]:
-        """Parse ``'package==version'`` into ``(package, version)``.
-
-        Also accepts ``'package=version'`` and ``'package:version'``
-        for flexibility.
-        """
-        for sep in ("==", "=", ":"):
-            if sep in coordinate:
-                parts = coordinate.split(sep, 1)
-                return parts[0].strip(), parts[1].strip()
-        raise ValueError(
-            f"Cannot parse Python coordinate: {coordinate!r}. "
-            f"Expected format: 'package==version'"
-        )
 
     def _extract_artifact_path(self, build_log: str) -> str | None:
         """Extract ``ARTIFACT_PATH=<path>`` from build log output."""
