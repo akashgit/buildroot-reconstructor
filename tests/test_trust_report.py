@@ -292,7 +292,15 @@ class TestTierDescriptions:
 
     def test_no_tier_assigned(self, tmp_path):
         spec = _make_spec(provenance_tier=None)
-        delta = _make_delta()
+        delta = _make_delta(
+            trusted=VariantResult(
+                name="trusted",
+                base_image="docker.io/eclipse-temurin:17-jdk",
+                jdk_version="17",
+                jdk_source="unknown",
+                provenance_tier=None,
+            ),
+        )
         generate_trust_report(spec, delta, tmp_path)
         text = (tmp_path / "trust_report.md").read_text()
         assert "No tier assigned" in text

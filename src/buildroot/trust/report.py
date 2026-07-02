@@ -78,7 +78,7 @@ def _executive_summary(
 ) -> str:
     rec = delta.recommendation or "investigate"
     equiv = delta.functional_equivalence or "NOT_EVALUATED"
-    tier = spec.provenance_tier
+    tier = spec.provenance_tier or delta.trusted.provenance_tier
 
     if rec == "use_trusted":
         posture = "The trusted variant is recommended for production use."
@@ -160,10 +160,15 @@ def _how_to_use(output_dir: Path) -> str:
 
 
 def _trust_assessment(spec: BuildrootSpec, delta: DeltaReport) -> str:
-    tier = spec.provenance_tier
-    tier_desc = _TIER_DESCRIPTIONS.get(tier, "Unknown tier") if tier else "No provenance tier assigned"
-    provider = spec.provenance_provider or "unknown"
+    tier = spec.provenance_tier or delta.trusted.provenance_tier
+    provider = spec.provenance_provider or delta.trusted.jdk_source or "unknown"
     verification = spec.provenance_verification or []
+    if not verification and tier is not None:
+        from buildroot.trust.registry import DEFAULT_SOURCES
+        for src in DEFAULT_SOURCES:
+            if src.provider == provider:
+                verification = src.verification
+                break
 
     lines = [
         "## Trust Assessment",
