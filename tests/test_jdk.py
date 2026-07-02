@@ -106,6 +106,26 @@ class TestConflictDetection:
         assert "11" in versions_in_conflicts
 
 
+class TestArtifactNameJdkHint:
+    def test_jdk18on_infers_jdk8(self):
+        resolver = JdkResolver()
+        spec = resolver.resolve(PomData(), None, {}, artifact_id='bcprov-jdk18on')
+        assert spec.version == '8'
+        assert spec.confidence.level == Source.INFERRED
+
+    def test_jdk15on_infers_jdk8(self):
+        resolver = JdkResolver()
+        spec = resolver.resolve(PomData(), None, {}, artifact_id='bcprov-jdk15on')
+        assert spec.version == '8'
+        assert spec.confidence.level == Source.INFERRED
+
+    def test_no_jdk_hint_defaults(self):
+        resolver = JdkResolver()
+        spec = resolver.resolve(PomData(), None, {}, artifact_id='commons-lang3')
+        assert spec.version == '17'
+        assert spec.confidence.level == Source.DEFAULTED
+
+
 class TestDistributionToImageMapping:
     def test_temurin(self):
         resolver = JdkResolver()

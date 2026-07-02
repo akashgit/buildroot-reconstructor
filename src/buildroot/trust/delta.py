@@ -125,6 +125,10 @@ class DeltaReport:
         return "\n".join(lines)
 
 
+def _normalize_image(image: str) -> str:
+    return image.replace('docker.io/library/', 'docker.io/')
+
+
 def build_delta_report(
     exact: VariantResult,
     trusted: VariantResult,
@@ -135,7 +139,7 @@ def build_delta_report(
     diffs: dict[str, tuple[str, str]] = {}
     if exact.jdk_version != trusted.jdk_version:
         diffs["jdk_version"] = (exact.jdk_version, trusted.jdk_version)
-    if exact.base_image != trusted.base_image:
+    if _normalize_image(exact.base_image) != _normalize_image(trusted.base_image):
         diffs["base_image"] = (exact.base_image, trusted.base_image)
     if exact.jdk_source != trusted.jdk_source:
         diffs["jdk_source"] = (exact.jdk_source, trusted.jdk_source)

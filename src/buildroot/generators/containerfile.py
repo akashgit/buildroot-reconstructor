@@ -212,6 +212,11 @@ class ContainerfileGenerator:
             "config_files": spec.config_files,
             "metadata_strip_patterns": spec.metadata_strip_patterns,
             "reproducibility_env": spec.reproducibility_env,
+            "provenance_provider": spec.provenance_provider or "",
+            "provenance_tier": spec.provenance_tier,
+            "provenance_verification": spec.provenance_verification or [],
+            "jdk_resolution_type": spec.jdk_resolution_type or "",
+            "jdk_requested": spec.jdk_requested_version or "",
         }
 
     def _resolve_build_command(self, spec: BuildrootSpec) -> str:

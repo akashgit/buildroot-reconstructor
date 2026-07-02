@@ -142,6 +142,20 @@ class TestToDict:
         assert d["version_diff"]["jdk_version"] == ["9", "11"]
 
 
+class TestBaseImageNormalization:
+    def test_library_prefix_not_false_diff(self):
+        exact = _make_variant('exact', base_image='docker.io/library/eclipse-temurin:17-jdk')
+        trusted = _make_variant('trusted', base_image='docker.io/eclipse-temurin:17-jdk')
+        report = build_delta_report(exact, trusted)
+        assert 'base_image' not in report.version_diff
+
+    def test_real_diff_still_detected(self):
+        exact = _make_variant('exact', base_image='docker.io/eclipse-temurin:17-jdk')
+        trusted = _make_variant('trusted', base_image='registry.access.redhat.com/ubi9/openjdk-17')
+        report = build_delta_report(exact, trusted)
+        assert 'base_image' in report.version_diff
+
+
 class TestToMarkdown:
     def test_markdown_contains_key_sections(self):
         exact = _make_variant("exact", jdk_version="9")

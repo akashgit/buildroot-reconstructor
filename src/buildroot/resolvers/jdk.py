@@ -41,6 +41,7 @@ IMAGE_TAG_SUFFIX = {
 }
 
 JAVA_HOME_VERSION_RE = re.compile(r"JAVA_HOME_(\d+)_")
+ARTIFACT_JDK_RE = re.compile(r'jdk(\d+)(?:on|to\d+)?$|[-_]jdk(\d+)$', re.IGNORECASE)
 
 TRUSTED_IMAGE_MAP = {
     "adoptium": "docker.io/eclipse-temurin:{version}-jdk",
@@ -244,7 +245,16 @@ class JdkResolver:
                         )
                         spec.source_description = f"{file_source} file in repo"
 
-        # Priority 12: Default
+        # Priority 12: Artifact name JDK hint
+        if not spec.version and artifact_id:
+            artifact_version = self._check_artifact_name_jdk(artifact_id)
+            if artifact_version:
+                spec.version = artifact_version
+                spec.confidence = Confidence(level=Source.INFERRED, reason=f"JDK version inferred from artifact name '{artifact_id}'")
+                spec.source_description = 'Artifact name JDK hint'
+                all_signals.append({'source': 'artifact name', 'version': artifact_version, 'priority': '12'})
+
+        # Priority 13: Default
         if not spec.version:
             spec.version = DEFAULT_JDK_VERSION
             spec.confidence = Confidence(
@@ -263,6 +273,24 @@ class JdkResolver:
         spec.conflicts = self._detect_conflicts(all_signals)
 
         return spec
+
+    @staticmethod
+    def _check_artifact_name_jdk(artifact_id: str) -> str:
+        m = ARTIFACT_JDK_RE.search(artifact_id)
+        if not m:
+            return ''
+        raw = m.group(1) or m.group(2)
+        if not raw:
+            return ''
+        ver = int(raw)
+        if ver >= 10:
+            major = int(str(ver)[0])
+            minor = int(str(ver)[1:])
+            if major == 1 and 5 <= minor <= 9:
+                ver = minor
+        if ver < 8:
+            return '8'
+        return str(ver)
 
     def _check_java_home_env(self, ci_data: CIData) -> str:
         for key in ci_data.env_vars:
