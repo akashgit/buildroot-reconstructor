@@ -242,13 +242,17 @@ SYSTEM_PACKAGE_HINTS: dict[str, list[str]] = {
     "readline": ["libreadline-dev"],
     "bz2": ["libbz2-dev"],
     "sqlite": ["libsqlite3-dev"],
+    "setuptools-rust": ["cargo", "rustc", "pkg-config"],
+    "maturin": ["cargo", "rustc", "pkg-config"],
 }
 
 
 def _infer_system_packages(
-    package_name: str, dependencies: list[str] | None = None
+    package_name: str,
+    dependencies: list[str] | None = None,
+    build_requires: list[str] | None = None,
 ) -> list[str]:
-    """Infer system packages needed based on package name and dependencies."""
+    """Infer system packages needed based on package name, dependencies, and build_requires."""
     system_pkgs: set[str] = set()
     name_lower = package_name.lower().replace("-", "").replace("_", "")
 
@@ -256,10 +260,18 @@ def _infer_system_packages(
         if pattern in name_lower:
             system_pkgs.update(pkgs)
 
-    # Also check dependencies for hints
+    # Check runtime dependencies for hints
     if dependencies:
         for dep in dependencies:
             dep_lower = dep.lower().split("[")[0].split(">=")[0].split("==")[0].strip()
+            for pattern, pkgs in SYSTEM_PACKAGE_HINTS.items():
+                if pattern in dep_lower:
+                    system_pkgs.update(pkgs)
+
+    # Check build_requires for hints (e.g. setuptools-rust, maturin)
+    if build_requires:
+        for dep in build_requires:
+            dep_lower = dep.lower().split("[")[0].split(">=")[0].split("==")[0].split(";")[0].strip()
             for pattern, pkgs in SYSTEM_PACKAGE_HINTS.items():
                 if pattern in dep_lower:
                     system_pkgs.update(pkgs)
@@ -429,7 +441,9 @@ def run_python_prepass(
     # Infer system packages when C extensions are detected
     if merged.has_c_extensions:
         findings.system_packages = _infer_system_packages(
-            package, merged.dependencies or None
+            package,
+            merged.dependencies or None,
+            merged.build_requires or None,
         )
 
     # Also merge in classifiers from PyPI metadata if not present

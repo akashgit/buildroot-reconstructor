@@ -33,7 +33,8 @@ RUN apt-get update && \
 
 {% if source_repo and git_tag %}
 RUN git clone --branch '{{ git_tag }}' '{{ source_repo }}' /build && \
-    cd /build && git fetch --tags
+    cd /build && git fetch --tags && \
+    git submodule update --init --recursive
 {% else %}
 RUN mkdir -p /build
 COPY . /build

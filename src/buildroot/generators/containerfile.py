@@ -39,6 +39,15 @@ REPRODUCIBLE_FLAGS = [
 ]
 
 
+def _sanitize_build_dep(dep: str) -> str:
+    """Strip PEP 508 environment markers from a dependency string.
+
+    ``'cffi>=1.12; platform_python_implementation != "PyPy"'`` becomes
+    ``'cffi>=1.12'``.
+    """
+    return dep.split(";")[0].strip()
+
+
 class ContainerfileGenerator:
     """Generate Containerfile and buildroot.json from a BuildrootSpec."""
 
@@ -298,14 +307,16 @@ class ContainerfileGenerator:
         if spec.pyproject_data.has_c_extensions:
             template_name = "python_compiled.j2"
 
-        # Deduplicate build_requires against packages already installed by the
-        # template (build, setuptools, wheel, cython).
+        # Sanitize build_requires: strip PEP 508 environment markers (the
+        # semicolon-delimited part) so the shell doesn't misinterpret them,
+        # then deduplicate against packages already installed by the template.
         _hardcoded = {"build", "setuptools", "wheel", "cython"}
-        deduped_build_deps = [
-            req for req in spec.pyproject_data.build_requires
-            if req.lower().split("[")[0].split(">=")[0].split("==")[0].split("<")[0].strip()
-            not in _hardcoded
-        ]
+        deduped_build_deps: list[str] = []
+        for req in spec.pyproject_data.build_requires:
+            clean = _sanitize_build_dep(req)
+            name = clean.split("[")[0].split(">=")[0].split("==")[0].split("<")[0].strip().lower()
+            if name not in _hardcoded:
+                deduped_build_deps.append(clean)
 
         # Determine Cython version pin for compiled extensions
         cython_spec = ""
