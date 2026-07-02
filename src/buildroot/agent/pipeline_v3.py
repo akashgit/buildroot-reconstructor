@@ -353,7 +353,7 @@ def run_v3_pipeline(
     coordinate: str,
     *,
     max_iterations: int = 10,
-    host: str = "rh-h100-01",
+    host: str | None = None,
     workspace: Path | None = None,
     skip_deps: bool = True,
     warm_start_containerfile: str | None = None,

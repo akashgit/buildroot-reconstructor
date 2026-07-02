@@ -1,4 +1,4 @@
-"""Evaluator agent — 4-level scoring with SSH-based remote builds."""
+"""Evaluator agent — 4-level scoring via podman (local or remote via SSH)."""
 
 from __future__ import annotations
 
@@ -25,9 +25,29 @@ logger = logging.getLogger(__name__)
 class Evaluator:
     """Runs 4-level evaluation: parse, build, command, JAR match."""
 
-    def __init__(self, host: str = "rh-h100-01", timeout: int = 900) -> None:
+    def __init__(self, host: str | None = None, timeout: int = 900) -> None:
         self._host = host
         self._timeout = timeout
+
+    def _run(self, cmd: list[str], **kwargs) -> subprocess.CompletedProcess:
+        """Run a command locally, or via SSH if a host is configured."""
+        if self._host:
+            return subprocess.run(
+                ["ssh", "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=no",
+                 self._host, shlex.join(cmd)],
+                **kwargs,
+            )
+        return subprocess.run(cmd, **kwargs)
+
+    def _run_shell(self, shell_cmd: str, **kwargs) -> subprocess.CompletedProcess:
+        """Run a shell command string locally or via SSH."""
+        if self._host:
+            return subprocess.run(
+                ["ssh", "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=no",
+                 self._host, shell_cmd],
+                **kwargs,
+            )
+        return subprocess.run(shell_cmd, shell=True, **kwargs)
 
     def evaluate(
         self,
@@ -55,7 +75,7 @@ class Evaluator:
             return result
 
         from buildroot.eval.test_runner import run_tests
-        result.test_result = run_tests(tag, self._host, containerfile, timeout=300)
+        result.test_result = run_tests(tag, containerfile, host=self._host, timeout=300)
 
         self._l4_match(tag, coordinate, result)
         self._cleanup_image(tag)
@@ -75,18 +95,27 @@ class Evaluator:
 
     def _l2_build(self, containerfile: str, tag: str, result: EvalResult, capture_full_log: bool = False) -> bool:
         try:
-            delimiter = f"CONTAINERFILE_EOF_{uuid.uuid4().hex[:8]}"
-            safe_containerfile = containerfile.replace(delimiter, "")
-            build_cmd = (
-                f"cd $(mktemp -d) && "
-                f"cat > Containerfile << '{delimiter}'\n{safe_containerfile}\n{delimiter}\n"
-                f"podman build --no-cache -t {tag} -f Containerfile ."
-            )
-            proc = subprocess.run(
-                ["ssh", "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=no",
-                 self._host, build_cmd],
-                capture_output=True, text=True, timeout=self._timeout,
-            )
+            if self._host:
+                delimiter = f"CONTAINERFILE_EOF_{uuid.uuid4().hex[:8]}"
+                safe_containerfile = containerfile.replace(delimiter, "")
+                build_cmd = (
+                    f"cd $(mktemp -d) && "
+                    f"cat > Containerfile << '{delimiter}'\n{safe_containerfile}\n{delimiter}\n"
+                    f"podman build --no-cache -t {tag} -f Containerfile ."
+                )
+                proc = self._run_shell(
+                    build_cmd,
+                    capture_output=True, text=True, timeout=self._timeout,
+                )
+            else:
+                import tempfile as _tmpfile
+                build_dir = _tmpfile.mkdtemp(prefix="buildroot-l2-")
+                cf_path = Path(build_dir) / "Containerfile"
+                cf_path.write_text(containerfile)
+                proc = self._run(
+                    ["podman", "build", "--no-cache", "-t", tag, "-f", str(cf_path), build_dir],
+                    capture_output=True, text=True, timeout=self._timeout,
+                )
             build_log = proc.stdout + proc.stderr
             if capture_full_log:
                 result.build_log = build_log
@@ -109,18 +138,16 @@ class Evaluator:
     def _l3_command(self, tag: str, result: EvalResult) -> bool:
         try:
             check_cmd = (
-                f"podman run --rm {tag} sh -c '"
-                f"find target/ build/libs/ */target/ */build/libs/ "
-                f"-name \"*.jar\" "
-                f"-not -name \"*-sources.jar\" "
-                f"-not -name \"*-javadoc.jar\" "
-                f"-not -name \"original-*.jar\" "
-                f"2>/dev/null | head -1 | grep -q . "
-                f"&& echo BUILD_SUCCESS || echo BUILD_FAILED'"
+                "find target/ build/libs/ */target/ */build/libs/ "
+                "-name '*.jar' "
+                "-not -name '*-sources.jar' "
+                "-not -name '*-javadoc.jar' "
+                "-not -name 'original-*.jar' "
+                "2>/dev/null | head -1 | grep -q . "
+                "&& echo BUILD_SUCCESS || echo BUILD_FAILED"
             )
-            proc = subprocess.run(
-                ["ssh", "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=no",
-                 self._host, check_cmd],
+            proc = self._run(
+                ["podman", "run", "--rm", tag, "sh", "-c", check_cmd],
                 capture_output=True, text=True, timeout=120,
             )
             output = proc.stdout + proc.stderr
@@ -210,14 +237,12 @@ class Evaluator:
     ) -> Path | None:
         try:
             find_cmd = (
-                f"podman run --rm {tag} sh -c "
-                f"'find /build target -name \"*.jar\" -not -name \"*-sources.jar\" "
-                f"-not -name \"*-javadoc.jar\" -not -name \"original-*.jar\" 2>/dev/null "
-                f"| head -5'"
+                "find /build target -name '*.jar' -not -name '*-sources.jar' "
+                "-not -name '*-javadoc.jar' -not -name 'original-*.jar' 2>/dev/null "
+                "| head -5"
             )
-            proc = subprocess.run(
-                ["ssh", "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=no",
-                 self._host, find_cmd],
+            proc = self._run(
+                ["podman", "run", "--rm", tag, "sh", "-c", find_cmd],
                 capture_output=True, text=True, timeout=60,
             )
             jar_paths = [
@@ -236,12 +261,8 @@ class Evaluator:
                 target_jar = jar_paths[0]
 
             local_jar = dest / f"{artifact_id}-{version}-rebuilt.jar"
-            copy_cmd = (
-                f"podman run --rm {tag} cat {shlex.quote(target_jar)}"
-            )
-            copy_proc = subprocess.run(
-                ["ssh", "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=no",
-                 self._host, copy_cmd],
+            copy_proc = self._run(
+                ["podman", "run", "--rm", tag, "cat", target_jar],
                 capture_output=True, timeout=120,
             )
             if copy_proc.returncode == 0 and copy_proc.stdout:
@@ -282,9 +303,8 @@ class Evaluator:
 
     def _cleanup_image(self, tag: str) -> None:
         try:
-            subprocess.run(
-                ["ssh", "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=no",
-                 self._host, f"podman rmi -f {tag} 2>/dev/null"],
+            self._run(
+                ["podman", "rmi", "-f", tag],
                 capture_output=True, timeout=30,
             )
         except Exception:

@@ -36,7 +36,7 @@ def _discover_packages(golden_dir):
 @click.command("regression")
 @click.option("--quick", is_flag=True, help="Run only the canary package (commons-lang3)")
 @click.option("--package", "pkg_name", default=None, help="Run a single package by short name")
-@click.option("--host", default="rh-h100-01", help="SSH host for remote builds")
+@click.option("--host", default=None, help="SSH host for remote builds (default: run locally)")
 @click.option("--report", is_flag=True, help="Write detailed results to results/regression/<timestamp>/")
 @click.option("--status", "show_status", is_flag=True, help="Show suite status and baselines")
 @click.option("--timeout", default=900, type=int, help="Eval timeout per package in seconds")
@@ -48,7 +48,8 @@ def regression_cmd(quick, pkg_name, host, report, show_status, timeout, run_e2e,
     """Run regression tests against golden Containerfiles.
 
     Validates that pipeline changes don't degrade evaluation scores
-    below established baselines.
+    below established baselines. Builds run locally via podman by default;
+    pass --host to use a remote SSH host.
 
     \b
     Examples:
@@ -56,9 +57,9 @@ def regression_cmd(quick, pkg_name, host, report, show_status, timeout, run_e2e,
         buildroot regression --package commons-lang3
         buildroot regression --status
         buildroot regression --report
-        buildroot regression --e2e --host rh-h100-01
-        buildroot regression --solve --host rh-h100-01
-        buildroot regression --solve --package protobuf-java --host rh-h100-01
+        buildroot regression --e2e
+        buildroot regression --solve
+        buildroot regression --solve --package protobuf-java --host myserver
     """
     project_root = _get_project_root()
     golden_dir = project_root / GOLDEN_DIR_REL
@@ -260,8 +261,10 @@ def _run_e2e(host, timeout):
     cmd = [
         sys.executable, "-m", "buildroot", "agent",
         "org.apache.commons:commons-lang3:3.14.0",
-        "--v3-only", "--max-iterations", "5", "--host", host,
+        "--v3-only", "--max-iterations", "5",
     ]
+    if host:
+        cmd.extend(["--host", host])
 
     t0 = time.time()
     try:

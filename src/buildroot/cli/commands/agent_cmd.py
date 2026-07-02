@@ -11,7 +11,7 @@ import click
 
 @click.command("agent")
 @click.argument("coordinate", required=False)
-@click.option("--host", default="rh-h100-01", help="SSH host for remote builds")
+@click.option("--host", default=None, help="SSH host for remote builds (default: run locally)")
 @click.option("--max-iterations", default=15, type=int, help="Max inner loop iterations")
 @click.option("--batch", "batch_file", type=click.Path(exists=True), help="File with one coordinate per line for batch processing")
 @click.option("--output", "output_dir", type=click.Path(), help="Output directory for batch results")
@@ -25,6 +25,7 @@ def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, 
     """Run agentic reconstruction loop for a Maven COORDINATE.
 
     Default mode uses the v4 orchestrator agent. Use --v3-only for the template pipeline.
+    Builds run locally via podman by default; pass --host to use a remote SSH host.
 
     \b
     Single package (orchestrator): buildroot agent org.apache.commons:commons-lang3:3.14.0

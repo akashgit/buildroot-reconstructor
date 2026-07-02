@@ -141,7 +141,7 @@ Evaluate a Containerfile against a Maven Central artifact. Returns JSON with:
 
 Usage:
 ```bash
-buildroot eval /path/to/Containerfile org.example:artifact:1.0.0 --host rh-h100-01
+buildroot eval /path/to/Containerfile org.example:artifact:1.0.0
 ```"""]
 
     if v3_available:
@@ -153,7 +153,7 @@ Use this as your fast path — if v3 solves it, you're done.
 
 Usage:
 ```bash
-buildroot agent org.apache.commons:commons-lang3:3.14.0 --v3-only --host rh-h100-01
+buildroot agent org.apache.commons:commons-lang3:3.14.0 --v3-only
 ```""")
 
     sections.append("""\
@@ -163,12 +163,12 @@ Search the knowledge base for templates, tips, and tricks.
 ## buildroot kb list
 List all knowledge base entries.
 
-## SSH to build host
-All builds run on remote hosts via SSH. The build host is configured by the outer loop.
-You can SSH directly for debugging:
+## Build execution
+Builds run locally via podman by default. Pass --host to run on a remote SSH host.
+You can use podman directly for debugging:
 ```bash
-ssh <host> "podman images | grep buildroot"
-ssh <host> "podman run --rm <image-tag> find / -name '*.jar' 2>/dev/null"
+podman images | grep buildroot
+podman run --rm <image-tag> find / -name '*.jar' 2>/dev/null
 ```""")
 
     return "\n\n".join(sections)
