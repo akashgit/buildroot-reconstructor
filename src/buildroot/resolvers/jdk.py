@@ -12,6 +12,11 @@ from buildroot.pipeline.models import (
     PomData,
     Source,
 )
+from buildroot.trust.registry import (
+    JdkResolutionStrategy,
+    TrustedJdkResolution,
+    TrustedSourceRegistry,
+)
 from buildroot.utils.maven_central import fetch_jar_manifest_jdk
 
 logger = logging.getLogger(__name__)
@@ -36,6 +41,13 @@ IMAGE_TAG_SUFFIX = {
 }
 
 JAVA_HOME_VERSION_RE = re.compile(r"JAVA_HOME_(\d+)_")
+
+TRUSTED_IMAGE_MAP = {
+    "adoptium": "docker.io/eclipse-temurin:{version}-jdk",
+    "redhat_ubi_11": "registry.access.redhat.com/ubi8/openjdk-{version}",
+    "redhat_ubi": "registry.access.redhat.com/ubi9/openjdk-{version}",
+    "corretto": "docker.io/amazoncorretto:{version}",
+}
 
 
 class JdkResolver:
@@ -330,3 +342,27 @@ class JdkResolver:
                 "sources": ", ".join(sources),
             })
         return conflicts
+
+    def resolve_trusted(
+        self,
+        version: str,
+        registry: TrustedSourceRegistry,
+        strategy: JdkResolutionStrategy = JdkResolutionStrategy.NEAREST_LTS_ABOVE,
+    ) -> TrustedJdkResolution:
+        """Resolve a JDK version against the trusted source registry."""
+        resolution = registry.resolve_trusted_jdk(version, strategy)
+
+        if resolution.source and not resolution.base_image:
+            provider = resolution.source.provider
+            ver = resolution.resolved_version
+            if provider == "redhat_ubi" and ver == "11":
+                key = "redhat_ubi_11"
+            elif provider in TRUSTED_IMAGE_MAP:
+                key = provider
+            else:
+                key = provider
+            pattern = TRUSTED_IMAGE_MAP.get(key, "")
+            if pattern:
+                resolution.base_image = pattern.format(version=ver)
+
+        return resolution
