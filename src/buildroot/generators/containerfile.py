@@ -10,6 +10,7 @@ from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
 
 from buildroot.pipeline.models import BuildrootSpec, Source
+from buildroot.pipeline.models_python import PyBuildrootSpec
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +24,15 @@ RUNNER_IMAGE_MAP = {
 }
 
 DEFAULT_BUILD_COMMAND = "mvn clean install -B"
+
+_PYTHON_TEMPLATE_MAP = {
+    "setuptools": "python_base.j2",
+    "flit": "python_base.j2",
+    "hatch": "python_base.j2",
+    "poetry": "python_poetry.j2",
+    "maturin": "python_compiled.j2",
+    "scikit-build": "python_compiled.j2",
+}
 
 REPRODUCIBLE_FLAGS = [
     "-Dproject.build.outputTimestamp=2000-01-01T00:00:00Z",
@@ -268,6 +278,66 @@ class ContainerfileGenerator:
         if cmd.startswith("gradle") or "gradle " in cmd or cmd.startswith("./gradlew") or "./gradlew " in cmd:
             return "gradle"
         return "maven"
+
+    def generate_python(
+        self, spec: PyBuildrootSpec, output_dir: Path
+    ) -> tuple[Path, Path]:
+        """Generate Containerfile from a PyBuildrootSpec.
+
+        1. Select template based on spec.build_backend using _PYTHON_TEMPLATE_MAP
+        2. If spec has C extensions, use python_compiled.j2 regardless
+        3. Build template context from spec fields
+        4. Render template
+        5. Write Containerfile and buildroot.json to output_dir
+        """
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+        template_name = _PYTHON_TEMPLATE_MAP.get(
+            spec.build_backend, "python_base.j2"
+        )
+        if spec.pyproject_data.has_c_extensions:
+            template_name = "python_compiled.j2"
+
+        context = {
+            "coordinate": f"{spec.pyproject_data.name}=={spec.pyproject_data.version}",
+            "base_image": spec.python_spec.base_image or "python:3.11-slim",
+            "source_repo": spec.source_repo,
+            "git_tag": spec.git_tag,
+            "system_packages": spec.system_packages,
+            "env_vars": spec.env_vars,
+            "pre_build_commands": spec.pre_build_commands,
+            "post_build_commands": spec.post_build_commands,
+            "build_command": spec.build_command or "python -m build --sdist",
+            "extra_build_deps": " ".join(spec.pyproject_data.build_requires),
+        }
+
+        template = self._env.get_template(template_name)
+        containerfile_content = template.render(**context)
+
+        cf_path = output_dir / "Containerfile"
+        cf_path.write_text(containerfile_content)
+
+        provenance = self._generate_python_provenance(spec)
+        prov_path = output_dir / "buildroot.json"
+        prov_path.write_text(json.dumps(provenance, indent=2) + "\n")
+
+        logger.info(
+            "Generated %s using template %s", cf_path, template_name
+        )
+        return cf_path, prov_path
+
+    def _generate_python_provenance(self, spec: PyBuildrootSpec) -> dict:
+        """Generate provenance document for a Python build."""
+        return {
+            "coordinate": f"{spec.pyproject_data.name}=={spec.pyproject_data.version}",
+            "ecosystem": "python",
+            "python_version": spec.python_spec.version,
+            "build_backend": spec.build_backend,
+            "source_repo": spec.source_repo,
+            "git_tag": spec.git_tag,
+            "base_image": spec.python_spec.base_image,
+            "build_command": spec.build_command,
+        }
 
     @staticmethod
     def map_runner_to_ubuntu(runner_os: str) -> str:

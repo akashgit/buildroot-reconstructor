@@ -1,0 +1,59 @@
+# =============================================================================
+# Buildroot Containerfile for Python package (Poetry) — auto-generated
+# Package: {{ coordinate }}
+# Source: {{ source_repo }}
+# Tag: {{ git_tag }}
+# =============================================================================
+
+FROM {{ base_image }}
+
+{% if system_packages %}
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+{% for pkg in system_packages %}
+    {{ pkg }}{{ " \\" if not loop.last else "" }}
+{% endfor %}
+    && rm -rf /var/lib/apt/lists/*
+{% endif %}
+
+{% if env_vars %}
+{% for key, value in env_vars.items() %}
+ENV {{ key }}={{ value }}
+{% endfor %}
+{% endif %}
+
+# Install git for source checkout
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends git ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+
+{% if source_repo and git_tag %}
+RUN git clone --depth 1 --branch '{{ git_tag }}' '{{ source_repo }}' /build
+{% else %}
+RUN mkdir -p /build
+COPY . /build
+{% endif %}
+
+WORKDIR /build
+
+# Install Poetry
+RUN pip install --no-cache-dir poetry
+RUN poetry config virtualenvs.create false
+
+{% if pre_build_commands %}
+{% for cmd in pre_build_commands %}
+RUN {{ cmd }}
+{% endfor %}
+{% endif %}
+
+# Reproducible build
+ENV SOURCE_DATE_EPOCH=0
+
+# Build
+RUN {{ build_command | default("poetry build --format sdist") }}
+
+{% if post_build_commands %}
+{% for cmd in post_build_commands %}
+RUN {{ cmd }}
+{% endfor %}
+{% endif %}

@@ -133,3 +133,39 @@ def _run_orchestrator(coordinate, host, max_budget, max_turns):
         max_budget_usd=max_budget,
         max_agent_turns=max_turns,
     )
+
+
+@click.command("agent-python")
+@click.argument("coordinate")
+@click.option("--host", default="rh-h100-01", help="Remote build host")
+@click.option("--max-iterations", default=10, type=int, help="Max inner loop iterations")
+@click.option("--target-score", default=0.98, type=float, help="Target L4 score to stop at")
+@click.option("--workspace", default=None, type=click.Path(), help="Workspace directory")
+@click.option("-v", "--verbose", is_flag=True, help="Enable debug logging")
+def agent_python_cmd(coordinate, host, max_iterations, target_score, workspace, verbose):
+    """Run Python build reconstruction agent for COORDINATE (e.g., requests==2.31.0)."""
+    logging.basicConfig(
+        level=logging.DEBUG if verbose else logging.INFO,
+        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    )
+
+    from pathlib import Path
+    from buildroot.agent.pipeline_v3_python import run_v3_pipeline_python
+
+    ws = Path(workspace) if workspace else Path(f".buildroot-py/{coordinate.replace('==', '-')}")
+    ws.mkdir(parents=True, exist_ok=True)
+
+    click.echo(f"Starting Python pipeline for {coordinate}")
+    result = run_v3_pipeline_python(
+        coordinate,
+        ws,
+        host=host,
+        max_iterations=max_iterations,
+        target_score=target_score,
+    )
+
+    click.echo(
+        f"Result: L{result['level_reached']} | "
+        f"Reward: {result['reward']:.4f} | "
+        f"L4: {result['l4_score']:.4f}"
+    )

@@ -1,0 +1,60 @@
+"""Reconstruct command for Python packages — pre-pass to Containerfile."""
+
+import click
+from pathlib import Path
+
+
+@click.command("reconstruct-python")
+@click.argument("coordinate")
+@click.option(
+    "--output-dir", "-o", default=".", type=click.Path(), help="Output directory for Containerfile"
+)
+@click.option("--no-cache", is_flag=True, help="Skip PyPI cache")
+@click.option("--skip-deps", is_flag=True, help="Skip dependency resolution")
+def reconstruct_python(coordinate, output_dir, no_cache, skip_deps):
+    """Reconstruct build environment for a Python COORDINATE (e.g., requests==2.31.0)."""
+    from buildroot.agent.prepass_python import run_python_prepass, parse_python_coordinate
+    from buildroot.generators.containerfile import ContainerfileGenerator
+    from buildroot.pipeline.models_python import PyBuildrootSpec, PythonSpec
+
+    click.echo(f"Reconstructing: {coordinate}")
+
+    output_path = Path(output_dir)
+    output_path.mkdir(parents=True, exist_ok=True)
+    workspace = output_path / ".workspace"
+    workspace.mkdir(parents=True, exist_ok=True)
+
+    # Run prepass
+    click.echo("Running pre-pass analysis...")
+    findings = run_python_prepass(coordinate, workspace)
+
+    # Build spec from findings
+    pkg, ver = parse_python_coordinate(coordinate)
+    spec = PyBuildrootSpec(
+        pyproject_data=findings.pyproject_data,
+        source_repo=findings.source_repo.value if findings.source_repo else "",
+        git_tag=findings.git_tag.value if findings.git_tag else "",
+        build_backend=findings.build_backend.value if findings.build_backend else "setuptools",
+        build_command=findings.build_command.value if findings.build_command else "python -m build --sdist",
+    )
+    spec.pyproject_data.name = pkg
+    spec.pyproject_data.version = ver
+
+    # Set python spec
+    if findings.python_version:
+        spec.python_spec = PythonSpec(
+            version=findings.python_version.value,
+            base_image=(
+                findings.base_image.value
+                if findings.base_image
+                else f"docker.io/library/python:{findings.python_version.value}-slim"
+            ),
+        )
+
+    # Generate Containerfile
+    click.echo("Generating Containerfile...")
+    gen = ContainerfileGenerator()
+    cf_path, prov_path = gen.generate_python(spec, output_path)
+
+    click.echo(f"Containerfile written to: {cf_path}")
+    click.echo(f"Provenance written to: {prov_path}")

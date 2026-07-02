@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 import hashlib
-import logging
 import time
 from pathlib import Path
 
 import requests
+import structlog
 
-logger = logging.getLogger(__name__)
+logger = structlog.get_logger()
 
 PYPI_BASE = "https://pypi.org/pypi"
 DEFAULT_CACHE_DIR = Path.home() / ".cache" / "buildroot" / "pypi"
@@ -89,17 +89,29 @@ def fetch_package_metadata(
     return json.loads(text)
 
 
-def _find_sdist_url(metadata: dict) -> dict | None:
+def _find_sdist_url(metadata: dict) -> tuple[str, str] | None:
+    """Find the sdist download URL and SHA-256 digest.
+
+    Returns ``(url, sha256)`` or *None* if no sdist is available.
+    """
     for url_info in metadata.get("urls", []):
         if url_info.get("packagetype") == "sdist":
-            return url_info
+            url = url_info["url"]
+            sha256 = url_info.get("digests", {}).get("sha256", "")
+            return (url, sha256)
     return None
 
 
-def _find_wheel_url(metadata: dict) -> dict | None:
+def _find_wheel_url(metadata: dict) -> tuple[str, str] | None:
+    """Find the wheel download URL and SHA-256 digest.
+
+    Returns ``(url, sha256)`` or *None* if no wheel is available.
+    """
     for url_info in metadata.get("urls", []):
         if url_info.get("packagetype") == "bdist_wheel":
-            return url_info
+            url = url_info["url"]
+            sha256 = url_info.get("digests", {}).get("sha256", "")
+            return (url, sha256)
     return None
 
 
@@ -109,6 +121,7 @@ def download_sdist(
     dest_path: Path,
     *,
     verify_checksum: bool = True,
+    metadata: dict | None = None,
 ) -> Path:
     """Download an sdist from PyPI and optionally verify its SHA-256 checksum.
 
@@ -116,11 +129,13 @@ def download_sdist(
     Raises requests.HTTPError on download failure.
     Raises ValueError if checksum verification fails or no sdist is available.
     """
-    metadata = fetch_package_metadata(package, version)
-    url_info = _find_sdist_url(metadata)
-    if url_info is None:
+    if metadata is None:
+        metadata = fetch_package_metadata(package, version)
+    result = _find_sdist_url(metadata)
+    if result is None:
         raise ValueError(f"No sdist found for {package}=={version}")
-    return _download_artifact(url_info, dest_path, verify_checksum=verify_checksum)
+    url, expected_sha256 = result
+    return _download_artifact(url, expected_sha256, dest_path, verify_checksum=verify_checksum)
 
 
 def download_wheel(
@@ -129,6 +144,7 @@ def download_wheel(
     dest_path: Path,
     *,
     verify_checksum: bool = True,
+    metadata: dict | None = None,
 ) -> Path:
     """Download a wheel from PyPI and optionally verify its SHA-256 checksum.
 
@@ -136,24 +152,26 @@ def download_wheel(
     Raises requests.HTTPError on download failure.
     Raises ValueError if checksum verification fails or no wheel is available.
     """
-    metadata = fetch_package_metadata(package, version)
-    url_info = _find_wheel_url(metadata)
-    if url_info is None:
+    if metadata is None:
+        metadata = fetch_package_metadata(package, version)
+    result = _find_wheel_url(metadata)
+    if result is None:
         raise ValueError(f"No wheel found for {package}=={version}")
-    return _download_artifact(url_info, dest_path, verify_checksum=verify_checksum)
+    url, expected_sha256 = result
+    return _download_artifact(url, expected_sha256, dest_path, verify_checksum=verify_checksum)
 
 
 def _download_artifact(
-    url_info: dict,
+    url: str,
+    expected_sha256: str,
     dest_path: Path,
     *,
     verify_checksum: bool = True,
 ) -> Path:
-    url = url_info["url"]
     dest_path = Path(dest_path)
     dest_path.parent.mkdir(parents=True, exist_ok=True)
 
-    logger.info("Downloading artifact from %s", url)
+    logger.info("Downloading artifact", url=url)
     with requests.get(url, timeout=120, stream=True) as resp:
         resp.raise_for_status()
 
@@ -171,18 +189,17 @@ def _download_artifact(
                 sha256.update(chunk)
 
     if verify_checksum:
-        expected = url_info.get("digests", {}).get("sha256", "")
-        if expected:
+        if expected_sha256:
             actual = sha256.hexdigest()
-            if actual != expected:
+            if actual != expected_sha256:
                 raise ValueError(
-                    f"SHA-256 mismatch for {url}: expected {expected}, got {actual}"
+                    f"SHA-256 mismatch for {url}: expected {expected_sha256}, got {actual}"
                 )
-            logger.info("SHA-256 verified for %s", dest_path)
+            logger.info("SHA-256 verified", path=str(dest_path))
         else:
-            logger.warning("No SHA-256 digest available for %s", url)
+            logger.warning("No SHA-256 digest available", url=url)
 
-    logger.info("Downloaded artifact to %s (%d bytes)", dest_path, downloaded)
+    logger.info("Downloaded artifact", path=str(dest_path), bytes=downloaded)
     return dest_path
 
 

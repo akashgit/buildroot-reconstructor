@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import ast
 import configparser
-import io
 import logging
 import re
 import tomllib
@@ -219,23 +218,32 @@ class PyProjectParser:
                         return "hatch"
                     if "maturin" in req:
                         return "maturin"
-            return "unknown"
+            return "setuptools"
         return BUILD_BACKEND_MAP.get(backend, "unknown")
 
     def detect_c_extensions(
-        self, pyproject_data: PyProjectData, file_list: list[str]
+        self, pyproject_data: PyProjectData, file_list: list[str] | None = None
     ) -> bool:
         """Detect whether the project contains C/C++/Cython extension files."""
         if pyproject_data.has_c_extensions:
+            return True
+
+        backend = pyproject_data.build_backend
+        if backend in ("maturin", "scikit_build_core.build"):
             return True
 
         for req in pyproject_data.build_requires:
             if any(ext_tool in req for ext_tool in ("cython", "maturin", "scikit-build")):
                 return True
 
-        for f in file_list:
-            if C_EXTENSION_PATTERNS.search(f):
+        for dep in pyproject_data.dependencies:
+            if "cffi" in dep:
                 return True
+
+        if file_list:
+            for f in file_list:
+                if C_EXTENSION_PATTERNS.search(f):
+                    return True
 
         return False
 

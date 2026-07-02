@@ -246,6 +246,12 @@ class TestDetectBuildSystem:
         proj = PyProjectData(build_backend="some.custom.backend")
         assert parser.detect_build_system(proj) == "unknown"
 
+    def test_no_backend_defaults_to_setuptools(self):
+        parser = PyProjectParser()
+        from buildroot.pipeline.models_python import PyProjectData
+        proj = PyProjectData()
+        assert parser.detect_build_system(proj) == "setuptools"
+
 
 class TestDetectCExtensions:
     def test_from_file_list(self):
@@ -267,6 +273,23 @@ class TestDetectCExtensions:
         proj = PyProjectData(has_c_extensions=True)
         assert parser.detect_c_extensions(proj, []) is True
 
+    def test_from_maturin_backend(self):
+        parser = PyProjectParser()
+        proj = parser.parse_pyproject_toml(MATURIN_TOML)
+        assert parser.detect_c_extensions(proj) is True
+
+    def test_from_cffi_dependency(self):
+        parser = PyProjectParser()
+        from buildroot.pipeline.models_python import PyProjectData
+        proj = PyProjectData(dependencies=["cffi>=1.0"])
+        assert parser.detect_c_extensions(proj) is True
+
+    def test_no_file_list(self):
+        parser = PyProjectParser()
+        from buildroot.pipeline.models_python import PyProjectData
+        proj = PyProjectData()
+        assert parser.detect_c_extensions(proj) is False
+
 
 class TestMergeConfigs:
     def test_pyproject_takes_priority(self):
@@ -279,7 +302,6 @@ class TestMergeConfigs:
 
     def test_fallback_to_setup_cfg(self):
         parser = PyProjectParser()
-        from buildroot.pipeline.models_python import PyProjectData
         setup_cfg = parser.parse_setup_cfg(SETUP_CFG)
         merged = parser.merge_configs(None, setup_cfg, None)
         assert merged.name == "cfg-package"

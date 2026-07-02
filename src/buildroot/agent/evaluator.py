@@ -11,6 +11,7 @@ import uuid
 from pathlib import Path
 
 import requests
+import structlog
 from dockerfile_parse import DockerfileParser
 
 from buildroot.agent.analyzer import sanitize_gha_expressions
@@ -18,8 +19,11 @@ from buildroot.agent.models import EvalResult
 from buildroot.pipeline.orchestrator import parse_gav
 from buildroot.utils.jar_comparator import compare_jars
 from buildroot.utils.maven_central import MAVEN_CENTRAL_BASE
+from buildroot.utils import pypi_client
+from buildroot.utils.sdist_comparator import compare_sdists, compare_wheels
 
 logger = logging.getLogger(__name__)
+pylogger = structlog.get_logger(__name__)
 
 
 class Evaluator:
@@ -279,6 +283,303 @@ class Evaluator:
             logger.warning("Fallback signal extraction failed: %s", e)
 
         return signals
+
+    # ------------------------------------------------------------------
+    # Python-specific evaluation pipeline
+    # ------------------------------------------------------------------
+
+    def evaluate_python(
+        self,
+        containerfile: str,
+        coordinate: str,
+        capture_full_log: bool = False,
+    ) -> EvalResult:
+        """Python-specific evaluation pipeline.
+
+        ``coordinate`` format: ``'package==version'``
+        (e.g., ``'requests==2.31.0'``).
+
+        L1: _l1_parse  (REUSE existing -- ecosystem agnostic)
+        L2: _l2_build  (REUSE existing -- ecosystem agnostic)
+        L3: _l3_python_command (NEW -- find sdist/wheel)
+        L4: _l4_python_match   (NEW -- compare against PyPI)
+        """
+        containerfile = sanitize_gha_expressions(containerfile)
+        result = EvalResult()
+        tag = f"buildroot-py-{coordinate.replace('==', '-').replace('.', '-')[:40]}"
+
+        # L1: Parse Containerfile (reuse)
+        if not self._l1_parse(containerfile, result):
+            result.compute_reward()
+            return result
+
+        # L2: Build container (reuse)
+        if not self._l2_build(containerfile, tag, result, capture_full_log):
+            self._cleanup_image(tag)
+            result.compute_reward()
+            return result
+
+        # L3: Find Python artifact
+        if not self._l3_python_command(tag, result):
+            self._cleanup_image(tag)
+            result.compute_reward()
+            return result
+
+        # L4: Compare against PyPI original
+        self._l4_python_match(tag, coordinate, result)
+        self._cleanup_image(tag)
+        result.compute_reward()
+        return result
+
+    def _l3_python_command(self, tag: str, result: EvalResult) -> bool:
+        """Find sdist (.tar.gz) or wheel (.whl) in the container.
+
+        Searches ``/build/dist`` first, then ``*/dist/`` up to depth 4.
+        On success sets ``result.l3_command = True`` and appends the
+        ``ARTIFACT_PATH=...`` line to ``result.build_log`` so that
+        ``_l4_python_match`` can extract it.
+        """
+        try:
+            check_cmd = (
+                f"podman run --rm {tag} sh -c '"
+                f"found=$(find /build/dist -name \"*.tar.gz\" -o -name \"*.whl\" 2>/dev/null | head -1); "
+                f"if [ -z \"$found\" ]; then "
+                f"  found=$(find / -maxdepth 4 \\( -path \"*/dist/*.tar.gz\" -o -path \"*/dist/*.whl\" \\) 2>/dev/null | head -1); "
+                f"fi; "
+                f"if [ -n \"$found\" ]; then "
+                f"  echo \"BUILD_SUCCESS\"; "
+                f"  echo \"ARTIFACT_PATH=$found\"; "
+                f"else "
+                f"  echo \"BUILD_FAILED: no sdist or wheel found in dist/\"; "
+                f"fi'"
+            )
+            proc = subprocess.run(
+                [
+                    "ssh", "-o", "BatchMode=yes",
+                    "-o", "StrictHostKeyChecking=no",
+                    self._host, check_cmd,
+                ],
+                capture_output=True,
+                text=True,
+                timeout=120,
+            )
+            output = proc.stdout + proc.stderr
+            result.build_log += "\n--- L3 python check ---\n" + output[-2000:]
+
+            if "BUILD_SUCCESS" in output and proc.returncode == 0:
+                result.l3_command = True
+                pylogger.info(
+                    "L3 python artifact found",
+                    tag=tag,
+                    output=output.strip()[:200],
+                )
+                return True
+            else:
+                result.error_summary = _extract_error_lines(output)
+                pylogger.warning(
+                    "L3 python artifact not found",
+                    tag=tag,
+                    output=output.strip()[:200],
+                )
+                return False
+        except subprocess.TimeoutExpired:
+            result.error_summary = "L3 python command check timed out"
+            return False
+        except Exception as e:
+            result.error_summary = f"L3 python command error: {e}"
+            return False
+
+    def _l4_python_match(
+        self, tag: str, coordinate: str, result: EvalResult
+    ) -> None:
+        """Compare rebuilt artifact against PyPI original.
+
+        1. Parse coordinate: ``'requests==2.31.0'`` -> ``('requests', '2.31.0')``
+        2. Extract ``ARTIFACT_PATH`` from ``result.build_log``
+        3. Download original sdist/wheel from PyPI
+        4. Extract rebuilt artifact from container via podman
+        5. Run ``compare_sdists`` or ``compare_wheels``
+        6. Populate ``result.l4_match``, ``result.l4_score``,
+           ``result.comparison_verdict``, ``result.diff_summary``
+        """
+        package, version = self._parse_python_coordinate(coordinate)
+
+        # Find the artifact path recorded by _l3_python_command
+        artifact_path = self._extract_artifact_path(result.build_log)
+        if not artifact_path:
+            result.error_summary = (
+                "L4: could not determine artifact path from L3 output"
+            )
+            pylogger.warning("L4 python: no ARTIFACT_PATH in build_log")
+            return
+
+        is_wheel = artifact_path.endswith(".whl")
+
+        try:
+            with tempfile.TemporaryDirectory(prefix="buildroot-py-l4-") as tmpdir:
+                tmp = Path(tmpdir)
+
+                # Download original from PyPI
+                original_path = self._download_python_original(
+                    package, version, tmp, is_wheel=is_wheel
+                )
+                if not original_path:
+                    result.error_summary = (
+                        f"L4: could not download original "
+                        f"{'wheel' if is_wheel else 'sdist'} from PyPI"
+                    )
+                    return
+
+                # Extract rebuilt artifact from container
+                rebuilt_path = self._extract_python_artifact(
+                    tag, artifact_path, tmp
+                )
+                if not rebuilt_path:
+                    result.error_summary = (
+                        "L4: could not extract rebuilt artifact from container"
+                    )
+                    return
+
+                # Compare
+                if is_wheel:
+                    report = compare_wheels(
+                        original_path, rebuilt_path, coordinate
+                    )
+                else:
+                    report = compare_sdists(
+                        original_path, rebuilt_path, coordinate
+                    )
+
+                result.comparison_report = report
+                result.comparison_verdict = report.verdict
+                result.l4_score = report.equivalence_score()
+
+                if report.verdict in ("IDENTICAL", "EQUIVALENT"):
+                    result.l4_match = True
+                    pylogger.info(
+                        "L4 python match",
+                        coordinate=coordinate,
+                        verdict=report.verdict,
+                        score=result.l4_score,
+                    )
+                else:
+                    parts = [
+                        f"verdict={report.verdict}",
+                        f"structural_match={report.structural.match}",
+                    ]
+                    if not report.structural.match:
+                        diff = report.structural.diff
+                        if diff.missing:
+                            parts.append(
+                                f"missing_files={diff.missing[:5]}"
+                            )
+                        if diff.extra:
+                            parts.append(f"extra_files={diff.extra[:5]}")
+                    if hasattr(report, "source") and not report.source.match:
+                        parts.append(
+                            f"source_diffs={report.source.files_divergent[:5]}"
+                        )
+                    if hasattr(report, "metadata") and not report.metadata.match:
+                        parts.append(
+                            f"metadata_diffs={report.metadata.metadata_diff_fields[:5]}"
+                        )
+                    result.diff_summary = ", ".join(parts)
+                    pylogger.info(
+                        "L4 python divergent",
+                        coordinate=coordinate,
+                        diff_summary=result.diff_summary,
+                    )
+
+        except Exception as e:
+            result.error_summary = f"L4 python comparison error: {e}"
+            pylogger.exception("L4 python comparison failed", coordinate=coordinate)
+
+    def _parse_python_coordinate(self, coordinate: str) -> tuple[str, str]:
+        """Parse ``'package==version'`` into ``(package, version)``.
+
+        Also accepts ``'package=version'`` and ``'package:version'``
+        for flexibility.
+        """
+        for sep in ("==", "=", ":"):
+            if sep in coordinate:
+                parts = coordinate.split(sep, 1)
+                return parts[0].strip(), parts[1].strip()
+        raise ValueError(
+            f"Cannot parse Python coordinate: {coordinate!r}. "
+            f"Expected format: 'package==version'"
+        )
+
+    def _extract_artifact_path(self, build_log: str) -> str | None:
+        """Extract ``ARTIFACT_PATH=<path>`` from build log output."""
+        match = re.search(r"ARTIFACT_PATH=(.+)", build_log)
+        if match:
+            return match.group(1).strip()
+        return None
+
+    def _download_python_original(
+        self,
+        package: str,
+        version: str,
+        dest: Path,
+        *,
+        is_wheel: bool = False,
+    ) -> Path | None:
+        """Download the original sdist or wheel from PyPI."""
+        try:
+            if is_wheel:
+                dest_path = dest / f"{package}-{version}-original.whl"
+                return pypi_client.download_wheel(
+                    package, version, dest_path, verify_checksum=True
+                )
+            else:
+                dest_path = dest / f"{package}-{version}-original.tar.gz"
+                return pypi_client.download_sdist(
+                    package, version, dest_path, verify_checksum=True
+                )
+        except (requests.RequestException, ValueError) as e:
+            pylogger.warning(
+                "Could not download original Python artifact",
+                package=package,
+                version=version,
+                error=str(e),
+            )
+            return None
+
+    def _extract_python_artifact(
+        self, tag: str, artifact_path: str, dest: Path
+    ) -> Path | None:
+        """Extract a rebuilt Python artifact from the container via podman."""
+        try:
+            filename = Path(artifact_path).name
+            local_path = dest / f"rebuilt-{filename}"
+            copy_cmd = (
+                f"podman run --rm {tag} cat {shlex.quote(artifact_path)}"
+            )
+            proc = subprocess.run(
+                [
+                    "ssh", "-o", "BatchMode=yes",
+                    "-o", "StrictHostKeyChecking=no",
+                    self._host, copy_cmd,
+                ],
+                capture_output=True,
+                timeout=120,
+            )
+            if proc.returncode == 0 and proc.stdout:
+                local_path.write_bytes(proc.stdout)
+                return local_path
+            pylogger.warning(
+                "Failed to extract python artifact",
+                tag=tag,
+                artifact_path=artifact_path,
+                returncode=proc.returncode,
+            )
+            return None
+        except Exception as e:
+            pylogger.warning(
+                "Could not extract rebuilt Python artifact",
+                error=str(e),
+            )
+            return None
 
     def _cleanup_image(self, tag: str) -> None:
         try:

@@ -1,0 +1,62 @@
+# =============================================================================
+# Buildroot Containerfile for Python package (compiled extensions) — auto-generated
+# Package: {{ coordinate }}
+# Source: {{ source_repo }}
+# Tag: {{ git_tag }}
+# =============================================================================
+
+FROM {{ base_image }}
+
+# Install C/C++ build toolchain and common native dependencies
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    build-essential \
+    libffi-dev \
+    libssl-dev \
+{% if system_packages %}
+{% for pkg in system_packages %}
+    {{ pkg }} \
+{% endfor %}
+{% endif %}
+    && rm -rf /var/lib/apt/lists/*
+
+{% if env_vars %}
+{% for key, value in env_vars.items() %}
+ENV {{ key }}={{ value }}
+{% endfor %}
+{% endif %}
+
+# Install git for source checkout
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends git ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+
+{% if source_repo and git_tag %}
+RUN git clone --depth 1 --branch '{{ git_tag }}' '{{ source_repo }}' /build
+{% else %}
+RUN mkdir -p /build
+COPY . /build
+{% endif %}
+
+WORKDIR /build
+
+# Install build dependencies
+RUN pip install --no-cache-dir build setuptools wheel cython {% if extra_build_deps %}{{ extra_build_deps }}{% endif %}
+
+{% if pre_build_commands %}
+{% for cmd in pre_build_commands %}
+RUN {{ cmd }}
+{% endfor %}
+{% endif %}
+
+# Reproducible build
+ENV SOURCE_DATE_EPOCH=0
+
+# Build sdist and wheel
+RUN {{ build_command | default("python -m build --sdist --wheel") }}
+
+{% if post_build_commands %}
+{% for cmd in post_build_commands %}
+RUN {{ cmd }}
+{% endfor %}
+{% endif %}

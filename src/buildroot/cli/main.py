@@ -3,12 +3,13 @@
 import click
 
 from buildroot import __version__
-from buildroot.cli.commands.agent_cmd import agent_cmd
+from buildroot.cli.commands.agent_cmd import agent_cmd, agent_python_cmd
 from buildroot.cli.commands.compare import compare
 from buildroot.cli.commands.eval_cmd import eval_cmd
 from buildroot.cli.commands.inspect_cmd import inspect_cmd
 from buildroot.cli.commands.kb_cmd import kb_cmd
 from buildroot.cli.commands.reconstruct import reconstruct
+from buildroot.cli.commands.reconstruct_python import reconstruct_python
 from buildroot.cli.commands.regression_cmd import regression_cmd
 from buildroot.cli.commands.validate import validate
 from buildroot.cli.commands.verify import verify
@@ -21,11 +22,13 @@ def cli():
 
 
 cli.add_command(agent_cmd, name="agent")
+cli.add_command(agent_python_cmd, name="agent-python")
 cli.add_command(compare)
 cli.add_command(eval_cmd, name="eval")
 cli.add_command(inspect_cmd, name="inspect")
 cli.add_command(kb_cmd, name="kb")
 cli.add_command(reconstruct)
+cli.add_command(reconstruct_python)
 cli.add_command(regression_cmd, name="regression")
 cli.add_command(validate)
 cli.add_command(verify)
