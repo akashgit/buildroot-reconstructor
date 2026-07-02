@@ -298,6 +298,24 @@ class ContainerfileGenerator:
         if spec.pyproject_data.has_c_extensions:
             template_name = "python_compiled.j2"
 
+        # Deduplicate build_requires against packages already installed by the
+        # template (build, setuptools, wheel, cython).
+        _hardcoded = {"build", "setuptools", "wheel", "cython"}
+        deduped_build_deps = [
+            req for req in spec.pyproject_data.build_requires
+            if req.lower().split("[")[0].split(">=")[0].split("==")[0].split("<")[0].strip()
+            not in _hardcoded
+        ]
+
+        # Determine Cython version pin for compiled extensions
+        cython_spec = ""
+        if spec.pyproject_data.has_c_extensions:
+            needs_cython = any(
+                "cython" in r.lower() for r in spec.pyproject_data.build_requires
+            )
+            if needs_cython:
+                cython_spec = "'Cython<3'"  # Safe default for older packages
+
         context = {
             "coordinate": f"{spec.pyproject_data.name}=={spec.pyproject_data.version}",
             "base_image": spec.python_spec.base_image or "python:3.11-slim",
@@ -308,7 +326,8 @@ class ContainerfileGenerator:
             "pre_build_commands": spec.pre_build_commands,
             "post_build_commands": spec.post_build_commands,
             "build_command": spec.build_command or "python -m build --sdist",
-            "extra_build_deps": " ".join(spec.pyproject_data.build_requires),
+            "extra_build_deps": " ".join(deduped_build_deps),
+            "cython_spec": cython_spec,
         }
 
         template = self._env.get_template(template_name)

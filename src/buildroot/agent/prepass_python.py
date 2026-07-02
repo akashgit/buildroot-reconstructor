@@ -53,6 +53,7 @@ class PyPrePassFindings:
     ci_data: dict | None = None
     env_vars: dict[str, str] = field(default_factory=dict)
     attempted_but_failed: list[str] = field(default_factory=list)
+    system_packages: list[str] = field(default_factory=list)
 
     sdist_path: Path | None = None
     sdist_entry_count: int | None = None
@@ -220,6 +221,52 @@ def _discover_python_tag(
     return candidates[0], False
 
 
+SYSTEM_PACKAGE_HINTS: dict[str, list[str]] = {
+    # package name patterns -> apt packages needed
+    "yaml": ["libyaml-dev"],
+    "pyyaml": ["libyaml-dev"],
+    "lxml": ["libxml2-dev", "libxslt1-dev"],
+    "xml": ["libxml2-dev"],
+    "pillow": ["libjpeg-dev", "zlib1g-dev", "libfreetype-dev"],
+    "pil": ["libjpeg-dev", "zlib1g-dev"],
+    "cryptography": ["libssl-dev", "libffi-dev"],
+    "psycopg2": ["libpq-dev"],
+    "numpy": ["libopenblas-dev", "gfortran"],
+    "scipy": ["libopenblas-dev", "gfortran", "liblapack-dev"],
+    "h5py": ["libhdf5-dev"],
+    "cairo": ["libcairo2-dev"],
+    "pycairo": ["libcairo2-dev"],
+    "gi": ["libgirepository1.0-dev"],
+    "pygobject": ["libgirepository1.0-dev"],
+    "curses": ["libncurses-dev"],
+    "readline": ["libreadline-dev"],
+    "bz2": ["libbz2-dev"],
+    "sqlite": ["libsqlite3-dev"],
+}
+
+
+def _infer_system_packages(
+    package_name: str, dependencies: list[str] | None = None
+) -> list[str]:
+    """Infer system packages needed based on package name and dependencies."""
+    system_pkgs: set[str] = set()
+    name_lower = package_name.lower().replace("-", "").replace("_", "")
+
+    for pattern, pkgs in SYSTEM_PACKAGE_HINTS.items():
+        if pattern in name_lower:
+            system_pkgs.update(pkgs)
+
+    # Also check dependencies for hints
+    if dependencies:
+        for dep in dependencies:
+            dep_lower = dep.lower().split("[")[0].split(">=")[0].split("==")[0].strip()
+            for pattern, pkgs in SYSTEM_PACKAGE_HINTS.items():
+                if pattern in dep_lower:
+                    system_pkgs.update(pkgs)
+
+    return sorted(system_pkgs)
+
+
 def run_python_prepass(
     coordinate: str, workspace: Path, *, no_cache: bool = False
 ) -> PyPrePassFindings:
@@ -304,6 +351,7 @@ def run_python_prepass(
             findings.attempted_but_failed.append(f"Git tag discovery: {e}")
 
     # 5. Download original sdist
+    sdist_members: list[str] = []
     try:
         sdist_path = workspace / "original.tar.gz"
         pypi_client.download_sdist(
@@ -314,6 +362,7 @@ def run_python_prepass(
         if sdist_path.exists() and tarfile.is_tarfile(sdist_path):
             with tarfile.open(sdist_path, "r:gz") as tf:
                 members = tf.getnames()
+                sdist_members = list(members)
                 findings.sdist_entry_count = len(members)
 
                 # Extract PKG-INFO if present
@@ -369,7 +418,19 @@ def run_python_prepass(
         merged.name = package
     if not merged.version:
         merged.version = version
+
+    # Detect C extensions from sdist file list
+    sdist_files = [m for m in sdist_members if not m.endswith("/")]
+    if parser.detect_c_extensions(merged, file_list=sdist_files):
+        merged.has_c_extensions = True
+
     findings.pyproject_data = merged
+
+    # Infer system packages when C extensions are detected
+    if merged.has_c_extensions:
+        findings.system_packages = _infer_system_packages(
+            package, merged.dependencies or None
+        )
 
     # Also merge in classifiers from PyPI metadata if not present
     pypi_classifiers = pypi_client.extract_classifiers(metadata)

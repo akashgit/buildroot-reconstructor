@@ -45,6 +45,7 @@ def reconstruct_python(coordinate, output_dir, no_cache):
         git_tag=findings.git_tag.value if findings.git_tag else "",
         build_backend=findings.build_backend.value if findings.build_backend else "setuptools",
         build_command=findings.build_command.value if findings.build_command else "python -m build --sdist",
+        system_packages=findings.system_packages,
     )
     spec.pyproject_data.name = pkg
     spec.pyproject_data.version = ver

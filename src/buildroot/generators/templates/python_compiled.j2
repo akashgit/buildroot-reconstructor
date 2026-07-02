@@ -42,7 +42,7 @@ COPY . /build
 WORKDIR /build
 
 # Install build dependencies
-RUN pip install --no-cache-dir build setuptools wheel cython {% if extra_build_deps %}{{ extra_build_deps }}{% endif %}
+RUN pip install --no-cache-dir build setuptools wheel {% if cython_spec %}{{ cython_spec }}{% endif %} {% if extra_build_deps %}{{ extra_build_deps }}{% endif %}
 
 {% if pre_build_commands %}
 {% for cmd in pre_build_commands %}
