@@ -42,6 +42,7 @@ def spawn_claude_agent(
     cwd: str | None = None,
     allowed_tools: list[str] | None = None,
     disallowed_tools: list[str] | None = None,
+    runner: str = "claude",
 ) -> AgentResult:
     """Spawn a Claude Code agent as a subprocess and return the parsed result.
 
@@ -67,7 +68,7 @@ def spawn_claude_agent(
             prompt_file = f.name
 
         cmd = [
-            "claude",
+            runner,
             "--bare",
             "-p", task,
             "--append-system-prompt-file", prompt_file,
@@ -160,7 +161,7 @@ def spawn_claude_agent(
         )
 
     except FileNotFoundError:
-        msg = "Claude Code CLI not found — ensure 'claude' is on PATH"
+        msg = f"Claude Code CLI not found — ensure '{runner}' is on PATH"
         logger.error(msg)
         return AgentResult(text="", is_error=True, error_message=msg)
 

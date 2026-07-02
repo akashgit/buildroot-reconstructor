@@ -63,6 +63,7 @@ def launch_interactive_orchestrator(
     host: str = "rh-h100-01",
     workspace: Path | None = None,
     target_score: float = 0.98,
+    runner: str = "claude",
 ) -> int:
     """Run prepass + KB query, then launch an interactive Claude session with full context.
 
@@ -124,7 +125,7 @@ def launch_interactive_orchestrator(
     print(_BANNER, file=sys.stderr)
 
     cmd = [
-        "claude",
+        runner,
         f"Reconstruct {coordinate}",
         "--append-system-prompt-file", str(prompt_file),
         "--model", "claude-opus-4-6",
@@ -161,6 +162,7 @@ def run_orchestrator(
     max_budget_usd: float = 0,
     max_agent_turns: int = 0,
     agent_timeout: int = 0,
+    runner: str = "claude",
 ) -> OrchestratorResult:
     """Run the orchestrator: prepass → KB query → spawn Claude Code agent → parse result."""
     start_time = time.time()
@@ -245,6 +247,7 @@ def run_orchestrator(
         timeout=agent_timeout,
         cwd=str(workspace),
         allowed_tools=["Bash", "Read", "Write", "Edit", "WebSearch", "WebFetch"],
+        runner=runner,
     )
 
     result.cost_usd = agent_result.cost_usd

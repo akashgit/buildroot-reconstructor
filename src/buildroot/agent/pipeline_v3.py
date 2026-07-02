@@ -357,6 +357,7 @@ def run_v3_pipeline(
     workspace: Path | None = None,
     skip_deps: bool = True,
     warm_start_containerfile: str | None = None,
+    runner: str = "claude",
 ) -> PipelineResult:
     """Run the v3 pipeline: pre-pass → analysis agent → build+eval → feedback loop."""
     import tempfile
@@ -427,6 +428,7 @@ def run_v3_pipeline(
             max_budget_usd=10.0,
             timeout=1800,
             allowed_tools=["Bash", "Read", "WebSearch", "WebFetch", "Agent"],
+            runner=runner,
         )
 
         if draft_result and draft_result.reward >= 0.98:
@@ -606,6 +608,7 @@ def run_v3_pipeline(
             max_budget_usd=15.0,
             timeout=1800,
             allowed_tools=["Bash", "Read", "WebSearch", "WebFetch", "Agent"],
+            runner=runner,
         )
 
         if feedback_result.is_error or not feedback_result.structured_output:
