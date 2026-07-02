@@ -32,6 +32,13 @@ def reconstruct_python(coordinate, output_dir, no_cache):
     # Run prepass
     click.echo("Running pre-pass analysis...")
     findings = run_python_prepass(coordinate, workspace, no_cache=no_cache)
+
+    if not findings.source_repo:
+        raise click.ClickException(
+            f"Could not discover a source repository for {coordinate}. "
+            "PyPI metadata did not contain a GitHub URL."
+        )
+
     spec = PyBuildrootSpec(
         pyproject_data=findings.pyproject_data,
         source_repo=findings.source_repo.value if findings.source_repo else "",

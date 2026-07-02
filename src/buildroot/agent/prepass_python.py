@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+import subprocess
 import tarfile
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -15,7 +16,10 @@ from buildroot.parsers.pyproject import PyProjectParser
 from buildroot.pipeline.models_python import PyProjectData
 from buildroot.resolvers.python_version import PythonVersionResolver
 from buildroot.utils import pypi_client
-from buildroot.utils.github_api import discover_git_tag
+from buildroot.utils.github_api import (
+    _generate_date_tag_candidates,
+    discover_git_tag,
+)
 
 logger = structlog.get_logger()
 
@@ -175,6 +179,47 @@ def parse_python_coordinate(coordinate: str) -> tuple[str, str]:
     )
 
 
+def _verify_tag_exists(repo_url: str, tag: str) -> bool:
+    """Check if a tag exists using git ls-remote (no API auth needed)."""
+    try:
+        result = subprocess.run(
+            ["git", "ls-remote", "--tags", repo_url, f"refs/tags/{tag}"],
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        return bool(result.stdout.strip())
+    except (subprocess.TimeoutExpired, FileNotFoundError):
+        return False
+
+
+def _discover_python_tag(
+    repo_url: str, version: str, package: str
+) -> tuple[str, bool]:
+    """Discover the correct git tag for a Python package using git ls-remote.
+
+    Returns ``(tag, verified)`` where *verified* is True when the tag was
+    confirmed to exist via ``git ls-remote``.  Python packages most commonly
+    use bare version tags (e.g. ``1.1.4``), so bare version is tried first.
+    """
+    # Build candidates in priority order for Python packages
+    candidates: list[str] = [version]  # bare version first (most common)
+    candidates.append(f"v{version}")
+    candidates.append(f"{package}-{version}")
+
+    # Add date-based candidates (e.g. 2021.10.8 -> 2021.10.08)
+    for dc in _generate_date_tag_candidates(version):
+        if dc not in candidates:
+            candidates.append(dc)
+
+    for tag in candidates:
+        if _verify_tag_exists(repo_url, tag):
+            return tag, True
+
+    # Nothing verified -- return bare version as the best guess for Python
+    return candidates[0], False
+
+
 def run_python_prepass(
     coordinate: str, workspace: Path, *, no_cache: bool = False
 ) -> PyPrePassFindings:
@@ -231,11 +276,28 @@ def run_python_prepass(
             parts = repo_url.rstrip("/").split("/")
             owner, repo_name = parts[-2], parts[-1]
             tag = discover_git_tag(owner, repo_name, package, version)
+
+            # If GitHub API returned the default v{version} fallback,
+            # it may be wrong for Python packages (bare tags are common).
+            # Use git ls-remote to verify/discover the correct tag.
+            source = "github_api"
+            if tag == f"v{version}":
+                py_tag, verified = _discover_python_tag(
+                    repo_url, version, package
+                )
+                if verified:
+                    tag = py_tag
+                    source = "git_ls_remote"
+                else:
+                    # ls-remote couldn't verify anything; prefer bare
+                    # version for Python over v-prefixed.
+                    tag = py_tag
+
             findings.git_tag = PrePassFinding(
                 value=tag,
-                source="github_api",
-                confidence="high" if tag != f"v{version}" else "medium",
-                evidence=f"GitHub tags API matched: {tag}",
+                source=source,
+                confidence="high" if source == "git_ls_remote" else "medium",
+                evidence=f"Tag discovery matched: {tag}",
             )
         except Exception as e:
             logger.warning("Git tag discovery failed", error=str(e))

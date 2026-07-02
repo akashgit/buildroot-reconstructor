@@ -12,8 +12,10 @@ from buildroot.agent.prepass import PrePassFinding
 from buildroot.agent.prepass_python import (
     PyPrePassFindings,
     _build_command_for_backend,
+    _discover_python_tag,
     _discover_repo_from_pypi,
     _extract_pyproject_from_sdist,
+    _verify_tag_exists,
     parse_python_coordinate,
     run_python_prepass,
 )
@@ -205,6 +207,83 @@ class TestPyPrePassFindings:
 
 
 # ---------------------------------------------------------------------------
+# TestVerifyTagExists / TestDiscoverPythonTag
+# ---------------------------------------------------------------------------
+
+class TestVerifyTagExists:
+    @patch("buildroot.agent.prepass_python.subprocess.run")
+    def test_tag_found(self, mock_run):
+        mock_run.return_value.stdout = "abc123\trefs/tags/1.1.4\n"
+        assert _verify_tag_exists("https://github.com/pallets/flask", "1.1.4") is True
+        mock_run.assert_called_once()
+
+    @patch("buildroot.agent.prepass_python.subprocess.run")
+    def test_tag_not_found(self, mock_run):
+        mock_run.return_value.stdout = ""
+        assert _verify_tag_exists("https://github.com/pallets/flask", "v1.1.4") is False
+
+    @patch("buildroot.agent.prepass_python.subprocess.run")
+    def test_timeout(self, mock_run):
+        import subprocess
+        mock_run.side_effect = subprocess.TimeoutExpired(cmd="git", timeout=10)
+        assert _verify_tag_exists("https://github.com/pallets/flask", "1.1.4") is False
+
+
+class TestDiscoverPythonTag:
+    @patch("buildroot.agent.prepass_python._verify_tag_exists")
+    def test_bare_version_found(self, mock_verify):
+        """Bare version tag is tried first and found."""
+        mock_verify.side_effect = lambda url, tag: tag == "1.1.4"
+        tag, verified = _discover_python_tag(
+            "https://github.com/pallets/flask", "1.1.4", "flask"
+        )
+        assert tag == "1.1.4"
+        assert verified is True
+
+    @patch("buildroot.agent.prepass_python._verify_tag_exists")
+    def test_v_prefixed_found(self, mock_verify):
+        """Falls back to v-prefixed when bare version doesn't exist."""
+        mock_verify.side_effect = lambda url, tag: tag == "v2.0.0"
+        tag, verified = _discover_python_tag(
+            "https://github.com/psf/requests", "2.0.0", "requests"
+        )
+        assert tag == "v2.0.0"
+        assert verified is True
+
+    @patch("buildroot.agent.prepass_python._verify_tag_exists")
+    def test_package_prefixed_found(self, mock_verify):
+        """Falls back to package-version tag."""
+        mock_verify.side_effect = lambda url, tag: tag == "click-8.1.7"
+        tag, verified = _discover_python_tag(
+            "https://github.com/pallets/click", "8.1.7", "click"
+        )
+        assert tag == "click-8.1.7"
+        assert verified is True
+
+    @patch("buildroot.agent.prepass_python._verify_tag_exists")
+    def test_nothing_verified_returns_bare(self, mock_verify):
+        """When nothing is verified, returns bare version as best guess."""
+        mock_verify.return_value = False
+        tag, verified = _discover_python_tag(
+            "https://github.com/pallets/flask", "1.1.4", "flask"
+        )
+        assert tag == "1.1.4"
+        assert verified is False
+
+    @patch("buildroot.agent.prepass_python._verify_tag_exists")
+    def test_date_based_version(self, mock_verify):
+        """Date-based version generates padded candidates."""
+        mock_verify.side_effect = lambda url, tag: tag == "2021.10.08"
+        tag, verified = _discover_python_tag(
+            "https://github.com/certifi/python-certifi",
+            "2021.10.8",
+            "certifi",
+        )
+        assert tag == "2021.10.08"
+        assert verified is True
+
+
+# ---------------------------------------------------------------------------
 # TestExtractPyprojectFromSdist
 # ---------------------------------------------------------------------------
 
@@ -305,14 +384,17 @@ class TestRunPythonPrepass:
         workspace = tmp_path / "workspace"
 
         with patch("buildroot.agent.prepass_python.discover_git_tag", return_value="v2.31.0"):
-            with patch("buildroot.utils.github_api.list_directory", return_value=None):
-                findings = run_python_prepass("requests==2.31.0", workspace)
+            with patch("buildroot.agent.prepass_python._verify_tag_exists", return_value=False):
+                with patch("buildroot.utils.github_api.list_directory", return_value=None):
+                    findings = run_python_prepass("requests==2.31.0", workspace)
 
         assert findings.pyproject_data.name == "requests"
         assert findings.source_repo is not None
         assert findings.source_repo.value == "https://github.com/psf/requests"
         assert findings.git_tag is not None
-        assert findings.git_tag.value == "v2.31.0"
+        # When API returns v{version} and ls-remote can't verify, Python
+        # prepass prefers bare version.
+        assert findings.git_tag.value == "2.31.0"
         assert findings.build_backend is not None
         assert findings.build_backend.value == "setuptools"
         assert findings.build_command is not None
@@ -322,6 +404,54 @@ class TestRunPythonPrepass:
         assert findings.sdist_path is not None
         assert findings.sdist_entry_count is not None
         assert findings.pkg_info.get("Name") == "requests"
+
+    @patch("buildroot.agent.prepass_python.pypi_client")
+    def test_pipeline_ls_remote_verifies_bare_tag(self, mock_pypi, tmp_path):
+        """When GitHub API falls back to v{version}, ls-remote finds bare tag."""
+        mock_pypi.fetch_package_metadata.return_value = {
+            "info": {
+                "project_urls": {
+                    "Source": "https://github.com/pallets/flask",
+                },
+                "classifiers": [],
+                "requires_python": ">=3.7",
+                "home_page": "",
+            },
+            "urls": [],
+        }
+        mock_pypi.extract_classifiers.return_value = []
+        mock_pypi.extract_python_requires.return_value = ">=3.7"
+
+        def fake_download(pkg, ver, dest, **kwargs):
+            pyproject = (
+                '[build-system]\nrequires = ["setuptools"]\n'
+                'build-backend = "setuptools.build_meta"\n'
+            )
+            buf = io.BytesIO()
+            with tarfile.open(fileobj=buf, mode="w:gz") as tf:
+                data = pyproject.encode()
+                info = tarfile.TarInfo(name="flask-1.1.4/pyproject.toml")
+                info.size = len(data)
+                tf.addfile(info, io.BytesIO(data))
+            dest.write_bytes(buf.getvalue())
+
+        mock_pypi.download_sdist.side_effect = fake_download
+        workspace = tmp_path / "workspace"
+
+        # GitHub API falls back to v1.1.4 (rate limited)
+        # But git ls-remote finds bare tag 1.1.4
+        with patch("buildroot.agent.prepass_python.discover_git_tag", return_value="v1.1.4"):
+            with patch(
+                "buildroot.agent.prepass_python._verify_tag_exists",
+                side_effect=lambda url, tag: tag == "1.1.4",
+            ):
+                with patch("buildroot.utils.github_api.list_directory", return_value=None):
+                    findings = run_python_prepass("flask==1.1.4", workspace)
+
+        assert findings.git_tag is not None
+        assert findings.git_tag.value == "1.1.4"
+        assert findings.git_tag.source == "git_ls_remote"
+        assert findings.git_tag.confidence == "high"
 
     @patch("buildroot.agent.prepass_python.pypi_client")
     def test_pipeline_with_pypi_failure(self, mock_pypi, tmp_path):
