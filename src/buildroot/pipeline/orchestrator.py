@@ -69,10 +69,11 @@ def parse_gav(coordinate: str) -> tuple[str, str, str]:
 
 
 class BuildrootOrchestrator:
-    def __init__(self, *, no_cache: bool = False, skip_deps: bool = False, runtime: str = "podman"):
+    def __init__(self, *, no_cache: bool = False, skip_deps: bool = False, runtime: str = "podman", dual_build: bool = True):
         self._no_cache = no_cache
         self._skip_deps = skip_deps
         self._runtime = runtime
+        self._dual_build = dual_build
 
     def reconstruct(
         self,
@@ -223,6 +224,37 @@ class BuildrootOrchestrator:
         # 13. Generate Containerfile and buildroot.json
         generator = ContainerfileGenerator()
         generator.generate(spec, out)
+
+        # 14. Dual-variant trusted-source generation
+        if self._dual_build:
+            try:
+                from buildroot.trust.config import load_trust_config
+                from buildroot.trust.delta import build_delta_report
+                from buildroot.trust.dual_variant import DualVariantGenerator
+                from buildroot.trust.registry import TrustedSourceRegistry
+
+                trust_config = load_trust_config()
+                registry = TrustedSourceRegistry(trust_config)
+                dual_gen = DualVariantGenerator(registry, generator)
+                exact_result, trusted_result = dual_gen.generate_dual(spec, out)
+
+                delta = build_delta_report(exact_result, trusted_result)
+                delta.coordinate = f"{group_id}:{artifact_id}:{version}"
+                delta_path = out / "delta_report.json"
+                delta_path.write_text(
+                    json.dumps(delta.to_dict(), indent=2) + "\n"
+                )
+                logger.info("Delta report written to %s", delta_path)
+
+                from buildroot.trust.report import generate_trust_report
+
+                trust_report_path = generate_trust_report(spec, delta, out)
+                logger.info("Trust report written to %s", trust_report_path)
+            except Exception:
+                logger.warning(
+                    "Dual-variant generation failed; exact variant is still available",
+                    exc_info=True,
+                )
 
         return spec
 

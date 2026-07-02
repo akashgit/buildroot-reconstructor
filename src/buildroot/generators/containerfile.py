@@ -86,7 +86,7 @@ class ContainerfileGenerator:
         if spec.dependency_tree:
             deps = self._flatten_direct_deps(spec.dependency_tree)
 
-        return {
+        result = {
             "source_repo": spec.source_repo,
             "git_tag": spec.git_tag,
             "jdk_version": {
@@ -118,6 +118,18 @@ class ContainerfileGenerator:
             "dependencies": deps,
             "gap_report": gap_entries,
         }
+
+        if spec.provenance_tier is not None:
+            result["provenance"] = {
+                "tier": spec.provenance_tier,
+                "provider": spec.provenance_provider,
+                "verification": spec.provenance_verification,
+                "jdk_resolution": spec.jdk_resolution_type,
+                "jdk_requested": spec.jdk_requested_version,
+                "jdk_resolved": spec.jdk_spec.version,
+            }
+
+        return result
 
     _BUILD_SYSTEM_TEMPLATE_MAP = {
         "maven": "jdk_base.j2",
@@ -200,6 +212,11 @@ class ContainerfileGenerator:
             "config_files": spec.config_files,
             "metadata_strip_patterns": spec.metadata_strip_patterns,
             "reproducibility_env": spec.reproducibility_env,
+            "provenance_provider": spec.provenance_provider or "",
+            "provenance_tier": spec.provenance_tier,
+            "provenance_verification": spec.provenance_verification or [],
+            "jdk_resolution_type": spec.jdk_resolution_type or "",
+            "jdk_requested": spec.jdk_requested_version or "",
         }
 
     def _resolve_build_command(self, spec: BuildrootSpec) -> str:
