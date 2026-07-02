@@ -67,7 +67,7 @@ DEFAULT_SOURCES = [
         provider="redhat_ubi",
         registry="registry.access.redhat.com",
         tier=SourceTier.TIER_1,
-        verification=["gpg", "checksum"],
+        verification=["rpm_signature"],
         slsa_level=None,
         jdk_versions=["11", "17", "21", "25"],
         image_pattern="registry.access.redhat.com/ubi9/openjdk-{version}",
@@ -85,7 +85,7 @@ DEFAULT_SOURCES = [
         provider="jdk_archive",
         registry="jdk.java.net",
         tier=SourceTier.TIER_3,
-        verification=["checksum"],
+        verification=[],
         slsa_level=None,
         jdk_versions=["9", "10", "12", "13", "14", "15", "16"],
         image_pattern="",
@@ -188,9 +188,13 @@ class TrustedSourceRegistry:
             substitution_reason=f"JDK {major} not available from any trusted source",
         )
 
-    def resolve_trusted_base_image(self, jdk_version: str) -> str | None:
+    def resolve_trusted_base_image(
+        self, jdk_version: str, provider: str | None = None
+    ) -> str | None:
         major = self._extract_major(jdk_version)
         for source in self._tier_sorted_sources():
+            if provider and source.provider != provider:
+                continue
             if major in source.jdk_versions and source.image_pattern:
                 return self._resolve_image(source, major)
         return None
@@ -238,7 +242,7 @@ class TrustedSourceRegistry:
             },
             "redhat_ubi": {
                 "registry": "registry.access.redhat.com",
-                "verification": ["gpg", "checksum"],
+                "verification": ["rpm_signature"],
                 "slsa_level": None,
                 "image_pattern": "registry.access.redhat.com/ubi9/openjdk-{version}",
             },
@@ -250,7 +254,7 @@ class TrustedSourceRegistry:
             },
             "jdk_archive": {
                 "registry": "jdk.java.net",
-                "verification": ["checksum"],
+                "verification": [],
                 "slsa_level": None,
                 "image_pattern": "",
             },
