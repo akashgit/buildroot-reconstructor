@@ -11,6 +11,7 @@ from buildroot.trust.registry import (
     TrustedSource,
     TrustedSourceRegistry,
 )
+from buildroot.trust.report import generate_trust_report
 from buildroot.trust.sbom import generate_sbom
 
 __all__ = [
@@ -26,5 +27,6 @@ __all__ = [
     "VariantResult",
     "build_delta_report",
     "generate_sbom",
+    "generate_trust_report",
     "load_trust_config",
 ]

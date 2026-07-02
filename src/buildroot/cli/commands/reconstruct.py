@@ -66,3 +66,5 @@ def reconstruct(coordinate, repo_url, ci_type, no_cache, skip_deps, output_dir, 
             click.echo(f"Trusted variant: {output_dir}/trusted/")
         if (out_path / "delta_report.json").exists():
             click.echo(f"Delta report: {output_dir}/delta_report.json")
+        if (out_path / "trust_report.md").exists():
+            click.echo(f"Trust report: {output_dir}/trust_report.md")

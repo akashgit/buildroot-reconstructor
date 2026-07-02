@@ -245,6 +245,11 @@ class BuildrootOrchestrator:
                     json.dumps(delta.to_dict(), indent=2) + "\n"
                 )
                 logger.info("Delta report written to %s", delta_path)
+
+                from buildroot.trust.report import generate_trust_report
+
+                trust_report_path = generate_trust_report(spec, delta, out)
+                logger.info("Trust report written to %s", trust_report_path)
             except Exception:
                 logger.warning(
                     "Dual-variant generation failed; exact variant is still available",
