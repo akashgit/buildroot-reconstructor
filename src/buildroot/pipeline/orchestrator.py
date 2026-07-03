@@ -7,6 +7,8 @@ import logging
 import re
 import subprocess
 import zipfile
+
+import requests
 from pathlib import Path
 
 from buildroot.generators.containerfile import ContainerfileGenerator
@@ -481,8 +483,8 @@ class BuildrootOrchestrator:
     ) -> str:
         try:
             cached = get_jar_path(group_id, artifact_id, version)
-        except Exception:
-            logger.warning("Could not obtain cached JAR for %s:%s:%s", group_id, artifact_id, version)
+        except (requests.RequestException, ValueError, OSError) as e:
+            logger.warning("Could not obtain cached JAR for %s:%s:%s: %s", group_id, artifact_id, version, e)
             return ""
 
         try:

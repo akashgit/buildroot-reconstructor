@@ -14,7 +14,7 @@ from buildroot.parsers.pom import PomParser
 from buildroot.pipeline.models import PomData
 from buildroot.pipeline.orchestrator import parse_gav
 from buildroot.utils.github_api import discover_git_tag, discover_repo_from_pom
-from buildroot.utils.maven_central import MAVEN_CENTRAL_BASE, fetch_pom, get_jar_path
+from buildroot.utils.maven_central import fetch_pom, get_jar_path
 
 logger = logging.getLogger(__name__)
 

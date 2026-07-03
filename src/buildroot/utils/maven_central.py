@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import hashlib
-import io
 import logging
 import os
 import shutil
@@ -134,7 +133,7 @@ def get_jar_path(
     logger.info("Downloading JAR from %s", url)
 
     cached_path.parent.mkdir(parents=True, exist_ok=True)
-    tmp_path = cached_path.with_suffix(".jar.tmp")
+    tmp_path = cached_path.with_suffix(f".{os.getpid()}.jar.tmp")
 
     last_exc: Exception | None = None
     for attempt in range(MAX_RETRIES):
@@ -201,7 +200,7 @@ def get_jar_path(
             logger.warning("Could not verify SHA-1 checksum for %s", url)
 
     # Atomic rename into cache
-    tmp_path.rename(cached_path)
+    os.replace(tmp_path, cached_path)
     logger.info("Cached JAR at %s (%d bytes)", cached_path, downloaded)
     return cached_path
 

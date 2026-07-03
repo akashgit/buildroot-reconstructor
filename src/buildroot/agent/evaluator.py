@@ -11,6 +11,7 @@ import tempfile
 import uuid
 from pathlib import Path
 
+import requests
 from dockerfile_parse import DockerfileParser
 
 from buildroot.agent.analyzer import sanitize_gha_expressions
@@ -222,7 +223,7 @@ class Evaluator:
             jar_path = dest / f"{artifact_id}-{version}-original.jar"
             shutil.copy2(cached, jar_path)
             return jar_path
-        except Exception as e:
+        except (requests.RequestException, ValueError, OSError) as e:
             logger.warning("Could not obtain original JAR: %s", e)
             return None
 
