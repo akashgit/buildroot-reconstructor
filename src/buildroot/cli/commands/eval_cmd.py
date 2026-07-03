@@ -47,10 +47,12 @@ def eval_cmd(containerfile, coordinate, host, timeout, pretty, report):
         static = extract_static_assets(cf_text)
         dynamic = extract_dynamic_assets(result.build_log)
 
+        from buildroot.utils.maven_central import MAVEN_CENTRAL_BASE
+
         group_id, artifact_id, version = coordinate.split(":")
         group_path = group_id.replace(".", "/")
         ref_url = (
-            f"https://repo1.maven.org/maven2/{group_path}/{artifact_id}/{version}/"
+            f"{MAVEN_CENTRAL_BASE}/{group_path}/{artifact_id}/{version}/"
             f"{artifact_id}-{version}.jar"
         )
         audit_log = build_audit_log(static, dynamic, reference_jar_url=ref_url)

@@ -14,7 +14,7 @@ from buildroot.parsers.pom import PomParser
 from buildroot.pipeline.models import PomData
 from buildroot.pipeline.orchestrator import parse_gav
 from buildroot.utils.github_api import discover_git_tag, discover_repo_from_pom
-from buildroot.utils.maven_central import MAVEN_CENTRAL_BASE, fetch_pom
+from buildroot.utils.maven_central import MAVEN_CENTRAL_BASE, fetch_pom, get_jar_path
 
 logger = logging.getLogger(__name__)
 
@@ -178,8 +178,6 @@ def run_prepass(coordinate: str, workspace: Path) -> PrePassFindings:
 
     Data-gathering only — no template rendering, no spec decisions.
     """
-    import requests
-
     group_id, artifact_id, version = parse_gav(coordinate)
     findings = PrePassFindings()
 
@@ -239,17 +237,8 @@ def run_prepass(coordinate: str, workspace: Path) -> PrePassFindings:
 
     # 4. Fetch JAR manifest for JDK version
     try:
-        jar_url = (
-            f"{MAVEN_CENTRAL_BASE}/{group_id.replace('.', '/')}"
-            f"/{artifact_id}/{version}/{artifact_id}-{version}.jar"
-        )
-        resp = requests.get(jar_url, timeout=60)
-        resp.raise_for_status()
-        jar_bytes = resp.content
-
-        workspace.mkdir(parents=True, exist_ok=True)
-        jar_path = workspace / f"{artifact_id}-{version}.jar"
-        jar_path.write_bytes(jar_bytes)
+        jar_path = get_jar_path(group_id, artifact_id, version)
+        jar_bytes = jar_path.read_bytes()
         findings.jar_path = jar_path
 
         with zipfile.ZipFile(io.BytesIO(jar_bytes)) as zf:

@@ -5,19 +5,19 @@ from __future__ import annotations
 import logging
 import re
 import shlex
+import shutil
 import subprocess
 import tempfile
 import uuid
 from pathlib import Path
 
-import requests
 from dockerfile_parse import DockerfileParser
 
 from buildroot.agent.analyzer import sanitize_gha_expressions
 from buildroot.agent.models import EvalResult
 from buildroot.pipeline.orchestrator import parse_gav
 from buildroot.utils.jar_comparator import compare_jars
-from buildroot.utils.maven_central import MAVEN_CENTRAL_BASE
+from buildroot.utils.maven_central import get_jar_path
 
 logger = logging.getLogger(__name__)
 
@@ -217,19 +217,13 @@ class Evaluator:
     def _download_original_jar(
         self, group_id: str, artifact_id: str, version: str, dest: Path
     ) -> Path | None:
-        group_path = group_id.replace(".", "/")
-        jar_url = (
-            f"{MAVEN_CENTRAL_BASE}/{group_path}/{artifact_id}/{version}/"
-            f"{artifact_id}-{version}.jar"
-        )
         try:
-            resp = requests.get(jar_url, timeout=60)
-            resp.raise_for_status()
+            cached = get_jar_path(group_id, artifact_id, version)
             jar_path = dest / f"{artifact_id}-{version}-original.jar"
-            jar_path.write_bytes(resp.content)
+            shutil.copy2(cached, jar_path)
             return jar_path
-        except requests.RequestException as e:
-            logger.warning("Could not download original JAR: %s", e)
+        except Exception as e:
+            logger.warning("Could not obtain original JAR: %s", e)
             return None
 
     def _extract_rebuilt_jar(

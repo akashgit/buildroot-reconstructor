@@ -2,15 +2,12 @@
 
 from __future__ import annotations
 
-import io
 import json
 import logging
 import re
 import subprocess
 import zipfile
 from pathlib import Path
-
-import requests
 
 from buildroot.generators.containerfile import ContainerfileGenerator
 from buildroot.parsers.ci import CIParser
@@ -25,7 +22,7 @@ from buildroot.utils.github_api import (
     discover_repo_from_pom,
     fetch_maven_wrapper_properties,
 )
-from buildroot.utils.maven_central import MAVEN_CENTRAL_BASE, fetch_pom
+from buildroot.utils.maven_central import fetch_pom, get_jar_path
 
 logger = logging.getLogger(__name__)
 
@@ -482,18 +479,14 @@ class BuildrootOrchestrator:
     def _read_jar_build_jdk(
         self, group_id: str, artifact_id: str, version: str
     ) -> str:
-        group_path = group_id.replace(".", "/")
-        jar_url = f"{MAVEN_CENTRAL_BASE}/{group_path}/{artifact_id}/{version}/{artifact_id}-{version}.jar"
         try:
-            resp = requests.get(jar_url, timeout=30)
-            resp.raise_for_status()
-        except requests.RequestException:
-            logger.warning("Could not fetch JAR from %s", jar_url)
+            cached = get_jar_path(group_id, artifact_id, version)
+        except Exception:
+            logger.warning("Could not obtain cached JAR for %s:%s:%s", group_id, artifact_id, version)
             return ""
 
         try:
-            jar_bytes = io.BytesIO(resp.content)
-            with zipfile.ZipFile(jar_bytes) as zf:
+            with zipfile.ZipFile(cached) as zf:
                 manifest_path = "META-INF/MANIFEST.MF"
                 if manifest_path not in zf.namelist():
                     return ""
