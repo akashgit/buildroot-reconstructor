@@ -14,7 +14,9 @@ import click
 @click.option("--host", default="rh-h100-01", help="SSH host for remote builds")
 @click.option("--timeout", default=900, type=int, help="Build timeout in seconds")
 @click.option("--pretty/--no-pretty", default=True, help="Pretty-print JSON output")
-def eval_cmd(containerfile, coordinate, host, timeout, pretty):
+@click.option("--trusted", is_flag=True, default=False,
+              help="Enforce trusted-source-only constraint (L1.5 gate)")
+def eval_cmd(containerfile, coordinate, host, timeout, pretty, trusted):
     """Evaluate a Containerfile against a Maven Central artifact.
 
     Returns JSON with L1-L4 scores, comparison report, and reward.
@@ -23,6 +25,7 @@ def eval_cmd(containerfile, coordinate, host, timeout, pretty):
     Examples:
         buildroot eval Containerfile org.apache.commons:commons-lang3:3.14.0
         buildroot eval my.Containerfile com.fasterxml.jackson.core:jackson-core:2.16.1 --host rh-h100-01
+        buildroot eval Containerfile org.example:lib:1.0 --trusted
     """
     from pathlib import Path
 
@@ -30,7 +33,7 @@ def eval_cmd(containerfile, coordinate, host, timeout, pretty):
 
     cf_text = Path(containerfile).read_text()
     evaluator = Evaluator(host=host, timeout=timeout)
-    result = evaluator.evaluate(cf_text, coordinate)
+    result = evaluator.evaluate(cf_text, coordinate, trusted=trusted)
 
     output = {
         "l1_parse": result.l1_parse,
@@ -44,6 +47,10 @@ def eval_cmd(containerfile, coordinate, host, timeout, pretty):
         "error_summary": result.error_summary or None,
         "diff_summary": getattr(result, "diff_summary", None),
     }
+
+    if result.trust_check or result.trust_violations:
+        output["trust_check"] = result.trust_check
+        output["trust_violations"] = result.trust_violations
 
     if hasattr(result, "comparison_report") and result.comparison_report:
         report = result.comparison_report

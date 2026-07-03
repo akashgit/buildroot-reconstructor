@@ -112,6 +112,8 @@ class EvalResult:
     diff_summary: str = ""
     comparison_report: Any | None = None
     level_reached: int = 0
+    trust_check: bool = False
+    trust_violations: list[str] = field(default_factory=list)
 
     def compute_reward(self) -> float:
         if self.l4_match:
@@ -132,7 +134,7 @@ class EvalResult:
         return self.reward
 
     def to_dict(self) -> dict:
-        return {
+        d = {
             "l1_parse": self.l1_parse,
             "l2_build": self.l2_build,
             "l3_command": self.l3_command,
@@ -143,6 +145,10 @@ class EvalResult:
             "error_summary": self.error_summary,
             "comparison_verdict": self.comparison_verdict,
         }
+        if self.trust_check or self.trust_violations:
+            d["trust_check"] = self.trust_check
+            d["trust_violations"] = self.trust_violations
+        return d
 
 
 RECIPE_DIR = Path(".factory/recipes")

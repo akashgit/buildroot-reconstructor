@@ -158,6 +158,8 @@ class TestEvalCmd:
         mock_result.level_reached = 4
         mock_result.comparison_verdict = "equivalent"
         mock_result.error_summary = ""
+        mock_result.trust_check = False
+        mock_result.trust_violations = []
         del mock_result.diff_summary
         del mock_result.comparison_report
         MockEvaluator.return_value.evaluate.return_value = mock_result
@@ -168,6 +170,40 @@ class TestEvalCmd:
         output = json.loads(result.output)
         assert output["diff_summary"] is None
         assert "comparison_report" not in output
+
+    @patch("buildroot.agent.evaluator.Evaluator")
+    def test_eval_trusted_flag_passed(self, MockEvaluator, tmp_path):
+        cf = tmp_path / "Containerfile"
+        cf.write_text("FROM eclipse-temurin:17-jdk")
+
+        mock_result = _make_eval_result(trust_check=True, trust_violations=[])
+        MockEvaluator.return_value.evaluate.return_value = mock_result
+
+        runner = CliRunner()
+        runner.invoke(cli, ["eval", str(cf), "g:a:1.0", "--trusted"])
+        MockEvaluator.return_value.evaluate.assert_called_once_with(
+            cf.read_text(), "g:a:1.0", trusted=True
+        )
+
+    @patch("buildroot.agent.evaluator.Evaluator")
+    def test_eval_trust_violations_in_output(self, MockEvaluator, tmp_path):
+        cf = tmp_path / "Containerfile"
+        cf.write_text("FROM amazoncorretto:17")
+
+        mock_result = _make_eval_result(
+            l2_build=False, l3_command=False, l4_match=False,
+            l4_score=0.0, reward=0.05, level_reached=1,
+            trust_check=False,
+            trust_violations=["FROM amazoncorretto:17 — not in trusted allowlist"],
+        )
+        MockEvaluator.return_value.evaluate.return_value = mock_result
+
+        runner = CliRunner()
+        result = runner.invoke(cli, ["eval", str(cf), "g:a:1.0", "--trusted"])
+        output = json.loads(result.output)
+        assert output["trust_check"] is False
+        assert len(output["trust_violations"]) == 1
+        assert "amazoncorretto" in output["trust_violations"][0]
 
     def test_eval_missing_file(self):
         runner = CliRunner()

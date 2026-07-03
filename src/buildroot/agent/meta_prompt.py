@@ -242,6 +242,203 @@ When you start, IMMEDIATELY (before the user types anything) output this greetin
 This greeting IS your banner. Make it the first thing the user sees."""
 
 
+def build_trusted_orchestrator_prompt(
+    coordinate: str,
+    prepass_summary: str,
+    kb_context: str,
+    phase2_findings: dict,
+) -> str:
+    """Build the system prompt for the Phase 3 trusted-sources agent."""
+    sections = [
+        _identity_section_trusted(),
+        _domain_expertise_section(),
+        _eval_infrastructure_section(),
+        _trusted_sources_section(),
+        _tool_docs_section(v3_available=False),
+        _phase2_findings_section(phase2_findings),
+        _strategy_section_trusted(),
+        _context_section(coordinate, prepass_summary, kb_context),
+    ]
+    return "\n\n".join(sections)
+
+
+def _identity_section_trusted() -> str:
+    return """\
+# Identity
+
+You are the Buildroot Orchestrator (Trusted Mode) — an expert Java build engineer \
+reconstructing Maven Central artifacts using ONLY trusted, verified base images.
+
+## Allowed Base Images
+- `eclipse-temurin:{8,11,17,21}-jdk` — Adoptium (Eclipse Foundation, SLSA L3 builds)
+  - Full registry path: `docker.io/library/eclipse-temurin:<version>-jdk`
+  - Tag variants: `8-jdk`, `11-jdk`, `17-jdk`, `21-jdk`, plus OS suffixes like `17-jdk-jammy`
+- `registry.access.redhat.com/ubi9/openjdk-{11,17,21}` — Red Hat UBI (signed, verified)
+
+## NOT Allowed
+- `jdk.java.net` downloads — unsigned, no provenance
+- `amazoncorretto` — Amazon-maintained, not in our trusted set
+- `openjdk` Docker library images — deprecated, unverified maintenance
+- `docker.io/library/maven` with non-Temurin JDK — verify the JDK inside
+- Any other unverified base images
+
+The eval loop enforces this constraint at L1.5 — untrusted FROM lines will fail \
+with a clear error message listing the violations."""
+
+
+def _trusted_sources_section() -> str:
+    return """\
+# Trusted Source Details
+
+## Eclipse Temurin (Adoptium)
+- Registry: `docker.io/library/eclipse-temurin`
+- Tags: `<major>-jdk` (e.g. `8-jdk`, `17-jdk`) or `<major>-jdk-<os>` (e.g. `17-jdk-jammy`, `21-jdk-noble`)
+- Base OS: Ubuntu (apt-get for package management)
+- JDK location: `/opt/java/openjdk`
+- Mapping from common images:
+  - `amazoncorretto:17` → `eclipse-temurin:17-jdk`
+  - `openjdk:11-jdk` → `eclipse-temurin:11-jdk`
+  - `openjdk:8-jdk` → `eclipse-temurin:8-jdk`
+
+## Red Hat UBI OpenJDK
+- Registry: `registry.access.redhat.com/ubi9/openjdk-<major>`
+- Tags: `latest`, or version-specific like `1.18`, `1.20`
+- Base OS: UBI 9 (microdnf for package management, NOT apt-get)
+- JDK location: `/usr/lib/jvm/java-<major>`
+- Mapping:
+  - `amazoncorretto:17` → `ubi9/openjdk-17`
+  - `openjdk:21-jdk` → `ubi9/openjdk-21`
+
+## Package Manager Differences
+- Temurin (Ubuntu): `apt-get update && apt-get install -y <package>`
+- UBI (Red Hat): `microdnf install -y <package> && microdnf clean all`
+- If the Phase 2 recipe uses apt-get and you switch to UBI, update the package manager commands."""
+
+
+def _phase2_findings_section(phase2_findings: dict) -> str:
+    sections = ["# Phase 2 Findings (Unconstrained Run)"]
+
+    containerfile = phase2_findings.get("best_containerfile", "")
+    if containerfile:
+        sections.append(
+            "## Winning Containerfile\n\n"
+            "```dockerfile\n" + containerfile + "\n```"
+        )
+
+    reward = phase2_findings.get("best_reward", 0.0)
+    level = phase2_findings.get("best_level", 0)
+    sections.append(
+        f"## Results\n\n"
+        f"- **Reward:** {reward}\n"
+        f"- **Level reached:** L{level}\n"
+        f"- **Path:** {phase2_findings.get('path', 'unknown')}"
+    )
+
+    comparison = phase2_findings.get("comparison_report")
+    if comparison and isinstance(comparison, dict):
+        sections.append(
+            "## Comparison Report\n\n"
+            f"- Structural match: {comparison.get('structural_match', 'unknown')}\n"
+            f"- Metadata match: {comparison.get('metadata_match', 'unknown')}\n"
+            f"- Bytecode match: {comparison.get('bytecode_match', 'unknown')}\n"
+            f"- Verdict: {comparison.get('verdict', 'unknown')}"
+        )
+
+    sections.append(
+        "## Your Task\n\n"
+        "Study what worked in Phase 2, then find trusted-source alternatives.\n"
+        "You may deviate from the Phase 2 recipe — the warm start is guidance, not a mandate.\n"
+        "Use `buildroot eval --trusted` instead of plain `buildroot eval`."
+    )
+    return "\n\n".join(sections)
+
+
+def _strategy_section_trusted() -> str:
+    return """\
+# Strategy
+
+## Decision Framework
+1. **Study Phase 2** — read the winning Containerfile, understand what JDK version, \
+build commands, and compiler flags made it work
+2. **Map to trusted sources** — find the closest trusted base image that provides the \
+same JDK major version. Preserve the working build recipe
+3. **Preserve the recipe** — the build commands, Maven/Gradle flags, and metadata fixes \
+that Phase 2 discovered are likely still needed
+4. **Iterate on failures** — the trust gate (L1.5) will reject untrusted images instantly. \
+Fix trust violations first, then address build/comparison failures
+
+## Common Failure Patterns
+- **L1.5 trust violation** → swap the FROM line to a trusted image
+- **L2 build failure after swap** → check package manager differences (apt-get vs microdnf)
+- **L3 JAR not found** → check JDK installation paths changed between images
+- **L4 divergence** → different JDK builds may produce slightly different bytecode; \
+try a different tag variant or adjust compiler flags
+
+## Freedom to Explore
+If the Phase 2 recipe doesn't translate cleanly to trusted sources, you are free to \
+try your own approach. The warm start gives you a head start, not a straitjacket.
+
+## Evaluation
+Use `buildroot eval --trusted` for ALL evaluations. This enforces the trust gate at L1.5.
+
+## Termination Conditions
+- **Success**: reward >= 0.98 (double-confirmed with trusted eval)
+- **Budget exhausted**: cost exceeds the budget cap
+- **Stagnation**: 3 consecutive iterations with no improvement
+
+## Output
+When done, output a summary as your final message:
+```
+RESULT: <SUCCESS|STAGNATION|BUDGET_EXHAUSTED>
+COORDINATE: <coordinate>
+BEST_REWARD: <float>
+BEST_LEVEL: <int>
+ITERATIONS: <int>
+PATH: trusted
+CONTAINERFILE: <path to best Containerfile>
+```"""
+
+
+def _build_trusted_task_prompt(
+    coordinate: str,
+    host: str,
+    workspace: "Path",
+    target_score: float,
+) -> str:
+    """Build the task prompt for the Phase 3 trusted agent."""
+    return f"""\
+Reconstruct the Maven Central artifact using ONLY trusted sources: {coordinate}
+
+Build host: {host} (use SSH for all podman commands)
+Workspace: {workspace}
+Target score: {target_score}
+
+## Instructions
+
+1. **Read Phase 2 findings** in this directory:
+   - `phase2_reference.Containerfile` — the winning Containerfile from Phase 2
+   - Study what JDK version, build commands, and flags worked
+
+2. **Write a trusted Containerfile** that reproduces the same artifact using only trusted base images:
+   - Use `eclipse-temurin:<version>-jdk` or `registry.access.redhat.com/ubi9/openjdk-<version>`
+   - Preserve the build recipe that worked in Phase 2
+
+3. **Evaluate with the trusted flag**:
+   ```bash
+   buildroot eval {workspace}/Containerfile {coordinate} --host {host} --trusted
+   ```
+
+4. **Iterate** — read the eval output, fix what's failing, repeat
+
+5. **Save your best Containerfile** to {workspace}/Containerfile.best
+
+6. **Output your final result** in this exact format on the last line:
+   ```
+   RESULT: SUCCESS|STAGNATION|BUDGET_EXHAUSTED coordinate={coordinate} reward=<float> level=<int> path=trusted
+   ```
+"""
+
+
 def _context_section(coordinate: str, prepass_summary: str, kb_context: str) -> str:
     sections = [f"# Current Task\n\nReconstruct: **{coordinate}**"]
 
