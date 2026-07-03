@@ -1,0 +1,15 @@
+{
+  "coordinate": "org.dom4j:dom4j:2.1.4",
+  "status": "success",
+  "best_reward": 0.9992537313432835,
+  "iterations": 1,
+  "elapsed_seconds": 351.4,
+  "score_history": [
+    {
+      "iteration": 1,
+      "reward": 0.9993,
+      "level": 3,
+      "delta": 0.9993
+    }
+  ]
+}
