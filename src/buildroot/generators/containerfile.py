@@ -140,7 +140,14 @@ class ContainerfileGenerator:
 
     def _select_template(self, spec: BuildrootSpec, *, template_id: str = "", build_system: str = "") -> str:
         if template_id:
-            return template_id
+            name = template_id
+            if not name.endswith(".j2"):
+                name += ".j2"
+            if (TEMPLATES_DIR / name).exists():
+                return name
+            if template_id in self._BUILD_SYSTEM_TEMPLATE_MAP:
+                return self._BUILD_SYSTEM_TEMPLATE_MAP[template_id]
+            logger.warning("template_id '%s' not found, falling back to build_system selection", template_id)
         if build_system and build_system in self._BUILD_SYSTEM_TEMPLATE_MAP:
             return self._BUILD_SYSTEM_TEMPLATE_MAP[build_system]
         if spec.base_image:

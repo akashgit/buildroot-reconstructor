@@ -410,13 +410,16 @@ def run_v3_pipeline(
         fallback_values = _ensure_defaults(fallback_values, prepass_findings)
 
         draft_result: EvalResult | None = None
-        try:
-            draft_cf = _render_containerfile(fallback_values)
-            logger.info("Parallel first build: evaluating pre-pass draft while agent analyzes")
-            draft_result = evaluator.evaluate(draft_cf, coordinate)
-            logger.info("  Draft build: reward=%.4f level=%d", draft_result.reward, draft_result.level_reached)
-        except Exception as e:
-            logger.warning("Draft build failed (non-fatal): %s", e)
+        if fallback_values.get("source_repo"):
+            try:
+                draft_cf = _render_containerfile(fallback_values)
+                logger.info("Parallel first build: evaluating pre-pass draft while agent analyzes")
+                draft_result = evaluator.evaluate(draft_cf, coordinate)
+                logger.info("  Draft build: reward=%.4f level=%d", draft_result.reward, draft_result.level_reached)
+            except Exception as e:
+                logger.warning("Draft build failed (non-fatal): %s", e)
+        else:
+            logger.info("No source_repo from pre-pass — skipping draft build (COPY . . would fail)")
 
         agent_result = spawn_claude_agent(
             task=initial_task,
@@ -444,6 +447,7 @@ def run_v3_pipeline(
     best_values = dict(current_values)
     best_reward = 0.0
     best_containerfile = ""
+    best_eval_result: EvalResult | None = None
     failed_approaches: list[FailedApproach] = []
     value_hashes: list[str] = []
     prev_values: dict | None = None
@@ -454,6 +458,19 @@ def run_v3_pipeline(
 
     for t in range(max_iterations):
         logger.info("Iteration %d/%d for %s", t + 1, max_iterations, coordinate)
+
+        # Validate source_repo before rendering — COPY . . never works in agent pipeline
+        if not current_values.get("source_repo"):
+            logger.warning("Iteration %d: source_repo is empty — skipping build (COPY . . would fail)", t + 1)
+            result.score_history.append({
+                "iteration": t + 1, "reward": 0.0, "level": 0,
+                "delta": 0.0, "error": "source_repo empty — cannot build without git clone",
+            })
+            if t >= 2:
+                logger.info("No source_repo after %d iterations — terminating", t + 1)
+                result.status = "no_source_repo"
+                break
+            continue
 
         # Render Containerfile
         try:
@@ -530,6 +547,7 @@ def run_v3_pipeline(
             best_reward = reward
             best_values = dict(current_values)
             best_containerfile = containerfile
+            best_eval_result = eval_result
             stagnation_count = 0
         elif reward < best_reward:
             logger.info("  Regression: %.4f < best %.4f — reverting to best values", reward, best_reward)
@@ -577,17 +595,20 @@ def run_v3_pipeline(
         prev_reward = reward
 
         from buildroot.agent.feedback import build_feedback_context
+        # Use best_eval_result when values were reverted after regression
+        feedback_eval = best_eval_result if (reward < best_reward and best_eval_result) else eval_result
         feedback = build_feedback_context(
             current_values=current_values,
             best_values=best_values,
-            eval_result=eval_result,
-            comparison_report=eval_result.comparison_report,
+            eval_result=feedback_eval,
+            comparison_report=feedback_eval.comparison_report,
             score_history=result.score_history,
             failed_approaches=failed_approaches,
             containerfile=containerfile,
             workspace=workspace,
             iteration=t + 1,
             max_iterations=max_iterations,
+            prepass_findings=prepass_findings,
         )
 
         feedback_task = (
@@ -682,6 +703,15 @@ def _build_initial_task(
         for hint in group_hints[:3]:
             sections.append(f"- {hint.get('coordinate', '?')}: template_id={hint.get('template_id', '?')}, "
                           f"build_system={hint.get('build_system', '?')}")
+
+    if not findings.source_repo:
+        sections.append(
+            "\n## CRITICAL: Source repository not found\n"
+            "The pre-pass could not discover the source repository from the POM. "
+            "You MUST find the source_repo URL (e.g. search GitHub for the project, "
+            "check the Maven Central page, or search the web). "
+            "Without source_repo, the build cannot proceed — the template requires git clone."
+        )
 
     sections.append(
         "\nOutput COMPLETE template values as a JSON object. "

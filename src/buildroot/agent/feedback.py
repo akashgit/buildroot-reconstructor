@@ -25,6 +25,7 @@ def build_feedback_context(
     workspace: Path,
     iteration: int,
     max_iterations: int = 10,
+    prepass_findings: Any | None = None,
 ) -> str:
     """Build structured feedback for the Analysis Agent.
 
@@ -32,6 +33,10 @@ def build_feedback_context(
     with explicit Read instructions for full artifacts.
     """
     sections: list[str] = []
+
+    if prepass_findings is not None and hasattr(prepass_findings, "to_prompt"):
+        sections.append(prepass_findings.to_prompt())
+        sections.append("")
 
     reward = eval_result.reward
     level = eval_result.level_reached
