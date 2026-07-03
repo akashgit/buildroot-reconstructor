@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 
 MAVEN_CENTRAL_BASE = os.environ.get(
     "MAVEN_MIRROR_URL",
-    "https://maven-central.storage-download.googleapis.com/maven2",
+    "https://repo1.maven.org/maven2",
 )
 DEFAULT_CACHE_DIR = Path.home() / ".cache" / "buildroot" / "poms"
 DEFAULT_JAR_CACHE_DIR = Path.home() / ".cache" / "buildroot" / "jars"
