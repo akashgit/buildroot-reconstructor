@@ -127,7 +127,7 @@ class TestEvalCmd:
 
         runner = CliRunner()
         runner.invoke(cli, ["eval", str(cf), "g:a:1.0", "--host", "myhost", "--timeout", "300"])
-        MockEvaluator.assert_called_once_with(host="myhost", timeout=300)
+        MockEvaluator.assert_called_once_with(host="myhost", timeout=300, no_cache=False)
 
     @patch("buildroot.agent.evaluator.Evaluator")
     def test_eval_includes_diff_summary(self, MockEvaluator, tmp_path):

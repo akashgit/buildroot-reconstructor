@@ -26,9 +26,10 @@ logger = logging.getLogger(__name__)
 class Evaluator:
     """Runs 4-level evaluation: parse, build, command, JAR match."""
 
-    def __init__(self, host: str | None = None, timeout: int = 900) -> None:
+    def __init__(self, host: str | None = None, timeout: int = 900, no_cache: bool = False) -> None:
         self._host = host
         self._timeout = timeout
+        self._no_cache = no_cache
 
     def _run(self, cmd: list[str], **kwargs) -> subprocess.CompletedProcess:
         """Run a command locally, or via SSH if a host is configured."""
@@ -99,10 +100,11 @@ class Evaluator:
             if self._host:
                 delimiter = f"CONTAINERFILE_EOF_{uuid.uuid4().hex[:8]}"
                 safe_containerfile = containerfile.replace(delimiter, "")
+                cache_flag = " --no-cache" if self._no_cache else ""
                 build_cmd = (
                     f"cd $(mktemp -d) && "
                     f"cat > Containerfile << '{delimiter}'\n{safe_containerfile}\n{delimiter}\n"
-                    f"podman build --no-cache -t {tag} -f Containerfile ."
+                    f"podman build{cache_flag} -t {tag} -f Containerfile ."
                 )
                 proc = self._run_shell(
                     build_cmd,
@@ -113,8 +115,12 @@ class Evaluator:
                 build_dir = _tmpfile.mkdtemp(prefix="buildroot-l2-")
                 cf_path = Path(build_dir) / "Containerfile"
                 cf_path.write_text(containerfile)
+                build_cmd_list = ["podman", "build"]
+                if self._no_cache:
+                    build_cmd_list.append("--no-cache")
+                build_cmd_list.extend(["-t", tag, "-f", str(cf_path), build_dir])
                 proc = self._run(
-                    ["podman", "build", "--no-cache", "-t", tag, "-f", str(cf_path), build_dir],
+                    build_cmd_list,
                     capture_output=True, text=True, timeout=self._timeout,
                 )
             build_log = proc.stdout + proc.stderr
