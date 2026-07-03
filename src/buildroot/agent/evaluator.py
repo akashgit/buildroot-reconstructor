@@ -293,7 +293,12 @@ class Evaluator:
                 image = self._substitute_args(value, args)
                 has_unresolved = "${" in image or "$" in image
                 has_empty_sub = any(
-                    v == "" and k in value for k, v in args.items()
+                    v == ""
+                    and re.search(
+                        r"\$\{" + re.escape(k) + r"\}|\$" + re.escape(k) + r"\b",
+                        value,
+                    )
+                    for k, v in args.items()
                 )
                 if has_unresolved or has_empty_sub:
                     violations.append(

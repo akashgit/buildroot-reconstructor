@@ -183,6 +183,12 @@ class TestTrustCheck:
         assert r.trust_check is False
         assert any("unresolved" in v.lower() for v in r.trust_violations)
 
+    def test_short_arg_name_no_false_positive(self):
+        cf = "ARG e\nFROM eclipse-temurin:17-jdk\nRUN echo hello"
+        r = self._check(cf)
+        assert r.trust_check is True
+        assert r.trust_violations == []
+
     def test_scratch_allowed(self):
         cf = (
             "FROM eclipse-temurin:17-jdk AS builder\n"

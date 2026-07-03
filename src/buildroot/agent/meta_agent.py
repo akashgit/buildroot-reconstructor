@@ -303,8 +303,8 @@ def run_orchestrator(
 
         # 10. Output restructuring
         _restructure_output(workspace, result)
-        _generate_trust_report(workspace, result, coordinate)
         _generate_delta_report(workspace, result, coordinate, host)
+        _generate_trust_report(workspace, result, coordinate)
 
     return result
 
