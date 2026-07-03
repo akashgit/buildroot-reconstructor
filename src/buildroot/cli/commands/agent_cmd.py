@@ -77,7 +77,7 @@ def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, 
 
         summary = {
             "total": len(results),
-            "success": sum(1 for r in results if r.get("status") == "success"),
+            "success": sum(1 for r in results if r.get("status") in ("success", "recipe_skip")),
             "results": results,
         }
         (out_dir / "summary.json").write_text(json.dumps(summary, indent=2) + "\n")
