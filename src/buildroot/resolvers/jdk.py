@@ -12,6 +12,11 @@ from buildroot.pipeline.models import (
     PomData,
     Source,
 )
+from buildroot.trust.registry import (
+    JdkResolutionStrategy,
+    TrustedJdkResolution,
+    TrustedSourceRegistry,
+)
 from buildroot.utils.maven_central import fetch_jar_manifest_jdk
 
 logger = logging.getLogger(__name__)
@@ -36,6 +41,14 @@ IMAGE_TAG_SUFFIX = {
 }
 
 JAVA_HOME_VERSION_RE = re.compile(r"JAVA_HOME_(\d+)_")
+ARTIFACT_JDK_RE = re.compile(r'jdk(\d+)(?:on|to\d+)?$|[-_]jdk(\d+)$', re.IGNORECASE)
+
+TRUSTED_IMAGE_MAP = {
+    "adoptium": "docker.io/eclipse-temurin:{version}-jdk",
+    "redhat_ubi_11": "registry.access.redhat.com/ubi8/openjdk-{version}",
+    "redhat_ubi": "registry.access.redhat.com/ubi9/openjdk-{version}",
+    "corretto": "docker.io/amazoncorretto:{version}",
+}
 
 
 class JdkResolver:
@@ -232,7 +245,16 @@ class JdkResolver:
                         )
                         spec.source_description = f"{file_source} file in repo"
 
-        # Priority 12: Default
+        # Priority 12: Artifact name JDK hint
+        if not spec.version and artifact_id:
+            artifact_version = self._check_artifact_name_jdk(artifact_id)
+            if artifact_version:
+                spec.version = artifact_version
+                spec.confidence = Confidence(level=Source.INFERRED, reason=f"JDK version inferred from artifact name '{artifact_id}'")
+                spec.source_description = 'Artifact name JDK hint'
+                all_signals.append({'source': 'artifact name', 'version': artifact_version, 'priority': '12'})
+
+        # Priority 13: Default
         if not spec.version:
             spec.version = DEFAULT_JDK_VERSION
             spec.confidence = Confidence(
@@ -251,6 +273,24 @@ class JdkResolver:
         spec.conflicts = self._detect_conflicts(all_signals)
 
         return spec
+
+    @staticmethod
+    def _check_artifact_name_jdk(artifact_id: str) -> str:
+        m = ARTIFACT_JDK_RE.search(artifact_id)
+        if not m:
+            return ''
+        raw = m.group(1) or m.group(2)
+        if not raw:
+            return ''
+        ver = int(raw)
+        if ver >= 10:
+            major = int(str(ver)[0])
+            minor = int(str(ver)[1:])
+            if major == 1 and 5 <= minor <= 9:
+                ver = minor
+        if ver < 8:
+            return '8'
+        return str(ver)
 
     def _check_java_home_env(self, ci_data: CIData) -> str:
         for key in ci_data.env_vars:
@@ -330,3 +370,27 @@ class JdkResolver:
                 "sources": ", ".join(sources),
             })
         return conflicts
+
+    def resolve_trusted(
+        self,
+        version: str,
+        registry: TrustedSourceRegistry,
+        strategy: JdkResolutionStrategy = JdkResolutionStrategy.NEAREST_LTS_ABOVE,
+    ) -> TrustedJdkResolution:
+        """Resolve a JDK version against the trusted source registry."""
+        resolution = registry.resolve_trusted_jdk(version, strategy)
+
+        if resolution.source and not resolution.base_image:
+            provider = resolution.source.provider
+            ver = resolution.resolved_version
+            if provider == "redhat_ubi" and ver == "11":
+                key = "redhat_ubi_11"
+            elif provider in TRUSTED_IMAGE_MAP:
+                key = provider
+            else:
+                key = provider
+            pattern = TRUSTED_IMAGE_MAP.get(key, "")
+            if pattern:
+                resolution.base_image = pattern.format(version=ver)
+
+        return resolution

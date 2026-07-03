@@ -1,0 +1,9 @@
+{
+  "coordinate": "com.fasterxml.jackson.core:jackson-core:2.15.3",
+  "baseline_reward": 1.0,
+  "baseline_l4_score": 1.0,
+  "build_system": "maven",
+  "difficulty": "medium",
+  "has_golden_containerfile": true,
+  "notes": "L4 solved \u2014 reward=1.0. Eclipse Temurin JDK 11, Maven build."
+}

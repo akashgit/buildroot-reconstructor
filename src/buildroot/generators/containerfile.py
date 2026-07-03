@@ -86,7 +86,7 @@ class ContainerfileGenerator:
         if spec.dependency_tree:
             deps = self._flatten_direct_deps(spec.dependency_tree)
 
-        return {
+        result = {
             "source_repo": spec.source_repo,
             "git_tag": spec.git_tag,
             "jdk_version": {
@@ -119,6 +119,18 @@ class ContainerfileGenerator:
             "gap_report": gap_entries,
         }
 
+        if spec.provenance_tier is not None:
+            result["provenance"] = {
+                "tier": spec.provenance_tier,
+                "provider": spec.provenance_provider,
+                "verification": spec.provenance_verification,
+                "jdk_resolution": spec.jdk_resolution_type,
+                "jdk_requested": spec.jdk_requested_version,
+                "jdk_resolved": spec.jdk_spec.version,
+            }
+
+        return result
+
     _BUILD_SYSTEM_TEMPLATE_MAP = {
         "maven": "jdk_base.j2",
         "gradle": "gradle_base.j2",
@@ -128,7 +140,14 @@ class ContainerfileGenerator:
 
     def _select_template(self, spec: BuildrootSpec, *, template_id: str = "", build_system: str = "") -> str:
         if template_id:
-            return template_id
+            name = template_id
+            if not name.endswith(".j2"):
+                name += ".j2"
+            if (TEMPLATES_DIR / name).exists():
+                return name
+            if template_id in self._BUILD_SYSTEM_TEMPLATE_MAP:
+                return self._BUILD_SYSTEM_TEMPLATE_MAP[template_id]
+            logger.warning("template_id '%s' not found, falling back to build_system selection", template_id)
         if build_system and build_system in self._BUILD_SYSTEM_TEMPLATE_MAP:
             return self._BUILD_SYSTEM_TEMPLATE_MAP[build_system]
         if spec.base_image:
@@ -200,6 +219,11 @@ class ContainerfileGenerator:
             "config_files": spec.config_files,
             "metadata_strip_patterns": spec.metadata_strip_patterns,
             "reproducibility_env": spec.reproducibility_env,
+            "provenance_provider": spec.provenance_provider or "",
+            "provenance_tier": spec.provenance_tier,
+            "provenance_verification": spec.provenance_verification or [],
+            "jdk_resolution_type": spec.jdk_resolution_type or "",
+            "jdk_requested": spec.jdk_requested_version or "",
         }
 
     def _resolve_build_command(self, spec: BuildrootSpec) -> str:

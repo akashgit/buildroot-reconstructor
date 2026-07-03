@@ -14,6 +14,38 @@ logger = logging.getLogger(__name__)
 
 
 @dataclass
+class TestResult:
+    """Result from running a project's built-in test suite."""
+
+    available: bool = False
+    framework: str = ""
+    command: str = ""
+    passed: bool = False
+    run: int = 0
+    tests_passed: int = 0
+    failed: int = 0
+    skipped: int = 0
+    duration_seconds: float = 0.0
+    failures: list[str] = field(default_factory=list)
+    status: str = ""
+
+    def to_dict(self) -> dict:
+        return {
+            "available": self.available,
+            "framework": self.framework,
+            "command": self.command,
+            "passed": self.passed,
+            "run": self.run,
+            "tests_passed": self.tests_passed,
+            "failed": self.failed,
+            "skipped": self.skipped,
+            "duration_seconds": self.duration_seconds,
+            "failures": self.failures,
+            "status": self.status,
+        }
+
+
+@dataclass
 class BuildAttempt:
     """A single iteration's build attempt and its evaluation result."""
 
@@ -114,6 +146,7 @@ class EvalResult:
     level_reached: int = 0
     trust_check: bool = False
     trust_violations: list[str] = field(default_factory=list)
+    test_result: TestResult | None = None
 
     def compute_reward(self) -> float:
         if self.l4_match:
@@ -134,7 +167,7 @@ class EvalResult:
         return self.reward
 
     def to_dict(self) -> dict:
-        d = {
+        d: dict[str, Any] = {
             "l1_parse": self.l1_parse,
             "l2_build": self.l2_build,
             "l3_command": self.l3_command,
@@ -148,6 +181,8 @@ class EvalResult:
         if self.trust_check or self.trust_violations:
             d["trust_check"] = self.trust_check
             d["trust_violations"] = self.trust_violations
+        if self.test_result is not None:
+            d["test_result"] = self.test_result.to_dict()
         return d
 
 
@@ -201,10 +236,10 @@ class RecipeStore:
             return 0
         levels = recipe.get("levels", {})
         best = 0
-        for key in levels:
+        for key, data in levels.items():
             try:
                 lvl = int(key[1:])
-                if lvl > best:
+                if lvl > best and data.get("reward", 0) > 0.05:
                     best = lvl
             except (ValueError, IndexError):
                 pass

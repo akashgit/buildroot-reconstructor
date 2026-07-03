@@ -134,3 +134,9 @@ class BuildrootSpec:
     build_tool_version: str | None = None
     jdk_minor_version: str | None = None
     use_maven_wrapper: bool = False
+    provenance_tier: int | None = None
+    provenance_provider: str = ""
+    provenance_verification: list[str] = field(default_factory=list)
+    jdk_resolution_type: str = ""
+    jdk_requested_version: str = ""
+    trusted_base_image: str = ""

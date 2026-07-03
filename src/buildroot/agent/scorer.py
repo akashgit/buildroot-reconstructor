@@ -40,12 +40,18 @@ class ScoreBreakdown:
     manifest_sanity: bool | None = None
     unit_tests_pass: bool | None = None
 
+    tests_run: int | None = None
+    tests_passed: int | None = None
+    tests_failed: int | None = None
+    tests_skipped: int | None = None
+    test_duration_seconds: float | None = None
+
     signal_source: str = ""  # "full_comparison" | "fallback_signals" | "l3_ceiling"
     reward: float = 0.0
     level_reached: int = 0
 
     def to_dict(self) -> dict:
-        return {
+        d: dict = {
             "l1_parse": self.l1_parse,
             "l2_build": self.l2_build,
             "l3_command": self.l3_command,
@@ -58,6 +64,13 @@ class ScoreBreakdown:
             "reward": round(self.reward, 4),
             "level_reached": self.level_reached,
         }
+        if self.tests_run is not None:
+            d["tests_run"] = self.tests_run
+            d["tests_passed"] = self.tests_passed
+            d["tests_failed"] = self.tests_failed
+            d["tests_skipped"] = self.tests_skipped
+            d["test_duration_seconds"] = self.test_duration_seconds
+        return d
 
 
 def build_score_breakdown(eval_result: EvalResult, coordinate: str) -> ScoreBreakdown:

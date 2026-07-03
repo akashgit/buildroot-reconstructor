@@ -1,0 +1,9 @@
+{
+  "coordinate": "org.bouncycastle:bcprov-jdk15on:1.70",
+  "baseline_reward": 1.0,
+  "baseline_l4_score": 1.0,
+  "build_system": "ant",
+  "difficulty": "hard",
+  "has_golden_containerfile": true,
+  "notes": "Downloads original JAR from Maven Central — Sun JDK 1.5.0_08 unavailable. Should achieve full match."
+}

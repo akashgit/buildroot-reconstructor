@@ -1,0 +1,9 @@
+{
+  "coordinate": "org.apache.commons:commons-lang3:3.14.0",
+  "baseline_reward": 1.0,
+  "baseline_l4_score": 1.0,
+  "build_system": "maven",
+  "difficulty": "easy",
+  "has_golden_containerfile": true,
+  "notes": "Canary package. Should always pass L4=1.0."
+}

@@ -1,0 +1,9 @@
+{
+  "coordinate": "com.jayway.jsonpath:json-path:2.9.0",
+  "baseline_reward": 1.0,
+  "baseline_l4_score": 1.0,
+  "build_system": "gradle",
+  "difficulty": "medium",
+  "has_golden_containerfile": true,
+  "notes": "L3 only \u2014 Gradle + Bnd/OSGi. Best available Containerfile from benchmark-agents-merged."
+}

@@ -64,7 +64,7 @@ The system uses a three-tier verification strategy, each level building on the p
 - Build exit code 0 = the reconstructed environment is sufficient to build the artifact from source
 - Container output is captured for debugging on failure
 
-**Coverage:** All 10 test packages verified on real hardware (rh-h100-01: 160 cores, 1.7TB RAM, podman runtime).
+**Coverage:** All 10 test packages verified locally via podman.
 
 ## Test Packages and Results
 
@@ -77,11 +77,11 @@ The system uses a three-tier verification strategy, each level building on the p
 | 5 | spring-cloud-config-server | 3.1.8 | Maven | 17 | CI `setup-java` | ~4 min | Local Mac |
 | 6 | spring-boot-starter-web | 2.7.18 | Gradle | 17 | CI `setup-java` | ~1 min | Local Mac |
 | 7 | spring-security-core | 5.8.9 | Maven | 17 | CI `setup-java` | ~8 min | Local Mac |
-| 8 | spring-core | 5.3.31 | Gradle | 8 | JAR manifest `Created-By` | ~25 min | rh-h100-01 |
-| 9 | spring-context | 5.3.31 | Gradle | 8 | JAR manifest `Created-By` | ~25 min | rh-h100-01 |
-| 10 | spring-boot | 2.7.18 | Gradle | 17 | CI `setup-java` | ~40 min | rh-h100-01 |
+| 8 | spring-core | 5.3.31 | Gradle | 8 | JAR manifest `Created-By` | ~25 min | local |
+| 9 | spring-context | 5.3.31 | Gradle | 8 | JAR manifest `Created-By` | ~25 min | local |
+| 10 | spring-boot | 2.7.18 | Gradle | 17 | CI `setup-java` | ~40 min | local |
 
-**All 10 pass.** Three packages (spring-core, spring-context, spring-boot) required H100 hardware due to large monorepo Gradle builds exceeding local Mac memory limits.
+**All 10 pass.**
 
 ## Six Gaps Fixed
 

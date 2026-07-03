@@ -75,7 +75,7 @@ _BANNER = """\
 def launch_interactive_orchestrator(
     coordinate: str,
     *,
-    host: str = "rh-h100-01",
+    host: str | None = None,
     workspace: Path | None = None,
     target_score: float = 0.98,
 ) -> int:
@@ -170,7 +170,7 @@ def _extract_jdk_version(prepass_findings: PrePassFindings) -> str:
 def run_orchestrator(
     coordinate: str,
     *,
-    host: str = "rh-h100-01",
+    host: str | None = None,
     workspace: Path | None = None,
     target_score: float = 0.98,
     max_budget_usd: float = 0,
@@ -396,15 +396,17 @@ def _run_trusted_phase(
 
 def _build_task_prompt(
     coordinate: str,
-    host: str,
+    host: str | None,
     workspace: Path,
     target_score: float,
 ) -> str:
     """Build the task prompt given to the orchestrator agent."""
+    host_flag = f" --host {host}" if host else ""
+    build_mode = f"Build host: {host} (use SSH for all podman commands)" if host else "Builds run locally via podman."
     return f"""\
 Reconstruct the Maven Central artifact: {coordinate}
 
-Build host: {host} (use SSH for all podman commands)
+{build_mode}
 Workspace: {workspace}
 Target score: {target_score}
 
@@ -412,7 +414,7 @@ Target score: {target_score}
 
 1. **Try v3 first** (fast path):
    ```bash
-   buildroot agent {coordinate} --v3-only --max-iterations 1 --host {host}
+   buildroot agent {coordinate} --v3-only --max-iterations 1{host_flag}
    ```
    Read the JSON output. If reward >= {target_score}, you're done.
 
@@ -421,7 +423,7 @@ Target score: {target_score}
    - Write your own Containerfile at {workspace}/Containerfile
    - Evaluate it:
      ```bash
-     buildroot eval {workspace}/Containerfile {coordinate} --host {host}
+     buildroot eval {workspace}/Containerfile {coordinate}{host_flag}
      ```
    - Read the comparison report, fix what's failing, iterate
 
@@ -439,7 +441,7 @@ def _parse_agent_output(
     result: OrchestratorResult,
     workspace: Path,
     coordinate: str,
-    host: str,
+    host: str | None = None,
 ) -> None:
     """Parse the orchestrator agent's text output for structured result info."""
     for line in reversed(text.splitlines()):
@@ -473,7 +475,7 @@ def _scan_workspace_for_best(
     result: OrchestratorResult,
     workspace: Path,
     coordinate: str,
-    host: str,
+    host: str | None = None,
 ) -> None:
     """Scan workspace for Containerfile.best or Containerfile and evaluate if needed."""
     best_cf_path = workspace / "Containerfile.best"

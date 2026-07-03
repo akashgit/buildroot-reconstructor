@@ -11,20 +11,28 @@ import click
 @click.command("eval")
 @click.argument("containerfile", type=click.Path(exists=True))
 @click.argument("coordinate")
-@click.option("--host", default="rh-h100-01", help="SSH host for remote builds")
+@click.option("--host", default=None, help="SSH host for remote builds (default: run locally)")
 @click.option("--timeout", default=900, type=int, help="Build timeout in seconds")
 @click.option("--pretty/--no-pretty", default=True, help="Pretty-print JSON output")
+@click.option(
+    "--report",
+    type=click.Choice(["json", "markdown", "both", "none"]),
+    default="none",
+    help="Report format (json, markdown, both, or none)",
+)
+@click.option("--no-cache", is_flag=True, help="Disable podman layer caching (rebuild all layers)")
 @click.option("--trusted", is_flag=True, default=False,
               help="Enforce trusted-source-only constraint (L1.5 gate)")
-def eval_cmd(containerfile, coordinate, host, timeout, pretty, trusted):
+def eval_cmd(containerfile, coordinate, host, timeout, pretty, report, no_cache, trusted):
     """Evaluate a Containerfile against a Maven Central artifact.
 
     Returns JSON with L1-L4 scores, comparison report, and reward.
+    Builds run locally via podman by default; pass --host to use a remote SSH host.
 
     \b
     Examples:
         buildroot eval Containerfile org.apache.commons:commons-lang3:3.14.0
-        buildroot eval my.Containerfile com.fasterxml.jackson.core:jackson-core:2.16.1 --host rh-h100-01
+        buildroot eval my.Containerfile com.fasterxml.jackson.core:jackson-core:2.16.1 --host myserver
         buildroot eval Containerfile org.example:lib:1.0 --trusted
     """
     from pathlib import Path
@@ -32,8 +40,40 @@ def eval_cmd(containerfile, coordinate, host, timeout, pretty, trusted):
     from buildroot.agent.evaluator import Evaluator
 
     cf_text = Path(containerfile).read_text()
-    evaluator = Evaluator(host=host, timeout=timeout)
-    result = evaluator.evaluate(cf_text, coordinate, trusted=trusted)
+    capture_full_log = report != "none"
+    evaluator = Evaluator(host=host, timeout=timeout, no_cache=no_cache)
+    result = evaluator.evaluate(cf_text, coordinate, capture_full_log=capture_full_log, trusted=trusted)
+
+    if report != "none":
+        from buildroot.eval.audit import build_audit_log, extract_dynamic_assets, extract_static_assets
+        from buildroot.eval.report import build_report
+
+        static = extract_static_assets(cf_text)
+        dynamic = extract_dynamic_assets(result.build_log)
+
+        from buildroot.utils.maven_central import MAVEN_CENTRAL_BASE
+
+        group_id, artifact_id, version = coordinate.split(":")
+        group_path = group_id.replace(".", "/")
+        ref_url = (
+            f"{MAVEN_CENTRAL_BASE}/{group_path}/{artifact_id}/{version}/"
+            f"{artifact_id}-{version}.jar"
+        )
+        audit_log = build_audit_log(static, dynamic, reference_jar_url=ref_url)
+
+        full_report = build_report(result, cf_text, coordinate, audit_log)
+
+        safe_coord = coordinate.replace(":", "_")
+        results_dir = Path("results") / safe_coord
+        results_dir.mkdir(parents=True, exist_ok=True)
+
+        if report in ("json", "both"):
+            (results_dir / "report.json").write_text(full_report.to_json())
+            click.echo(f"Report written to {results_dir / 'report.json'}", err=True)
+
+        if report in ("markdown", "both"):
+            (results_dir / "report.md").write_text(full_report.to_markdown())
+            click.echo(f"Report written to {results_dir / 'report.md'}", err=True)
 
     output = {
         "l1_parse": result.l1_parse,
@@ -53,14 +93,17 @@ def eval_cmd(containerfile, coordinate, host, timeout, pretty, trusted):
         output["trust_violations"] = result.trust_violations
 
     if hasattr(result, "comparison_report") and result.comparison_report:
-        report = result.comparison_report
+        cr = result.comparison_report
         output["comparison_report"] = {
-            "verdict": report.verdict,
-            "equivalence_score": round(report.equivalence_score(), 4),
-            "structural_match": report.structural.match,
-            "metadata_match": report.metadata.match,
-            "bytecode_match": report.bytecode.match,
+            "verdict": cr.verdict,
+            "equivalence_score": round(cr.equivalence_score(), 4),
+            "structural_match": cr.structural.match,
+            "metadata_match": cr.metadata.match,
+            "bytecode_match": cr.bytecode.match,
         }
+
+    if result.test_result is not None:
+        output["test_result"] = result.test_result.to_dict()
 
     indent = 2 if pretty else None
     click.echo(json.dumps(output, indent=indent))

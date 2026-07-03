@@ -2,15 +2,14 @@
 
 from __future__ import annotations
 
-import io
 import json
 import logging
 import re
 import subprocess
 import zipfile
-from pathlib import Path
 
 import requests
+from pathlib import Path
 
 from buildroot.generators.containerfile import ContainerfileGenerator
 from buildroot.parsers.ci import CIParser
@@ -25,7 +24,7 @@ from buildroot.utils.github_api import (
     discover_repo_from_pom,
     fetch_maven_wrapper_properties,
 )
-from buildroot.utils.maven_central import MAVEN_CENTRAL_BASE, fetch_pom
+from buildroot.utils.maven_central import fetch_pom, get_jar_path
 
 logger = logging.getLogger(__name__)
 
@@ -69,10 +68,11 @@ def parse_gav(coordinate: str) -> tuple[str, str, str]:
 
 
 class BuildrootOrchestrator:
-    def __init__(self, *, no_cache: bool = False, skip_deps: bool = False, runtime: str = "podman"):
+    def __init__(self, *, no_cache: bool = False, skip_deps: bool = False, runtime: str = "podman", dual_build: bool = True):
         self._no_cache = no_cache
         self._skip_deps = skip_deps
         self._runtime = runtime
+        self._dual_build = dual_build
 
     def reconstruct(
         self,
@@ -223,6 +223,37 @@ class BuildrootOrchestrator:
         # 13. Generate Containerfile and buildroot.json
         generator = ContainerfileGenerator()
         generator.generate(spec, out)
+
+        # 14. Dual-variant trusted-source generation
+        if self._dual_build:
+            try:
+                from buildroot.trust.config import load_trust_config
+                from buildroot.trust.delta import build_delta_report
+                from buildroot.trust.dual_variant import DualVariantGenerator
+                from buildroot.trust.registry import TrustedSourceRegistry
+
+                trust_config = load_trust_config()
+                registry = TrustedSourceRegistry(trust_config)
+                dual_gen = DualVariantGenerator(registry, generator)
+                exact_result, trusted_result = dual_gen.generate_dual(spec, out)
+
+                delta = build_delta_report(exact_result, trusted_result)
+                delta.coordinate = f"{group_id}:{artifact_id}:{version}"
+                delta_path = out / "delta_report.json"
+                delta_path.write_text(
+                    json.dumps(delta.to_dict(), indent=2) + "\n"
+                )
+                logger.info("Delta report written to %s", delta_path)
+
+                from buildroot.trust.report import generate_trust_report
+
+                trust_report_path = generate_trust_report(spec, delta, out)
+                logger.info("Trust report written to %s", trust_report_path)
+            except Exception:
+                logger.warning(
+                    "Dual-variant generation failed; exact variant is still available",
+                    exc_info=True,
+                )
 
         return spec
 
@@ -450,18 +481,14 @@ class BuildrootOrchestrator:
     def _read_jar_build_jdk(
         self, group_id: str, artifact_id: str, version: str
     ) -> str:
-        group_path = group_id.replace(".", "/")
-        jar_url = f"{MAVEN_CENTRAL_BASE}/{group_path}/{artifact_id}/{version}/{artifact_id}-{version}.jar"
         try:
-            resp = requests.get(jar_url, timeout=30)
-            resp.raise_for_status()
-        except requests.RequestException:
-            logger.warning("Could not fetch JAR from %s", jar_url)
+            cached = get_jar_path(group_id, artifact_id, version)
+        except (requests.RequestException, ValueError, OSError) as e:
+            logger.warning("Could not obtain cached JAR for %s:%s:%s: %s", group_id, artifact_id, version, e)
             return ""
 
         try:
-            jar_bytes = io.BytesIO(resp.content)
-            with zipfile.ZipFile(jar_bytes) as zf:
+            with zipfile.ZipFile(cached) as zf:
                 manifest_path = "META-INF/MANIFEST.MF"
                 if manifest_path not in zf.namelist():
                     return ""

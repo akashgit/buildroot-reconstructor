@@ -127,7 +127,7 @@ class TestEvalCmd:
 
         runner = CliRunner()
         runner.invoke(cli, ["eval", str(cf), "g:a:1.0", "--host", "myhost", "--timeout", "300"])
-        MockEvaluator.assert_called_once_with(host="myhost", timeout=300)
+        MockEvaluator.assert_called_once_with(host="myhost", timeout=300, no_cache=False)
 
     @patch("buildroot.agent.evaluator.Evaluator")
     def test_eval_includes_diff_summary(self, MockEvaluator, tmp_path):
@@ -162,6 +162,7 @@ class TestEvalCmd:
         mock_result.trust_violations = []
         del mock_result.diff_summary
         del mock_result.comparison_report
+        mock_result.test_result = None
         MockEvaluator.return_value.evaluate.return_value = mock_result
 
         runner = CliRunner()
@@ -182,7 +183,7 @@ class TestEvalCmd:
         runner = CliRunner()
         runner.invoke(cli, ["eval", str(cf), "g:a:1.0", "--trusted"])
         MockEvaluator.return_value.evaluate.assert_called_once_with(
-            cf.read_text(), "g:a:1.0", trusted=True
+            cf.read_text(), "g:a:1.0", capture_full_log=False, trusted=True
         )
 
     @patch("buildroot.agent.evaluator.Evaluator")

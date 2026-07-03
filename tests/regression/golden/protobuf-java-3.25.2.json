@@ -1,0 +1,9 @@
+{
+  "coordinate": "com.google.protobuf:protobuf-java:3.25.2",
+  "baseline_reward": 0.9998,
+  "baseline_l4_score": 0.9998,
+  "build_system": "maven",
+  "difficulty": "hard",
+  "has_golden_containerfile": true,
+  "notes": "L4 solved \u2014 reward=0.9998. Uses custom_base.j2 template with eclipse-temurin:11-jdk and Maven build."
+}

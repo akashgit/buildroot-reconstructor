@@ -38,7 +38,7 @@ def run_inner_loop(
     coordinate: str,
     *,
     max_iterations: int = 15,
-    host: str = "rh-h100-01",
+    host: str | None = None,
     model: str = "claude-opus-4-6",
     skip_deps: bool = True,
     initial_containerfile: str | None = None,
