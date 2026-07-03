@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import io
 import logging
 import zipfile
 from dataclasses import dataclass, field
@@ -238,10 +237,9 @@ def run_prepass(coordinate: str, workspace: Path) -> PrePassFindings:
     # 4. Fetch JAR manifest for JDK version
     try:
         jar_path = get_jar_path(group_id, artifact_id, version)
-        jar_bytes = jar_path.read_bytes()
         findings.jar_path = jar_path
 
-        with zipfile.ZipFile(io.BytesIO(jar_bytes)) as zf:
+        with zipfile.ZipFile(jar_path) as zf:
             findings.jar_entry_count = len(zf.namelist())
 
             # Extract manifest

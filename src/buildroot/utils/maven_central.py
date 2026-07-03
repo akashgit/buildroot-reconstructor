@@ -14,10 +14,7 @@ import requests
 
 logger = logging.getLogger(__name__)
 
-MAVEN_CENTRAL_BASE = os.environ.get(
-    "MAVEN_MIRROR_URL",
-    "https://repo1.maven.org/maven2",
-)
+MAVEN_CENTRAL_BASE = os.environ.get("MAVEN_MIRROR_URL") or "https://repo1.maven.org/maven2"
 DEFAULT_CACHE_DIR = Path.home() / ".cache" / "buildroot" / "poms"
 DEFAULT_JAR_CACHE_DIR = Path.home() / ".cache" / "buildroot" / "jars"
 MAX_RETRIES = 5
@@ -150,7 +147,7 @@ def get_jar_path(
                     continue
                 resp.raise_for_status()
 
-                sha1 = hashlib.sha1()  # noqa: S324
+                sha1 = hashlib.sha1() if verify_checksum else None  # noqa: S324
                 downloaded = 0
                 with open(tmp_path, "wb") as f:
                     for chunk in resp.iter_content(chunk_size=8192):
@@ -161,7 +158,8 @@ def get_jar_path(
                                 f"JAR exceeds size limit of {_MAX_JAR_BYTES} bytes: {url}"
                             )
                         f.write(chunk)
-                        sha1.update(chunk)
+                        if sha1 is not None:
+                            sha1.update(chunk)
 
             # Download succeeded — break out of retry loop
             break
@@ -196,8 +194,8 @@ def get_jar_path(
                     f"SHA-1 mismatch for {url}: expected {expected}, got {actual}"
                 )
             logger.info("SHA-1 verified for %s", cached_path)
-        except requests.RequestException:
-            logger.warning("Could not verify SHA-1 checksum for %s", url)
+        except requests.RequestException as e:
+            logger.warning("Could not verify SHA-1 checksum for %s: %s", url, e)
 
     # Atomic rename into cache
     os.replace(tmp_path, cached_path)
