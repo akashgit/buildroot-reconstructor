@@ -20,7 +20,8 @@ import click
     default="none",
     help="Report format (json, markdown, both, or none)",
 )
-def eval_cmd(containerfile, coordinate, host, timeout, pretty, report):
+@click.option("--no-cache", is_flag=True, help="Disable podman layer caching (rebuild all layers)")
+def eval_cmd(containerfile, coordinate, host, timeout, pretty, report, no_cache):
     """Evaluate a Containerfile against a Maven Central artifact.
 
     Returns JSON with L1-L4 scores, comparison report, and reward.
@@ -37,7 +38,7 @@ def eval_cmd(containerfile, coordinate, host, timeout, pretty, report):
 
     cf_text = Path(containerfile).read_text()
     capture_full_log = report != "none"
-    evaluator = Evaluator(host=host, timeout=timeout)
+    evaluator = Evaluator(host=host, timeout=timeout, no_cache=no_cache)
     result = evaluator.evaluate(cf_text, coordinate, capture_full_log=capture_full_log)
 
     if report != "none":
