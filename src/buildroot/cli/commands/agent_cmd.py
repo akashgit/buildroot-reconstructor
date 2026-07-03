@@ -12,7 +12,7 @@ import click
 @click.command("agent")
 @click.argument("coordinate", required=False)
 @click.option("--host", default=None, help="SSH host for remote builds (default: run locally)")
-@click.option("--max-iterations", default=15, type=int, help="Max inner loop iterations")
+@click.option("--max-iterations", default=1, type=int, help="Max inner loop iterations (default: 1)")
 @click.option("--batch", "batch_file", type=click.Path(exists=True), help="File with one coordinate per line for batch processing")
 @click.option("--output", "output_dir", type=click.Path(), help="Output directory for batch results")
 @click.option("--resume", type=click.Path(exists=True), help="Resume from prior results directory (seeds RecipeStore for warm-start)")
@@ -21,7 +21,8 @@ import click
 @click.option("--max-budget", default=0, type=float, help="Max budget in USD (0 = unlimited)")
 @click.option("--max-turns", default=0, type=int, help="Max agent turns (0 = unlimited)")
 @click.option("-v", "--verbose", is_flag=True, help="Enable debug logging")
-def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, v3_only, interactive, max_budget, max_turns, verbose):
+@click.option("--enable-google-mirror", is_flag=True, help="Use Google Cloud Storage as fallback on Maven Central 429 rate limits")
+def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, v3_only, interactive, max_budget, max_turns, verbose, enable_google_mirror):
     """Run agentic reconstruction loop for a Maven COORDINATE.
 
     Default mode uses the v4 orchestrator agent. Use --v3-only for the template pipeline.
@@ -36,6 +37,10 @@ def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, 
         level=logging.DEBUG if verbose else logging.INFO,
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     )
+
+    if enable_google_mirror:
+        from buildroot.utils.maven_central import enable_google_mirror as _enable_mirror
+        _enable_mirror()
 
     if interactive and v3_only:
         raise click.UsageError("--interactive cannot be combined with --v3-only")
