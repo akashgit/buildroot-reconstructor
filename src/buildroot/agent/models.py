@@ -231,10 +231,10 @@ class RecipeStore:
             return 0
         levels = recipe.get("levels", {})
         best = 0
-        for key in levels:
+        for key, data in levels.items():
             try:
                 lvl = int(key[1:])
-                if lvl > best:
+                if lvl > best and data.get("reward", 0) > 0.05:
                     best = lvl
             except (ValueError, IndexError):
                 pass
