@@ -233,10 +233,12 @@ def _build_recipe(containerfile: str, coordinate: str) -> dict:
     if build_command:
         recipe["build_command"] = build_command
 
+    from buildroot.utils.maven_central import MAVEN_CENTRAL_BASE
+
     group_id, artifact_id, version = coordinate.split(":")
     group_path = group_id.replace(".", "/")
     recipe["reference_jar_url"] = (
-        f"https://repo1.maven.org/maven2/{group_path}/{artifact_id}/{version}/"
+        f"{MAVEN_CENTRAL_BASE}/{group_path}/{artifact_id}/{version}/"
         f"{artifact_id}-{version}.jar"
     )
 
