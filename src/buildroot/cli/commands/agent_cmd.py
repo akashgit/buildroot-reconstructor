@@ -12,7 +12,7 @@ import click
 @click.command("agent")
 @click.argument("coordinate", required=False)
 @click.option("--host", default=None, help="SSH host for remote builds (default: run locally)")
-@click.option("--max-iterations", default=15, type=int, help="Max inner loop iterations")
+@click.option("--max-iterations", default=1, type=int, help="Max inner loop iterations (default: 1)")
 @click.option("--batch", "batch_file", type=click.Path(exists=True), help="File with one coordinate per line for batch processing")
 @click.option("--output", "output_dir", type=click.Path(), help="Output directory for batch results")
 @click.option("--resume", type=click.Path(exists=True), help="Resume from prior results directory (seeds RecipeStore for warm-start)")

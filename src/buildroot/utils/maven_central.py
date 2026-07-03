@@ -22,7 +22,7 @@ MAX_RETRIES = 5
 BACKOFF_BASE = 2.0
 _MAX_JAR_BYTES = 50 * 1024 * 1024  # 50 MB
 
-_google_mirror_enabled = False
+_google_mirror_enabled = True
 
 
 def enable_google_mirror() -> None:

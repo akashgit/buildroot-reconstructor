@@ -352,7 +352,7 @@ def _render_containerfile(values: dict) -> str:
 def run_v3_pipeline(
     coordinate: str,
     *,
-    max_iterations: int = 10,
+    max_iterations: int = 1,
     host: str | None = None,
     workspace: Path | None = None,
     skip_deps: bool = True,
