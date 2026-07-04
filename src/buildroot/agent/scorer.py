@@ -39,6 +39,7 @@ class ScoreBreakdown:
     bytecode_version_match: bool | None = None
     manifest_sanity: bool | None = None
     unit_tests_pass: bool | None = None
+    structural_match: float | None = None
 
     tests_run: int | None = None
     tests_passed: int | None = None
@@ -60,6 +61,7 @@ class ScoreBreakdown:
             "bytecode_version_match": self.bytecode_version_match,
             "manifest_sanity": self.manifest_sanity,
             "unit_tests_pass": self.unit_tests_pass,
+            "structural_match": self.structural_match,
             "signal_source": self.signal_source,
             "reward": round(self.reward, 4),
             "level_reached": self.level_reached,
@@ -83,10 +85,22 @@ def build_score_breakdown(eval_result: EvalResult, coordinate: str) -> ScoreBrea
         level_reached=eval_result.level_reached,
     )
 
-    if eval_result.l4_score > 0 or eval_result.l4_match:
+    if eval_result.l4_signal_source == "full_comparison":
         breakdown.jar_available = True
         breakdown.l4_score = eval_result.l4_score
         breakdown.signal_source = "full_comparison"
+    elif eval_result.l4_signal_source == "fallback_signals":
+        breakdown.jar_available = False
+        breakdown.signal_source = "fallback_signals"
+        breakdown.l4_score = eval_result.l4_score
+        breakdown.bytecode_version_match = eval_result.bytecode_version_match
+        breakdown.manifest_sanity = eval_result.manifest_sanity
+        breakdown.unit_tests_pass = eval_result.unit_tests_pass
+        breakdown.structural_match = getattr(eval_result, "structural_match", None)
+        if eval_result.test_result:
+            breakdown.tests_run = eval_result.test_result.run
+            breakdown.tests_passed = eval_result.test_result.tests_passed
+            breakdown.tests_failed = eval_result.test_result.failed
     elif eval_result.l3_command:
         breakdown.jar_available = False
         breakdown.signal_source = "fallback_signals"
@@ -100,16 +114,19 @@ def compute_fallback_score(
     bytecode_version_match: bool | None,
     manifest_sanity: bool | None,
     unit_tests_pass: bool | None,
+    structural_match: float | None = None,
 ) -> float:
     """Compute weighted fallback score from available signals.
 
-    Weights: bytecode_version_match (0.40) + manifest_sanity (0.30) + unit_tests_pass (0.30)
+    Weights: structural (0.30) + bytecode (0.30) + manifest (0.20) + tests (0.20)
     Only scores on available (non-None) signals, re-normalizing weights.
+    For structural_match, the value is a float (Jaccard similarity 0.0-1.0).
     """
-    signals = [
-        (bytecode_version_match, 0.40),
-        (manifest_sanity, 0.30),
-        (unit_tests_pass, 0.30),
+    signals: list[tuple[float | bool | None, float]] = [
+        (bytecode_version_match, 0.30),
+        (manifest_sanity, 0.20),
+        (unit_tests_pass, 0.20),
+        (structural_match, 0.30),
     ]
 
     total_weight = 0.0
@@ -118,7 +135,9 @@ def compute_fallback_score(
     for value, weight in signals:
         if value is not None:
             total_weight += weight
-            if value:
+            if isinstance(value, float):
+                score += weight * value
+            elif value:
                 score += weight
 
     if total_weight == 0:
@@ -190,6 +209,82 @@ def check_manifest_sanity(
             return True
     except (zipfile.BadZipFile, OSError):
         return None
+
+
+def check_structural_match(
+    rebuilt_jar: Path,
+    source_root: Path,
+) -> float | None:
+    """Check structural correspondence between rebuilt JAR classes and source .java files.
+
+    Returns Jaccard similarity (0.0-1.0) between the set of class files in the JAR
+    and the set of .java source files. Returns None if either set is empty or
+    if the project uses shade/bundle plugins (which add third-party classes).
+    """
+    if not rebuilt_jar.exists() or not source_root.exists():
+        return None
+
+    pom_path = source_root / "pom.xml"
+    if pom_path.exists():
+        try:
+            xml_text = pom_path.read_text()
+            if "maven-shade-plugin" in xml_text or "maven-bundle-plugin" in xml_text or "bnd-maven-plugin" in xml_text:
+                return None
+        except OSError:
+            pass
+
+    try:
+        with zipfile.ZipFile(rebuilt_jar) as zf:
+            class_names = set()
+            for name in zf.namelist():
+                if not name.endswith(".class"):
+                    continue
+                if name.startswith("META-INF/"):
+                    continue
+                if name == "module-info.class" or name.endswith("/module-info.class"):
+                    continue
+                outer = _class_to_outer_source(name)
+                if outer:
+                    class_names.add(outer)
+
+        if not class_names:
+            return None
+
+        source_names = set()
+        for java_file in source_root.rglob("*.java"):
+            rel = java_file.relative_to(source_root)
+            parts = rel.parts
+            src_idx = -1
+            for i, p in enumerate(parts):
+                if p in ("java", "src"):
+                    src_idx = i
+            if src_idx >= 0 and src_idx + 1 < len(parts):
+                qualified = "/".join(parts[src_idx + 1:])
+            else:
+                qualified = str(rel)
+            qualified = qualified.replace(".java", "")
+            source_names.add(qualified)
+
+        if not source_names:
+            return None
+
+        intersection = class_names & source_names
+        union = class_names | source_names
+        if not union:
+            return None
+
+        return len(intersection) / len(union)
+
+    except (zipfile.BadZipFile, OSError):
+        return None
+
+
+def _class_to_outer_source(class_path: str) -> str | None:
+    """Map a .class file path to its outer source file path (without extension)."""
+    name = class_path[:-6]  # strip .class
+    if "$" in name:
+        name = name.split("$")[0]
+    return name if name else None
 
 
 def check_unit_tests_pass(

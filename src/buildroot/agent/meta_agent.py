@@ -577,8 +577,24 @@ def _scan_workspace_for_best(
 
     if result.best_reward < 0.01:
         try:
+            jdk_version = ""
+            prepass_json = workspace / "prepass_findings.json"
+            if prepass_json.exists():
+                try:
+                    pdata = json.loads(prepass_json.read_text())
+                    manifest = pdata.get("jar_manifest") or {}
+                    jdk_version = manifest.get("Build-Jdk-Spec", "")
+                    if not jdk_version:
+                        created_by = manifest.get("Created-By", "")
+                        for part in created_by.replace("(", " ").replace(")", " ").split():
+                            if part and part[0].isdigit():
+                                jdk_version = part
+                                break
+                except (json.JSONDecodeError, OSError):
+                    pass
+
             evaluator = Evaluator(host=host)
-            eval_result = evaluator.evaluate(cf_text, coordinate)
+            eval_result = evaluator.evaluate(cf_text, coordinate, jdk_version=jdk_version)
             result.best_reward = eval_result.reward
             result.best_level = eval_result.level_reached
             if eval_result.comparison_report is not None:

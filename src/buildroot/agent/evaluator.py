@@ -60,6 +60,7 @@ class Evaluator:
         capture_full_log: bool = False,
         *,
         trusted: bool = False,
+        jdk_version: str = "",
     ) -> EvalResult:
         containerfile = sanitize_gha_expressions(containerfile)
         result = EvalResult()
@@ -89,7 +90,7 @@ class Evaluator:
         from buildroot.eval.test_runner import run_tests
         result.test_result = run_tests(tag, containerfile, host=self._host, timeout=300)
 
-        self._l4_match(tag, coordinate, result)
+        self._l4_match(tag, coordinate, result, jdk_version=jdk_version)
         self._cleanup_image(tag)
         result.compute_reward()
         return result
@@ -212,7 +213,7 @@ class Evaluator:
             result.error_summary = f"L3 command error: {e}"
             return False
 
-    def _l4_match(self, tag: str, coordinate: str, result: EvalResult) -> None:
+    def _l4_match(self, tag: str, coordinate: str, result: EvalResult, *, jdk_version: str = "") -> None:
         group_id, artifact_id, version = parse_gav(coordinate)
         try:
             with tempfile.TemporaryDirectory(prefix="buildroot-l4-") as tmpdir:
@@ -221,7 +222,27 @@ class Evaluator:
                     group_id, artifact_id, version, tmp
                 )
                 if not original_jar:
-                    result.error_summary = "L4: could not download original JAR"
+                    signals = self.l4_fallback_signals(tag, coordinate, jdk_version)
+                    test_pass = None
+                    if result.test_result and result.test_result.available:
+                        test_pass = result.test_result.passed
+
+                    from buildroot.agent.scorer import compute_fallback_score
+                    fallback = compute_fallback_score(
+                        signals.get("bytecode_version_match"),
+                        signals.get("manifest_sanity"),
+                        test_pass,
+                        signals.get("structural_match"),
+                    )
+                    result.l4_score = fallback
+                    result.bytecode_version_match = signals.get("bytecode_version_match")
+                    result.manifest_sanity = signals.get("manifest_sanity")
+                    result.unit_tests_pass = test_pass
+                    result.structural_match = signals.get("structural_match")
+                    result.l4_signal_source = "fallback_signals"
+                    result.error_summary = (
+                        f"L4 (approximate): fallback score = {fallback:.2f} (JAR unavailable)"
+                    )
                     return
 
                 rebuilt_jar = self._extract_rebuilt_jar(
@@ -235,6 +256,7 @@ class Evaluator:
                 result.comparison_report = report
                 result.comparison_verdict = report.verdict
                 result.l4_score = report.equivalence_score()
+                result.l4_signal_source = "full_comparison"
                 if report.verdict in ("IDENTICAL", "EQUIVALENT"):
                     result.l4_match = True
                 else:
@@ -318,16 +340,21 @@ class Evaluator:
     ) -> dict:
         """Compute fallback L4 signals when no original JAR is available.
 
-        Returns dict with bytecode_version_match, manifest_sanity keys.
+        Returns dict with bytecode_version_match, manifest_sanity, structural_match keys.
         """
-        from buildroot.agent.scorer import check_bytecode_version_match, check_manifest_sanity
+        from buildroot.agent.scorer import (
+            check_bytecode_version_match,
+            check_manifest_sanity,
+            check_structural_match,
+        )
 
         group_id, artifact_id, version = parse_gav(coordinate)
         signals: dict = {}
 
         try:
             with tempfile.TemporaryDirectory(prefix="buildroot-fb-") as tmpdir:
-                rebuilt_jar = self._extract_rebuilt_jar(tag, artifact_id, version, Path(tmpdir))
+                tmp = Path(tmpdir)
+                rebuilt_jar = self._extract_rebuilt_jar(tag, artifact_id, version, tmp)
                 if rebuilt_jar:
                     if jdk_version:
                         signals["bytecode_version_match"] = check_bytecode_version_match(
@@ -336,10 +363,46 @@ class Evaluator:
                     signals["manifest_sanity"] = check_manifest_sanity(
                         rebuilt_jar, group_id, artifact_id,
                     )
+                    source_root = self._extract_source_root(tag, tmp / "source")
+                    if source_root:
+                        signals["structural_match"] = check_structural_match(
+                            rebuilt_jar, source_root,
+                        )
         except Exception as e:
             logger.warning("Fallback signal extraction failed: %s", e)
 
         return signals
+
+    def _extract_source_root(self, tag: str, dest: Path) -> Path | None:
+        """Extract the source tree from a container image for structural validation."""
+        try:
+            find_cmd = "find /build -name '*.java' -maxdepth 6 2>/dev/null | head -1"
+            proc = self._run(
+                ["podman", "run", "--rm", tag, "sh", "-c", find_cmd],
+                capture_output=True, text=True, timeout=60,
+            )
+            if proc.returncode != 0 or not proc.stdout.strip():
+                return None
+
+            dest.mkdir(parents=True, exist_ok=True)
+            export_cmd = "tar -cf - /build 2>/dev/null"
+            tar_proc = self._run(
+                ["podman", "run", "--rm", tag, "sh", "-c", export_cmd],
+                capture_output=True, timeout=120,
+            )
+            if tar_proc.returncode != 0 or not tar_proc.stdout:
+                return None
+
+            import tarfile
+            import io
+            with tarfile.open(fileobj=io.BytesIO(tar_proc.stdout)) as tf:
+                tf.extractall(dest, filter="data")
+
+            build_dir = dest / "build"
+            return build_dir if build_dir.exists() else dest
+        except Exception as e:
+            logger.warning("Could not extract source root: %s", e)
+            return None
 
     def _parse_dockerfile_args(self, structure: list) -> dict:
         """Extract ARG instructions with defaults."""

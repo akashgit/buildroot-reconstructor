@@ -160,6 +160,11 @@ class TestEvalCmd:
         mock_result.error_summary = ""
         mock_result.trust_check = False
         mock_result.trust_violations = []
+        mock_result.l4_signal_source = ""
+        mock_result.bytecode_version_match = None
+        mock_result.manifest_sanity = None
+        mock_result.unit_tests_pass = None
+        mock_result.structural_match = None
         del mock_result.diff_summary
         del mock_result.comparison_report
         mock_result.test_result = None
@@ -183,7 +188,7 @@ class TestEvalCmd:
         runner = CliRunner()
         runner.invoke(cli, ["eval", str(cf), "g:a:1.0", "--trusted"])
         MockEvaluator.return_value.evaluate.assert_called_once_with(
-            cf.read_text(), "g:a:1.0", capture_full_log=False, trusted=True
+            cf.read_text(), "g:a:1.0", capture_full_log=False, trusted=True, jdk_version=""
         )
 
     @patch("buildroot.agent.evaluator.Evaluator")

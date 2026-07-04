@@ -3,7 +3,7 @@
 from unittest.mock import MagicMock, patch
 
 from buildroot.agent.evaluator import Evaluator, _extract_error_lines
-from buildroot.agent.models import EvalResult
+from buildroot.agent.models import EvalResult, TestResult
 
 
 VALID_CONTAINERFILE = """\
@@ -192,3 +192,125 @@ class TestTrustCheck:
         )
         r = self._check(cf)
         assert r.trust_violations == []
+
+
+class TestL4FallbackPath:
+    def test_fallback_when_jar_unavailable(self):
+        evaluator = Evaluator()
+        result = EvalResult(l3_command=True)
+        with patch.object(evaluator, "_download_original_jar", return_value=None), \
+             patch.object(evaluator, "l4_fallback_signals", return_value={
+                 "bytecode_version_match": True,
+                 "manifest_sanity": True,
+             }):
+            evaluator._l4_match("test-tag", "org.example:test:1.0", result)
+        assert result.l4_score > 0
+        assert result.l4_signal_source == "fallback_signals"
+        assert result.bytecode_version_match is True
+        assert result.manifest_sanity is True
+        assert "L4 (approximate)" in result.error_summary
+
+    def test_fallback_with_test_result(self):
+        evaluator = Evaluator()
+        result = EvalResult(l3_command=True)
+        result.test_result = TestResult(available=True, passed=True, run=10, tests_passed=10)
+        with patch.object(evaluator, "_download_original_jar", return_value=None), \
+             patch.object(evaluator, "l4_fallback_signals", return_value={
+                 "bytecode_version_match": True,
+                 "manifest_sanity": True,
+             }):
+            evaluator._l4_match("test-tag", "org.example:test:1.0", result)
+        assert result.unit_tests_pass is True
+        score_with_tests = result.l4_score
+
+        result2 = EvalResult(l3_command=True)
+        with patch.object(evaluator, "_download_original_jar", return_value=None), \
+             patch.object(evaluator, "l4_fallback_signals", return_value={
+                 "bytecode_version_match": True,
+                 "manifest_sanity": True,
+             }):
+            evaluator._l4_match("test-tag", "org.example:test:1.0", result2)
+        assert result2.unit_tests_pass is None
+        assert score_with_tests >= result2.l4_score
+
+    def test_fallback_partial_signals(self):
+        evaluator = Evaluator()
+        result = EvalResult(l3_command=True)
+        with patch.object(evaluator, "_download_original_jar", return_value=None), \
+             patch.object(evaluator, "l4_fallback_signals", return_value={
+                 "manifest_sanity": True,
+             }):
+            evaluator._l4_match("test-tag", "org.example:test:1.0", result)
+        assert result.l4_score > 0
+        assert result.bytecode_version_match is None
+        assert result.manifest_sanity is True
+        assert result.l4_signal_source == "fallback_signals"
+
+    def test_normal_l4_path_unchanged(self):
+        evaluator = Evaluator()
+        result = EvalResult(l3_command=True)
+
+        mock_report = MagicMock()
+        mock_report.verdict = "EQUIVALENT"
+        mock_report.equivalence_score.return_value = 0.95
+        mock_report.structural.match = True
+        mock_report.metadata.match = True
+        mock_report.bytecode.match = False
+        mock_report.bytecode.classes_divergent = ["Foo.class"]
+
+        from pathlib import Path
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmpdir:
+            jar_path = Path(tmpdir) / "original.jar"
+            jar_path.write_bytes(b"fake jar")
+            rebuilt_path = Path(tmpdir) / "rebuilt.jar"
+            rebuilt_path.write_bytes(b"fake rebuilt")
+
+            with patch.object(evaluator, "_download_original_jar", return_value=jar_path), \
+                 patch.object(evaluator, "_extract_rebuilt_jar", return_value=rebuilt_path), \
+                 patch("buildroot.agent.evaluator.compare_jars", return_value=mock_report):
+                evaluator._l4_match("test-tag", "org.example:test:1.0", result)
+
+        assert result.l4_score == 0.95
+        assert result.l4_signal_source == "full_comparison"
+        assert result.comparison_verdict == "EQUIVALENT"
+
+    def test_fallback_computes_reward_above_050(self):
+        evaluator = Evaluator()
+        result = EvalResult(l1_parse=True, l2_build=True, l3_command=True)
+        result.test_result = TestResult(available=True, passed=True)
+        with patch.object(evaluator, "_download_original_jar", return_value=None), \
+             patch.object(evaluator, "l4_fallback_signals", return_value={
+                 "bytecode_version_match": True,
+                 "manifest_sanity": True,
+                 "structural_match": 0.8,
+             }):
+            evaluator._l4_match("test-tag", "org.example:test:1.0", result)
+        result.compute_reward()
+        assert result.reward > 0.50
+
+    def test_to_dict_includes_fallback_signals(self):
+        result = EvalResult(
+            l1_parse=True, l2_build=True, l3_command=True,
+            l4_score=0.7, reward=0.85, level_reached=3,
+            l4_signal_source="fallback_signals",
+            bytecode_version_match=True,
+            manifest_sanity=True,
+            unit_tests_pass=False,
+            structural_match=0.6,
+        )
+        d = result.to_dict()
+        assert d["l4_signal_source"] == "fallback_signals"
+        assert "fallback_signals" in d
+        assert d["fallback_signals"]["bytecode_version_match"] is True
+        assert d["fallback_signals"]["structural_match"] == 0.6
+
+    def test_to_dict_full_comparison_no_fallback(self):
+        result = EvalResult(
+            l1_parse=True, l2_build=True, l3_command=True,
+            l4_score=0.95, reward=0.97, level_reached=3,
+            l4_signal_source="full_comparison",
+        )
+        d = result.to_dict()
+        assert d["l4_signal_source"] == "full_comparison"
+        assert "fallback_signals" not in d
