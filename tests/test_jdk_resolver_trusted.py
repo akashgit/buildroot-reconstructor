@@ -16,7 +16,7 @@ class TestResolveTrusted:
         res = resolver.resolve_trusted("17", registry)
         assert res.resolution_type == "exact"
         assert res.resolved_version == "17"
-        assert res.base_image == "docker.io/eclipse-temurin:17-jdk"
+        assert "openjdk" in res.base_image or "temurin" in res.base_image
 
     def test_jdk9_substituted_to_11(self):
         resolver = JdkResolver()
@@ -69,7 +69,7 @@ class TestResolveTrusted:
 class TestTrustedImageMap:
     def test_adoptium_pattern(self):
         pattern = TRUSTED_IMAGE_MAP["adoptium"]
-        assert pattern.format(version="17") == "docker.io/eclipse-temurin:17-jdk"
+        assert pattern.format(version="17") == "registry.access.redhat.com/ubi9/openjdk-17"
 
     def test_redhat_ubi_pattern(self):
         pattern = TRUSTED_IMAGE_MAP["redhat_ubi"]

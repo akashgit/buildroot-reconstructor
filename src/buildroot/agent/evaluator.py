@@ -376,16 +376,31 @@ class Evaluator:
     def _extract_source_root(self, tag: str, dest: Path) -> Path | None:
         """Extract the source tree from a container image for structural validation."""
         try:
-            find_cmd = "find /build -name '*.java' -maxdepth 6 2>/dev/null | head -1"
+            src_dirs = ["/build/src", "/build/*/src"]
+            find_cmd = (
+                "for d in /build/src /build/*/src; do "
+                "[ -d \"$d\" ] && echo \"$d\" && exit 0; "
+                "done; exit 1"
+            )
             proc = self._run(
                 ["podman", "run", "--rm", tag, "sh", "-c", find_cmd],
-                capture_output=True, text=True, timeout=60,
+                capture_output=True, text=True, timeout=30,
             )
             if proc.returncode != 0 or not proc.stdout.strip():
                 return None
 
+            src_path = proc.stdout.strip().splitlines()[0]
+
+            verify_cmd = f"find {shlex.quote(src_path)} -name '*.java' -maxdepth 6 2>/dev/null | head -1"
+            verify_proc = self._run(
+                ["podman", "run", "--rm", tag, "sh", "-c", verify_cmd],
+                capture_output=True, text=True, timeout=120,
+            )
+            if verify_proc.returncode != 0 or not verify_proc.stdout.strip():
+                return None
+
             dest.mkdir(parents=True, exist_ok=True)
-            export_cmd = "tar -cf - /build 2>/dev/null"
+            export_cmd = f"tar -cf - {shlex.quote(src_path)} 2>/dev/null"
             tar_proc = self._run(
                 ["podman", "run", "--rm", tag, "sh", "-c", export_cmd],
                 capture_output=True, timeout=120,
