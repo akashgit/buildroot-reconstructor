@@ -5,6 +5,7 @@ import click
 from buildroot import __version__
 from buildroot.cli.commands.agent_cmd import agent_cmd
 from buildroot.cli.commands.compare import compare
+from buildroot.cli.commands.db_cmd import db_cmd
 from buildroot.cli.commands.eval_cmd import eval_cmd
 from buildroot.cli.commands.inspect_cmd import inspect_cmd
 from buildroot.cli.commands.kb_cmd import kb_cmd
@@ -22,6 +23,7 @@ def cli():
 
 cli.add_command(agent_cmd, name="agent")
 cli.add_command(compare)
+cli.add_command(db_cmd, name="db")
 cli.add_command(eval_cmd, name="eval")
 cli.add_command(inspect_cmd, name="inspect")
 cli.add_command(kb_cmd, name="kb")

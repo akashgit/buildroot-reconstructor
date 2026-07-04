@@ -225,6 +225,31 @@ def run_orchestrator(
             result.elapsed_seconds = time.time() - start_time
             return result
 
+    # 0. Sibling check — find a successful build of a different version
+    sibling_context = ""
+    try:
+        from buildroot.agent.build_store import get_sibling_build
+
+        sibling = get_sibling_build(group_id, artifact_id, exclude_version=version)
+        if sibling:
+            sibling_context = (
+                f"\n## Sibling Build (same artifact, different version)\n\n"
+                f"A successful L{sibling['level']} build exists for "
+                f"`{sibling['group_id']}:{sibling['artifact_id']}:{sibling['version']}` "
+                f"(reward={sibling['reward']}).\n\n"
+                f"```dockerfile\n{sibling['containerfile']}\n```\n\n"
+                f"**Adapt this for version {version}.** The build recipe is likely very similar — "
+                f"update the git tag, version strings, and filenames. "
+                f"Try evaluating the adapted version first before exploring other approaches.\n"
+            )
+            logger.info(
+                "Found sibling build: %s:%s:%s (reward=%.4f)",
+                sibling["group_id"], sibling["artifact_id"],
+                sibling["version"], sibling["reward"],
+            )
+    except Exception as e:
+        logger.debug("Sibling lookup skipped: %s", e)
+
     # 1. Pre-pass
     logger.info("Running pre-pass for %s", coordinate)
     try:
@@ -267,6 +292,8 @@ def run_orchestrator(
 
     # 4. Build task prompt
     task = _build_task_prompt(coordinate, host, workspace, target_score)
+    if sibling_context:
+        task = task + "\n" + sibling_context
 
     # 5. Write prepass data to workspace for agent access
     prepass_json = workspace / "prepass_findings.json"
@@ -310,6 +337,18 @@ def run_orchestrator(
             prepass_findings=prepass_findings,
         )
         result.status = "success"
+
+    # 8b. Save to build store for sibling warm-start
+    if result.best_reward > 0 and result.best_containerfile:
+        try:
+            from buildroot.agent.build_store import save_build
+
+            save_build(
+                coordinate, result.best_containerfile, result.best_reward,
+                result.best_level, result.path, result.cost_usd, result.elapsed_seconds,
+            )
+        except Exception as e:
+            logger.debug("Build store save skipped: %s", e)
 
     # 9. Phase 3: Trusted cascade
     if result.best_containerfile:
