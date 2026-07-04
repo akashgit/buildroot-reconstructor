@@ -175,6 +175,24 @@ set jdk_minor_version to match — different minor versions produce different by
 Output COMPLETE template values as a JSON object matching the schema. \
 Include ALL fields — do not output incremental changes. \
 Every iteration must be a complete specification.
+
+## Mandatory Summary Report
+
+Before producing your structured JSON output, you MUST first write a brief summary as \
+plain text (this will be captured even if structured output fails):
+
+```
+SUMMARY:
+- source_repo: <what you found or "not found">
+- git_tag: <what you found or "not found">
+- build_system: <maven/gradle/ant/unknown>
+- jdk_version: <version or "unknown">
+- key_findings: <1-2 sentences on what you discovered>
+- blockers: <anything that prevented you from completing>
+```
+
+Then output your structured JSON. If you cannot produce the full JSON, the summary \
+above still provides diagnostic value. An incomplete answer is far better than no answer.
 """
 
 MULTI_VARIANT_SCHEMA = {
@@ -233,6 +251,21 @@ feedback below and output UPDATED COMPLETE template values.
 - Always add -Dgpg.skip=true for Maven builds
 - Use -Dproject.build.outputTimestamp=2000-01-01T00:00:00Z for Maven
 - Match JDK minor version exactly when bytecode diverges
+
+## Mandatory Summary Report
+
+Before producing your variants JSON, you MUST first write a brief summary as plain text:
+
+```
+SUMMARY:
+- current_level: <L0/L1/L2/L3/L4>
+- diagnosis: <what's failing and why>
+- changes_tried: <what you changed from the previous iteration>
+- blockers: <anything preventing progress>
+```
+
+Then output your variants JSON. If you cannot produce variants, the summary above \
+still provides diagnostic value — producing nothing wastes the entire iteration.
 """
 
 
@@ -436,8 +469,16 @@ def run_v3_pipeline(
             logger.info("Draft build already near-perfect (%.4f) — using draft values", draft_result.reward)
             current_values = fallback_values
         elif agent_result.is_error or not agent_result.structured_output:
-            logger.warning("Initial analysis agent failed: %s", agent_result.error_message)
-            current_values = fallback_values
+            logger.warning("Agent returned no structured output — failing hard")
+            if agent_result.text:
+                ts = int(time.time())
+                diag_path = workspace / f"agent-failure-{coordinate.replace(':', '_')}-{ts}.txt"
+                diag_path.write_text(agent_result.text)
+                logger.info("Agent failure transcript saved to %s", diag_path)
+            result.status = "agent_failure"
+            result.error_message = agent_result.error_message or "Agent returned no structured output"
+            result.elapsed_seconds = time.time() - start_time
+            return result
         else:
             current_values = agent_result.structured_output
 
@@ -630,8 +671,12 @@ def run_v3_pipeline(
         )
 
         if feedback_result.is_error or not feedback_result.structured_output:
-            logger.warning("Feedback agent failed — retrying with best values")
+            logger.warning("Feedback agent failed — skipping build (no new values to try)")
+            if feedback_result.text:
+                diag_path = workspace / f"feedback-failure-iter{t+1}-{coordinate.replace(':', '_')}-{int(time.time())}.txt"
+                diag_path.write_text(feedback_result.text)
             current_values = dict(best_values)
+            continue
         else:
             # Multi-variant elitist: prepend incumbent, eval all, pick winner
             agent_variants = feedback_result.structured_output.get("variants", [])
