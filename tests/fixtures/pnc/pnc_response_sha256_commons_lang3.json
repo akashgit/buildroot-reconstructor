@@ -1,0 +1,39 @@
+{
+  "totalHits": 1,
+  "content": [
+    {
+      "id": "98765",
+      "identifier": "maven:org.apache.commons:commons-lang3:jar:3.12.0.redhat-00001",
+      "artifactQuality": "NEW",
+      "build": {
+        "id": "12345",
+        "submitTime": "2022-03-15T10:30:00.000Z",
+        "status": "SUCCESS",
+        "scmUrl": "git+ssh://code.engineering.redhat.com/commons-lang.git",
+        "scmTag": "commons-lang-3.12.0.redhat-00001",
+        "scmRevision": "abc123def456",
+        "scmRepository": {
+          "id": "500",
+          "internalUrl": "git+ssh://code.engineering.redhat.com/commons-lang.git",
+          "externalUrl": "https://github.com/apache/commons-lang.git"
+        },
+        "buildConfigRevision": {
+          "id": "600",
+          "scmRevision": "rel/commons-lang-3.12.0"
+        },
+        "environment": {
+          "id": "200",
+          "name": "OpenJDK 1.8; Mvn 3.6.3 on RHEL 7",
+          "systemImageRepositoryUrl": "quay.io/rh-newcastle",
+          "systemImageId": "builder-rhel-7-j8-mvn3.6.3:latest",
+          "attributes": {
+            "IMAGE_DIGEST_REF": "builder-rhel-7-j8-mvn3.6.3@sha256:17c069af230739573bbfbb4daf8cecda02e45decf7c10fd2c05e9995b4249e42",
+            "IMAGE_MANIFEST_URL": "https://sbomer.pnc.engineering.redhat.com/api/v1beta1/manifests/52FAC8B7BA48437/bom",
+            "JDK": "1.8",
+            "MAVEN": "3.6.3"
+          }
+        }
+      }
+    }
+  ]
+}

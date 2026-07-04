@@ -141,6 +141,8 @@ class ContainerfileGenerator:
     }
 
     def _select_template(self, spec: BuildrootSpec, *, template_id: str = "", build_system: str = "") -> str:
+        if spec.provenance_provider == "pnc":
+            return "pnc_base.j2"
         if template_id:
             name = template_id
             if not name.endswith(".j2"):
@@ -228,6 +230,9 @@ class ContainerfileGenerator:
             "jdk_requested": spec.jdk_requested_version or "",
             "base_image_digest": "",
             "maven_checksum": "",
+            "pnc_builder_image": spec.pnc_builder_image,
+            "pnc_build_id": spec.pnc_build_id,
+            "rhel_version": spec.rhel_version or None,
         }
 
         if spec.provenance_provider:

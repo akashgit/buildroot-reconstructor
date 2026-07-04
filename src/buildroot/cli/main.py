@@ -12,6 +12,7 @@ from buildroot.cli.commands.db_cmd import db_cmd
 from buildroot.cli.commands.eval_cmd import eval_cmd
 from buildroot.cli.commands.inspect_cmd import inspect_cmd
 from buildroot.cli.commands.kb_cmd import kb_cmd
+from buildroot.cli.commands.pnc_cmd import pnc_lookup_cmd
 from buildroot.cli.commands.reconstruct import reconstruct
 from buildroot.cli.commands.regression_cmd import regression_cmd
 from buildroot.cli.commands.validate import validate
@@ -33,4 +34,5 @@ cli.add_command(kb_cmd, name="kb")
 cli.add_command(reconstruct)
 cli.add_command(regression_cmd, name="regression")
 cli.add_command(validate)
+cli.add_command(pnc_lookup_cmd, name="pnc-lookup")
 cli.add_command(verify)

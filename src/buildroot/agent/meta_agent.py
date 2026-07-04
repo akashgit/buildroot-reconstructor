@@ -221,6 +221,8 @@ def run_orchestrator(
     agent_timeout: int = 0,
     isolate_podman: bool = True,
     force: bool = False,
+    enable_pnc: bool = False,
+    pnc_output: bool = False,
 ) -> OrchestratorResult:
     """Run the orchestrator: prepass → KB query → spawn Claude Code agent → parse result."""
     start_time = time.time()
@@ -291,7 +293,7 @@ def run_orchestrator(
     # 1. Pre-pass
     logger.info("Running pre-pass for %s", coordinate)
     try:
-        prepass_findings = run_prepass(coordinate, workspace / "prepass")
+        prepass_findings = run_prepass(coordinate, workspace / "prepass", enable_pnc=enable_pnc)
     except Exception as e:
         logger.error("Pre-pass failed: %s", e)
         result.status = "prepass_failed"
