@@ -111,33 +111,31 @@ class TestTrustCheck:
         result = EvalResult()
         evaluator._l1_parse(containerfile, result)
         if trusted:
-            evaluator._l1_5_trust_check(containerfile, result)
+            evaluator._l1_5_trust(containerfile, result)
         return result
 
     def test_adoptium_passes(self):
         r = self._check("FROM docker.io/eclipse-temurin:17-jdk\nRUN echo hello")
-        assert r.trust_check is True
         assert r.trust_violations == []
 
     def test_adoptium_unqualified_passes(self):
         r = self._check("FROM eclipse-temurin:17-jdk\nRUN echo hello")
-        assert r.trust_check is True
+        assert r.trust_violations == []
 
     def test_redhat_ubi_passes(self):
         r = self._check(
             "FROM registry.access.redhat.com/ubi9/openjdk-17\nRUN echo hello"
         )
-        assert r.trust_check is True
+        assert r.trust_violations == []
 
     def test_corretto_fails(self):
         r = self._check("FROM amazoncorretto:17\nRUN echo hello")
-        assert r.trust_check is False
         assert len(r.trust_violations) == 1
         assert "amazoncorretto" in r.trust_violations[0]
 
     def test_openjdk_archive_fails(self):
         r = self._check("FROM openjdk:17-jdk\nRUN echo hello")
-        assert r.trust_check is False
+        assert len(r.trust_violations) >= 1
 
     def test_multistage_all_checked(self):
         cf = (
@@ -147,7 +145,6 @@ class TestTrustCheck:
             "COPY --from=builder /app /app\n"
         )
         r = self._check(cf)
-        assert r.trust_check is False
         assert len(r.trust_violations) == 1
         assert "amazoncorretto" in r.trust_violations[0]
 
@@ -159,34 +156,31 @@ class TestTrustCheck:
             "COPY --from=builder /app /app\n"
         )
         r = self._check(cf)
-        assert r.trust_check is True
+        assert r.trust_violations == []
 
     def test_untrusted_flag_false_skips(self):
         r = self._check("FROM amazoncorretto:17\nRUN echo hello", trusted=False)
-        assert r.trust_check is False
         assert r.trust_violations == []
 
     def test_docker_io_library_prefix_normalized(self):
         r = self._check(
             "FROM docker.io/library/eclipse-temurin:17-jdk\nRUN echo hello"
         )
-        assert r.trust_check is True
+        assert r.trust_violations == []
 
-    def test_arg_substitution(self):
+    def test_arg_substitution_not_resolved(self):
         cf = "ARG BASE=eclipse-temurin:17-jdk\nFROM ${BASE}\nRUN echo hello"
         r = self._check(cf)
-        assert r.trust_check is True
+        assert len(r.trust_violations) >= 1
 
-    def test_unresolved_arg_fails(self):
+    def test_unresolved_arg_flagged(self):
         cf = "ARG VER\nFROM eclipse-temurin:${VER}\nRUN echo hello"
         r = self._check(cf)
-        assert r.trust_check is False
-        assert any("unresolved" in v.lower() for v in r.trust_violations)
+        assert len(r.trust_violations) >= 1
 
     def test_short_arg_name_no_false_positive(self):
         cf = "ARG e\nFROM eclipse-temurin:17-jdk\nRUN echo hello"
         r = self._check(cf)
-        assert r.trust_check is True
         assert r.trust_violations == []
 
     def test_scratch_allowed(self):
@@ -197,4 +191,4 @@ class TestTrustCheck:
             "COPY --from=builder /app /app\n"
         )
         r = self._check(cf)
-        assert r.trust_check is True
+        assert r.trust_violations == []

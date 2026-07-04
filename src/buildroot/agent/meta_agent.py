@@ -19,7 +19,12 @@ from buildroot.agent.meta_prompt import (
 )
 from buildroot.agent.models import RecipeStore
 from buildroot.agent.prepass import PrePassFindings, run_prepass
+from buildroot.pipeline.models import BuildrootSpec, JdkSpec, PomData
 from buildroot.pipeline.orchestrator import parse_gav
+from buildroot.trust.delta import VariantResult, build_delta_report
+from buildroot.trust.registry import TrustedSourceRegistry
+from buildroot.trust.report import generate_trust_report
+from buildroot.trust.sbom import generate_sbom
 
 logger = logging.getLogger(__name__)
 
@@ -39,6 +44,8 @@ class OrchestratorResult:
     elapsed_seconds: float = 0.0
     cost_usd: float = 0.0
     error_message: str = ""
+    comparison_report: dict | None = None
+    build_log: str = ""
     trusted_reward: float = 0.0
     trusted_level: int = 0
     trusted_containerfile: str = ""
@@ -55,6 +62,10 @@ class OrchestratorResult:
             "elapsed_seconds": round(self.elapsed_seconds, 1),
             "cost_usd": round(self.cost_usd, 4),
         }
+        if self.comparison_report is not None:
+            d["comparison_report"] = self.comparison_report
+        if self.build_log:
+            d["build_log"] = self.build_log
         if self.trusted_reward > 0 or self.trusted_containerfile:
             d["trusted"] = {
                 "reward": round(self.trusted_reward, 4),
@@ -62,6 +73,20 @@ class OrchestratorResult:
                 "containerfile_path": self.trusted_containerfile_path,
             }
         return d
+
+    def phase2_findings(self) -> dict:
+        """Build a phase2 findings dict for handoff to phase 3."""
+        findings: dict = {
+            "best_containerfile": self.best_containerfile,
+            "best_reward": self.best_reward,
+            "best_level": self.best_level,
+            "path": self.path,
+        }
+        if self.comparison_report is not None and self.best_level >= 3:
+            findings["comparison_report"] = self.comparison_report
+        if self.build_log:
+            findings["build_log"] = self.build_log
+        return findings
 
 
 _BANNER = """\
@@ -302,9 +327,7 @@ def run_orchestrator(
         )
 
         # 10. Output restructuring
-        _restructure_output(workspace, result)
-        _generate_delta_report(workspace, result, coordinate, host)
-        _generate_trust_report(workspace, result, coordinate)
+        _restructure_output(result, workspace, coordinate)
 
     return result
 
@@ -327,12 +350,7 @@ def _run_trusted_phase(
     trusted_workspace = workspace / "trusted"
     trusted_workspace.mkdir(parents=True, exist_ok=True)
 
-    phase2_findings = {
-        "best_containerfile": phase2_result.best_containerfile,
-        "best_reward": phase2_result.best_reward,
-        "best_level": phase2_result.best_level,
-        "path": phase2_result.path,
-    }
+    phase2_findings = phase2_result.phase2_findings()
 
     if phase2_result.best_containerfile:
         ref_path = trusted_workspace / "phase2_reference.Containerfile"
@@ -503,185 +521,17 @@ def _scan_workspace_for_best(
             eval_result = evaluator.evaluate(cf_text, coordinate)
             result.best_reward = eval_result.reward
             result.best_level = eval_result.level_reached
+            if eval_result.comparison_report is not None:
+                report = eval_result.comparison_report
+                result.comparison_report = {
+                    "structural_match": report.structural.match,
+                    "metadata_match": report.metadata.match,
+                    "bytecode_match": report.bytecode.match,
+                    "verdict": report.verdict,
+                }
+            result.build_log = eval_result.build_log
         except Exception as e:
             logger.warning("Post-scan evaluation failed: %s", e)
-
-
-def _restructure_output(
-    workspace: Path,
-    result: OrchestratorResult,
-) -> None:
-    """Create exact/ and trusted/ output directories with final artifacts."""
-    exact_dir = workspace / "exact"
-    exact_dir.mkdir(parents=True, exist_ok=True)
-
-    if result.best_containerfile:
-        (exact_dir / "Containerfile").write_text(result.best_containerfile)
-        (exact_dir / "buildroot.json").write_text(json.dumps({
-            "coordinate": result.coordinate,
-            "reward": result.best_reward,
-            "level": result.best_level,
-            "path": result.path,
-        }, indent=2))
-
-    trusted_dir = workspace / "trusted"
-    trusted_dir.mkdir(parents=True, exist_ok=True)
-
-    if result.trusted_containerfile:
-        trusted_cf_path = trusted_dir / "Containerfile"
-        if not trusted_cf_path.exists():
-            trusted_cf_path.write_text(result.trusted_containerfile)
-        (trusted_dir / "buildroot.json").write_text(json.dumps({
-            "coordinate": result.coordinate,
-            "reward": result.trusted_reward,
-            "level": result.trusted_level,
-            "path": "trusted",
-        }, indent=2))
-
-
-def _generate_delta_report(
-    workspace: Path,
-    result: OrchestratorResult,
-    coordinate: str,
-    host: str,
-) -> None:
-    """Generate delta_report.json comparing exact and trusted variants."""
-    exact_cf = workspace / "exact" / "Containerfile"
-    trusted_cf = workspace / "trusted" / "Containerfile"
-
-    report = {
-        "coordinate": coordinate,
-        "exact_reward": result.best_reward,
-        "trusted_reward": result.trusted_reward,
-        "exact_level": result.best_level,
-        "trusted_level": result.trusted_level,
-    }
-
-    if not exact_cf.exists() or not trusted_cf.exists():
-        report["functional_equivalence"] = "INCOMPLETE"
-        report["reason"] = "One or both Containerfiles missing"
-    elif result.best_level < 3 or result.trusted_level < 3:
-        report["functional_equivalence"] = "INCOMPLETE"
-        report["reason"] = (
-            f"Both must reach L3+ for comparison "
-            f"(exact=L{result.best_level}, trusted=L{result.trusted_level})"
-        )
-    else:
-        try:
-            evaluator = Evaluator(host=host)
-            exact_eval = evaluator.evaluate(exact_cf.read_text(), coordinate)
-            trusted_eval = evaluator.evaluate(
-                trusted_cf.read_text(), coordinate, trusted=True
-            )
-
-            if exact_eval.comparison_report and trusted_eval.comparison_report:
-                exact_score = exact_eval.comparison_report.equivalence_score()
-                trusted_score = trusted_eval.comparison_report.equivalence_score()
-                avg_score = (exact_score + trusted_score) / 2
-
-                if exact_score == 1.0 and trusted_score == 1.0:
-                    equiv = "IDENTICAL"
-                elif avg_score >= 0.95:
-                    equiv = "EQUIVALENT"
-                else:
-                    equiv = "DIVERGENT"
-
-                report["functional_equivalence"] = equiv
-                report["exact_base_image"] = _extract_base_image(exact_cf.read_text())
-                report["trusted_base_image"] = _extract_base_image(trusted_cf.read_text())
-                report["structural_match"] = (
-                    exact_eval.comparison_report.structural.match
-                    and trusted_eval.comparison_report.structural.match
-                )
-                report["metadata_match"] = (
-                    exact_eval.comparison_report.metadata.match
-                    and trusted_eval.comparison_report.metadata.match
-                )
-                report["bytecode_match"] = (
-                    exact_eval.comparison_report.bytecode.match
-                    and trusted_eval.comparison_report.bytecode.match
-                )
-            else:
-                report["functional_equivalence"] = "INCOMPLETE"
-                report["reason"] = "Comparison reports not available from eval"
-        except Exception as e:
-            logger.warning("Delta report generation failed: %s", e)
-            report["functional_equivalence"] = "ERROR"
-            report["reason"] = str(e)
-
-    (workspace / "delta_report.json").write_text(json.dumps(report, indent=2) + "\n")
-    logger.info("Delta report written to %s", workspace / "delta_report.json")
-
-
-def _generate_trust_report(
-    workspace: Path,
-    result: OrchestratorResult,
-    coordinate: str,
-) -> None:
-    """Generate trust_report.md with side-by-side comparison."""
-    exact_cf = workspace / "exact" / "Containerfile"
-    trusted_cf = workspace / "trusted" / "Containerfile"
-
-    exact_base = _extract_base_image(exact_cf.read_text()) if exact_cf.exists() else "N/A"
-    trusted_base = _extract_base_image(trusted_cf.read_text()) if trusted_cf.exists() else "N/A"
-
-    delta_path = workspace / "delta_report.json"
-    func_equiv = "N/A"
-    if delta_path.exists():
-        try:
-            delta = json.loads(delta_path.read_text())
-            func_equiv = delta.get("functional_equivalence", "N/A")
-        except (json.JSONDecodeError, OSError):
-            pass
-
-    if result.trusted_reward >= 0.98:
-        recommendation = "Use trusted variant — high reward with verified supply chain"
-    elif result.trusted_reward >= result.best_reward * 0.95:
-        recommendation = "Both equivalent — prefer trusted variant for supply chain security"
-    elif result.trusted_containerfile:
-        recommendation = "Use exact variant — trusted variant has lower fidelity, investigation needed"
-    else:
-        recommendation = "Investigation needed — Phase 3 did not produce a result"
-
-    report = f"""\
-# Trust Report for {coordinate}
-
-## Summary
-
-| Dimension | Exact (Phase 2) | Trusted (Phase 3) |
-|-----------|-----------------|-------------------|
-| Reward | {result.best_reward:.4f} | {result.trusted_reward:.4f} |
-| Level | L{result.best_level} | L{result.trusted_level} |
-| Base Image | `{exact_base}` | `{trusted_base}` |
-
-## Functional Equivalence
-
-**Verdict:** {func_equiv}
-
-## Source Analysis
-
-- **Exact variant** uses `{exact_base}` — trust status depends on the specific image
-- **Trusted variant** uses `{trusted_base}` — verified supply chain (Adoptium SLSA L3 or Red Hat UBI)
-
-## Recommendation
-
-{recommendation}
-"""
-
-    (workspace / "trust_report.md").write_text(report)
-    logger.info("Trust report written to %s", workspace / "trust_report.md")
-
-
-def _extract_base_image(containerfile: str) -> str:
-    """Extract the last FROM image from a Containerfile."""
-    from dockerfile_parse import DockerfileParser
-    parser = DockerfileParser()
-    parser.content = containerfile
-    last_from = "unknown"
-    for instruction in parser.structure:
-        if instruction["instruction"] == "FROM":
-            last_from = instruction["value"].split()[0]
-    return last_from
 
 
 def _record_learnings(
@@ -760,3 +610,122 @@ def _update_matched_kb_entries(
                 save_entry(entry, DEFAULT_KB_DIR)
             except Exception:
                 pass
+
+
+def _build_variant_result_from_cascade(
+    containerfile_path: str,
+    result: OrchestratorResult,
+    variant_type: str,
+) -> VariantResult:
+    """Build a VariantResult from cascade pipeline output."""
+    base_image = ""
+    jdk_version = ""
+    if result.best_containerfile:
+        for line in result.best_containerfile.splitlines():
+            stripped = line.strip()
+            if stripped.upper().startswith("FROM "):
+                base_image = stripped.split()[1]
+                break
+
+    registry = TrustedSourceRegistry()
+    trusted, source = registry.is_trusted_image(base_image)
+    jdk_source = source.provider if source else "unknown"
+    provenance_tier = source.tier.value if source else None
+
+    return VariantResult(
+        name=variant_type,
+        containerfile_path=Path(containerfile_path) if containerfile_path else Path(),
+        base_image=base_image,
+        jdk_version=jdk_version,
+        jdk_source=jdk_source,
+        provenance_tier=provenance_tier,
+    )
+
+
+def _load_or_build_spec(variant_dir: str) -> BuildrootSpec:
+    """Load BuildrootSpec from buildroot.json or construct a minimal one."""
+    br_path = Path(variant_dir) / "buildroot.json"
+    if br_path.exists():
+        try:
+            data = json.loads(br_path.read_text())
+            pom = PomData(
+                group_id=data.get("group_id", ""),
+                artifact_id=data.get("artifact_id", ""),
+                version=data.get("version", ""),
+            )
+            jdk_data = data.get("jdk_version", {})
+            jdk = JdkSpec(
+                version=jdk_data.get("value", "") if isinstance(jdk_data, dict) else str(jdk_data),
+                base_image=data.get("base_image", ""),
+            )
+            return BuildrootSpec(pom_data=pom, jdk_spec=jdk)
+        except (json.JSONDecodeError, OSError):
+            pass
+    return BuildrootSpec()
+
+
+def _restructure_output(
+    result: OrchestratorResult,
+    workspace: Path,
+    coordinate: str,
+    output_dir: Path | None = None,
+) -> None:
+    """Generate trust artifacts (delta_report, trust_report, SBOM) and copy to output_dir."""
+    group_id, artifact_id, version = parse_gav(coordinate)
+
+    exact_dir = workspace / "exact"
+    trusted_dir = workspace / "trusted"
+    exact_dir.mkdir(parents=True, exist_ok=True)
+    trusted_dir.mkdir(parents=True, exist_ok=True)
+
+    if result.best_containerfile:
+        (exact_dir / "Containerfile").write_text(result.best_containerfile)
+
+    exact_result = _build_variant_result_from_cascade(
+        str(exact_dir / "Containerfile"), result, "exact",
+    )
+    trusted_result = _build_variant_result_from_cascade(
+        str(trusted_dir / "Containerfile") if (trusted_dir / "Containerfile").exists() else "",
+        result,
+        "trusted",
+    )
+
+    delta = build_delta_report(exact_result, trusted_result)
+    delta.coordinate = coordinate
+    delta.exact_reward = result.best_reward
+
+    if isinstance(result.comparison_report, dict):
+        cr = result.comparison_report
+        delta.structural_match = cr.get("structural_match")
+        delta.metadata_match = cr.get("metadata_match")
+        delta.bytecode_match = cr.get("bytecode_match")
+        verdict = cr.get("verdict", "")
+        if verdict in ("IDENTICAL", "EQUIVALENT", "DIVERGENT"):
+            delta.functional_equivalence = verdict
+
+    delta_path = workspace / "delta_report.json"
+    delta_path.write_text(json.dumps(delta.to_dict(), indent=2) + "\n")
+
+    spec = _load_or_build_spec(str(workspace))
+    spec.pom_data.group_id = group_id
+    spec.pom_data.artifact_id = artifact_id
+    spec.pom_data.version = version
+
+    generate_trust_report(spec, delta, workspace)
+    generate_sbom(spec, "exact", exact_dir)
+    generate_sbom(spec, "trusted", trusted_dir)
+
+    if output_dir is not None:
+        import shutil
+
+        gav_dir = output_dir / group_id.replace(".", "/") / artifact_id / version
+        gav_dir.mkdir(parents=True, exist_ok=True)
+        for item_name in ["exact", "trusted", "delta_report.json", "trust_report.md"]:
+            src = workspace / item_name
+            dst = gav_dir / item_name
+            if src.is_dir():
+                if dst.exists():
+                    shutil.rmtree(dst)
+                shutil.copytree(src, dst)
+            elif src.is_file():
+                shutil.copy2(src, dst)

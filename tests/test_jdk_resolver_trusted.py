@@ -86,7 +86,7 @@ class TestTrustedImageMap:
 
 class TestIntegrationStandardAndTrusted:
     def test_different_base_images_for_jdk9(self):
-        from buildroot.pipeline.models import JdkSpec, PomData
+        from buildroot.pipeline.models import PomData
 
         resolver = JdkResolver()
         registry = TrustedSourceRegistry()

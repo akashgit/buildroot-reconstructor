@@ -1,7 +1,5 @@
 """Tests for trust report generation."""
 
-from pathlib import Path
-
 import pytest
 
 from buildroot.pipeline.models import (

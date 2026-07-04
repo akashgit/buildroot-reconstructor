@@ -286,7 +286,7 @@ def _gaps_and_risks(spec: BuildrootSpec) -> str:
             "",
             f"- JDK {spec.jdk_requested_version} substituted with JDK {spec.jdk_spec.version} "
             f"— API compatibility risk: newer JDK may include API changes that affect build output",
-            f"- Bytecode target level may differ — verify `-target` / `--release` compiler flags",
+            "- Bytecode target level may differ — verify `-target` / `--release` compiler flags",
             "",
         ]
 
@@ -400,7 +400,7 @@ def _next_steps(coordinate: str, delta: DeltaReport) -> str:
         ]
     else:
         lines += [
-            f"1. Review the variant comparison and gap analysis above.",
+            "1. Review the variant comparison and gap analysis above.",
             f"2. Run `buildroot agent {coordinate}` for deeper analysis if needed.",
         ]
 

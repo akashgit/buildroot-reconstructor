@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-from pathlib import Path
 
 from buildroot.pipeline.models import BuildrootSpec, JdkSpec
 from buildroot.trust.sbom import CYCLONEDX_SPEC_VERSION, TOOL_NAME, TOOL_VERSION, generate_sbom
