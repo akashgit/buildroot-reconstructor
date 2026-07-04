@@ -1,9 +1,11 @@
 """Tests for agent evaluator — L1-L4 scoring logic with mocked SSH."""
 
-from unittest.mock import MagicMock, patch
+import tempfile
+from pathlib import Path
+from unittest.mock import MagicMock, call, patch
 
 from buildroot.agent.evaluator import Evaluator, _extract_error_lines
-from buildroot.agent.models import EvalResult
+from buildroot.agent.models import EvalResult, TestResult
 
 
 VALID_CONTAINERFILE = """\
@@ -192,3 +194,235 @@ class TestTrustCheck:
         )
         r = self._check(cf)
         assert r.trust_violations == []
+
+
+class TestL4FallbackPath:
+    def test_fallback_when_jar_unavailable(self):
+        evaluator = Evaluator()
+        result = EvalResult(l3_command=True)
+        with patch.object(evaluator, "_download_original_jar", return_value=None), \
+             patch.object(evaluator, "l4_fallback_signals", return_value={
+                 "bytecode_version_match": True,
+                 "manifest_sanity": True,
+             }):
+            evaluator._l4_match("test-tag", "org.example:test:1.0", result)
+        assert result.l4_score > 0
+        assert result.l4_signal_source == "fallback_signals"
+        assert result.bytecode_version_match is True
+        assert result.manifest_sanity is True
+        assert "L4 (approximate)" in result.error_summary
+
+    def test_fallback_with_test_result(self):
+        evaluator = Evaluator()
+        result = EvalResult(l3_command=True)
+        result.test_result = TestResult(available=True, passed=True, run=10, tests_passed=10)
+        with patch.object(evaluator, "_download_original_jar", return_value=None), \
+             patch.object(evaluator, "l4_fallback_signals", return_value={
+                 "bytecode_version_match": True,
+                 "manifest_sanity": True,
+             }):
+            evaluator._l4_match("test-tag", "org.example:test:1.0", result)
+        assert result.unit_tests_pass is True
+        score_with_tests = result.l4_score
+
+        result2 = EvalResult(l3_command=True)
+        with patch.object(evaluator, "_download_original_jar", return_value=None), \
+             patch.object(evaluator, "l4_fallback_signals", return_value={
+                 "bytecode_version_match": True,
+                 "manifest_sanity": True,
+             }):
+            evaluator._l4_match("test-tag", "org.example:test:1.0", result2)
+        assert result2.unit_tests_pass is None
+        assert score_with_tests >= result2.l4_score
+
+    def test_fallback_partial_signals(self):
+        evaluator = Evaluator()
+        result = EvalResult(l3_command=True)
+        with patch.object(evaluator, "_download_original_jar", return_value=None), \
+             patch.object(evaluator, "l4_fallback_signals", return_value={
+                 "manifest_sanity": True,
+             }):
+            evaluator._l4_match("test-tag", "org.example:test:1.0", result)
+        assert result.l4_score > 0
+        assert result.bytecode_version_match is None
+        assert result.manifest_sanity is True
+        assert result.l4_signal_source == "fallback_signals"
+
+    def test_normal_l4_path_unchanged(self):
+        evaluator = Evaluator()
+        result = EvalResult(l3_command=True)
+
+        mock_report = MagicMock()
+        mock_report.verdict = "EQUIVALENT"
+        mock_report.equivalence_score.return_value = 0.95
+        mock_report.structural.match = True
+        mock_report.metadata.match = True
+        mock_report.bytecode.match = False
+        mock_report.bytecode.classes_divergent = ["Foo.class"]
+
+        from pathlib import Path
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmpdir:
+            jar_path = Path(tmpdir) / "original.jar"
+            jar_path.write_bytes(b"fake jar")
+            rebuilt_path = Path(tmpdir) / "rebuilt.jar"
+            rebuilt_path.write_bytes(b"fake rebuilt")
+
+            with patch.object(evaluator, "_download_original_jar", return_value=jar_path), \
+                 patch.object(evaluator, "_extract_rebuilt_jar", return_value=rebuilt_path), \
+                 patch("buildroot.agent.evaluator.compare_jars", return_value=mock_report):
+                evaluator._l4_match("test-tag", "org.example:test:1.0", result)
+
+        assert result.l4_score == 0.95
+        assert result.l4_signal_source == "full_comparison"
+        assert result.comparison_verdict == "EQUIVALENT"
+
+    def test_fallback_computes_reward_above_050(self):
+        evaluator = Evaluator()
+        result = EvalResult(l1_parse=True, l2_build=True, l3_command=True)
+        result.test_result = TestResult(available=True, passed=True)
+        with patch.object(evaluator, "_download_original_jar", return_value=None), \
+             patch.object(evaluator, "l4_fallback_signals", return_value={
+                 "bytecode_version_match": True,
+                 "manifest_sanity": True,
+                 "structural_match": 0.8,
+             }):
+            evaluator._l4_match("test-tag", "org.example:test:1.0", result)
+        result.compute_reward()
+        assert result.reward > 0.50
+
+    def test_to_dict_includes_fallback_signals(self):
+        result = EvalResult(
+            l1_parse=True, l2_build=True, l3_command=True,
+            l4_score=0.7, reward=0.85, level_reached=3,
+            l4_signal_source="fallback_signals",
+            bytecode_version_match=True,
+            manifest_sanity=True,
+            unit_tests_pass=False,
+            structural_match=0.6,
+        )
+        d = result.to_dict()
+        assert d["l4_signal_source"] == "fallback_signals"
+        assert "fallback_signals" in d
+        assert d["fallback_signals"]["bytecode_version_match"] is True
+        assert d["fallback_signals"]["structural_match"] == 0.6
+
+    def test_to_dict_full_comparison_no_fallback(self):
+        result = EvalResult(
+            l1_parse=True, l2_build=True, l3_command=True,
+            l4_score=0.95, reward=0.97, level_reached=3,
+            l4_signal_source="full_comparison",
+        )
+        d = result.to_dict()
+        assert d["l4_signal_source"] == "full_comparison"
+        assert "fallback_signals" not in d
+
+
+class TestPodmanCreateCpPattern:
+    """Tests for the podman create + podman cp extraction pattern."""
+
+    @patch("buildroot.agent.evaluator.subprocess.run")
+    def test_create_container_returns_id(self, mock_run):
+        mock_run.return_value = MagicMock(
+            returncode=0, stdout="abc123def456\n", stderr=""
+        )
+        evaluator = Evaluator()
+        cid = evaluator._create_container("test-tag")
+        assert cid == "abc123def456"
+        mock_run.assert_called_once_with(
+            ["podman", "create", "test-tag", "true"],
+            capture_output=True, text=True, timeout=30,
+        )
+
+    @patch("buildroot.agent.evaluator.subprocess.run")
+    def test_create_container_failure_returns_none(self, mock_run):
+        mock_run.return_value = MagicMock(returncode=1, stdout="", stderr="error")
+        evaluator = Evaluator()
+        assert evaluator._create_container("test-tag") is None
+
+    @patch("buildroot.agent.evaluator.subprocess.run")
+    def test_remove_container(self, mock_run):
+        mock_run.return_value = MagicMock(returncode=0)
+        evaluator = Evaluator()
+        evaluator._remove_container("abc123")
+        mock_run.assert_called_once_with(
+            ["podman", "rm", "abc123"],
+            capture_output=True, timeout=30,
+        )
+
+    @patch("buildroot.agent.evaluator.subprocess.run")
+    def test_extract_rebuilt_jar_uses_podman_cp(self, mock_run):
+        evaluator = Evaluator()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            dest = Path(tmpdir)
+            jar_dir = dest / "jars"
+            jar_dir.mkdir(parents=True)
+            fake_jar = jar_dir / "test-1.0.jar"
+            fake_jar.write_bytes(b"fake jar content")
+
+            mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
+
+            result = evaluator._extract_jar_from_container(
+                "container-id", "test", "1.0", dest,
+            )
+            cp_calls = [c for c in mock_run.call_args_list if "cp" in str(c)]
+            assert len(cp_calls) >= 1
+
+    @patch("buildroot.agent.evaluator.subprocess.run")
+    def test_extract_rebuilt_jar_creates_own_container_when_none_given(self, mock_run):
+        mock_run.side_effect = [
+            MagicMock(returncode=0, stdout="cid123\n", stderr=""),
+            MagicMock(returncode=1, stdout="", stderr="no such dir"),
+            MagicMock(returncode=1, stdout="", stderr="no such dir"),
+            MagicMock(returncode=1, stdout="", stderr="no such dir"),
+            MagicMock(returncode=1, stdout="", stderr="no such dir"),
+            MagicMock(returncode=0, stdout="", stderr=""),
+        ]
+        evaluator = Evaluator()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            result = evaluator._extract_rebuilt_jar("tag", "art", "1.0", Path(tmpdir))
+        assert mock_run.call_args_list[0] == call(
+            ["podman", "create", "tag", "true"],
+            capture_output=True, text=True, timeout=30,
+        )
+        assert mock_run.call_args_list[-1] == call(
+            ["podman", "rm", "cid123"],
+            capture_output=True, timeout=30,
+        )
+
+    @patch("buildroot.agent.evaluator.subprocess.run")
+    def test_fallback_signals_creates_one_container(self, mock_run):
+        """l4_fallback_signals creates one container and reuses it."""
+        mock_run.side_effect = [
+            MagicMock(returncode=0, stdout="shared-cid\n", stderr=""),
+            MagicMock(returncode=1, stdout="", stderr=""),
+            MagicMock(returncode=1, stdout="", stderr=""),
+            MagicMock(returncode=1, stdout="", stderr=""),
+            MagicMock(returncode=1, stdout="", stderr=""),
+            MagicMock(returncode=0, stdout="", stderr=""),
+        ]
+        evaluator = Evaluator()
+        signals = evaluator.l4_fallback_signals("tag", "org.example:test:1.0")
+        create_calls = [c for c in mock_run.call_args_list if "create" in str(c)]
+        assert len(create_calls) == 1
+        rm_calls = [c for c in mock_run.call_args_list if "\"rm\"" in str(c) or "'rm'" in str(c)]
+        assert len(rm_calls) == 1
+
+    @patch("buildroot.agent.evaluator.subprocess.run")
+    def test_extract_source_uses_podman_cp(self, mock_run):
+        """_extract_source_from_container uses podman cp, not podman run."""
+        evaluator = Evaluator()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            dest = Path(tmpdir) / "source"
+            dest.mkdir()
+            java_file = dest / "main" / "java" / "com" / "Test.java"
+            java_file.parent.mkdir(parents=True)
+            java_file.write_text("class Test {}")
+
+            mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
+            result = evaluator._extract_source_from_container("cid", dest)
+            assert result == dest
+            run_calls = [c for c in mock_run.call_args_list if "run" in str(c.args[0]) if isinstance(c.args[0], list)]
+            podman_run_calls = [c for c in mock_run.call_args_list
+                               if isinstance(c.args[0], list) and len(c.args[0]) > 1 and c.args[0][1] == "run"]
+            assert len(podman_run_calls) == 0

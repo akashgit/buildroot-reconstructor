@@ -125,7 +125,23 @@ When L3 passes, read the comparison report carefully:
 - `metadata.match` + `metadata.manifest_diff_keys`
 - `bytecode.match` + `bytecode.classes_divergent`
 
-Focus your fixes on whichever dimension is failing."""
+Focus your fixes on whichever dimension is failing.
+
+## L4' Approximate Scoring (when reference JAR unavailable)
+
+When the original JAR is not on Maven Central, L4 uses approximate scoring (L4'):
+- **Bytecode version match (0.30)**: Built .class files target expected JDK version
+- **Manifest sanity (0.20)**: MANIFEST.MF + pom.properties GAV correct
+- **Unit test pass (0.20)**: Project's test suite passes
+- **Structural match (0.30)**: Built classes correspond to source .java files
+
+L4' score replaces L4 in the reward formula. Check `l4_signal_source` in eval output:
+- `"full_comparison"` = normal L4 (reference comparison)
+- `"fallback_signals"` = L4' (approximate)
+
+Read `fallback_signals` in eval output for per-signal details.
+To improve L4' score: fix JDK version (bytecode), ensure correct GAV (manifest),
+fix test failures (tests), ensure all source compiles (structural)."""
 
 
 def _tool_docs_section(v3_available: bool) -> str:

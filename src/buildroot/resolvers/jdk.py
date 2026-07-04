@@ -22,9 +22,9 @@ from buildroot.utils.maven_central import fetch_jar_manifest_jdk
 logger = logging.getLogger(__name__)
 
 DISTRIBUTION_IMAGE_MAP = {
-    "temurin": "eclipse-temurin",
-    "adopt": "eclipse-temurin",
-    "adopt-hotspot": "eclipse-temurin",
+    "temurin": "registry.access.redhat.com/ubi9/openjdk",
+    "adopt": "registry.access.redhat.com/ubi9/openjdk",
+    "adopt-hotspot": "registry.access.redhat.com/ubi9/openjdk",
     "corretto": "amazoncorretto",
     "zulu": "azul/zulu-openjdk",
     "liberica": "bellsoft/liberica-openjdk-debian",
@@ -33,18 +33,16 @@ DISTRIBUTION_IMAGE_MAP = {
 }
 
 DEFAULT_DISTRIBUTION = "temurin"
-DEFAULT_IMAGE_BASE = "eclipse-temurin"
+DEFAULT_IMAGE_BASE = "registry.access.redhat.com/ubi9/openjdk"
 DEFAULT_JDK_VERSION = "17"
 
-IMAGE_TAG_SUFFIX = {
-    "eclipse-temurin": "-jdk",
-}
+IMAGE_TAG_SUFFIX = {}
 
 JAVA_HOME_VERSION_RE = re.compile(r"JAVA_HOME_(\d+)_")
 ARTIFACT_JDK_RE = re.compile(r'jdk(\d+)(?:on|to\d+)?$|[-_]jdk(\d+)$', re.IGNORECASE)
 
 TRUSTED_IMAGE_MAP = {
-    "adoptium": "docker.io/eclipse-temurin:{version}-jdk",
+    "adoptium": "registry.access.redhat.com/ubi9/openjdk-{version}",
     "redhat_ubi_11": "registry.access.redhat.com/ubi8/openjdk-{version}",
     "redhat_ubi": "registry.access.redhat.com/ubi9/openjdk-{version}",
     "corretto": "docker.io/amazoncorretto:{version}",
@@ -341,7 +339,10 @@ class JdkResolver:
         image_base = DISTRIBUTION_IMAGE_MAP.get(dist_lower, DEFAULT_IMAGE_BASE)
         tag_version = self._normalize_version_for_tag(version)
         suffix = IMAGE_TAG_SUFFIX.get(image_base, "")
-        image = f"{image_base}:{tag_version}{suffix}"
+        if image_base.startswith("registry.access.redhat.com/") and image_base.endswith("/openjdk"):
+            image = f"{image_base}-{tag_version}"
+        else:
+            image = f"{image_base}:{tag_version}{suffix}"
         if "." not in image_base.split("/")[0]:
             image = f"docker.io/{'library/' if '/' not in image_base else ''}{image}"
         return image

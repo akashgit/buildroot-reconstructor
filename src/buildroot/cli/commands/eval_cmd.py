@@ -23,7 +23,8 @@ import click
 @click.option("--no-cache", is_flag=True, help="Disable podman layer caching (rebuild all layers)")
 @click.option("--trusted", is_flag=True, default=False,
               help="Enforce trusted-source-only constraint (L1.5 gate)")
-def eval_cmd(containerfile, coordinate, host, timeout, pretty, report, no_cache, trusted):
+@click.option("--jdk-version", default="", help="Expected JDK version for fallback bytecode check")
+def eval_cmd(containerfile, coordinate, host, timeout, pretty, report, no_cache, trusted, jdk_version):
     """Evaluate a Containerfile against a Maven Central artifact.
 
     Returns JSON with L1-L4 scores, comparison report, and reward.
@@ -42,7 +43,7 @@ def eval_cmd(containerfile, coordinate, host, timeout, pretty, report, no_cache,
     cf_text = Path(containerfile).read_text()
     capture_full_log = report != "none"
     evaluator = Evaluator(host=host, timeout=timeout, no_cache=no_cache)
-    result = evaluator.evaluate(cf_text, coordinate, capture_full_log=capture_full_log, trusted=trusted)
+    result = evaluator.evaluate(cf_text, coordinate, capture_full_log=capture_full_log, trusted=trusted, jdk_version=jdk_version)
 
     if report != "none":
         from buildroot.eval.audit import build_audit_log, extract_dynamic_assets, extract_static_assets
@@ -87,6 +88,16 @@ def eval_cmd(containerfile, coordinate, host, timeout, pretty, report, no_cache,
         "error_summary": result.error_summary or None,
         "diff_summary": getattr(result, "diff_summary", None),
     }
+
+    if result.l4_signal_source:
+        output["l4_signal_source"] = result.l4_signal_source
+    if result.l4_signal_source == "fallback_signals":
+        output["fallback_signals"] = {
+            "bytecode_version_match": result.bytecode_version_match,
+            "manifest_sanity": result.manifest_sanity,
+            "unit_tests_pass": result.unit_tests_pass,
+            "structural_match": result.structural_match,
+        }
 
     if result.trust_check or result.trust_violations:
         output["trust_check"] = result.trust_check

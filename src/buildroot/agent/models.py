@@ -147,7 +147,11 @@ class EvalResult:
     trust_check: bool = False
     trust_violations: list[str] = field(default_factory=list)
     test_result: TestResult | None = None
-    trust_violations: list[str] = field(default_factory=list)
+    bytecode_version_match: bool | None = None
+    manifest_sanity: bool | None = None
+    unit_tests_pass: bool | None = None
+    structural_match: float | None = None
+    l4_signal_source: str = ""
 
     def compute_reward(self) -> float:
         if self.l4_match:
@@ -186,6 +190,15 @@ class EvalResult:
             d["test_result"] = self.test_result.to_dict()
         if self.trust_violations:
             d["trust_violations"] = self.trust_violations
+        if self.l4_signal_source:
+            d["l4_signal_source"] = self.l4_signal_source
+        if self.l4_signal_source == "fallback_signals":
+            d["fallback_signals"] = {
+                "bytecode_version_match": self.bytecode_version_match,
+                "manifest_sanity": self.manifest_sanity,
+                "unit_tests_pass": self.unit_tests_pass,
+                "structural_match": self.structural_match,
+            }
         return d
 
 
