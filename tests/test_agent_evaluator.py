@@ -1,6 +1,8 @@
 """Tests for agent evaluator — L1-L4 scoring logic with mocked SSH."""
 
-from unittest.mock import MagicMock, patch
+import tempfile
+from pathlib import Path
+from unittest.mock import MagicMock, call, patch
 
 from buildroot.agent.evaluator import Evaluator, _extract_error_lines
 from buildroot.agent.models import EvalResult, TestResult
@@ -314,3 +316,113 @@ class TestL4FallbackPath:
         d = result.to_dict()
         assert d["l4_signal_source"] == "full_comparison"
         assert "fallback_signals" not in d
+
+
+class TestPodmanCreateCpPattern:
+    """Tests for the podman create + podman cp extraction pattern."""
+
+    @patch("buildroot.agent.evaluator.subprocess.run")
+    def test_create_container_returns_id(self, mock_run):
+        mock_run.return_value = MagicMock(
+            returncode=0, stdout="abc123def456\n", stderr=""
+        )
+        evaluator = Evaluator()
+        cid = evaluator._create_container("test-tag")
+        assert cid == "abc123def456"
+        mock_run.assert_called_once_with(
+            ["podman", "create", "test-tag", "true"],
+            capture_output=True, text=True, timeout=30,
+        )
+
+    @patch("buildroot.agent.evaluator.subprocess.run")
+    def test_create_container_failure_returns_none(self, mock_run):
+        mock_run.return_value = MagicMock(returncode=1, stdout="", stderr="error")
+        evaluator = Evaluator()
+        assert evaluator._create_container("test-tag") is None
+
+    @patch("buildroot.agent.evaluator.subprocess.run")
+    def test_remove_container(self, mock_run):
+        mock_run.return_value = MagicMock(returncode=0)
+        evaluator = Evaluator()
+        evaluator._remove_container("abc123")
+        mock_run.assert_called_once_with(
+            ["podman", "rm", "abc123"],
+            capture_output=True, timeout=30,
+        )
+
+    @patch("buildroot.agent.evaluator.subprocess.run")
+    def test_extract_rebuilt_jar_uses_podman_cp(self, mock_run):
+        evaluator = Evaluator()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            dest = Path(tmpdir)
+            jar_dir = dest / "jars"
+            jar_dir.mkdir(parents=True)
+            fake_jar = jar_dir / "test-1.0.jar"
+            fake_jar.write_bytes(b"fake jar content")
+
+            mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
+
+            result = evaluator._extract_jar_from_container(
+                "container-id", "test", "1.0", dest,
+            )
+            cp_calls = [c for c in mock_run.call_args_list if "cp" in str(c)]
+            assert len(cp_calls) >= 1
+
+    @patch("buildroot.agent.evaluator.subprocess.run")
+    def test_extract_rebuilt_jar_creates_own_container_when_none_given(self, mock_run):
+        mock_run.side_effect = [
+            MagicMock(returncode=0, stdout="cid123\n", stderr=""),
+            MagicMock(returncode=1, stdout="", stderr="no such dir"),
+            MagicMock(returncode=1, stdout="", stderr="no such dir"),
+            MagicMock(returncode=1, stdout="", stderr="no such dir"),
+            MagicMock(returncode=1, stdout="", stderr="no such dir"),
+            MagicMock(returncode=0, stdout="", stderr=""),
+        ]
+        evaluator = Evaluator()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            result = evaluator._extract_rebuilt_jar("tag", "art", "1.0", Path(tmpdir))
+        assert mock_run.call_args_list[0] == call(
+            ["podman", "create", "tag", "true"],
+            capture_output=True, text=True, timeout=30,
+        )
+        assert mock_run.call_args_list[-1] == call(
+            ["podman", "rm", "cid123"],
+            capture_output=True, timeout=30,
+        )
+
+    @patch("buildroot.agent.evaluator.subprocess.run")
+    def test_fallback_signals_creates_one_container(self, mock_run):
+        """l4_fallback_signals creates one container and reuses it."""
+        mock_run.side_effect = [
+            MagicMock(returncode=0, stdout="shared-cid\n", stderr=""),
+            MagicMock(returncode=1, stdout="", stderr=""),
+            MagicMock(returncode=1, stdout="", stderr=""),
+            MagicMock(returncode=1, stdout="", stderr=""),
+            MagicMock(returncode=1, stdout="", stderr=""),
+            MagicMock(returncode=0, stdout="", stderr=""),
+        ]
+        evaluator = Evaluator()
+        signals = evaluator.l4_fallback_signals("tag", "org.example:test:1.0")
+        create_calls = [c for c in mock_run.call_args_list if "create" in str(c)]
+        assert len(create_calls) == 1
+        rm_calls = [c for c in mock_run.call_args_list if "\"rm\"" in str(c) or "'rm'" in str(c)]
+        assert len(rm_calls) == 1
+
+    @patch("buildroot.agent.evaluator.subprocess.run")
+    def test_extract_source_uses_podman_cp(self, mock_run):
+        """_extract_source_from_container uses podman cp, not podman run."""
+        evaluator = Evaluator()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            dest = Path(tmpdir) / "source"
+            dest.mkdir()
+            java_file = dest / "main" / "java" / "com" / "Test.java"
+            java_file.parent.mkdir(parents=True)
+            java_file.write_text("class Test {}")
+
+            mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
+            result = evaluator._extract_source_from_container("cid", dest)
+            assert result == dest
+            run_calls = [c for c in mock_run.call_args_list if "run" in str(c.args[0]) if isinstance(c.args[0], list)]
+            podman_run_calls = [c for c in mock_run.call_args_list
+                               if isinstance(c.args[0], list) and len(c.args[0]) > 1 and c.args[0][1] == "run"]
+            assert len(podman_run_calls) == 0

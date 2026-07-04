@@ -294,46 +294,88 @@ class Evaluator:
             logger.warning("Could not obtain original JAR: %s", e)
             return None
 
+    def _create_container(self, tag: str) -> str | None:
+        """Create a stopped container from an image, returning the container ID."""
+        try:
+            proc = self._run(
+                ["podman", "create", tag, "true"],
+                capture_output=True, text=True, timeout=30,
+            )
+            if proc.returncode == 0 and proc.stdout.strip():
+                return proc.stdout.strip()
+            return None
+        except Exception as e:
+            logger.warning("Could not create container from %s: %s", tag, e)
+            return None
+
+    def _remove_container(self, container_id: str) -> None:
+        """Remove a stopped container."""
+        try:
+            self._run(
+                ["podman", "rm", container_id],
+                capture_output=True, timeout=30,
+            )
+        except Exception:
+            pass
+
     def _extract_rebuilt_jar(
-        self, tag: str, artifact_id: str, version: str, dest: Path
+        self, tag: str, artifact_id: str, version: str, dest: Path,
+        *, container_id: str | None = None,
     ) -> Path | None:
         try:
-            find_cmd = (
-                "find /build target -name '*.jar' -not -name '*-sources.jar' "
-                "-not -name '*-javadoc.jar' -not -name 'original-*.jar' 2>/dev/null "
-                "| head -5"
-            )
-            proc = self._run(
-                ["podman", "run", "--rm", tag, "sh", "-c", find_cmd],
-                capture_output=True, text=True, timeout=60,
-            )
-            jar_paths = [
-                line.strip() for line in proc.stdout.strip().splitlines()
-                if line.strip().endswith(".jar")
-            ]
-            if not jar_paths:
-                return None
+            own_container = False
+            if container_id is None:
+                container_id = self._create_container(tag)
+                own_container = True
+                if not container_id:
+                    return None
 
-            target_jar = None
-            for jp in jar_paths:
-                if artifact_id in jp and version in jp:
-                    target_jar = jp
-                    break
-            if not target_jar:
-                target_jar = jar_paths[0]
-
-            local_jar = dest / f"{artifact_id}-{version}-rebuilt.jar"
-            copy_proc = self._run(
-                ["podman", "run", "--rm", tag, "cat", target_jar],
-                capture_output=True, timeout=120,
-            )
-            if copy_proc.returncode == 0 and copy_proc.stdout:
-                local_jar.write_bytes(copy_proc.stdout)
-                return local_jar
-            return None
+            try:
+                return self._extract_jar_from_container(
+                    container_id, artifact_id, version, dest,
+                )
+            finally:
+                if own_container:
+                    self._remove_container(container_id)
         except Exception as e:
             logger.warning("Could not extract rebuilt JAR: %s", e)
             return None
+
+    def _extract_jar_from_container(
+        self, container_id: str, artifact_id: str, version: str, dest: Path,
+    ) -> Path | None:
+        """Extract JAR from a stopped container using podman cp."""
+        jar_dir = dest / "jars"
+        jar_dir.mkdir(parents=True, exist_ok=True)
+
+        for src_path in ["/build/target", "/build/build/libs", "target", "build/libs"]:
+            cp_proc = self._run(
+                ["podman", "cp", f"{container_id}:{src_path}/.", str(jar_dir)],
+                capture_output=True, text=True, timeout=60,
+            )
+            if cp_proc.returncode == 0:
+                break
+
+        jar_files = [
+            p for p in jar_dir.rglob("*.jar")
+            if not p.name.endswith("-sources.jar")
+            and not p.name.endswith("-javadoc.jar")
+            and not p.name.startswith("original-")
+        ]
+        if not jar_files:
+            return None
+
+        target_jar = None
+        for jp in jar_files:
+            if artifact_id in jp.name and version in jp.name:
+                target_jar = jp
+                break
+        if not target_jar:
+            target_jar = jar_files[0]
+
+        local_jar = dest / f"{artifact_id}-{version}-rebuilt.jar"
+        shutil.copy2(target_jar, local_jar)
+        return local_jar
 
     def l4_fallback_signals(
         self, tag: str, coordinate: str, jdk_version: str = "",
@@ -341,6 +383,7 @@ class Evaluator:
         """Compute fallback L4 signals when no original JAR is available.
 
         Returns dict with bytecode_version_match, manifest_sanity, structural_match keys.
+        Uses podman create + podman cp (not podman run) to avoid container startup overhead.
         """
         from buildroot.agent.scorer import (
             check_bytecode_version_match,
@@ -351,10 +394,17 @@ class Evaluator:
         group_id, artifact_id, version = parse_gav(coordinate)
         signals: dict = {}
 
+        container_id = self._create_container(tag)
+        if not container_id:
+            logger.warning("Could not create container for fallback signals")
+            return signals
+
         try:
             with tempfile.TemporaryDirectory(prefix="buildroot-fb-") as tmpdir:
                 tmp = Path(tmpdir)
-                rebuilt_jar = self._extract_rebuilt_jar(tag, artifact_id, version, tmp)
+                rebuilt_jar = self._extract_rebuilt_jar(
+                    tag, artifact_id, version, tmp, container_id=container_id,
+                )
                 if rebuilt_jar:
                     if jdk_version:
                         signals["bytecode_version_match"] = check_bytecode_version_match(
@@ -363,61 +413,78 @@ class Evaluator:
                     signals["manifest_sanity"] = check_manifest_sanity(
                         rebuilt_jar, group_id, artifact_id,
                     )
-                    source_root = self._extract_source_root(tag, tmp / "source")
+                    source_root = self._extract_source_root(
+                        tag, tmp / "source", container_id=container_id,
+                        artifact_id=artifact_id,
+                    )
                     if source_root:
                         signals["structural_match"] = check_structural_match(
                             rebuilt_jar, source_root,
                         )
         except Exception as e:
             logger.warning("Fallback signal extraction failed: %s", e)
+        finally:
+            self._remove_container(container_id)
 
         return signals
 
-    def _extract_source_root(self, tag: str, dest: Path) -> Path | None:
-        """Extract the source tree from a container image for structural validation."""
+    def _extract_source_root(
+        self, tag: str, dest: Path, *, container_id: str | None = None,
+        artifact_id: str = "",
+    ) -> Path | None:
+        """Extract the source tree from a container image using podman cp."""
         try:
-            src_dirs = ["/build/src", "/build/*/src"]
-            find_cmd = (
-                "for d in /build/src /build/*/src; do "
-                "[ -d \"$d\" ] && echo \"$d\" && exit 0; "
-                "done; exit 1"
-            )
-            proc = self._run(
-                ["podman", "run", "--rm", tag, "sh", "-c", find_cmd],
-                capture_output=True, text=True, timeout=30,
-            )
-            if proc.returncode != 0 or not proc.stdout.strip():
-                return None
+            own_container = False
+            if container_id is None:
+                container_id = self._create_container(tag)
+                own_container = True
+                if not container_id:
+                    return None
 
-            src_path = proc.stdout.strip().splitlines()[0]
-
-            verify_cmd = f"find {shlex.quote(src_path)} -name '*.java' -maxdepth 6 2>/dev/null | head -1"
-            verify_proc = self._run(
-                ["podman", "run", "--rm", tag, "sh", "-c", verify_cmd],
-                capture_output=True, text=True, timeout=120,
-            )
-            if verify_proc.returncode != 0 or not verify_proc.stdout.strip():
-                return None
-
-            dest.mkdir(parents=True, exist_ok=True)
-            export_cmd = f"tar -cf - {shlex.quote(src_path)} 2>/dev/null"
-            tar_proc = self._run(
-                ["podman", "run", "--rm", tag, "sh", "-c", export_cmd],
-                capture_output=True, timeout=120,
-            )
-            if tar_proc.returncode != 0 or not tar_proc.stdout:
-                return None
-
-            import tarfile
-            import io
-            with tarfile.open(fileobj=io.BytesIO(tar_proc.stdout)) as tf:
-                tf.extractall(dest, filter="data")
-
-            build_dir = dest / "build"
-            return build_dir if build_dir.exists() else dest
+            try:
+                return self._extract_source_from_container(
+                    container_id, dest, artifact_id=artifact_id,
+                )
+            finally:
+                if own_container:
+                    self._remove_container(container_id)
         except Exception as e:
             logger.warning("Could not extract source root: %s", e)
             return None
+
+    def _extract_source_from_container(
+        self, container_id: str, dest: Path, *, artifact_id: str = "",
+    ) -> Path | None:
+        """Extract source tree from a stopped container using podman cp."""
+        dest.mkdir(parents=True, exist_ok=True)
+
+        cp_proc = self._run(
+            ["podman", "cp", f"{container_id}:/build/src/.", str(dest)],
+            capture_output=True, text=True, timeout=60,
+        )
+        if cp_proc.returncode == 0:
+            java_files = list(dest.rglob("*.java"))
+            if java_files:
+                return dest
+
+        if artifact_id:
+            submod_names = [artifact_id]
+            parts = artifact_id.split("-")
+            if len(parts) > 1:
+                submod_names.append(parts[-1])
+            for submod in submod_names:
+                sub_dest = dest / submod
+                sub_dest.mkdir(parents=True, exist_ok=True)
+                cp_proc = self._run(
+                    ["podman", "cp", f"{container_id}:/build/{submod}/src/.", str(sub_dest)],
+                    capture_output=True, text=True, timeout=60,
+                )
+                if cp_proc.returncode == 0:
+                    java_files = list(sub_dest.rglob("*.java"))
+                    if java_files:
+                        return sub_dest
+
+        return None
 
     def _parse_dockerfile_args(self, structure: list) -> dict:
         """Extract ARG instructions with defaults."""
