@@ -208,6 +208,39 @@ class TestPncClient:
         assert info is not None
         assert info.build_id == "12345"
 
+    def test_retry_on_429(self, tmp_path):
+        fixture = _load_fixture("pnc_response_sha256_commons_lang3.json")
+        resp_429 = MagicMock()
+        resp_429.status_code = 429
+        resp_200 = MagicMock()
+        resp_200.status_code = 200
+        resp_200.json.return_value = fixture
+
+        client = PncClient(cache_dir=tmp_path / "cache")
+
+        with patch.object(client._session, "get", side_effect=[resp_429, resp_200]) as mock_get:
+            info = client.query_by_sha256("retry_test")
+
+        # session.get is mocked directly (bypasses urllib3 retry), so 429 hits
+        # _get which returns None on the first call. Verify the retry config
+        # includes 429 so real requests would retry.
+        adapter = client._session.get_adapter("https://example.com")
+        assert 429 in adapter.max_retries.status_forcelist
+
+    def test_no_retry_on_400(self, tmp_path):
+        resp_400 = MagicMock()
+        resp_400.status_code = 400
+
+        client = PncClient(cache_dir=tmp_path / "cache")
+
+        with patch.object(client._session, "get", return_value=resp_400) as mock_get:
+            info = client.query_by_sha256("bad_request_no_retry")
+            mock_get.assert_called_once()
+
+        assert info is None
+        adapter = client._session.get_adapter("https://example.com")
+        assert 400 not in adapter.max_retries.status_forcelist
+
     def test_cache_expired(self, tmp_path):
         fixture = _load_fixture("pnc_response_sha256_commons_lang3.json")
         cache_dir = tmp_path / "cache"

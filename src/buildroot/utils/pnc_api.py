@@ -215,7 +215,7 @@ def extract_builder_image(response: dict) -> str | None:
         digest_ref = attrs.get("IMAGE_DIGEST_REF", "")
         if repo_url and digest_ref:
             repo_url = repo_url.rstrip("/")
-            return f"{repo_url}/{digest_ref}" if "@" in digest_ref else f"{repo_url}/{digest_ref}"
+            return f"{repo_url}/{digest_ref}"
     return None
 
 

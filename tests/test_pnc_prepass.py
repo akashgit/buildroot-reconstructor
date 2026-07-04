@@ -32,10 +32,12 @@ def _make_pnc_info(**kwargs) -> PncBuildInfo:
     return PncBuildInfo(**defaults)
 
 
+@patch("buildroot.agent.prepass._discover_repo_from_latest_version", return_value=None)
+@patch("buildroot.agent.prepass._discover_repo_from_parent_chain", return_value=None)
 @patch("buildroot.agent.prepass.get_jar_path")
 @patch("buildroot.agent.prepass.fetch_pom")
 @patch("buildroot.agent.prepass.discover_repo_from_pom", return_value=None)
-def test_prepass_pnc_enabled_sha256_hit(mock_repo, mock_pom, mock_jar, tmp_path):
+def test_prepass_pnc_enabled_sha256_hit(mock_repo, mock_pom, mock_jar, mock_parent, mock_latest, tmp_path):
     mock_pom.return_value = "<project><groupId>g</groupId><artifactId>a</artifactId><version>1.0</version></project>"
 
     jar_path = tmp_path / "test.jar"
@@ -62,10 +64,12 @@ def test_prepass_pnc_enabled_sha256_hit(mock_repo, mock_pom, mock_jar, tmp_path)
     assert findings.jdk_version.source == "pnc_api"
 
 
+@patch("buildroot.agent.prepass._discover_repo_from_latest_version", return_value=None)
+@patch("buildroot.agent.prepass._discover_repo_from_parent_chain", return_value=None)
 @patch("buildroot.agent.prepass.get_jar_path")
 @patch("buildroot.agent.prepass.fetch_pom")
 @patch("buildroot.agent.prepass.discover_repo_from_pom", return_value=None)
-def test_prepass_pnc_enabled_sha256_miss_gav_hit(mock_repo, mock_pom, mock_jar, tmp_path):
+def test_prepass_pnc_enabled_sha256_miss_gav_hit(mock_repo, mock_pom, mock_jar, mock_parent, mock_latest, tmp_path):
     mock_pom.return_value = "<project><groupId>g</groupId><artifactId>a</artifactId><version>1.0</version></project>"
 
     jar_path = tmp_path / "test.jar"
@@ -86,10 +90,12 @@ def test_prepass_pnc_enabled_sha256_miss_gav_hit(mock_repo, mock_pom, mock_jar, 
     assert findings.pnc_build_id == "99999"
 
 
+@patch("buildroot.agent.prepass._discover_repo_from_latest_version", return_value=None)
+@patch("buildroot.agent.prepass._discover_repo_from_parent_chain", return_value=None)
 @patch("buildroot.agent.prepass.get_jar_path")
 @patch("buildroot.agent.prepass.fetch_pom")
 @patch("buildroot.agent.prepass.discover_repo_from_pom", return_value=None)
-def test_prepass_pnc_disabled_no_lookup(mock_repo, mock_pom, mock_jar, tmp_path):
+def test_prepass_pnc_disabled_no_lookup(mock_repo, mock_pom, mock_jar, mock_parent, mock_latest, tmp_path):
     mock_pom.return_value = "<project><groupId>g</groupId><artifactId>a</artifactId><version>1.0</version></project>"
 
     jar_path = tmp_path / "test.jar"
@@ -106,10 +112,12 @@ def test_prepass_pnc_disabled_no_lookup(mock_repo, mock_pom, mock_jar, tmp_path)
     assert findings.pnc_builder_image is None
 
 
+@patch("buildroot.agent.prepass._discover_repo_from_latest_version", return_value=None)
+@patch("buildroot.agent.prepass._discover_repo_from_parent_chain", return_value=None)
 @patch("buildroot.agent.prepass.get_jar_path")
 @patch("buildroot.agent.prepass.fetch_pom")
 @patch("buildroot.agent.prepass.discover_repo_from_pom", return_value=None)
-def test_prepass_pnc_overrides_jdk_version(mock_repo, mock_pom, mock_jar, tmp_path):
+def test_prepass_pnc_overrides_jdk_version(mock_repo, mock_pom, mock_jar, mock_parent, mock_latest, tmp_path):
     mock_pom.return_value = "<project><groupId>g</groupId><artifactId>a</artifactId><version>1.0</version></project>"
 
     jar_path = tmp_path / "test.jar"
@@ -130,10 +138,12 @@ def test_prepass_pnc_overrides_jdk_version(mock_repo, mock_pom, mock_jar, tmp_pa
     assert findings.jdk_version.source == "pnc_api"
 
 
+@patch("buildroot.agent.prepass._discover_repo_from_latest_version", return_value=None)
+@patch("buildroot.agent.prepass._discover_repo_from_parent_chain", return_value=None)
 @patch("buildroot.agent.prepass.get_jar_path")
 @patch("buildroot.agent.prepass.fetch_pom")
 @patch("buildroot.agent.prepass.discover_repo_from_pom", return_value=None)
-def test_prepass_pnc_overrides_maven_version(mock_repo, mock_pom, mock_jar, tmp_path):
+def test_prepass_pnc_overrides_maven_version(mock_repo, mock_pom, mock_jar, mock_parent, mock_latest, tmp_path):
     mock_pom.return_value = "<project><groupId>g</groupId><artifactId>a</artifactId><version>1.0</version></project>"
 
     jar_path = tmp_path / "test.jar"
@@ -155,10 +165,12 @@ def test_prepass_pnc_overrides_maven_version(mock_repo, mock_pom, mock_jar, tmp_
     assert findings.maven_version.source == "pnc_api"
 
 
+@patch("buildroot.agent.prepass._discover_repo_from_latest_version", return_value=None)
+@patch("buildroot.agent.prepass._discover_repo_from_parent_chain", return_value=None)
 @patch("buildroot.agent.prepass.get_jar_path")
 @patch("buildroot.agent.prepass.fetch_pom")
 @patch("buildroot.agent.prepass.discover_repo_from_pom", return_value=None)
-def test_prepass_pnc_connection_failure_graceful(mock_repo, mock_pom, mock_jar, tmp_path):
+def test_prepass_pnc_connection_failure_graceful(mock_repo, mock_pom, mock_jar, mock_parent, mock_latest, tmp_path):
     mock_pom.return_value = "<project><groupId>g</groupId><artifactId>a</artifactId><version>1.0</version></project>"
 
     jar_path = tmp_path / "test.jar"
