@@ -360,8 +360,8 @@ def run_orchestrator(
         # 10. Output restructuring
         _restructure_output(result, workspace, coordinate)
 
-    # 11. Save to build store (after Phase 3 so all artifacts are included)
-    if result.best_reward > 0 and result.best_containerfile:
+    # 11. Save to build store (only verified L4 builds for sibling warm-start)
+    if result.best_level >= 4 and result.best_reward >= 0.98 and result.best_containerfile:
         try:
             from buildroot.agent.build_store import save_build
 
