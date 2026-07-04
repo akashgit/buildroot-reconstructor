@@ -695,17 +695,18 @@ def _restructure_output(
         "trusted",
     )
 
-    comparison = None
-    if result.comparison_report:
-        from buildroot.utils.jar_comparator import ComparisonReport
-        try:
-            comparison = result.comparison_report if isinstance(result.comparison_report, ComparisonReport) else None
-        except Exception:
-            comparison = None
-
-    delta = build_delta_report(exact_result, trusted_result, comparison)
+    delta = build_delta_report(exact_result, trusted_result)
     delta.coordinate = coordinate
     delta.exact_reward = result.best_reward
+
+    if isinstance(result.comparison_report, dict):
+        cr = result.comparison_report
+        delta.structural_match = cr.get("structural_match")
+        delta.metadata_match = cr.get("metadata_match")
+        delta.bytecode_match = cr.get("bytecode_match")
+        verdict = cr.get("verdict", "")
+        if verdict in ("IDENTICAL", "EQUIVALENT", "DIVERGENT"):
+            delta.functional_equivalence = verdict
 
     delta_path = workspace / "delta_report.json"
     delta_path.write_text(json.dumps(delta.to_dict(), indent=2) + "\n")
