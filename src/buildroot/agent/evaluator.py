@@ -20,6 +20,11 @@ from buildroot.pipeline.orchestrator import parse_gav
 from buildroot.utils.jar_comparator import compare_jars
 from buildroot.utils.maven_central import get_jar_path
 
+TRUSTED_IMAGE_PATTERNS = [
+    re.compile(r"^docker\.io/library/eclipse-temurin:\d+(\.\d+)*(_\d+)?-jdk"),
+    re.compile(r"^registry\.access\.redhat\.com/ubi\d+/openjdk-\d+"),
+]
+
 logger = logging.getLogger(__name__)
 
 
@@ -56,11 +61,17 @@ class Evaluator:
         containerfile: str,
         coordinate: str,
         capture_full_log: bool = False,
+        *,
+        trusted: bool = False,
     ) -> EvalResult:
         containerfile = sanitize_gha_expressions(containerfile)
         result = EvalResult()
 
         if not self._l1_parse(containerfile, result):
+            result.compute_reward()
+            return result
+
+        if trusted and not self._l1_5_trust_check(containerfile, result):
             result.compute_reward()
             return result
 
@@ -301,6 +312,88 @@ class Evaluator:
             logger.warning("Fallback signal extraction failed: %s", e)
 
         return signals
+
+    def _l1_5_trust_check(self, containerfile: str, result: EvalResult) -> bool:
+        """Verify all FROM lines use trusted base images."""
+        parser = DockerfileParser()
+        parser.content = containerfile
+        structure = parser.structure
+
+        args = self._parse_dockerfile_args(structure)
+        violations = []
+
+        for instruction in structure:
+            if instruction["instruction"] == "FROM":
+                value = instruction["value"].split()[0]
+                image = self._substitute_args(value, args)
+                has_unresolved = "${" in image or "$" in image
+                has_empty_sub = any(
+                    v == ""
+                    and re.search(
+                        r"\$\{" + re.escape(k) + r"\}|\$" + re.escape(k) + r"\b",
+                        value,
+                    )
+                    for k, v in args.items()
+                )
+                if has_unresolved or has_empty_sub:
+                    violations.append(
+                        f"FROM {value} — unresolved build argument"
+                    )
+                elif image == "scratch":
+                    continue
+                elif not self._is_trusted_image(image):
+                    violations.append(
+                        f"FROM {image} — not in trusted allowlist"
+                    )
+
+        if violations:
+            result.trust_violations = violations
+            result.trust_check = False
+            result.error_summary = (
+                f"Trust check failed: {len(violations)} untrusted source(s) detected"
+            )
+            return False
+
+        result.trust_check = True
+        return True
+
+    def _is_trusted_image(self, image: str) -> bool:
+        """Check if an image reference matches the trusted allowlist."""
+        normalized = image
+        if normalized.startswith("index.docker.io/"):
+            normalized = "docker.io/" + normalized[len("index.docker.io/"):]
+
+        if not normalized.startswith("docker.io/") and not normalized.startswith("registry."):
+            if "/" not in normalized or "." not in normalized.split("/")[0]:
+                normalized = "docker.io/library/" + normalized
+
+        if normalized.startswith("docker.io/") and not normalized.startswith("docker.io/library/"):
+            rest = normalized[len("docker.io/"):]
+            if "/" not in rest:
+                normalized = "docker.io/library/" + rest
+
+        return any(pat.search(normalized) for pat in TRUSTED_IMAGE_PATTERNS)
+
+    def _parse_dockerfile_args(self, structure: list) -> dict:
+        """Extract ARG instructions with defaults."""
+        args = {}
+        for instruction in structure:
+            if instruction["instruction"] == "ARG":
+                value = instruction["value"].strip()
+                if "=" in value:
+                    key, default = value.split("=", 1)
+                    args[key.strip()] = default.strip()
+                else:
+                    args[value] = ""
+        return args
+
+    def _substitute_args(self, text: str, args: dict) -> str:
+        """Replace ${VAR} and $VAR patterns with values from args dict."""
+        import re as _re
+        def replacer(m):
+            var = m.group(1) or m.group(2)
+            return args.get(var, m.group(0))
+        return _re.sub(r"\$\{(\w+)\}|\$(\w+)", replacer, text)
 
     def _cleanup_image(self, tag: str) -> None:
         try:

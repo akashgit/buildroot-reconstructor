@@ -3,6 +3,7 @@
 from unittest.mock import MagicMock, patch
 
 from buildroot.agent.evaluator import Evaluator, _extract_error_lines
+from buildroot.agent.models import EvalResult
 
 
 VALID_CONTAINERFILE = """\
@@ -100,6 +101,100 @@ class TestEvaluatorWithMocks:
             stderr="",
         )
         evaluator = Evaluator()
-        from buildroot.agent.models import EvalResult
         result = EvalResult()
         assert evaluator._l3_command("test-tag", result) is False
+
+
+class TestTrustCheck:
+    def _check(self, containerfile: str, trusted: bool = True) -> EvalResult:
+        evaluator = Evaluator()
+        result = EvalResult()
+        evaluator._l1_parse(containerfile, result)
+        if trusted:
+            evaluator._l1_5_trust_check(containerfile, result)
+        return result
+
+    def test_adoptium_passes(self):
+        r = self._check("FROM docker.io/eclipse-temurin:17-jdk\nRUN echo hello")
+        assert r.trust_check is True
+        assert r.trust_violations == []
+
+    def test_adoptium_unqualified_passes(self):
+        r = self._check("FROM eclipse-temurin:17-jdk\nRUN echo hello")
+        assert r.trust_check is True
+
+    def test_redhat_ubi_passes(self):
+        r = self._check(
+            "FROM registry.access.redhat.com/ubi9/openjdk-17\nRUN echo hello"
+        )
+        assert r.trust_check is True
+
+    def test_corretto_fails(self):
+        r = self._check("FROM amazoncorretto:17\nRUN echo hello")
+        assert r.trust_check is False
+        assert len(r.trust_violations) == 1
+        assert "amazoncorretto" in r.trust_violations[0]
+
+    def test_openjdk_archive_fails(self):
+        r = self._check("FROM openjdk:17-jdk\nRUN echo hello")
+        assert r.trust_check is False
+
+    def test_multistage_all_checked(self):
+        cf = (
+            "FROM eclipse-temurin:17-jdk AS builder\n"
+            "RUN echo build\n"
+            "FROM amazoncorretto:17\n"
+            "COPY --from=builder /app /app\n"
+        )
+        r = self._check(cf)
+        assert r.trust_check is False
+        assert len(r.trust_violations) == 1
+        assert "amazoncorretto" in r.trust_violations[0]
+
+    def test_multistage_all_trusted_passes(self):
+        cf = (
+            "FROM eclipse-temurin:17-jdk AS builder\n"
+            "RUN echo build\n"
+            "FROM registry.access.redhat.com/ubi9/openjdk-17\n"
+            "COPY --from=builder /app /app\n"
+        )
+        r = self._check(cf)
+        assert r.trust_check is True
+
+    def test_untrusted_flag_false_skips(self):
+        r = self._check("FROM amazoncorretto:17\nRUN echo hello", trusted=False)
+        assert r.trust_check is False
+        assert r.trust_violations == []
+
+    def test_docker_io_library_prefix_normalized(self):
+        r = self._check(
+            "FROM docker.io/library/eclipse-temurin:17-jdk\nRUN echo hello"
+        )
+        assert r.trust_check is True
+
+    def test_arg_substitution(self):
+        cf = "ARG BASE=eclipse-temurin:17-jdk\nFROM ${BASE}\nRUN echo hello"
+        r = self._check(cf)
+        assert r.trust_check is True
+
+    def test_unresolved_arg_fails(self):
+        cf = "ARG VER\nFROM eclipse-temurin:${VER}\nRUN echo hello"
+        r = self._check(cf)
+        assert r.trust_check is False
+        assert any("unresolved" in v.lower() for v in r.trust_violations)
+
+    def test_short_arg_name_no_false_positive(self):
+        cf = "ARG e\nFROM eclipse-temurin:17-jdk\nRUN echo hello"
+        r = self._check(cf)
+        assert r.trust_check is True
+        assert r.trust_violations == []
+
+    def test_scratch_allowed(self):
+        cf = (
+            "FROM eclipse-temurin:17-jdk AS builder\n"
+            "RUN echo build\n"
+            "FROM scratch\n"
+            "COPY --from=builder /app /app\n"
+        )
+        r = self._check(cf)
+        assert r.trust_check is True
