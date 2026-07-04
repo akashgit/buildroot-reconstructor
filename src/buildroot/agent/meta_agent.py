@@ -51,6 +51,8 @@ class OrchestratorResult:
     trusted_containerfile: str = ""
     trusted_containerfile_path: str = ""
     trusted_comparison_report: dict | None = None
+    eval_result_dict: dict | None = None
+    trusted_eval_result_dict: dict | None = None
 
     def to_dict(self) -> dict:
         d = {
@@ -391,6 +393,8 @@ def run_orchestrator(
                 prepass_findings=prepass_data,
                 exact_comparison=result.comparison_report,
                 trusted_comparison=result.trusted_comparison_report,
+                eval_result=result.eval_result_dict,
+                trusted_eval_result=result.trusted_eval_result_dict,
             )
         except Exception as e:
             logger.debug("Build store save skipped: %s", e)
@@ -471,6 +475,7 @@ def _run_trusted_phase(
         phase2_result.trusted_containerfile = trusted_result.best_containerfile
         phase2_result.trusted_containerfile_path = trusted_result.best_containerfile_path
         phase2_result.trusted_comparison_report = trusted_result.comparison_report
+        phase2_result.trusted_eval_result_dict = trusted_result.eval_result_dict
         logger.info(
             "Phase 3 complete: trusted_reward=%.4f, trusted_level=%d",
             trusted_result.best_reward, trusted_result.best_level,
@@ -603,6 +608,7 @@ def _scan_workspace_for_best(
         eval_result = evaluator.evaluate(cf_text, coordinate, jdk_version=jdk_version)
         result.best_reward = eval_result.reward
         result.best_level = eval_result.level_reached
+        result.eval_result_dict = eval_result.to_dict()
         if eval_result.comparison_report is not None:
             report = eval_result.comparison_report
             result.comparison_report = {
