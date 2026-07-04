@@ -10,7 +10,6 @@ logger = logging.getLogger(__name__)
 DEFAULT_TRUST_CONFIG: dict = {
     "default_tier1_provider": "adoptium",
     "jdk_resolution_strategy": "nearest_lts_above",
-    "dual_build": True,
     "sources": {
         "adoptium": {"tier": 1, "jdk_versions": ["8", "11", "17", "21", "25"]},
         "redhat_ubi": {"tier": 1, "jdk_versions": ["11", "17", "21", "25"]},
@@ -63,9 +62,6 @@ def _parse_factory_md_trust_section(path: Path) -> dict | None:
             config["default_tier1_provider"] = line.split(":", 1)[1].strip()
         elif line.startswith("- strategy:"):
             config["jdk_resolution_strategy"] = line.split(":", 1)[1].strip()
-        elif line.startswith("- dual_build:"):
-            val = line.split(":", 1)[1].strip().lower()
-            config["dual_build"] = val in ("true", "yes", "1")
 
     return config if config else None
 

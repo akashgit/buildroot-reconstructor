@@ -2,9 +2,9 @@
 
 from buildroot.trust.config import DEFAULT_TRUST_CONFIG, load_trust_config
 from buildroot.trust.delta import DeltaReport, VariantResult, build_delta_report
-from buildroot.trust.dual_variant import DualVariantGenerator
 from buildroot.trust.registry import (
     DEFAULT_LTS_VERSIONS,
+    DEFAULT_TRUSTED_DOMAINS,
     JdkResolutionStrategy,
     SourceTier,
     TrustedJdkResolution,
@@ -17,8 +17,8 @@ from buildroot.trust.sbom import generate_sbom
 __all__ = [
     "DEFAULT_LTS_VERSIONS",
     "DEFAULT_TRUST_CONFIG",
+    "DEFAULT_TRUSTED_DOMAINS",
     "DeltaReport",
-    "DualVariantGenerator",
     "JdkResolutionStrategy",
     "SourceTier",
     "TrustedJdkResolution",

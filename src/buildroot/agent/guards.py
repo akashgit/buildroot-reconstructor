@@ -12,7 +12,6 @@ logger = logging.getLogger(__name__)
 MUTABLE_SURFACES = frozenset({
     "src/buildroot/agent/analyzer.py",
     "src/buildroot/agent/loop.py",
-    "src/buildroot/agent/observer.py",
     "src/buildroot/agent/models.py",
     "src/buildroot/agent/guards.py",
     "src/buildroot/agent/claude_runner.py",

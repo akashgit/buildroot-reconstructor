@@ -24,9 +24,8 @@ from buildroot.pipeline.orchestrator import BuildrootOrchestrator, parse_gav
     default="podman",
     help="Container runtime for build steps.",
 )
-@click.option("--skip-trusted", is_flag=True, default=False, help="Skip trusted-source variant generation.")
 @click.option("--enable-google-mirror", is_flag=True, help="Use Google Cloud Storage as fallback on Maven Central 429 rate limits")
-def reconstruct(coordinate, repo_url, ci_type, no_cache, skip_deps, output_dir, runtime, skip_trusted, enable_google_mirror):
+def reconstruct(coordinate, repo_url, ci_type, no_cache, skip_deps, output_dir, runtime, enable_google_mirror):
     """Reconstruct build environment for a Maven COORDINATE (groupId:artifactId:version)."""
     if enable_google_mirror:
         from buildroot.utils.maven_central import enable_google_mirror as _enable_mirror
@@ -39,7 +38,6 @@ def reconstruct(coordinate, repo_url, ci_type, no_cache, skip_deps, output_dir, 
 
     orchestrator = BuildrootOrchestrator(
         no_cache=no_cache, skip_deps=skip_deps, runtime=runtime,
-        dual_build=not skip_trusted,
     )
 
     try:
@@ -60,16 +58,3 @@ def reconstruct(coordinate, repo_url, ci_type, no_cache, skip_deps, output_dir, 
 
     click.echo(f"Containerfile: {output_dir}/Containerfile")
     click.echo(f"buildroot.json: {output_dir}/buildroot.json")
-
-    if not skip_trusted:
-        from pathlib import Path
-
-        out_path = Path(output_dir)
-        if (out_path / "exact" / "Containerfile").exists():
-            click.echo(f"Exact variant: {output_dir}/exact/")
-        if (out_path / "trusted" / "Containerfile").exists():
-            click.echo(f"Trusted variant: {output_dir}/trusted/")
-        if (out_path / "delta_report.json").exists():
-            click.echo(f"Delta report: {output_dir}/delta_report.json")
-        if (out_path / "trust_report.md").exists():
-            click.echo(f"Trust report: {output_dir}/trust_report.md")

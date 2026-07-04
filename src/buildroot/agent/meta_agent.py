@@ -15,7 +15,12 @@ from buildroot.agent.knowledge.retrieval import DEFAULT_KB_DIR, query_kb_for_pro
 from buildroot.agent.meta_prompt import build_orchestrator_prompt
 from buildroot.agent.models import RecipeStore
 from buildroot.agent.prepass import PrePassFindings, run_prepass
+from buildroot.pipeline.models import BuildrootSpec, JdkSpec, PomData
 from buildroot.pipeline.orchestrator import parse_gav
+from buildroot.trust.delta import VariantResult, build_delta_report
+from buildroot.trust.registry import TrustedSourceRegistry
+from buildroot.trust.report import generate_trust_report
+from buildroot.trust.sbom import generate_sbom
 
 logger = logging.getLogger(__name__)
 
@@ -35,9 +40,11 @@ class OrchestratorResult:
     elapsed_seconds: float = 0.0
     cost_usd: float = 0.0
     error_message: str = ""
+    comparison_report: dict | None = None
+    build_log: str = ""
 
     def to_dict(self) -> dict:
-        return {
+        d = {
             "coordinate": self.coordinate,
             "status": self.status,
             "best_reward": round(self.best_reward, 4),
@@ -47,6 +54,25 @@ class OrchestratorResult:
             "elapsed_seconds": round(self.elapsed_seconds, 1),
             "cost_usd": round(self.cost_usd, 4),
         }
+        if self.comparison_report is not None:
+            d["comparison_report"] = self.comparison_report
+        if self.build_log:
+            d["build_log"] = self.build_log
+        return d
+
+    def phase2_findings(self) -> dict:
+        """Build a phase2 findings dict for handoff to phase 3."""
+        findings: dict = {
+            "best_containerfile": self.best_containerfile,
+            "best_reward": self.best_reward,
+            "best_level": self.best_level,
+            "path": self.path,
+        }
+        if self.comparison_report is not None and self.best_level >= 3:
+            findings["comparison_report"] = self.comparison_report
+        if self.build_log:
+            findings["build_log"] = self.build_log
+        return findings
 
 
 _BANNER = """\
@@ -383,6 +409,15 @@ def _scan_workspace_for_best(
             eval_result = evaluator.evaluate(cf_text, coordinate)
             result.best_reward = eval_result.reward
             result.best_level = eval_result.level_reached
+            if eval_result.comparison_report is not None:
+                report = eval_result.comparison_report
+                result.comparison_report = {
+                    "structural_match": report.structural.match,
+                    "metadata_match": report.metadata.match,
+                    "bytecode_match": report.bytecode.match,
+                    "verdict": report.verdict,
+                }
+            result.build_log = eval_result.build_log
         except Exception as e:
             logger.warning("Post-scan evaluation failed: %s", e)
 
@@ -463,3 +498,121 @@ def _update_matched_kb_entries(
                 save_entry(entry, DEFAULT_KB_DIR)
             except Exception:
                 pass
+
+
+def _build_variant_result_from_cascade(
+    containerfile_path: str,
+    result: OrchestratorResult,
+    variant_type: str,
+) -> VariantResult:
+    """Build a VariantResult from cascade pipeline output."""
+    base_image = ""
+    jdk_version = ""
+    if result.best_containerfile:
+        for line in result.best_containerfile.splitlines():
+            stripped = line.strip()
+            if stripped.upper().startswith("FROM "):
+                base_image = stripped.split()[1]
+                break
+
+    registry = TrustedSourceRegistry()
+    trusted, source = registry.is_trusted_image(base_image)
+    jdk_source = source.provider if source else "unknown"
+    provenance_tier = source.tier.value if source else None
+
+    return VariantResult(
+        name=variant_type,
+        containerfile_path=Path(containerfile_path) if containerfile_path else Path(),
+        base_image=base_image,
+        jdk_version=jdk_version,
+        jdk_source=jdk_source,
+        provenance_tier=provenance_tier,
+    )
+
+
+def _load_or_build_spec(variant_dir: str) -> BuildrootSpec:
+    """Load BuildrootSpec from buildroot.json or construct a minimal one."""
+    br_path = Path(variant_dir) / "buildroot.json"
+    if br_path.exists():
+        try:
+            data = json.loads(br_path.read_text())
+            pom = PomData(
+                group_id=data.get("group_id", ""),
+                artifact_id=data.get("artifact_id", ""),
+                version=data.get("version", ""),
+            )
+            jdk_data = data.get("jdk_version", {})
+            jdk = JdkSpec(
+                version=jdk_data.get("value", "") if isinstance(jdk_data, dict) else str(jdk_data),
+                base_image=data.get("base_image", ""),
+            )
+            return BuildrootSpec(pom_data=pom, jdk_spec=jdk)
+        except (json.JSONDecodeError, OSError):
+            pass
+    return BuildrootSpec()
+
+
+def _restructure_output(
+    result: OrchestratorResult,
+    workspace: Path,
+    coordinate: str,
+    output_dir: Path | None = None,
+) -> None:
+    """Generate trust artifacts (delta_report, trust_report, SBOM) and copy to output_dir."""
+    group_id, artifact_id, version = parse_gav(coordinate)
+
+    exact_dir = workspace / "exact"
+    trusted_dir = workspace / "trusted"
+    exact_dir.mkdir(parents=True, exist_ok=True)
+    trusted_dir.mkdir(parents=True, exist_ok=True)
+
+    if result.best_containerfile:
+        (exact_dir / "Containerfile").write_text(result.best_containerfile)
+
+    exact_result = _build_variant_result_from_cascade(
+        str(exact_dir / "Containerfile"), result, "exact",
+    )
+    trusted_result = _build_variant_result_from_cascade(
+        str(trusted_dir / "Containerfile") if (trusted_dir / "Containerfile").exists() else "",
+        result,
+        "trusted",
+    )
+
+    comparison = None
+    if result.comparison_report:
+        from buildroot.utils.jar_comparator import ComparisonReport
+        try:
+            comparison = result.comparison_report if isinstance(result.comparison_report, ComparisonReport) else None
+        except Exception:
+            comparison = None
+
+    delta = build_delta_report(exact_result, trusted_result, comparison)
+    delta.coordinate = coordinate
+    delta.exact_reward = result.best_reward
+
+    delta_path = workspace / "delta_report.json"
+    delta_path.write_text(json.dumps(delta.to_dict(), indent=2) + "\n")
+
+    spec = _load_or_build_spec(str(workspace))
+    spec.pom_data.group_id = group_id
+    spec.pom_data.artifact_id = artifact_id
+    spec.pom_data.version = version
+
+    generate_trust_report(spec, delta, workspace)
+    generate_sbom(spec, "exact", exact_dir)
+    generate_sbom(spec, "trusted", trusted_dir)
+
+    if output_dir is not None:
+        import shutil
+
+        gav_dir = output_dir / group_id.replace(".", "/") / artifact_id / version
+        gav_dir.mkdir(parents=True, exist_ok=True)
+        for item_name in ["exact", "trusted", "delta_report.json", "trust_report.md"]:
+            src = workspace / item_name
+            dst = gav_dir / item_name
+            if src.is_dir():
+                if dst.exists():
+                    shutil.rmtree(dst)
+                shutil.copytree(src, dst)
+            elif src.is_file():
+                shutil.copy2(src, dst)

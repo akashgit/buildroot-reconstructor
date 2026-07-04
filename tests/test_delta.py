@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from buildroot.trust.delta import DeltaReport, VariantResult, build_delta_report
+from buildroot.trust.delta import VariantResult, build_delta_report
 from buildroot.utils.jar_comparator import (
     BytecodeResult,
     ComparisonReport,

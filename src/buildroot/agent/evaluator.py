@@ -17,6 +17,7 @@ from dockerfile_parse import DockerfileParser
 from buildroot.agent.analyzer import sanitize_gha_expressions
 from buildroot.agent.models import EvalResult
 from buildroot.pipeline.orchestrator import parse_gav
+from buildroot.trust.registry import TrustedSourceRegistry
 from buildroot.utils.jar_comparator import compare_jars
 from buildroot.utils.maven_central import get_jar_path
 
@@ -30,6 +31,7 @@ class Evaluator:
         self._host = host
         self._timeout = timeout
         self._no_cache = no_cache
+        self._trust_registry = TrustedSourceRegistry()
 
     def _run(self, cmd: list[str], **kwargs) -> subprocess.CompletedProcess:
         """Run a command locally, or via SSH if a host is configured."""
@@ -64,6 +66,8 @@ class Evaluator:
             result.compute_reward()
             return result
 
+        self._l1_5_trust(containerfile, result)
+
         tag = f"buildroot-agent-{uuid.uuid4().hex[:8]}"
 
         if not self._l2_build(containerfile, tag, result, capture_full_log):
@@ -94,6 +98,35 @@ class Evaluator:
         except Exception as e:
             result.error_summary = f"L1 parse error: {e}"
             return False
+
+    def _l1_5_trust(self, containerfile: str, result: EvalResult) -> bool:
+        """L1.5 trust gate: verify FROM images and download URLs are trusted."""
+        violations: list[str] = []
+
+        parser = DockerfileParser()
+        parser.content = containerfile
+        for instruction in parser.structure:
+            if instruction["instruction"] == "FROM":
+                image_ref = instruction["value"].split()[0]
+                if image_ref.upper() == "SCRATCH":
+                    continue
+                trusted, _ = self._trust_registry.is_trusted_image(image_ref)
+                if not trusted:
+                    violations.append(
+                        f"Untrusted base image: {image_ref}"
+                    )
+
+        for line_num, url in _extract_download_urls(containerfile):
+            if not self._trust_registry.is_trusted_download_url(url):
+                violations.append(
+                    f"Untrusted download URL at line {line_num}: {url}"
+                )
+
+        if violations:
+            result.trust_violations = violations
+            logger.warning("L1.5 trust violations: %s", violations)
+
+        return True
 
     def _l2_build(self, containerfile: str, tag: str, result: EvalResult, capture_full_log: bool = False) -> bool:
         try:
@@ -310,6 +343,41 @@ class Evaluator:
             )
         except Exception:
             pass
+
+
+def _extract_download_urls(containerfile_content: str) -> list[tuple[int, str]]:
+    """Extract URLs from RUN curl/wget and ADD directives.
+
+    Returns list of (line_number, url) tuples.
+    """
+    results: list[tuple[int, str]] = []
+    url_re = re.compile(r'https?://\S+')
+
+    for line_num, line in enumerate(containerfile_content.splitlines(), 1):
+        stripped = line.strip()
+
+        if stripped.upper().startswith("ADD "):
+            parts = stripped.split()
+            if len(parts) >= 2:
+                src = parts[1]
+                if src.startswith(("http://", "https://")):
+                    results.append((line_num, src))
+            continue
+
+        if stripped.upper().startswith("RUN "):
+            cmd_part = stripped[4:]
+        elif stripped.startswith(("&&", "|")):
+            cmd_part = stripped.lstrip("&|").strip()
+        else:
+            continue
+
+        tokens = cmd_part.split()
+        for i, token in enumerate(tokens):
+            if token in ("curl", "wget"):
+                for url_match in url_re.finditer(" ".join(tokens[i:])):
+                    results.append((line_num, url_match.group()))
+
+    return results
 
 
 def _extract_error_lines(log: str, max_lines: int = 15) -> str:

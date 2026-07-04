@@ -14,9 +14,6 @@ class TestDefaultConfig:
     def test_default_strategy(self):
         assert DEFAULT_TRUST_CONFIG["jdk_resolution_strategy"] == "nearest_lts_above"
 
-    def test_default_dual_build_enabled(self):
-        assert DEFAULT_TRUST_CONFIG["dual_build"] is True
-
     def test_default_sources_present(self):
         sources = DEFAULT_TRUST_CONFIG["sources"]
         assert "adoptium" in sources
@@ -61,13 +58,11 @@ class TestLoadTrustConfig:
             "## Trusted Sources\n"
             "- default_provider: redhat_ubi\n"
             "- strategy: exact_only\n"
-            "- dual_build: false\n"
             "\n## Other Section\n"
         )
         config = load_trust_config(factory_md_path=md)
         assert config["default_tier1_provider"] == "redhat_ubi"
         assert config["jdk_resolution_strategy"] == "exact_only"
-        assert config["dual_build"] is False
 
     def test_factory_md_without_trust_section(self, tmp_path: Path):
         md = tmp_path / "factory.md"

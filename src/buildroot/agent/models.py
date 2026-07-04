@@ -145,6 +145,7 @@ class EvalResult:
     comparison_report: Any | None = None
     level_reached: int = 0
     test_result: TestResult | None = None
+    trust_violations: list[str] = field(default_factory=list)
 
     def compute_reward(self) -> float:
         if self.l4_match:
@@ -178,6 +179,8 @@ class EvalResult:
         }
         if self.test_result is not None:
             d["test_result"] = self.test_result.to_dict()
+        if self.trust_violations:
+            d["trust_violations"] = self.trust_violations
         return d
 
 

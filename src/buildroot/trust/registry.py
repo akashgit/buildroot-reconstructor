@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import logging
+import re
 from dataclasses import dataclass, field
 from enum import Enum
+from urllib.parse import urlparse
 
 logger = logging.getLogger(__name__)
 
@@ -53,6 +55,20 @@ class TrustedJdkResolution:
     substitution_reason: str | None = None
 
 
+DEFAULT_TRUSTED_DOMAINS = frozenset({
+    "archive.apache.org",
+    "downloads.apache.org",
+    "dlcdn.apache.org",
+    "repo1.maven.org",
+    "repo.maven.apache.org",
+    "plugins.gradle.org",
+    "services.gradle.org",
+    "github.com",
+    "raw.githubusercontent.com",
+    "adoptium.net",
+    "download.java.net",
+})
+
 DEFAULT_SOURCES = [
     TrustedSource(
         provider="adoptium",
@@ -99,6 +115,7 @@ class TrustedSourceRegistry:
     def __init__(self, config: dict | None = None) -> None:
         self._sources: list[TrustedSource] = []
         self._default_provider: str = "adoptium"
+        self._trusted_domains: frozenset[str] = DEFAULT_TRUSTED_DOMAINS
 
         if config:
             self._default_provider = config.get("default_tier1_provider", "adoptium")
@@ -199,6 +216,40 @@ class TrustedSourceRegistry:
                 return self._resolve_image(source, major)
         return None
 
+    def is_trusted_image(
+        self, image_ref: str, max_tier: SourceTier = SourceTier.TIER_1,
+    ) -> tuple[bool, TrustedSource | None]:
+        """Check if an image reference matches a trusted source."""
+        normalized = self._normalize_image_ref(image_ref)
+        for source in self._tier_sorted_sources():
+            if source.tier.value > max_tier.value:
+                continue
+            if not source.image_pattern:
+                continue
+            pattern = re.escape(source.image_pattern).replace(r"\{version\}", r"[\w.-]+")
+            if re.fullmatch(pattern, normalized):
+                return True, source
+        return False, None
+
+    def is_trusted_download_url(self, url: str) -> bool:
+        """Check if a download URL comes from a trusted domain."""
+        try:
+            parsed = urlparse(url)
+            domain = parsed.hostname or ""
+        except Exception:
+            return False
+        return domain in self._trusted_domains
+
+    @staticmethod
+    def _normalize_image_ref(image_ref: str) -> str:
+        """Normalize Docker image references for matching."""
+        ref = image_ref.replace("index.docker.io", "docker.io")
+        if "/" not in ref.split(":")[0]:
+            ref = f"docker.io/library/{ref}"
+        if ref.startswith("docker.io/library/"):
+            ref = "docker.io/" + ref[len("docker.io/library/"):]
+        return ref
+
     def get_provenance(self, source: TrustedSource) -> dict:
         return {
             "provider": source.provider,
@@ -230,10 +281,10 @@ class TrustedSourceRegistry:
 
     @staticmethod
     def _build_sources_from_config(config: dict) -> list[TrustedSource]:
-        sources_cfg = config.get("sources", {})
+        sources_cfg: dict = config.get("sources", {})
         sources: list[TrustedSource] = []
 
-        provider_defaults = {
+        provider_defaults: dict[str, dict] = {
             "adoptium": {
                 "registry": "docker.io",
                 "verification": ["gpg", "checksum", "sbom"],
@@ -260,8 +311,9 @@ class TrustedSourceRegistry:
             },
         }
 
-        for provider, cfg in sources_cfg.items():
-            defaults = provider_defaults.get(provider, {})
+        for provider, cfg_raw in sources_cfg.items():
+            cfg: dict = cfg_raw if isinstance(cfg_raw, dict) else {}
+            defaults: dict = provider_defaults.get(provider, {})
             tier_val = cfg.get("tier", 3)
             sources.append(TrustedSource(
                 provider=provider,
