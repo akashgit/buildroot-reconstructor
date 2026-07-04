@@ -50,6 +50,7 @@ class OrchestratorResult:
     trusted_level: int = 0
     trusted_containerfile: str = ""
     trusted_containerfile_path: str = ""
+    trusted_comparison_report: dict | None = None
 
     def to_dict(self) -> dict:
         d = {
@@ -67,11 +68,14 @@ class OrchestratorResult:
         if self.build_log:
             d["build_log"] = self.build_log
         if self.trusted_reward > 0 or self.trusted_containerfile:
-            d["trusted"] = {
+            trusted_d = {
                 "reward": round(self.trusted_reward, 4),
                 "level": self.trusted_level,
                 "containerfile_path": self.trusted_containerfile_path,
             }
+            if self.trusted_comparison_report is not None:
+                trusted_d["comparison_report"] = self.trusted_comparison_report
+            d["trusted"] = trusted_d
         return d
 
     def phase2_findings(self) -> dict:
@@ -385,6 +389,8 @@ def run_orchestrator(
                 delta_report=delta,
                 trust_report=trust_md,
                 prepass_findings=prepass_data,
+                exact_comparison=result.comparison_report,
+                trusted_comparison=result.trusted_comparison_report,
             )
         except Exception as e:
             logger.debug("Build store save skipped: %s", e)
@@ -464,6 +470,7 @@ def _run_trusted_phase(
         phase2_result.trusted_level = trusted_result.best_level
         phase2_result.trusted_containerfile = trusted_result.best_containerfile
         phase2_result.trusted_containerfile_path = trusted_result.best_containerfile_path
+        phase2_result.trusted_comparison_report = trusted_result.comparison_report
         logger.info(
             "Phase 3 complete: trusted_reward=%.4f, trusted_level=%d",
             trusted_result.best_reward, trusted_result.best_level,
@@ -575,39 +582,40 @@ def _scan_workspace_for_best(
     result.best_containerfile = cf_text
     result.best_containerfile_path = str(cf_path)
 
-    if result.best_reward < 0.01:
-        try:
-            jdk_version = ""
-            prepass_json = workspace / "prepass_findings.json"
-            if prepass_json.exists():
-                try:
-                    pdata = json.loads(prepass_json.read_text())
-                    manifest = pdata.get("jar_manifest") or {}
-                    jdk_version = manifest.get("Build-Jdk-Spec", "")
-                    if not jdk_version:
-                        created_by = manifest.get("Created-By", "")
-                        for part in created_by.replace("(", " ").replace(")", " ").split():
-                            if part and part[0].isdigit():
-                                jdk_version = part
-                                break
-                except (json.JSONDecodeError, OSError):
-                    pass
+    try:
+        jdk_version = ""
+        prepass_json = workspace / "prepass_findings.json"
+        if prepass_json.exists():
+            try:
+                pdata = json.loads(prepass_json.read_text())
+                manifest = pdata.get("jar_manifest") or {}
+                jdk_version = manifest.get("Build-Jdk-Spec", "")
+                if not jdk_version:
+                    created_by = manifest.get("Created-By", "")
+                    for part in created_by.replace("(", " ").replace(")", " ").split():
+                        if part and part[0].isdigit():
+                            jdk_version = part
+                            break
+            except (json.JSONDecodeError, OSError):
+                pass
 
-            evaluator = Evaluator(host=host)
-            eval_result = evaluator.evaluate(cf_text, coordinate, jdk_version=jdk_version)
-            result.best_reward = eval_result.reward
-            result.best_level = eval_result.level_reached
-            if eval_result.comparison_report is not None:
-                report = eval_result.comparison_report
-                result.comparison_report = {
-                    "structural_match": report.structural.match,
-                    "metadata_match": report.metadata.match,
-                    "bytecode_match": report.bytecode.match,
-                    "verdict": report.verdict,
-                }
-            result.build_log = eval_result.build_log
-        except Exception as e:
-            logger.warning("Post-scan evaluation failed: %s", e)
+        evaluator = Evaluator(host=host)
+        eval_result = evaluator.evaluate(cf_text, coordinate, jdk_version=jdk_version)
+        result.best_reward = eval_result.reward
+        result.best_level = eval_result.level_reached
+        if eval_result.comparison_report is not None:
+            report = eval_result.comparison_report
+            result.comparison_report = {
+                "structural_match": report.structural.match,
+                "metadata_match": report.metadata.match,
+                "bytecode_match": report.bytecode.match,
+                "verdict": report.verdict,
+            }
+        result.build_log = eval_result.build_log
+    except Exception as e:
+        logger.warning("Post-scan evaluation failed: %s", e)
+        result.best_reward = 0.0
+        result.best_level = 0
 
 
 def _record_learnings(
@@ -769,6 +777,8 @@ def _restructure_output(
     delta = build_delta_report(exact_result, trusted_result)
     delta.coordinate = coordinate
     delta.exact_reward = result.best_reward
+    delta.trusted_reward = result.trusted_reward
+    delta.reward_delta = result.trusted_reward - result.best_reward
 
     if isinstance(result.comparison_report, dict):
         cr = result.comparison_report
@@ -778,6 +788,15 @@ def _restructure_output(
         verdict = cr.get("verdict", "")
         if verdict in ("IDENTICAL", "EQUIVALENT", "DIVERGENT"):
             delta.functional_equivalence = verdict
+
+    if isinstance(result.trusted_comparison_report, dict):
+        tcr = result.trusted_comparison_report
+        trusted_verdict = tcr.get("verdict", "")
+        if delta.functional_equivalence in ("", "NOT_EVALUATED") and trusted_verdict in ("IDENTICAL", "EQUIVALENT", "DIVERGENT"):
+            delta.functional_equivalence = trusted_verdict
+            delta.structural_match = tcr.get("structural_match")
+            delta.metadata_match = tcr.get("metadata_match")
+            delta.bytecode_match = tcr.get("bytecode_match")
 
     delta_path = workspace / "delta_report.json"
     delta_path.write_text(json.dumps(delta.to_dict(), indent=2) + "\n")
