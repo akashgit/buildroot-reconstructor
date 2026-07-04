@@ -12,7 +12,11 @@ from pathlib import Path
 from buildroot.agent.claude_runner import spawn_claude_agent
 from buildroot.agent.evaluator import Evaluator
 from buildroot.agent.knowledge.retrieval import DEFAULT_KB_DIR, query_kb_for_prompt
-from buildroot.agent.meta_prompt import build_orchestrator_prompt
+from buildroot.agent.meta_prompt import (
+    build_orchestrator_prompt,
+    build_trusted_orchestrator_prompt,
+    _build_trusted_task_prompt,
+)
 from buildroot.agent.models import RecipeStore
 from buildroot.agent.prepass import PrePassFindings, run_prepass
 from buildroot.pipeline.models import BuildrootSpec, JdkSpec, PomData
@@ -42,6 +46,10 @@ class OrchestratorResult:
     error_message: str = ""
     comparison_report: dict | None = None
     build_log: str = ""
+    trusted_reward: float = 0.0
+    trusted_level: int = 0
+    trusted_containerfile: str = ""
+    trusted_containerfile_path: str = ""
 
     def to_dict(self) -> dict:
         d = {
@@ -58,6 +66,12 @@ class OrchestratorResult:
             d["comparison_report"] = self.comparison_report
         if self.build_log:
             d["build_log"] = self.build_log
+        if self.trusted_reward > 0 or self.trusted_containerfile:
+            d["trusted"] = {
+                "reward": round(self.trusted_reward, 4),
+                "level": self.trusted_level,
+                "containerfile_path": self.trusted_containerfile_path,
+            }
         return d
 
     def phase2_findings(self) -> dict:
@@ -297,7 +311,110 @@ def run_orchestrator(
         )
         result.status = "success"
 
+    # 9. Phase 3: Trusted cascade
+    if result.best_containerfile:
+        _run_trusted_phase(
+            coordinate=coordinate,
+            workspace=workspace,
+            phase2_result=result,
+            prepass_summary=prepass_summary,
+            kb_context=kb_context,
+            host=host,
+            max_budget_usd=max_budget_usd,
+            max_agent_turns=max_agent_turns,
+            agent_timeout=agent_timeout,
+            target_score=target_score,
+        )
+
+        # 10. Output restructuring
+        _restructure_output(result, workspace, coordinate)
+
     return result
+
+
+def _run_trusted_phase(
+    coordinate: str,
+    workspace: Path,
+    phase2_result: OrchestratorResult,
+    prepass_summary: str,
+    kb_context: str,
+    host: str,
+    max_budget_usd: float,
+    max_agent_turns: int,
+    agent_timeout: int,
+    target_score: float,
+) -> None:
+    """Run Phase 3: same agent loop constrained to trusted sources, warm-started from Phase 2."""
+    logger.info("Starting Phase 3 (trusted cascade) for %s", coordinate)
+
+    trusted_workspace = workspace / "trusted"
+    trusted_workspace.mkdir(parents=True, exist_ok=True)
+
+    phase2_findings = {
+        "best_containerfile": phase2_result.best_containerfile,
+        "best_reward": phase2_result.best_reward,
+        "best_level": phase2_result.best_level,
+        "path": phase2_result.path,
+    }
+
+    if phase2_result.best_containerfile:
+        ref_path = trusted_workspace / "phase2_reference.Containerfile"
+        ref_path.write_text(phase2_result.best_containerfile)
+
+    system_prompt = build_trusted_orchestrator_prompt(
+        coordinate=coordinate,
+        prepass_summary=prepass_summary,
+        kb_context=kb_context,
+        phase2_findings=phase2_findings,
+    )
+
+    task = _build_trusted_task_prompt(
+        coordinate=coordinate,
+        host=host,
+        workspace=trusted_workspace,
+        target_score=target_score,
+    )
+
+    remaining_budget = 0.0
+    if max_budget_usd > 0:
+        remaining_budget = max(0.0, max_budget_usd - phase2_result.cost_usd)
+        if remaining_budget <= 0:
+            logger.warning("No budget remaining for Phase 3")
+            return
+
+    logger.info(
+        "Spawning Phase 3 trusted agent (budget=$%.2f, timeout=%s)",
+        remaining_budget, f"{agent_timeout}s" if agent_timeout > 0 else "unlimited",
+    )
+
+    agent_result = spawn_claude_agent(
+        task=task,
+        system_prompt=system_prompt,
+        model="claude-opus-4-6",
+        max_turns=max_agent_turns,
+        max_budget_usd=remaining_budget,
+        timeout=agent_timeout,
+        cwd=str(trusted_workspace),
+        allowed_tools=["Bash", "Read", "Write", "Edit", "WebSearch", "WebFetch"],
+    )
+
+    phase2_result.cost_usd += agent_result.cost_usd
+
+    if not agent_result.is_error:
+        trusted_result = OrchestratorResult(coordinate=coordinate)
+        _parse_agent_output(agent_result.text, trusted_result, trusted_workspace, coordinate, host)
+        _scan_workspace_for_best(trusted_result, trusted_workspace, coordinate, host)
+
+        phase2_result.trusted_reward = trusted_result.best_reward
+        phase2_result.trusted_level = trusted_result.best_level
+        phase2_result.trusted_containerfile = trusted_result.best_containerfile
+        phase2_result.trusted_containerfile_path = trusted_result.best_containerfile_path
+        logger.info(
+            "Phase 3 complete: trusted_reward=%.4f, trusted_level=%d",
+            trusted_result.best_reward, trusted_result.best_level,
+        )
+    else:
+        logger.error("Phase 3 agent failed: %s", agent_result.error_message)
 
 
 def _build_task_prompt(
@@ -320,7 +437,7 @@ Target score: {target_score}
 
 1. **Try v3 first** (fast path):
    ```bash
-   buildroot agent {coordinate} --v3-only --max-iterations 5{host_flag}
+   buildroot agent {coordinate} --v3-only --max-iterations 1{host_flag}
    ```
    Read the JSON output. If reward >= {target_score}, you're done.
 

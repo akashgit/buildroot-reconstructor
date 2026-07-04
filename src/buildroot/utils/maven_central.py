@@ -42,6 +42,27 @@ def _pom_url(group_id: str, artifact_id: str, version: str) -> str:
     return f"{MAVEN_CENTRAL_BASE}/{group_path}/{artifact_id}/{version}/{artifact_id}-{version}.pom"
 
 
+def fetch_latest_version(group_id: str, artifact_id: str) -> str | None:
+    """Fetch the latest release version from Maven Central metadata.
+
+    Returns the version string, or None if unavailable.
+    """
+    group_path = group_id.replace(".", "/")
+    url = f"{MAVEN_CENTRAL_BASE}/{group_path}/{artifact_id}/maven-metadata.xml"
+    try:
+        xml_text = _fetch_with_retry(url)
+        import re
+        release = re.search(r"<release>([^<]+)</release>", xml_text)
+        if release:
+            return release.group(1)
+        latest = re.search(r"<latest>([^<]+)</latest>", xml_text)
+        if latest:
+            return latest.group(1)
+    except Exception as e:
+        logger.warning("Could not fetch latest version for %s:%s: %s", group_id, artifact_id, e)
+    return None
+
+
 def fetch_pom(
     group_id: str,
     artifact_id: str,

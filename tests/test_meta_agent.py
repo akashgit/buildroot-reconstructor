@@ -1,13 +1,17 @@
-"""Tests for meta_agent — unit tests for _parse_agent_output and _build_task_prompt."""
+"""Tests for meta_agent — unit tests for _parse_agent_output, _build_task_prompt, and cascade."""
 
 from __future__ import annotations
 
+import json
 from pathlib import Path
+from unittest.mock import MagicMock, patch
 
 from buildroot.agent.meta_agent import (
     OrchestratorResult,
     _build_task_prompt,
     _parse_agent_output,
+    _restructure_output,
+    _run_trusted_phase,
 )
 
 
@@ -132,3 +136,223 @@ class TestOrchestratorResult:
         assert d["best_level"] == 4
         assert d["elapsed_seconds"] == 120.5
         assert d["cost_usd"] == 2.5
+
+    def test_to_dict_with_trusted_fields(self):
+        r = OrchestratorResult(
+            coordinate="g:a:1.0",
+            trusted_reward=0.95,
+            trusted_level=4,
+            trusted_containerfile="FROM eclipse-temurin:17-jdk",
+            trusted_containerfile_path="/ws/trusted/Containerfile",
+        )
+        d = r.to_dict()
+        assert "trusted" in d
+        assert d["trusted"]["reward"] == 0.95
+        assert d["trusted"]["level"] == 4
+
+
+class TestCascadePipeline:
+    """Integration tests for the Phase 3 cascade pipeline."""
+
+    def _make_phase2_result(self, **kwargs):
+        defaults = dict(
+            coordinate="g:a:1.0",
+            status="success",
+            best_reward=0.9988,
+            best_level=4,
+            best_containerfile="FROM amazoncorretto:17\nRUN mvn clean install",
+            best_containerfile_path="/ws/Containerfile.best",
+            path="takeover",
+            cost_usd=1.50,
+        )
+        defaults.update(kwargs)
+        return OrchestratorResult(**defaults)
+
+    @patch("buildroot.agent.meta_agent.spawn_claude_agent")
+    @patch("buildroot.agent.meta_agent._scan_workspace_for_best")
+    def test_cascade_phase3_spawned(self, mock_scan, mock_spawn, tmp_path):
+        """Phase 3 spawns a second Claude agent when Phase 2 produces a Containerfile."""
+        mock_spawn.return_value = MagicMock(
+            is_error=False,
+            text="RESULT: SUCCESS coordinate=g:a:1.0 reward=0.85 level=3 path=trusted",
+            cost_usd=0.50,
+        )
+
+        result = self._make_phase2_result()
+        _run_trusted_phase(
+            coordinate="g:a:1.0",
+            workspace=tmp_path,
+            phase2_result=result,
+            prepass_summary="JDK 17",
+            kb_context="",
+            host="rh-h100-01",
+            max_budget_usd=5.0,
+            max_agent_turns=30,
+            agent_timeout=600,
+            target_score=0.98,
+        )
+
+        mock_spawn.assert_called_once()
+        call_kwargs = mock_spawn.call_args
+        assert call_kwargs.kwargs["cwd"] == str(tmp_path / "trusted")
+
+    @patch("buildroot.agent.meta_agent.spawn_claude_agent")
+    @patch("buildroot.agent.meta_agent._scan_workspace_for_best")
+    def test_phase3_prompt_contains_phase2_findings(self, mock_scan, mock_spawn, tmp_path):
+        """Phase 3 system prompt includes Phase 2's Containerfile and reward."""
+        mock_spawn.return_value = MagicMock(
+            is_error=False,
+            text="RESULT: STAGNATION coordinate=g:a:1.0 reward=0.50 level=2 path=trusted",
+            cost_usd=0.30,
+        )
+
+        result = self._make_phase2_result()
+        _run_trusted_phase(
+            coordinate="g:a:1.0",
+            workspace=tmp_path,
+            phase2_result=result,
+            prepass_summary="",
+            kb_context="",
+            host="rh-h100-01",
+            max_budget_usd=5.0,
+            max_agent_turns=30,
+            agent_timeout=600,
+            target_score=0.98,
+        )
+
+        call_kwargs = mock_spawn.call_args
+        system_prompt = call_kwargs.kwargs["system_prompt"]
+        assert "amazoncorretto:17" in system_prompt
+        assert "0.9988" in system_prompt
+
+    @patch("buildroot.agent.meta_agent.spawn_claude_agent")
+    @patch("buildroot.agent.meta_agent._scan_workspace_for_best")
+    def test_phase3_task_uses_trusted_flag(self, mock_scan, mock_spawn, tmp_path):
+        """Phase 3 task prompt contains --trusted flag."""
+        mock_spawn.return_value = MagicMock(
+            is_error=False,
+            text="RESULT: SUCCESS coordinate=g:a:1.0 reward=0.90 level=4 path=trusted",
+            cost_usd=0.40,
+        )
+
+        result = self._make_phase2_result()
+        _run_trusted_phase(
+            coordinate="g:a:1.0",
+            workspace=tmp_path,
+            phase2_result=result,
+            prepass_summary="",
+            kb_context="",
+            host="rh-h100-01",
+            max_budget_usd=5.0,
+            max_agent_turns=30,
+            agent_timeout=600,
+            target_score=0.98,
+        )
+
+        call_kwargs = mock_spawn.call_args
+        task = call_kwargs.kwargs["task"]
+        assert "--trusted" in task
+
+    @patch("buildroot.agent.meta_agent.spawn_claude_agent")
+    @patch("buildroot.agent.meta_agent._scan_workspace_for_best")
+    def test_orchestrator_result_has_trusted_fields(self, mock_scan, mock_spawn, tmp_path):
+        """After cascade, trusted_reward and trusted_level are populated."""
+        def populate_scan(res, ws, coord, host):
+            res.best_reward = 0.85
+            res.best_level = 3
+            res.best_containerfile = "FROM eclipse-temurin:17-jdk\nRUN mvn install"
+            res.best_containerfile_path = str(ws / "Containerfile.best")
+
+        mock_scan.side_effect = populate_scan
+        mock_spawn.return_value = MagicMock(
+            is_error=False,
+            text="RESULT: SUCCESS coordinate=g:a:1.0 reward=0.85 level=3 path=trusted",
+            cost_usd=0.50,
+        )
+
+        result = self._make_phase2_result()
+        _run_trusted_phase(
+            coordinate="g:a:1.0",
+            workspace=tmp_path,
+            phase2_result=result,
+            prepass_summary="",
+            kb_context="",
+            host="rh-h100-01",
+            max_budget_usd=5.0,
+            max_agent_turns=30,
+            agent_timeout=600,
+            target_score=0.98,
+        )
+
+        assert result.trusted_reward == 0.85
+        assert result.trusted_level == 3
+        assert result.trusted_containerfile == "FROM eclipse-temurin:17-jdk\nRUN mvn install"
+
+    def test_output_structure(self, tmp_path):
+        """Verify exact/ and trusted/ dirs, delta_report.json, trust_report.md exist."""
+        result = self._make_phase2_result(
+            trusted_reward=0.90,
+            trusted_level=3,
+            trusted_containerfile="FROM eclipse-temurin:17-jdk\nRUN mvn install",
+            trusted_containerfile_path=str(tmp_path / "trusted" / "Containerfile"),
+        )
+
+        (tmp_path / "trusted").mkdir(parents=True, exist_ok=True)
+        (tmp_path / "trusted" / "Containerfile").write_text(
+            "FROM eclipse-temurin:17-jdk\nRUN mvn install"
+        )
+
+        _restructure_output(result, tmp_path, "g:a:1.0")
+
+        assert (tmp_path / "exact" / "Containerfile").exists()
+        assert (tmp_path / "delta_report.json").exists()
+        assert (tmp_path / "trust_report.md").exists()
+
+    def test_delta_report_generated(self, tmp_path):
+        """delta_report.json is created by _restructure_output."""
+        result = self._make_phase2_result(
+            trusted_reward=0.90,
+            trusted_level=4,
+            trusted_containerfile="FROM eclipse-temurin:17-jdk\nRUN mvn install",
+        )
+
+        (tmp_path / "trusted").mkdir(parents=True, exist_ok=True)
+        (tmp_path / "trusted" / "Containerfile").write_text(
+            "FROM eclipse-temurin:17-jdk\nRUN mvn install"
+        )
+
+        _restructure_output(result, tmp_path, "g:a:1.0")
+
+        delta = json.loads((tmp_path / "delta_report.json").read_text())
+        assert "coordinate" in delta
+
+    def test_v3_iterations_default_1(self):
+        """Task prompt has --max-iterations 1."""
+        prompt = _build_task_prompt("g:a:1.0", "host", Path("/ws"), 0.98)
+        assert "--max-iterations 1" in prompt
+
+    @patch("buildroot.agent.meta_agent.spawn_claude_agent")
+    @patch("buildroot.agent.meta_agent._scan_workspace_for_best")
+    def test_phase3_always_runs(self, mock_scan, mock_spawn, tmp_path):
+        """Phase 3 runs even when Phase 2 reward is low (no threshold gate)."""
+        mock_spawn.return_value = MagicMock(
+            is_error=False,
+            text="RESULT: STAGNATION coordinate=g:a:1.0 reward=0.0 level=0 path=trusted",
+            cost_usd=0.10,
+        )
+
+        result = self._make_phase2_result(best_reward=0.15, best_level=2)
+        _run_trusted_phase(
+            coordinate="g:a:1.0",
+            workspace=tmp_path,
+            phase2_result=result,
+            prepass_summary="",
+            kb_context="",
+            host="rh-h100-01",
+            max_budget_usd=5.0,
+            max_agent_turns=30,
+            agent_timeout=600,
+            target_score=0.98,
+        )
+
+        mock_spawn.assert_called_once()

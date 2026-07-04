@@ -40,3 +40,8 @@ markers = [
     "level2: Level 2 Podman build verification",
     "slow: tests that take a long time to run (container builds, etc.)",
 ]
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.0",
+]

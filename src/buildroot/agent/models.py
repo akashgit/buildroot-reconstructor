@@ -144,6 +144,8 @@ class EvalResult:
     diff_summary: str = ""
     comparison_report: Any | None = None
     level_reached: int = 0
+    trust_check: bool = False
+    trust_violations: list[str] = field(default_factory=list)
     test_result: TestResult | None = None
     trust_violations: list[str] = field(default_factory=list)
 
@@ -177,6 +179,9 @@ class EvalResult:
             "error_summary": self.error_summary,
             "comparison_verdict": self.comparison_verdict,
         }
+        if self.trust_check or self.trust_violations:
+            d["trust_check"] = self.trust_check
+            d["trust_violations"] = self.trust_violations
         if self.test_result is not None:
             d["test_result"] = self.test_result.to_dict()
         if self.trust_violations:

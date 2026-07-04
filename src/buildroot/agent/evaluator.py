@@ -58,6 +58,8 @@ class Evaluator:
         containerfile: str,
         coordinate: str,
         capture_full_log: bool = False,
+        *,
+        trusted: bool = False,
     ) -> EvalResult:
         containerfile = sanitize_gha_expressions(containerfile)
         result = EvalResult()
@@ -67,6 +69,10 @@ class Evaluator:
             return result
 
         self._l1_5_trust(containerfile, result)
+        if trusted and result.trust_violations:
+            result.error_summary = "; ".join(result.trust_violations)
+            result.compute_reward()
+            return result
 
         tag = f"buildroot-agent-{uuid.uuid4().hex[:8]}"
 
@@ -334,6 +340,27 @@ class Evaluator:
             logger.warning("Fallback signal extraction failed: %s", e)
 
         return signals
+
+    def _parse_dockerfile_args(self, structure: list) -> dict:
+        """Extract ARG instructions with defaults."""
+        args = {}
+        for instruction in structure:
+            if instruction["instruction"] == "ARG":
+                value = instruction["value"].strip()
+                if "=" in value:
+                    key, default = value.split("=", 1)
+                    args[key.strip()] = default.strip()
+                else:
+                    args[value] = ""
+        return args
+
+    def _substitute_args(self, text: str, args: dict) -> str:
+        """Replace ${VAR} and $VAR patterns with values from args dict."""
+        import re as _re
+        def replacer(m):
+            var = m.group(1) or m.group(2)
+            return args.get(var, m.group(0))
+        return _re.sub(r"\$\{(\w+)\}|\$(\w+)", replacer, text)
 
     def _cleanup_image(self, tag: str) -> None:
         try:

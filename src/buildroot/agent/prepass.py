@@ -199,7 +199,7 @@ def run_prepass(coordinate: str, workspace: Path) -> PrePassFindings:
         findings.attempted_but_failed.append(f"POM fetch/parse: {e}")
         pom_data = PomData(group_id=group_id, artifact_id=artifact_id, version=version)
 
-    # 2. Discover source repo
+    # 2. Discover source repo (direct POM, then parent chain)
     try:
         repo_info = discover_repo_from_pom(pom_data)
         if repo_info:
@@ -212,7 +212,13 @@ def run_prepass(coordinate: str, workspace: Path) -> PrePassFindings:
                 evidence=f"SCM URL from POM → {owner}/{name}",
             )
         else:
-            findings.attempted_but_failed.append("Source repo discovery: no SCM URL in POM")
+            parent_repo = _discover_repo_from_parent_chain(pom_data, pom_parser)
+            if parent_repo:
+                findings.source_repo = parent_repo
+            else:
+                findings.attempted_but_failed.append(
+                    "Source repo discovery: no SCM URL in POM or parent chain"
+                )
     except Exception as e:
         logger.warning("Repo discovery failed: %s", e)
         findings.attempted_but_failed.append(f"Source repo discovery: {e}")
@@ -221,7 +227,7 @@ def run_prepass(coordinate: str, workspace: Path) -> PrePassFindings:
     if findings.source_repo:
         try:
             repo_url = findings.source_repo.value
-            parts = repo_url.rstrip("/").rstrip(".git").split("/")
+            parts = repo_url.rstrip("/").removesuffix(".git").split("/")
             owner, name = parts[-2], parts[-1]
             tag = discover_git_tag(owner, name, artifact_id, version)
             findings.git_tag = PrePassFinding(
@@ -308,7 +314,7 @@ def run_prepass(coordinate: str, workspace: Path) -> PrePassFindings:
     if findings.source_repo:
         try:
             repo_url = findings.source_repo.value
-            parts = repo_url.rstrip("/").rstrip(".git").split("/")
+            parts = repo_url.rstrip("/").removesuffix(".git").split("/")
             owner, name = parts[-2], parts[-1]
             ci_parser = CIParser()
             ci_data = _try_parse_ci(ci_parser, owner, name)
@@ -350,6 +356,41 @@ def run_prepass(coordinate: str, workspace: Path) -> PrePassFindings:
         )
 
     return findings
+
+
+_MAX_PARENT_DEPTH = 5
+
+
+def _discover_repo_from_parent_chain(pom_data: PomData, pom_parser: PomParser) -> PrePassFinding | None:
+    """Walk parent POM chain to find SCM URL when direct POM has none."""
+    current = pom_data
+    for depth in range(_MAX_PARENT_DEPTH):
+        if not current.parent_chain:
+            break
+        parent_ref = current.parent_chain[0]
+        pg = parent_ref.get("groupId", "")
+        pa = parent_ref.get("artifactId", "")
+        pv = parent_ref.get("version", "")
+        if not (pg and pa and pv):
+            break
+        try:
+            parent_xml = fetch_pom(pg, pa, pv)
+            parent_data = pom_parser.parse(parent_xml)
+            repo_info = discover_repo_from_pom(parent_data)
+            if repo_info:
+                owner, name = repo_info
+                logger.info("Found SCM in parent POM %s:%s:%s (depth=%d)", pg, pa, pv, depth + 1)
+                return PrePassFinding(
+                    value=f"https://github.com/{owner}/{name}.git",
+                    source="parent_pom",
+                    confidence="medium",
+                    evidence=f"SCM URL from parent POM {pg}:{pa}:{pv} (depth={depth + 1})",
+                )
+            current = parent_data
+        except Exception as e:
+            logger.warning("Parent POM fetch failed for %s:%s:%s: %s", pg, pa, pv, e)
+            break
+    return None
 
 
 def _detect_build_system_from_findings(findings: PrePassFindings, pom_data: PomData) -> None:

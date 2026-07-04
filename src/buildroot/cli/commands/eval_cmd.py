@@ -21,7 +21,9 @@ import click
     help="Report format (json, markdown, both, or none)",
 )
 @click.option("--no-cache", is_flag=True, help="Disable podman layer caching (rebuild all layers)")
-def eval_cmd(containerfile, coordinate, host, timeout, pretty, report, no_cache):
+@click.option("--trusted", is_flag=True, default=False,
+              help="Enforce trusted-source-only constraint (L1.5 gate)")
+def eval_cmd(containerfile, coordinate, host, timeout, pretty, report, no_cache, trusted):
     """Evaluate a Containerfile against a Maven Central artifact.
 
     Returns JSON with L1-L4 scores, comparison report, and reward.
@@ -31,6 +33,7 @@ def eval_cmd(containerfile, coordinate, host, timeout, pretty, report, no_cache)
     Examples:
         buildroot eval Containerfile org.apache.commons:commons-lang3:3.14.0
         buildroot eval my.Containerfile com.fasterxml.jackson.core:jackson-core:2.16.1 --host myserver
+        buildroot eval Containerfile org.example:lib:1.0 --trusted
     """
     from pathlib import Path
 
@@ -39,7 +42,7 @@ def eval_cmd(containerfile, coordinate, host, timeout, pretty, report, no_cache)
     cf_text = Path(containerfile).read_text()
     capture_full_log = report != "none"
     evaluator = Evaluator(host=host, timeout=timeout, no_cache=no_cache)
-    result = evaluator.evaluate(cf_text, coordinate, capture_full_log=capture_full_log)
+    result = evaluator.evaluate(cf_text, coordinate, capture_full_log=capture_full_log, trusted=trusted)
 
     if report != "none":
         from buildroot.eval.audit import build_audit_log, extract_dynamic_assets, extract_static_assets
@@ -84,6 +87,10 @@ def eval_cmd(containerfile, coordinate, host, timeout, pretty, report, no_cache)
         "error_summary": result.error_summary or None,
         "diff_summary": getattr(result, "diff_summary", None),
     }
+
+    if result.trust_check or result.trust_violations:
+        output["trust_check"] = result.trust_check
+        output["trust_violations"] = result.trust_violations
 
     if hasattr(result, "comparison_report") and result.comparison_report:
         cr = result.comparison_report
