@@ -17,7 +17,7 @@ GITHUB_API = "https://api.github.com"
 
 def _headers() -> dict[str, str]:
     headers = {"Accept": "application/vnd.github.v3+json"}
-    token = os.environ.get("GITHUB_TOKEN")
+    token = os.environ.get("GITHUB_TOKEN") or os.environ.get("GH_TOKEN")
     if token:
         headers["Authorization"] = f"token {token}"
     return headers

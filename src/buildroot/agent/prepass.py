@@ -233,7 +233,7 @@ def run_prepass(coordinate: str, workspace: Path) -> PrePassFindings:
     if findings.source_repo:
         try:
             repo_url = findings.source_repo.value
-            parts = repo_url.rstrip("/").rstrip(".git").split("/")
+            parts = repo_url.rstrip("/").removesuffix(".git").split("/")
             owner, name = parts[-2], parts[-1]
             tag = discover_git_tag(owner, name, artifact_id, version)
             findings.git_tag = PrePassFinding(
@@ -320,7 +320,7 @@ def run_prepass(coordinate: str, workspace: Path) -> PrePassFindings:
     if findings.source_repo:
         try:
             repo_url = findings.source_repo.value
-            parts = repo_url.rstrip("/").rstrip(".git").split("/")
+            parts = repo_url.rstrip("/").removesuffix(".git").split("/")
             owner, name = parts[-2], parts[-1]
             ci_parser = CIParser()
             ci_data = _try_parse_ci(ci_parser, owner, name)
