@@ -338,18 +338,6 @@ def run_orchestrator(
         )
         result.status = "success"
 
-    # 8b. Save to build store for sibling warm-start
-    if result.best_reward > 0 and result.best_containerfile:
-        try:
-            from buildroot.agent.build_store import save_build
-
-            save_build(
-                coordinate, result.best_containerfile, result.best_reward,
-                result.best_level, result.path, result.cost_usd, result.elapsed_seconds,
-            )
-        except Exception as e:
-            logger.debug("Build store save skipped: %s", e)
-
     # 9. Phase 3: Trusted cascade
     if result.best_containerfile:
         _run_trusted_phase(
@@ -367,6 +355,21 @@ def run_orchestrator(
 
         # 10. Output restructuring
         _restructure_output(result, workspace, coordinate)
+
+    # 11. Save to build store (after Phase 3 so trusted variant is included)
+    if result.best_reward > 0 and result.best_containerfile:
+        try:
+            from buildroot.agent.build_store import save_build
+
+            save_build(
+                coordinate, result.best_containerfile, result.best_reward,
+                result.best_level, result.path, result.cost_usd, result.elapsed_seconds,
+                trusted_containerfile=result.trusted_containerfile,
+                trusted_reward=result.trusted_reward,
+                trusted_level=result.trusted_level,
+            )
+        except Exception as e:
+            logger.debug("Build store save skipped: %s", e)
 
     return result
 

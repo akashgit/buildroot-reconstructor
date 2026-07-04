@@ -46,6 +46,9 @@ def init_table() -> bool:
                     method TEXT,
                     cost_usd FLOAT DEFAULT 0,
                     elapsed_seconds FLOAT DEFAULT 0,
+                    trusted_containerfile TEXT DEFAULT '',
+                    trusted_reward FLOAT DEFAULT 0,
+                    trusted_level INTEGER DEFAULT 0,
                     created_at TIMESTAMP DEFAULT NOW(),
                     UNIQUE(group_id, artifact_id, version)
                 )
@@ -112,6 +115,9 @@ def save_build(
     method: str = "",
     cost_usd: float = 0,
     elapsed_seconds: float = 0,
+    trusted_containerfile: str = "",
+    trusted_reward: float = 0,
+    trusted_level: int = 0,
 ) -> bool:
     """Save a successful build to the store. Upserts on (group_id, artifact_id, version)."""
     parts = coordinate.split(":")
@@ -126,8 +132,10 @@ def save_build(
         with conn.cursor() as cur:
             cur.execute(
                 """
-                INSERT INTO builds (group_id, artifact_id, version, containerfile, reward, level, method, cost_usd, elapsed_seconds)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s)
+                INSERT INTO builds (group_id, artifact_id, version, containerfile, reward, level,
+                                    method, cost_usd, elapsed_seconds,
+                                    trusted_containerfile, trusted_reward, trusted_level)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 ON CONFLICT (group_id, artifact_id, version)
                 DO UPDATE SET containerfile = EXCLUDED.containerfile,
                               reward = EXCLUDED.reward,
@@ -135,12 +143,17 @@ def save_build(
                               method = EXCLUDED.method,
                               cost_usd = EXCLUDED.cost_usd,
                               elapsed_seconds = EXCLUDED.elapsed_seconds,
+                              trusted_containerfile = EXCLUDED.trusted_containerfile,
+                              trusted_reward = EXCLUDED.trusted_reward,
+                              trusted_level = EXCLUDED.trusted_level,
                               created_at = NOW()
                 """,
-                (group_id, artifact_id, version, containerfile, reward, level, method, cost_usd, elapsed_seconds),
+                (group_id, artifact_id, version, containerfile, reward, level, method,
+                 cost_usd, elapsed_seconds, trusted_containerfile, trusted_reward, trusted_level),
             )
         conn.commit()
-        logger.info("Saved build: %s (reward=%.4f, level=L%d)", coordinate, reward, level)
+        logger.info("Saved build: %s (reward=%.4f, level=L%d, trusted_reward=%.4f)",
+                     coordinate, reward, level, trusted_reward)
         return True
     except Exception as e:
         logger.warning("Failed to save build: %s", e)
