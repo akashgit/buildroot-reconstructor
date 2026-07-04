@@ -13,7 +13,7 @@ from buildroot.parsers.pom import PomParser
 from buildroot.pipeline.models import PomData
 from buildroot.pipeline.orchestrator import parse_gav
 from buildroot.utils.github_api import discover_git_tag, discover_repo_from_pom
-from buildroot.utils.maven_central import fetch_latest_version, fetch_pom, get_jar_path
+from buildroot.utils.maven_central import fetch_pom, get_jar_path
 
 logger = logging.getLogger(__name__)
 
@@ -216,15 +216,9 @@ def run_prepass(coordinate: str, workspace: Path) -> PrePassFindings:
             if parent_repo:
                 findings.source_repo = parent_repo
             else:
-                latest_repo = _discover_repo_from_latest_version(
-                    group_id, artifact_id, version, pom_parser,
+                findings.attempted_but_failed.append(
+                    "Source repo discovery: no SCM URL in POM or parent chain"
                 )
-                if latest_repo:
-                    findings.source_repo = latest_repo
-                else:
-                    findings.attempted_but_failed.append(
-                        "Source repo discovery: no SCM URL in POM, parent chain, or latest version"
-                    )
     except Exception as e:
         logger.warning("Repo discovery failed: %s", e)
         findings.attempted_but_failed.append(f"Source repo discovery: {e}")
@@ -397,41 +391,6 @@ def _discover_repo_from_parent_chain(pom_data: PomData, pom_parser: PomParser) -
             logger.warning("Parent POM fetch failed for %s:%s:%s: %s", pg, pa, pv, e)
             break
     return None
-
-
-def _discover_repo_from_latest_version(
-    group_id: str, artifact_id: str, version: str, pom_parser: PomParser,
-) -> PrePassFinding | None:
-    """Fetch the latest version of the same artifact and resolve SCM from it."""
-    try:
-        latest = fetch_latest_version(group_id, artifact_id)
-        if not latest or latest == version:
-            return None
-        logger.info("Trying latest version %s:%s:%s for repo resolution", group_id, artifact_id, latest)
-        latest_pom = fetch_pom(group_id, artifact_id, latest)
-        latest_data = pom_parser.parse(latest_pom)
-        repo_info = discover_repo_from_pom(latest_data)
-        if not repo_info:
-            parent_finding = _discover_repo_from_parent_chain(latest_data, pom_parser)
-            if parent_finding:
-                return PrePassFinding(
-                    value=parent_finding.value,
-                    source="latest_version_fallback",
-                    confidence="medium",
-                    evidence=f"SCM URL from latest version {latest} (via parent POM)",
-                )
-            return None
-        owner, name = repo_info
-        logger.info("Found SCM via latest version %s → %s/%s", latest, owner, name)
-        return PrePassFinding(
-            value=f"https://github.com/{owner}/{name}.git",
-            source="latest_version_fallback",
-            confidence="medium",
-            evidence=f"SCM URL from latest version {latest}",
-        )
-    except Exception as e:
-        logger.warning("Latest version fallback failed for %s:%s: %s", group_id, artifact_id, e)
-        return None
 
 
 def _detect_build_system_from_findings(findings: PrePassFindings, pom_data: PomData) -> None:
