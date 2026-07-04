@@ -56,13 +56,12 @@ def seed_from_results(results_dir: Path) -> int:
         reward = data.get("best_reward", 0)
         status = data.get("status", "")
         method = data.get("method", "")
-        if status != "success" or reward < 0.5:
+        if status != "success" or reward < 0.98:
             continue
         containerfile = cf.read_text() if cf.exists() else ""
         if not containerfile:
             continue
-        level = 4 if reward >= 0.98 else 3 if reward >= 0.5 else 2
-        if save_build(coord, containerfile, reward, level, method):
+        if save_build(coord, containerfile, reward, 4, method):
             count += 1
     return count
 
