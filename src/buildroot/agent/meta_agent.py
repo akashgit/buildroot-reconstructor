@@ -598,6 +598,8 @@ def _scan_workspace_for_best(
         result.build_log = eval_result.build_log
     except Exception as e:
         logger.warning("Post-scan evaluation failed: %s", e)
+        result.best_reward = 0.0
+        result.best_level = 0
 
 
 def _record_learnings(
@@ -774,7 +776,7 @@ def _restructure_output(
     if isinstance(result.trusted_comparison_report, dict):
         tcr = result.trusted_comparison_report
         trusted_verdict = tcr.get("verdict", "")
-        if not delta.functional_equivalence and trusted_verdict in ("IDENTICAL", "EQUIVALENT", "DIVERGENT"):
+        if delta.functional_equivalence in ("", "NOT_EVALUATED") and trusted_verdict in ("IDENTICAL", "EQUIVALENT", "DIVERGENT"):
             delta.functional_equivalence = trusted_verdict
             delta.structural_match = tcr.get("structural_match")
             delta.metadata_match = tcr.get("metadata_match")
