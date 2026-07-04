@@ -350,12 +350,7 @@ def _run_trusted_phase(
     trusted_workspace = workspace / "trusted"
     trusted_workspace.mkdir(parents=True, exist_ok=True)
 
-    phase2_findings = {
-        "best_containerfile": phase2_result.best_containerfile,
-        "best_reward": phase2_result.best_reward,
-        "best_level": phase2_result.best_level,
-        "path": phase2_result.path,
-    }
+    phase2_findings = phase2_result.phase2_findings()
 
     if phase2_result.best_containerfile:
         ref_path = trusted_workspace / "phase2_reference.Containerfile"
