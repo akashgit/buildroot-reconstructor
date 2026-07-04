@@ -75,3 +75,40 @@ python -m buildroot reconstruct org.apache.commons:commons-lang3:3.14.0 --output
 - Follow the existing code style and conventions
 - Use Podman (not Docker) for container operations
 
+## L4' Approximate Scoring
+
+When the reference JAR is unavailable on Maven Central (returns 404), the evaluation pipeline automatically falls back to approximate L4 scoring (L4'). This is invoked transparently — no user flag is needed.
+
+### How it works
+
+The evaluator checks Maven Central for the reference JAR. If the download fails (404), it computes an approximate L4 score from 4 signals:
+
+| Signal | Weight | What it checks |
+|--------|--------|----------------|
+| Structural match | 0.30 | Jaccard similarity between JAR .class files and source .java files |
+| Bytecode version | 0.30 | Built .class files target the expected JDK version |
+| Manifest sanity | 0.20 | MANIFEST.MF exists, pom.properties has correct groupId/artifactId |
+| Unit test pass | 0.20 | Project's test suite passes inside the container |
+
+Signals that cannot be computed (e.g., no tests exist, shaded JAR detected) return None and their weight is redistributed to the remaining signals.
+
+### How to tell which scoring path was used
+
+Check `l4_signal_source` in the eval output:
+- `'full_comparison'` — normal L4: bytecode comparison against reference JAR from Maven Central
+- `'fallback_signals'` — L4' approximate: multi-signal proxy score (no reference JAR available)
+
+### CLI usage
+
+The `buildroot eval` command reports both paths transparently:
+
+```
+buildroot eval <containerfile> <coordinate> --jdk-version 21
+```
+
+Output includes `fallback_signals` dict when L4' is active.
+
+### Default base images
+
+Generated Containerfiles use `registry.access.redhat.com/ubi9/openjdk-{version}` by default (no Docker Hub authentication or rate limiting required). This supports large-scale batch runs (20k+ artifacts) without hitting pull rate limits.
+
