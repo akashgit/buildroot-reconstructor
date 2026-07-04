@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import logging
 import os
 from typing import Any
@@ -49,6 +50,9 @@ def init_table() -> bool:
                     trusted_containerfile TEXT DEFAULT '',
                     trusted_reward FLOAT DEFAULT 0,
                     trusted_level INTEGER DEFAULT 0,
+                    delta_report JSONB DEFAULT NULL,
+                    trust_report TEXT DEFAULT '',
+                    prepass_findings JSONB DEFAULT NULL,
                     created_at TIMESTAMP DEFAULT NOW(),
                     UNIQUE(group_id, artifact_id, version)
                 )
@@ -118,6 +122,9 @@ def save_build(
     trusted_containerfile: str = "",
     trusted_reward: float = 0,
     trusted_level: int = 0,
+    delta_report: dict | None = None,
+    trust_report: str = "",
+    prepass_findings: dict | None = None,
 ) -> bool:
     """Save a successful build to the store. Upserts on (group_id, artifact_id, version)."""
     parts = coordinate.split(":")
@@ -134,8 +141,9 @@ def save_build(
                 """
                 INSERT INTO builds (group_id, artifact_id, version, containerfile, reward, level,
                                     method, cost_usd, elapsed_seconds,
-                                    trusted_containerfile, trusted_reward, trusted_level)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                                    trusted_containerfile, trusted_reward, trusted_level,
+                                    delta_report, trust_report, prepass_findings)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 ON CONFLICT (group_id, artifact_id, version)
                 DO UPDATE SET containerfile = EXCLUDED.containerfile,
                               reward = EXCLUDED.reward,
@@ -146,10 +154,16 @@ def save_build(
                               trusted_containerfile = EXCLUDED.trusted_containerfile,
                               trusted_reward = EXCLUDED.trusted_reward,
                               trusted_level = EXCLUDED.trusted_level,
+                              delta_report = EXCLUDED.delta_report,
+                              trust_report = EXCLUDED.trust_report,
+                              prepass_findings = EXCLUDED.prepass_findings,
                               created_at = NOW()
                 """,
                 (group_id, artifact_id, version, containerfile, reward, level, method,
-                 cost_usd, elapsed_seconds, trusted_containerfile, trusted_reward, trusted_level),
+                 cost_usd, elapsed_seconds, trusted_containerfile, trusted_reward, trusted_level,
+                 json.dumps(delta_report) if delta_report else None,
+                 trust_report,
+                 json.dumps(prepass_findings) if prepass_findings else None),
             )
         conn.commit()
         logger.info("Saved build: %s (reward=%.4f, level=L%d, trusted_reward=%.4f)",

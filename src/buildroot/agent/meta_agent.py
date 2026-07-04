@@ -356,10 +356,25 @@ def run_orchestrator(
         # 10. Output restructuring
         _restructure_output(result, workspace, coordinate)
 
-    # 11. Save to build store (after Phase 3 so trusted variant is included)
+    # 11. Save to build store (after Phase 3 so all artifacts are included)
     if result.best_reward > 0 and result.best_containerfile:
         try:
             from buildroot.agent.build_store import save_build
+
+            delta = None
+            delta_path = workspace / "delta_report.json"
+            if delta_path.exists():
+                delta = json.loads(delta_path.read_text())
+
+            trust_md = ""
+            trust_path = workspace / "trust_report.md"
+            if trust_path.exists():
+                trust_md = trust_path.read_text()
+
+            prepass_data = None
+            prepass_path = workspace / "prepass_findings.json"
+            if prepass_path.exists():
+                prepass_data = json.loads(prepass_path.read_text())
 
             save_build(
                 coordinate, result.best_containerfile, result.best_reward,
@@ -367,6 +382,9 @@ def run_orchestrator(
                 trusted_containerfile=result.trusted_containerfile,
                 trusted_reward=result.trusted_reward,
                 trusted_level=result.trusted_level,
+                delta_report=delta,
+                trust_report=trust_md,
+                prepass_findings=prepass_data,
             )
         except Exception as e:
             logger.debug("Build store save skipped: %s", e)
