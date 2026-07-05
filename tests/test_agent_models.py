@@ -73,6 +73,39 @@ class TestEvalResult:
         assert reward == 0.50
         assert er.level_reached == 3
 
+    def test_l4prime_high_score_promotes_to_level_4(self):
+        er = EvalResult(
+            l1_parse=True, l2_build=True, l3_command=True,
+            l4_score=1.0, l4_signal_source="fallback_signals",
+        )
+        er.compute_reward()
+        assert er.reward == 1.0
+        assert er.level_reached == 4
+
+    def test_l4prime_low_score_stays_level_3(self):
+        er = EvalResult(
+            l1_parse=True, l2_build=True, l3_command=True,
+            l4_score=0.7, l4_signal_source="fallback_signals",
+        )
+        er.compute_reward()
+        assert er.level_reached == 3
+
+    def test_l4prime_at_threshold_promotes(self):
+        er = EvalResult(
+            l1_parse=True, l2_build=True, l3_command=True,
+            l4_score=0.98, l4_signal_source="fallback_signals",
+        )
+        er.compute_reward()
+        assert er.level_reached == 4
+
+    def test_l4prime_just_below_threshold_stays_level_3(self):
+        er = EvalResult(
+            l1_parse=True, l2_build=True, l3_command=True,
+            l4_score=0.979, l4_signal_source="fallback_signals",
+        )
+        er.compute_reward()
+        assert er.level_reached == 3
+
     def test_to_dict(self):
         er = EvalResult(l1_parse=True, l2_build=True)
         er.compute_reward()
