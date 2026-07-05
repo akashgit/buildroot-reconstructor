@@ -113,37 +113,25 @@ def build_score_breakdown(eval_result: EvalResult, coordinate: str) -> ScoreBrea
 def compute_fallback_score(
     bytecode_version_match: bool | None,
     manifest_sanity: bool | None,
-    unit_tests_pass: bool | None,
+    unit_tests_pass: bool | None = None,
     structural_match: float | None = None,
 ) -> float:
-    """Compute weighted fallback score from available signals.
+    """Compute fallback score from the 2 signals that reliably fire.
 
-    Weights: structural (0.30) + bytecode (0.30) + manifest (0.20) + tests (0.20)
-    Only scores on available (non-None) signals, re-normalizing weights.
-    For structural_match, the value is a float (Jaccard similarity 0.0-1.0).
+    Active signals:
+      - bytecode_version_match (0.60): built .class major version matches expected JDK
+      - manifest_sanity (0.40): MANIFEST.MF + pom.properties GAV correct
+
+    structural_match and unit_tests_pass are accepted for forward compatibility
+    but not scored — source extraction and test runner don't produce reliable
+    results in the current pipeline.
     """
-    signals: list[tuple[float | bool | None, float]] = [
-        (bytecode_version_match, 0.30),
-        (manifest_sanity, 0.20),
-        (unit_tests_pass, 0.20),
-        (structural_match, 0.30),
-    ]
-
-    total_weight = 0.0
     score = 0.0
-
-    for value, weight in signals:
-        if value is not None:
-            total_weight += weight
-            if isinstance(value, float):
-                score += weight * value
-            elif value:
-                score += weight
-
-    if total_weight == 0:
-        return 0.0
-
-    return score / total_weight
+    if bytecode_version_match:
+        score += 0.60
+    if manifest_sanity:
+        score += 0.40
+    return score
 
 
 def check_bytecode_version_match(

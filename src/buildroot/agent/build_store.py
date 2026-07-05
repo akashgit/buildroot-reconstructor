@@ -174,6 +174,7 @@ def save_build(
                               eval_result = EXCLUDED.eval_result,
                               trusted_eval_result = EXCLUDED.trusted_eval_result,
                               created_at = NOW()
+                WHERE EXCLUDED.reward >= builds.reward
                 """,
                 (group_id, artifact_id, version, containerfile, reward, level, method,
                  cost_usd, elapsed_seconds, trusted_containerfile, trusted_reward, trusted_level,

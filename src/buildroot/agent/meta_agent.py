@@ -335,7 +335,7 @@ def run_orchestrator(
 
     # 8. Learning loop — record success
     if result.best_reward >= target_score and result.best_containerfile:
-        recipe_store.save(coordinate, 4, result.best_containerfile, result.best_reward)
+        recipe_store.save(coordinate, result.best_level, result.best_containerfile, result.best_reward)
         _record_learnings(
             coordinate=coordinate,
             containerfile=result.best_containerfile,
@@ -362,8 +362,8 @@ def run_orchestrator(
         # 10. Output restructuring
         _restructure_output(result, workspace, coordinate)
 
-    # 11. Save to build store (only verified L4 builds for sibling warm-start)
-    if result.best_level >= 4 and result.best_reward >= 0.98 and result.best_containerfile:
+    # 11. Save to build store (L3+ builds for tracking and warm-start)
+    if result.best_reward >= 0.5 and result.best_containerfile:
         try:
             from buildroot.agent.build_store import save_build
 

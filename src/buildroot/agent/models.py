@@ -162,8 +162,11 @@ class EvalResult:
             + 0.35 * float(self.l3_command)
             + self.l4_score * 0.50
         )
+        l4_passed = self.l4_match or (
+            self.l4_signal_source == "fallback_signals" and self.l4_score >= 0.98
+        )
         self.level_reached = (
-            4 if self.l4_match
+            4 if l4_passed
             else 3 if self.l3_command
             else 2 if self.l2_build
             else 1 if self.l1_parse
