@@ -426,6 +426,9 @@ def run_v3_pipeline(
         result.elapsed_seconds = time.time() - start_time
         return result
 
+    draft_result: EvalResult | None = None
+    draft_cf: str = ""
+
     # Warm-start: reverse-parse existing Containerfile and start in feedback mode
     if warm_start_containerfile:
         logger.info("Warm-start: reverse-parsing existing Containerfile for %s", coordinate)
@@ -442,7 +445,6 @@ def run_v3_pipeline(
         fallback_values = _fallback_values_from_prepass(prepass_findings, coordinate)
         fallback_values = _ensure_defaults(fallback_values, prepass_findings)
 
-        draft_result: EvalResult | None = None
         if fallback_values.get("source_repo"):
             try:
                 draft_cf = _render_containerfile(fallback_values)
@@ -486,9 +488,28 @@ def run_v3_pipeline(
         current_values = _ensure_defaults(current_values, prepass_findings)
 
     best_values = dict(current_values)
-    best_reward = 0.0
-    best_containerfile = ""
-    best_eval_result: EvalResult | None = None
+
+    # Short-circuit: if the draft already scored near-perfect, skip iterations entirely
+    if draft_result and draft_result.reward >= 0.98:
+        logger.info("Draft scored %.4f — short-circuiting (iterations cannot improve a near-perfect draft)", draft_result.reward)
+        recipe_store.save(coordinate, draft_result.level_reached, draft_cf, draft_result.reward)
+        result.best_reward = draft_result.reward
+        result.best_values = best_values
+        result.best_containerfile = draft_cf
+        result.status = "success"
+        result.elapsed_seconds = time.time() - start_time
+        return result
+
+    # Seed best from draft if it produced a partial result worth preserving
+    if draft_result and draft_result.reward > 0:
+        best_reward = draft_result.reward
+        best_containerfile = draft_cf
+        best_eval_result = draft_result
+    else:
+        best_reward = 0.0
+        best_containerfile = ""
+        best_eval_result = None
+
     failed_approaches: list[FailedApproach] = []
     value_hashes: list[str] = []
     prev_values: dict | None = None
