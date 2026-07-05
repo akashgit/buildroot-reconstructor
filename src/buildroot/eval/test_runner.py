@@ -143,7 +143,8 @@ def run_tests(
     host: str | None = None,
     timeout: int = 300,
     podman_root: str | None = None,
-    podman_imagestore: str | None = None,
+    podman_runroot: str | None = None,
+    podman_tmpdir: str | None = None,
 ) -> TestResult | None:
     """Run the project's test suite inside the build container.
 
@@ -163,8 +164,10 @@ def run_tests(
     podman_bin = "podman"
     if podman_root:
         podman_bin += f" --root {shlex.quote(podman_root)}"
-    if podman_imagestore:
-        podman_bin += f" --imagestore {shlex.quote(podman_imagestore)}"
+    if podman_runroot:
+        podman_bin += f" --runroot {shlex.quote(podman_runroot)}"
+    if podman_tmpdir:
+        podman_bin += f" --tmpdir {shlex.quote(podman_tmpdir)}"
     podman_cmd = f"{podman_bin} run --rm {shlex.quote(tag)} sh -c {shlex.quote(command)}"
     if host:
         cmd = [
@@ -175,8 +178,10 @@ def run_tests(
         podman_base = ["podman"]
         if podman_root:
             podman_base += ["--root", podman_root]
-        if podman_imagestore:
-            podman_base += ["--imagestore", podman_imagestore]
+        if podman_runroot:
+            podman_base += ["--runroot", podman_runroot]
+        if podman_tmpdir:
+            podman_base += ["--tmpdir", podman_tmpdir]
         cmd = podman_base + ["run", "--rm", tag, "sh", "-c", command]
 
     start = time.monotonic()

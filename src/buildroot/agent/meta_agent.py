@@ -168,7 +168,11 @@ def launch_interactive_orchestrator(
 
     # 7. Print banner then launch interactive claude as a subprocess.
     import sys
+    from buildroot.utils.podman_isolation import PodmanIsolation
+
     print(_BANNER, file=sys.stderr)
+
+    isolation = PodmanIsolation.create()
 
     cmd = [
         "claude",
@@ -179,10 +183,11 @@ def launch_interactive_orchestrator(
     ]
 
     try:
-        result = subprocess.run(cmd)
+        result = subprocess.run(cmd, env=isolation.get_env())
         return result.returncode
     finally:
         prompt_file.unlink(missing_ok=True)
+        isolation.cleanup()
 
 
 def _extract_jdk_version(prepass_findings: PrePassFindings) -> str:
@@ -306,20 +311,27 @@ def run_orchestrator(
     prepass_json = workspace / "prepass_findings.json"
     prepass_json.write_text(json.dumps(prepass_findings.to_dict(), indent=2))
 
-    # 6. Spawn the orchestrator agent
-    logger.info("Spawning orchestrator agent for %s (budget=$%.2f, timeout=%s)",
-                coordinate, max_budget_usd, f"{agent_timeout}s" if agent_timeout > 0 else "unlimited")
+    # 6. Spawn the orchestrator agent with isolated podman storage
+    from buildroot.utils.podman_isolation import PodmanIsolation
+    isolation = PodmanIsolation.create()
+    logger.info("Spawning orchestrator agent for %s (budget=$%.2f, timeout=%s, podman_root=%s)",
+                coordinate, max_budget_usd, f"{agent_timeout}s" if agent_timeout > 0 else "unlimited",
+                isolation.graphroot)
 
-    agent_result = spawn_claude_agent(
-        task=task,
-        system_prompt=system_prompt,
-        model="claude-opus-4-6",
-        max_turns=max_agent_turns,
-        max_budget_usd=max_budget_usd,
-        timeout=agent_timeout,
-        cwd=str(workspace),
-        allowed_tools=["Bash", "Read", "Write", "Edit", "WebSearch", "WebFetch"],
-    )
+    try:
+        agent_result = spawn_claude_agent(
+            task=task,
+            system_prompt=system_prompt,
+            model="claude-opus-4-6",
+            max_turns=max_agent_turns,
+            max_budget_usd=max_budget_usd,
+            timeout=agent_timeout,
+            cwd=str(workspace),
+            allowed_tools=["Bash", "Read", "Write", "Edit", "WebSearch", "WebFetch"],
+            env=isolation.get_env(),
+        )
+    finally:
+        isolation.cleanup()
 
     result.cost_usd = agent_result.cost_usd
     result.elapsed_seconds = time.time() - start_time
