@@ -363,8 +363,8 @@ def run_orchestrator(
         # 10. Output restructuring
         _restructure_output(result, workspace, coordinate)
 
-    # 11. Save to build store (L3+ builds for tracking and warm-start)
-    if result.best_reward >= 0.5 and result.best_containerfile:
+    # 11. Save to build store (high-quality builds for tracking and warm-start)
+    if result.best_reward >= 0.9 and result.best_containerfile:
         try:
             from buildroot.agent.build_store import save_build
 
