@@ -141,7 +141,13 @@ L4' score replaces L4 in the reward formula. Check `l4_signal_source` in eval ou
 
 Read `fallback_signals` in eval output for per-signal details.
 To improve L4' score: fix JDK version (bytecode), ensure correct GAV (manifest),
-fix test failures (tests), ensure all source compiles (structural)."""
+fix test failures (tests), ensure all source compiles (structural).
+
+### Coordinate resolution for L4' builds
+If eval reports "JAR unavailable" and the coordinate is a fork/republish (e.g. `commons-dbcp:commons-dbcp:2.12.0`),
+the reference JAR may exist under the canonical coordinate (`org.apache.commons:commons-dbcp2:2.12.0`).
+The evaluator tries automatic resolution via Maven Central search. If it still fails, you can search
+for the canonical coordinate yourself and download the reference JAR manually for comparison."""
 
 
 def _tool_docs_section(v3_available: bool) -> str:

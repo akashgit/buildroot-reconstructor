@@ -209,8 +209,16 @@ def get_jar_path(
             )
             time.sleep(wait)
             continue
-        except requests.HTTPError:
+        except requests.HTTPError as exc:
             tmp_path.unlink(missing_ok=True)
+            if exc.response is not None and exc.response.status_code == 404:
+                resolved = resolve_canonical_coordinate(group_id, artifact_id, version)
+                if resolved:
+                    canonical_g, canonical_a = resolved
+                    return get_jar_path(
+                        canonical_g, canonical_a, version,
+                        cache_dir=cache_dir, verify_checksum=verify_checksum,
+                    )
             raise
     else:
         # All retries exhausted
@@ -303,6 +311,58 @@ def download_jar(
     shutil.copy2(cached, dest_path)
     logger.info("Copied cached JAR to %s", dest_path)
     return dest_path
+
+
+MAVEN_SEARCH_BASE = "https://search.maven.org/solrsearch/select"
+
+
+def resolve_canonical_coordinate(
+    group_id: str, artifact_id: str, version: str,
+) -> tuple[str, str] | None:
+    """Search Maven Central for the canonical coordinate when the fork coordinate 404s.
+
+    Returns (canonical_group_id, canonical_artifact_id) if found, else None.
+    """
+    try:
+        resp = requests.get(
+            MAVEN_SEARCH_BASE,
+            params={"q": f'a:"{artifact_id}" AND v:"{version}"', "rows": 10, "wt": "json"},
+            timeout=15,
+        )
+        resp.raise_for_status()
+        docs = resp.json().get("response", {}).get("docs", [])
+        for doc in docs:
+            g, a = doc.get("g", ""), doc.get("a", "")
+            if a == artifact_id and g and g != group_id:
+                logger.info(
+                    "Resolved canonical coordinate: %s:%s:%s → %s:%s:%s",
+                    group_id, artifact_id, version, g, a, version,
+                )
+                return (g, a)
+
+        if not docs:
+            resp2 = requests.get(
+                MAVEN_SEARCH_BASE,
+                params={"q": f'a:"{artifact_id}"', "rows": 20, "wt": "json"},
+                timeout=15,
+            )
+            resp2.raise_for_status()
+            candidates = resp2.json().get("response", {}).get("docs", [])
+            for doc in candidates:
+                g, a = doc.get("g", ""), doc.get("a", "")
+                if a == artifact_id and g and g != group_id:
+                    jar_url = _jar_url(g, a, version)
+                    check = requests.head(jar_url, timeout=10, allow_redirects=True)
+                    if check.status_code == 200:
+                        logger.info(
+                            "Resolved canonical coordinate (version probe): %s:%s:%s → %s:%s:%s",
+                            group_id, artifact_id, version, g, a, version,
+                        )
+                        return (g, a)
+    except Exception as e:
+        logger.debug("Canonical coordinate resolution failed: %s", e)
+
+    return None
 
 
 def _try_google_mirror(url: str) -> str | None:
