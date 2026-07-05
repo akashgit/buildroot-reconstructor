@@ -504,24 +504,28 @@ Target score: {target_score}
 
 ## Instructions
 
-1. **Try v3 first** (fast path):
+1. **Run v3 first** (fast path):
    ```bash
    buildroot agent {coordinate} --v3-only --max-iterations 1{host_flag}
    ```
-   Read the JSON output. If reward >= {target_score}, you're done.
+   **CRITICAL: NEVER stop, kill, or interrupt the v3 process. Not with TaskStop, not with Ctrl-C, not with any other method.**
+   v3 builds normally take 20-30 minutes — this is expected. Put it in the background and let it finish.
+   When v3 completes, read its JSON output. If reward >= {target_score}, adopt that result — you're done.
+   The JSON output includes a `best_containerfile` field with the winning Containerfile and a `workspace` field with the path to v3 artifacts.
 
-2. **If v3 stagnates or can't solve it**, take over:
-   - Read the v3 workspace for the best Containerfile so far
+2. **While v3 runs**, you may prepare in parallel:
+   - Analyze the original JAR (manifest, POM, structure)
    - Write your own Containerfile at {workspace}/Containerfile
-   - Evaluate it:
-     ```bash
-     buildroot eval {workspace}/Containerfile {coordinate}{host_flag}
-     ```
-   - Read the comparison report, fix what's failing, iterate
+   - Run `buildroot eval` on your Containerfile
+   - But keep v3 running — when it finishes, compare its result against yours and use whichever scored higher
 
-3. **Save your best Containerfile** to {workspace}/Containerfile.best
+3. **If v3 finishes below {target_score}**, take over:
+   - Read the v3 JSON for `best_containerfile` — use it as your starting point
+   - Iterate on it with `buildroot eval`
 
-4. **Output your final result** in this exact format on the last line:
+4. **Save your best Containerfile** to {workspace}/Containerfile.best
+
+5. **Output your final result** in this exact format on the last line:
    ```
    RESULT: SUCCESS|STAGNATION|BUDGET_EXHAUSTED coordinate={coordinate} reward=<float> level=<int> path=<v3|takeover>
    ```

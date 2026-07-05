@@ -282,16 +282,21 @@ class PipelineResult:
     elapsed_seconds: float = 0.0
     score_history: list[dict] = field(default_factory=list)
     error_message: str = ""
+    workspace: str = ""
 
     def to_dict(self) -> dict:
-        return {
+        d = {
             "coordinate": self.coordinate,
             "status": self.status,
             "best_reward": self.best_reward,
             "iterations": self.iterations,
             "elapsed_seconds": round(self.elapsed_seconds, 1),
             "score_history": self.score_history,
+            "workspace": self.workspace,
         }
+        if self.best_containerfile:
+            d["best_containerfile"] = self.best_containerfile
+        return d
 
 
 def _spec_to_dict(spec: BuildrootSpec) -> dict:
@@ -400,6 +405,7 @@ def run_v3_pipeline(
     if workspace is None:
         workspace = Path(tempfile.mkdtemp(prefix="buildroot-v3-ws-"))
     workspace.mkdir(parents=True, exist_ok=True)
+    result.workspace = str(workspace)
 
     group_id, artifact_id, version = parse_gav(coordinate)
     evaluator = Evaluator(host=host)
@@ -747,6 +753,11 @@ def run_v3_pipeline(
     result.best_values = best_values
     result.best_containerfile = best_containerfile
     result.elapsed_seconds = time.time() - start_time
+
+    # Persist best Containerfile to workspace so the orchestrator can find it
+    if best_containerfile:
+        (workspace / "Containerfile.best").write_text(best_containerfile)
+
     if result.status == "budget_exhausted":
         logger.info("Budget exhausted for %s after %d iterations (best=%.4f)",
                      coordinate, result.iterations, best_reward)
