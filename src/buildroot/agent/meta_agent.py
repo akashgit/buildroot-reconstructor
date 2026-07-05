@@ -53,6 +53,7 @@ class OrchestratorResult:
     trusted_comparison_report: dict | None = None
     eval_result_dict: dict | None = None
     trusted_eval_result_dict: dict | None = None
+    rebuilt_jar_bytes: bytes | None = None
 
     def to_dict(self) -> dict:
         d = {
@@ -395,6 +396,7 @@ def run_orchestrator(
                 trusted_comparison=result.trusted_comparison_report,
                 eval_result=result.eval_result_dict,
                 trusted_eval_result=result.trusted_eval_result_dict,
+                rebuilt_jar=result.rebuilt_jar_bytes,
             )
         except Exception as e:
             logger.debug("Build store save skipped: %s", e)
@@ -609,6 +611,7 @@ def _scan_workspace_for_best(
         result.best_reward = eval_result.reward
         result.best_level = eval_result.level_reached
         result.eval_result_dict = eval_result.to_dict()
+        result.rebuilt_jar_bytes = eval_result.rebuilt_jar_bytes
         if eval_result.comparison_report is not None:
             report = eval_result.comparison_report
             result.comparison_report = {

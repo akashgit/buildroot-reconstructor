@@ -246,6 +246,8 @@ class Evaluator:
                     result.unit_tests_pass = test_pass
                     result.structural_match = signals.get("structural_match")
                     result.l4_signal_source = "fallback_signals"
+                    if signals.get("rebuilt_jar_bytes"):
+                        result.rebuilt_jar_bytes = signals["rebuilt_jar_bytes"]
                     result.error_summary = (
                         f"L4 (approximate): fallback score = {fallback:.2f} (JAR unavailable)"
                     )
@@ -265,6 +267,11 @@ class Evaluator:
                 if not rebuilt_jar:
                     result.error_summary = "L4: could not extract rebuilt JAR from container"
                     return
+
+                try:
+                    result.rebuilt_jar_bytes = rebuilt_jar.read_bytes()
+                except OSError:
+                    pass
 
                 report = compare_jars(original_jar, rebuilt_jar, coordinate)
                 result.comparison_report = report
@@ -433,6 +440,10 @@ class Evaluator:
                     tag, artifact_id, version, tmp, container_id=container_id,
                 )
                 if rebuilt_jar:
+                    try:
+                        signals["rebuilt_jar_bytes"] = rebuilt_jar.read_bytes()
+                    except OSError:
+                        pass
                     if jdk_version:
                         signals["bytecode_version_match"] = check_bytecode_version_match(
                             rebuilt_jar, jdk_version,

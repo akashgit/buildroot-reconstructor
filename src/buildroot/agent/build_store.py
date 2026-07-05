@@ -67,6 +67,7 @@ def init_table() -> bool:
             cur.execute("ALTER TABLE builds ADD COLUMN IF NOT EXISTS trusted_comparison JSONB DEFAULT NULL")
             cur.execute("ALTER TABLE builds ADD COLUMN IF NOT EXISTS eval_result JSONB DEFAULT NULL")
             cur.execute("ALTER TABLE builds ADD COLUMN IF NOT EXISTS trusted_eval_result JSONB DEFAULT NULL")
+            cur.execute("ALTER TABLE builds ADD COLUMN IF NOT EXISTS rebuilt_jar BYTEA DEFAULT NULL")
         conn.commit()
         return True
     except Exception as e:
@@ -135,6 +136,7 @@ def save_build(
     trusted_comparison: dict | None = None,
     eval_result: dict | None = None,
     trusted_eval_result: dict | None = None,
+    rebuilt_jar: bytes | None = None,
 ) -> bool:
     """Save a successful build to the store. Upserts on (group_id, artifact_id, version)."""
     parts = coordinate.split(":")
@@ -154,8 +156,8 @@ def save_build(
                                     trusted_containerfile, trusted_reward, trusted_level,
                                     delta_report, trust_report, prepass_findings,
                                     exact_comparison, trusted_comparison,
-                                    eval_result, trusted_eval_result)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                                    eval_result, trusted_eval_result, rebuilt_jar)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 ON CONFLICT (group_id, artifact_id, version)
                 DO UPDATE SET containerfile = EXCLUDED.containerfile,
                               reward = EXCLUDED.reward,
@@ -173,6 +175,7 @@ def save_build(
                               trusted_comparison = EXCLUDED.trusted_comparison,
                               eval_result = EXCLUDED.eval_result,
                               trusted_eval_result = EXCLUDED.trusted_eval_result,
+                              rebuilt_jar = EXCLUDED.rebuilt_jar,
                               created_at = NOW()
                 WHERE EXCLUDED.reward >= builds.reward
                 """,
@@ -184,7 +187,8 @@ def save_build(
                  json.dumps(exact_comparison) if exact_comparison else None,
                  json.dumps(trusted_comparison) if trusted_comparison else None,
                  json.dumps(eval_result) if eval_result else None,
-                 json.dumps(trusted_eval_result) if trusted_eval_result else None),
+                 json.dumps(trusted_eval_result) if trusted_eval_result else None,
+                 rebuilt_jar),
             )
         conn.commit()
         logger.info("Saved build: %s (reward=%.4f, level=L%d, trusted_reward=%.4f)",

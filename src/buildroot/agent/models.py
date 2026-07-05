@@ -152,6 +152,7 @@ class EvalResult:
     unit_tests_pass: bool | None = None
     structural_match: float | None = None
     l4_signal_source: str = ""
+    rebuilt_jar_bytes: bytes | None = None
 
     def compute_reward(self) -> float:
         if self.l4_match:
