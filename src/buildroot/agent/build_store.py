@@ -88,7 +88,6 @@ def init_table() -> bool:
                     created_at TIMESTAMP DEFAULT NOW()
                 )
             """)
-            cur.execute("ALTER TABLE build_attempts ADD COLUMN IF NOT EXISTS rebuilt_jar BYTEA DEFAULT NULL")
             cur.execute("""
                 CREATE INDEX IF NOT EXISTS idx_build_attempts_coord
                 ON build_attempts(group_id, artifact_id, version)
