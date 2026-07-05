@@ -225,6 +225,17 @@ def get_jar_path(
         tmp_path.unlink(missing_ok=True)
         raise last_exc  # type: ignore[misc]
 
+    _MIN_JAR_BYTES = 1024
+    if downloaded < _MIN_JAR_BYTES:
+        tmp_path.unlink(missing_ok=True)
+        raise ValueError(f"Downloaded file too small ({downloaded} bytes), not a valid JAR: {url}")
+    try:
+        with zipfile.ZipFile(tmp_path) as zf:
+            _ = zf.namelist()
+    except (zipfile.BadZipFile, OSError):
+        tmp_path.unlink(missing_ok=True)
+        raise ValueError(f"Downloaded file is not a valid JAR/ZIP ({downloaded} bytes): {url}")
+
     # Optional SHA-1 verification
     if verify_checksum:
         sha1_url = url + ".sha1"

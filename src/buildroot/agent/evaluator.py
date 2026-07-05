@@ -185,13 +185,19 @@ class Evaluator:
     def _l3_command(self, tag: str, result: EvalResult) -> bool:
         try:
             check_cmd = (
-                "find target/ build/libs/ */target/ */build/libs/ "
+                "JAR=$(find target/ build/libs/ */target/ */build/libs/ "
                 "-name '*.jar' "
                 "-not -name '*-sources.jar' "
                 "-not -name '*-javadoc.jar' "
                 "-not -name 'original-*.jar' "
-                "2>/dev/null | head -1 | grep -q . "
-                "&& echo BUILD_SUCCESS || echo BUILD_FAILED"
+                "-size +1k "
+                "2>/dev/null | head -1); "
+                "if [ -z \"$JAR\" ]; then echo BUILD_FAILED; exit 1; fi; "
+                "MAGIC=$(od -A n -t x1 -N 4 \"$JAR\" | tr -d ' '); "
+                "if [ \"$MAGIC\" != '504b0304' ]; then echo 'JAR_INVALID: not a ZIP file'; exit 1; fi; "
+                "if ! jar tf \"$JAR\" 2>/dev/null | grep -q 'META-INF/MANIFEST.MF'; then "
+                "echo 'JAR_INVALID: no MANIFEST.MF'; exit 1; fi; "
+                "echo BUILD_SUCCESS"
             )
             proc = self._run(
                 ["podman", "run", "--rm", tag, "sh", "-c", check_cmd],
@@ -352,7 +358,21 @@ class Evaluator:
     def _extract_jar_from_container(
         self, container_id: str, artifact_id: str, version: str, dest: Path,
     ) -> Path | None:
-        """Extract JAR from a stopped container using podman cp."""
+        """Extract JAR from a stopped container using podman cp.
+
+        Checks /output/rebuilt.jar first (staged by agent), then falls back
+        to searching target/build dirs with substring matching.
+        """
+        local_jar = dest / f"{artifact_id}-{version}-rebuilt.jar"
+
+        staged_proc = self._run(
+            ["podman", "cp", f"{container_id}:/output/rebuilt.jar", str(local_jar)],
+            capture_output=True, text=True, timeout=60,
+        )
+        if staged_proc.returncode == 0 and local_jar.exists() and local_jar.stat().st_size > 1024:
+            logger.info("Using staged JAR from /output/rebuilt.jar")
+            return local_jar
+
         jar_dir = dest / "jars"
         jar_dir.mkdir(parents=True, exist_ok=True)
 
@@ -381,7 +401,6 @@ class Evaluator:
         if not target_jar:
             target_jar = jar_files[0]
 
-        local_jar = dest / f"{artifact_id}-{version}-rebuilt.jar"
         shutil.copy2(target_jar, local_jar)
         return local_jar
 
