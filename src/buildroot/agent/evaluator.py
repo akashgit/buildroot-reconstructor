@@ -244,8 +244,12 @@ class Evaluator:
                         f"L4 (approximate): fallback score = {fallback:.2f} (JAR unavailable)"
                     )
                     logger.info(
-                        "L4' fallback score = %.2f (signals: %s)",
-                        fallback, signals,
+                        "L4' fallback score = %.2f | bytecode=%s manifest=%s tests=%s structural=%s",
+                        fallback,
+                        signals.get("bytecode_version_match"),
+                        signals.get("manifest_sanity"),
+                        test_pass,
+                        signals.get("structural_match"),
                     )
                     return
 
