@@ -6,6 +6,7 @@ import json
 import logging
 import subprocess
 import tempfile
+import uuid
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -66,6 +67,7 @@ def spawn_claude_agent(
             f.write(system_prompt)
             prompt_file = f.name
 
+        session_id = str(uuid.uuid4())
         cmd = [
             "claude",
             "--bare",
@@ -74,6 +76,7 @@ def spawn_claude_agent(
             "--output-format", "json",
             "--model", model,
             "--dangerously-skip-permissions",
+            "--session-id", session_id,
         ]
 
         if max_turns > 0:
@@ -92,7 +95,7 @@ def spawn_claude_agent(
             cmd.extend(["--disallowedTools", ",".join(disallowed_tools)])
 
         effective_timeout = timeout if timeout > 0 else None
-        logger.info("Spawning Claude agent: model=%s, max_turns=%s, timeout=%s", model, max_turns or "unlimited", f"{timeout}s" if timeout > 0 else "unlimited")
+        logger.info("Spawning Claude agent: model=%s, max_turns=%s, timeout=%s, session=%s", model, max_turns or "unlimited", f"{timeout}s" if timeout > 0 else "unlimited", session_id)
         logger.debug("Agent task: %s", task[:200])
 
         result = subprocess.run(
