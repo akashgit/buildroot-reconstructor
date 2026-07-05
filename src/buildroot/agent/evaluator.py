@@ -243,6 +243,10 @@ class Evaluator:
                     result.error_summary = (
                         f"L4 (approximate): fallback score = {fallback:.2f} (JAR unavailable)"
                     )
+                    logger.info(
+                        "L4' fallback score = %.2f (signals: %s)",
+                        fallback, signals,
+                    )
                     return
 
                 rebuilt_jar = self._extract_rebuilt_jar(

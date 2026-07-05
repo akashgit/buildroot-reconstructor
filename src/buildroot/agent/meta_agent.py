@@ -335,7 +335,7 @@ def run_orchestrator(
 
     # 8. Learning loop — record success
     if result.best_reward >= target_score and result.best_containerfile:
-        recipe_store.save(coordinate, 4, result.best_containerfile, result.best_reward)
+        recipe_store.save(coordinate, result.best_level, result.best_containerfile, result.best_reward)
         _record_learnings(
             coordinate=coordinate,
             containerfile=result.best_containerfile,
