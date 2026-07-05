@@ -84,9 +84,11 @@ def init_table() -> bool:
                     elapsed_seconds FLOAT DEFAULT 0,
                     error_message TEXT DEFAULT '',
                     eval_result JSONB DEFAULT NULL,
+                    rebuilt_jar BYTEA DEFAULT NULL,
                     created_at TIMESTAMP DEFAULT NOW()
                 )
             """)
+            cur.execute("ALTER TABLE build_attempts ADD COLUMN IF NOT EXISTS rebuilt_jar BYTEA DEFAULT NULL")
             cur.execute("""
                 CREATE INDEX IF NOT EXISTS idx_build_attempts_coord
                 ON build_attempts(group_id, artifact_id, version)
@@ -235,8 +237,9 @@ def save_attempt(
     elapsed_seconds: float = 0,
     error_message: str = "",
     eval_result: dict | None = None,
+    rebuilt_jar: bytes | None = None,
 ) -> bool:
-    """Save every build attempt regardless of reward score."""
+    """Save a sub-threshold build attempt (reward < 0.9) with its JAR artifact."""
     parts = coordinate.split(":")
     if len(parts) < 3:
         return False
@@ -251,12 +254,14 @@ def save_attempt(
                 """
                 INSERT INTO build_attempts
                     (group_id, artifact_id, version, containerfile, reward, level,
-                     method, status, cost_usd, elapsed_seconds, error_message, eval_result)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                     method, status, cost_usd, elapsed_seconds, error_message,
+                     eval_result, rebuilt_jar)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
                 """,
                 (group_id, artifact_id, version, containerfile, reward, level,
                  method, status, cost_usd, elapsed_seconds, error_message,
-                 json.dumps(eval_result) if eval_result else None),
+                 json.dumps(eval_result) if eval_result else None,
+                 rebuilt_jar),
             )
         conn.commit()
         logger.info("Saved attempt: %s (reward=%.4f, level=L%d, status=%s)",
