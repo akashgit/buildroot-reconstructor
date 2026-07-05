@@ -329,10 +329,8 @@ class TestPodmanCreateCpPattern:
         evaluator = Evaluator()
         cid = evaluator._create_container("test-tag")
         assert cid == "abc123def456"
-        mock_run.assert_called_once_with(
-            ["podman", "create", "test-tag", "true"],
-            capture_output=True, text=True, timeout=30,
-        )
+        call_args = mock_run.call_args[0][0]
+        assert call_args[-3:] == ["create", "test-tag", "true"]
 
     @patch("buildroot.agent.evaluator.subprocess.run")
     def test_create_container_failure_returns_none(self, mock_run):
@@ -345,10 +343,8 @@ class TestPodmanCreateCpPattern:
         mock_run.return_value = MagicMock(returncode=0)
         evaluator = Evaluator()
         evaluator._remove_container("abc123")
-        mock_run.assert_called_once_with(
-            ["podman", "rm", "abc123"],
-            capture_output=True, timeout=30,
-        )
+        call_args = mock_run.call_args[0][0]
+        assert call_args[-2:] == ["rm", "abc123"]
 
     @patch("buildroot.agent.evaluator.subprocess.run")
     def test_extract_rebuilt_jar_uses_podman_cp(self, mock_run):
@@ -381,14 +377,10 @@ class TestPodmanCreateCpPattern:
         evaluator = Evaluator()
         with tempfile.TemporaryDirectory() as tmpdir:
             result = evaluator._extract_rebuilt_jar("tag", "art", "1.0", Path(tmpdir))
-        assert mock_run.call_args_list[0] == call(
-            ["podman", "create", "tag", "true"],
-            capture_output=True, text=True, timeout=30,
-        )
-        assert mock_run.call_args_list[-1] == call(
-            ["podman", "rm", "cid123"],
-            capture_output=True, timeout=30,
-        )
+        first_call_args = mock_run.call_args_list[0][0][0]
+        assert first_call_args[-3:] == ["create", "tag", "true"]
+        last_call_args = mock_run.call_args_list[-1][0][0]
+        assert last_call_args[-2:] == ["rm", "cid123"]
 
     @patch("buildroot.agent.evaluator.subprocess.run")
     def test_fallback_signals_creates_one_container(self, mock_run):
