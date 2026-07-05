@@ -40,6 +40,75 @@ def _find_writable_base() -> Path:
     return Path(tempfile.gettempdir())
 
 
+DEFAULT_BASE_IMAGES = [
+    "docker.io/eclipse-temurin:8-jdk",
+    "docker.io/eclipse-temurin:11-jdk",
+    "docker.io/eclipse-temurin:17-jdk",
+    "docker.io/eclipse-temurin:21-jdk",
+    "docker.io/library/maven:3.9.9-eclipse-temurin-8-focal",
+]
+
+_BASE_IMAGES_TARBALL: Path | None = None
+
+
+def save_base_images(
+    images: list[str] | None = None,
+    output: str | Path | None = None,
+) -> Path:
+    """Pull and save base images to a tarball for pre-warming isolated roots.
+
+    Call once before spawning workers. The tarball is reused across all workers.
+    """
+    global _BASE_IMAGES_TARBALL
+    images = images or DEFAULT_BASE_IMAGES
+    base = _find_writable_base()
+    output = Path(output) if output else base / "podman-base-images.tar"
+
+    if output.exists() and output.stat().st_size > 0:
+        logger.info("Base images tarball already exists: %s", output)
+        _BASE_IMAGES_TARBALL = output
+        return output
+
+    available = []
+    for img in images:
+        proc = subprocess.run(
+            ["podman", "image", "exists", img],
+            capture_output=True, timeout=10,
+        )
+        if proc.returncode == 0:
+            available.append(img)
+        else:
+            logger.info("Pulling %s...", img)
+            pull = subprocess.run(
+                ["podman", "pull", img],
+                capture_output=True, text=True, timeout=600,
+            )
+            if pull.returncode == 0:
+                available.append(img)
+            else:
+                logger.warning("Failed to pull %s: %s", img, pull.stderr[:200])
+
+    if not available:
+        raise RuntimeError("No base images available to save")
+
+    logger.info("Saving %d base images to %s", len(available), output)
+    proc = subprocess.run(
+        ["podman", "save", "-o", str(output)] + available,
+        capture_output=True, text=True, timeout=600,
+    )
+    if proc.returncode != 0:
+        raise RuntimeError(f"podman save failed: {proc.stderr[:300]}")
+
+    _BASE_IMAGES_TARBALL = output
+    logger.info("Saved %d images (%.1f MB)", len(available), output.stat().st_size / 1e6)
+    return output
+
+
+def get_base_images_tarball() -> Path | None:
+    """Return the cached tarball path, or None if not yet saved."""
+    return _BASE_IMAGES_TARBALL
+
+
 @dataclass
 class PodmanIsolation:
     """Fully isolated podman storage environment."""
@@ -51,7 +120,7 @@ class PodmanIsolation:
     containers_conf: Path
 
     @classmethod
-    def create(cls, worker_id: str | None = None) -> PodmanIsolation:
+    def create(cls, worker_id: str | None = None, prewarm_tarball: str | Path | None = None) -> PodmanIsolation:
         slug = worker_id or uuid.uuid4().hex
         base = _find_writable_base()
 
@@ -80,13 +149,19 @@ class PodmanIsolation:
             f'tmp_dir = "{tmpdir}"\n'
         )
 
-        return cls(
+        instance = cls(
             graphroot=graphroot,
             runroot=runroot,
             tmpdir=tmpdir,
             storage_conf=storage_conf,
             containers_conf=containers_conf,
         )
+
+        tarball = prewarm_tarball or get_base_images_tarball()
+        if tarball:
+            instance.prewarm(tarball)
+
+        return instance
 
     def wrap_command(self, cmd: list[str]) -> list[str]:
         """Inject --root/--runroot/--tmpdir into a podman command list."""
@@ -109,6 +184,30 @@ class PodmanIsolation:
             )
             return shell_cmd.replace("podman", f"podman {flags}", 1)
         return shell_cmd
+
+    def prewarm(self, tarball: str | Path) -> bool:
+        """Load pre-saved base images into this isolated root.
+
+        Use ``save_base_images()`` to create the tarball once, then
+        call ``prewarm()`` on each worker's isolation before builds start.
+        """
+        tarball = Path(tarball)
+        if not tarball.exists():
+            logger.warning("Prewarm tarball not found: %s", tarball)
+            return False
+        try:
+            proc = subprocess.run(
+                self.wrap_command(["podman", "load", "-i", str(tarball)]),
+                capture_output=True, text=True, timeout=120,
+            )
+            if proc.returncode == 0:
+                logger.info("Pre-warmed images from %s into %s", tarball, self.graphroot)
+                return True
+            logger.warning("Prewarm failed (exit %d): %s", proc.returncode, proc.stderr[:200])
+            return False
+        except Exception as e:
+            logger.warning("Prewarm error: %s", e)
+            return False
 
     def get_env(self) -> dict[str, str]:
         """Return env dict with CONTAINERS_STORAGE_CONF set.
