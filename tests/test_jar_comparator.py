@@ -230,6 +230,103 @@ class TestCompareJars:
         assert report.verdict == Verdict.EQUIVALENT
 
 
+class TestEquivalenceScore:
+    def test_identical_returns_1(self):
+        report = ComparisonReport(verdict=Verdict.IDENTICAL)
+        assert report.equivalence_score() == 1.0
+
+    def test_no_classes_no_resources_scores_low(self):
+        report = ComparisonReport(verdict=Verdict.DIVERGENT)
+        score = report.equivalence_score()
+        assert score < 0.20, "empty DIVERGENT report should score low"
+
+    def test_bytecode_match_manifest_mismatch(self):
+        """The kie-api pattern: bytecode matches, manifest doesn't, CRC mismatches exist."""
+        from buildroot.utils.jar_comparator import (
+            BytecodeResult,
+            MetadataResult,
+            StructuralResult,
+            EntryDiff,
+        )
+        report = ComparisonReport(
+            verdict=Verdict.DIVERGENT,
+            structural=StructuralResult(
+                original_count=100,
+                rebuilt_count=100,
+                diff=EntryDiff(
+                    crc_mismatches=[{"entry": f"e{i}"} for i in range(20)],
+                ),
+                match=False,
+            ),
+            metadata=MetadataResult(
+                manifest_match=False,
+                manifest_diff_keys=["Bundle-Version"],
+                resource_matches=10,
+                resource_mismatches=[],
+                match=False,
+            ),
+            bytecode=BytecodeResult(
+                classes_compared=80,
+                classes_identical=80,
+                match=True,
+            ),
+        )
+        score = report.equivalence_score()
+        assert score < 1.0, "DIVERGENT build must not score 1.0"
+        assert score > 0.7, "bytecode-matching build should still score high"
+
+    def test_manifest_mismatch_penalized(self):
+        """Manifest mismatch must reduce the score vs manifest match."""
+        from buildroot.utils.jar_comparator import (
+            BytecodeResult,
+            MetadataResult,
+            StructuralResult,
+        )
+        base_kwargs = dict(
+            verdict=Verdict.DIVERGENT,
+            structural=StructuralResult(original_count=10, rebuilt_count=10, match=True),
+            bytecode=BytecodeResult(classes_compared=10, classes_identical=10, match=True),
+        )
+        with_match = ComparisonReport(
+            **base_kwargs,
+            metadata=MetadataResult(manifest_match=True, resource_matches=5, match=True),
+        )
+        without_match = ComparisonReport(
+            **base_kwargs,
+            metadata=MetadataResult(
+                manifest_match=False, manifest_diff_keys=["X"], resource_matches=5, match=False,
+            ),
+        )
+        assert without_match.equivalence_score() < with_match.equivalence_score()
+
+    def test_crc_mismatches_penalized(self):
+        """CRC mismatches must reduce the score vs no mismatches."""
+        from buildroot.utils.jar_comparator import (
+            BytecodeResult,
+            MetadataResult,
+            StructuralResult,
+            EntryDiff,
+        )
+        base_kwargs = dict(
+            verdict=Verdict.DIVERGENT,
+            metadata=MetadataResult(manifest_match=True, resource_matches=5, match=True),
+            bytecode=BytecodeResult(classes_compared=10, classes_identical=10, match=True),
+        )
+        no_crc = ComparisonReport(
+            **base_kwargs,
+            structural=StructuralResult(original_count=50, rebuilt_count=50, match=True),
+        )
+        with_crc = ComparisonReport(
+            **base_kwargs,
+            structural=StructuralResult(
+                original_count=50, rebuilt_count=50,
+                diff=EntryDiff(crc_mismatches=[{"entry": f"e{i}"} for i in range(10)]),
+                match=False,
+            ),
+        )
+        assert with_crc.equivalence_score() < no_crc.equivalence_score()
+
+
 class TestReportSerialization:
     def test_to_dict(self):
         report = ComparisonReport(coordinate="g:a:1.0", verdict=Verdict.IDENTICAL)

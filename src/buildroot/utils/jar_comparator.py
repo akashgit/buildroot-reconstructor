@@ -82,8 +82,7 @@ class ComparisonReport:
     def equivalence_score(self) -> float:
         """Continuous 0.0-1.0 equivalence score.
 
-        Weights: 70% bytecode, 15% resources, 15% entry-set completeness.
-        MANIFEST.MF differences are excluded — they are packaging artifacts.
+        Weights: 70% bytecode, 15% metadata, 15% structural.
         """
         if self.verdict == Verdict.IDENTICAL:
             return 1.0
@@ -98,12 +97,17 @@ class ComparisonReport:
             resource_ratio = self.metadata.resource_matches / total_resources
         else:
             resource_ratio = 0.0
+        manifest_factor = 1.0 if self.metadata.manifest_match else 0.0
+        metadata_score = 0.50 * resource_ratio + 0.50 * manifest_factor
 
         total_entries = max(self.structural.original_count, self.structural.rebuilt_count, 1)
         missing_extra = len(self.structural.diff.missing) + len(self.structural.diff.extra)
-        entry_score = max(0.0, 1.0 - (missing_extra / total_entries))
+        completeness = max(0.0, 1.0 - (missing_extra / total_entries))
+        crc_size_issues = len(self.structural.diff.crc_mismatches) + len(self.structural.diff.size_mismatches)
+        byte_fidelity = max(0.0, 1.0 - (crc_size_issues / total_entries))
+        structural_score = 0.70 * completeness + 0.30 * byte_fidelity
 
-        return 0.70 * bytecode_ratio + 0.15 * resource_ratio + 0.15 * entry_score
+        return 0.70 * bytecode_ratio + 0.15 * metadata_score + 0.15 * structural_score
 
     def to_dict(self) -> dict:
         return {
