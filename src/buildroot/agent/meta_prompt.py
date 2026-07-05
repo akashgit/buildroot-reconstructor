@@ -129,19 +129,17 @@ Focus your fixes on whichever dimension is failing.
 
 ## L4' Approximate Scoring (when reference JAR unavailable)
 
-When the original JAR is not on Maven Central, L4 uses approximate scoring (L4'):
-- **Bytecode version match (0.30)**: Built .class files target expected JDK version
-- **Manifest sanity (0.20)**: MANIFEST.MF + pom.properties GAV correct
-- **Unit test pass (0.20)**: Project's test suite passes
-- **Structural match (0.30)**: Built classes correspond to source .java files
+When the original JAR is not on Maven Central, L4 uses approximate scoring (L4')
+with 2 signals:
+- **Bytecode version match (0.60)**: Built .class major version matches expected JDK
+- **Manifest sanity (0.40)**: MANIFEST.MF has Manifest-Version + pom.properties has correct GAV
 
 L4' score replaces L4 in the reward formula. Check `l4_signal_source` in eval output:
-- `"full_comparison"` = normal L4 (reference comparison)
-- `"fallback_signals"` = L4' (approximate)
+- `"full_comparison"` = normal L4 (reference JAR comparison)
+- `"fallback_signals"` = L4' (approximate, 2-signal)
 
-Read `fallback_signals` in eval output for per-signal details.
-To improve L4' score: fix JDK version (bytecode), ensure correct GAV (manifest),
-fix test failures (tests), ensure all source compiles (structural).
+To improve L4' score: ensure the correct JDK version is used (bytecode match) and
+that the build produces correct GAV metadata in pom.properties (manifest sanity).
 
 ### Recovering full L4 when the reference JAR is not found
 The evaluator automatically searches Maven Central for the canonical coordinate when the fork
