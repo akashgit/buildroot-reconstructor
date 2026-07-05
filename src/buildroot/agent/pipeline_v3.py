@@ -409,6 +409,11 @@ def run_v3_pipeline(
 
     group_id, artifact_id, version = parse_gav(coordinate)
     evaluator = Evaluator(host=host)
+
+    # Get isolation env for agent subprocesses so their podman calls
+    # also use isolated storage (not just buildroot eval calls).
+    _agent_env = evaluator._isolation.get_env() if evaluator._isolation else None
+
     recipe_store = RecipeStore()
 
     # Recipe store check
@@ -471,6 +476,7 @@ def run_v3_pipeline(
             max_budget_usd=10.0,
             timeout=1800,
             allowed_tools=["Bash", "Read", "WebSearch", "WebFetch", "Agent"],
+            env=_agent_env,
         )
 
         if draft_result and draft_result.reward >= 0.98:
@@ -695,6 +701,7 @@ def run_v3_pipeline(
             max_budget_usd=15.0,
             timeout=1800,
             allowed_tools=["Bash", "Read", "WebSearch", "WebFetch", "Agent"],
+            env=_agent_env,
         )
 
         if feedback_result.is_error or not feedback_result.structured_output:

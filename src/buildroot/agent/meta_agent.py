@@ -461,21 +461,28 @@ def _run_trusted_phase(
             logger.warning("No budget remaining for Phase 3")
             return
 
+    from buildroot.utils.podman_isolation import PodmanIsolation
+    isolation = PodmanIsolation.create()
     logger.info(
-        "Spawning Phase 3 trusted agent (budget=$%.2f, timeout=%s)",
+        "Spawning Phase 3 trusted agent (budget=$%.2f, timeout=%s, podman_root=%s)",
         remaining_budget, f"{agent_timeout}s" if agent_timeout > 0 else "unlimited",
+        isolation.graphroot,
     )
 
-    agent_result = spawn_claude_agent(
-        task=task,
-        system_prompt=system_prompt,
-        model="claude-opus-4-6",
-        max_turns=max_agent_turns,
-        max_budget_usd=remaining_budget,
-        timeout=agent_timeout,
-        cwd=str(trusted_workspace),
-        allowed_tools=["Bash", "Read", "Write", "Edit", "WebSearch", "WebFetch"],
-    )
+    try:
+        agent_result = spawn_claude_agent(
+            task=task,
+            system_prompt=system_prompt,
+            model="claude-opus-4-6",
+            max_turns=max_agent_turns,
+            max_budget_usd=remaining_budget,
+            timeout=agent_timeout,
+            cwd=str(trusted_workspace),
+            allowed_tools=["Bash", "Read", "Write", "Edit", "WebSearch", "WebFetch"],
+            env=isolation.get_env(),
+        )
+    finally:
+        isolation.cleanup()
 
     phase2_result.cost_usd += agent_result.cost_usd
 

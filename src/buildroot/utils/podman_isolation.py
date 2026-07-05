@@ -48,6 +48,7 @@ class PodmanIsolation:
     runroot: Path
     tmpdir: Path
     storage_conf: Path
+    containers_conf: Path
 
     @classmethod
     def create(cls, worker_id: str | None = None) -> PodmanIsolation:
@@ -72,11 +73,19 @@ class PodmanIsolation:
             f'mount_program = "/usr/bin/fuse-overlayfs"\n'
         )
 
+        # containers.conf controls libpod's tmp_dir (alive.lck, state)
+        containers_conf = graphroot / "containers.conf"
+        containers_conf.write_text(
+            f"[engine]\n"
+            f'tmp_dir = "{tmpdir}"\n'
+        )
+
         return cls(
             graphroot=graphroot,
             runroot=runroot,
             tmpdir=tmpdir,
             storage_conf=storage_conf,
+            containers_conf=containers_conf,
         )
 
     def wrap_command(self, cmd: list[str]) -> list[str]:
@@ -109,11 +118,18 @@ class PodmanIsolation:
         """
         env = dict(os.environ)
         env["CONTAINERS_STORAGE_CONF"] = str(self.storage_conf)
-        env["TMPDIR"] = str(self.tmpdir)
+        env["CONTAINERS_CONF"] = str(self.containers_conf)
         return env
 
     def cleanup(self) -> None:
         """Remove all isolated storage directories."""
+        try:
+            subprocess.run(
+                self.wrap_command(["podman", "system", "reset", "--force"]),
+                capture_output=True, timeout=60,
+            )
+        except Exception:
+            pass
         for d in [self.graphroot, self.runroot, self.tmpdir]:
             try:
                 shutil.rmtree(d, ignore_errors=True)
