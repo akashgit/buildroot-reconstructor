@@ -55,9 +55,6 @@ DEFAULT_BASE_IMAGES = [
     "docker.io/library/maven:3.9.6-eclipse-temurin-11",
     "docker.io/library/maven:3.9.6-eclipse-temurin-17",
     "docker.io/library/maven:3.8.6-eclipse-temurin-11",
-    # Legacy JDKs
-    "docker.io/library/maven:3.2.5-jdk-8",
-    "docker.io/library/maven:3.2.5-jdk-6",
 ]
 
 _BASE_IMAGES_TARBALL: Path | None = None
