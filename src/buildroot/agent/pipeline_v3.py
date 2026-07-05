@@ -395,6 +395,7 @@ def run_v3_pipeline(
     workspace: Path | None = None,
     skip_deps: bool = True,
     warm_start_containerfile: str | None = None,
+    isolate_podman: bool = False,
 ) -> PipelineResult:
     """Run the v3 pipeline: pre-pass → analysis agent → build+eval → feedback loop."""
     import tempfile
@@ -408,7 +409,7 @@ def run_v3_pipeline(
     result.workspace = str(workspace)
 
     group_id, artifact_id, version = parse_gav(coordinate)
-    evaluator = Evaluator(host=host)
+    evaluator = Evaluator(host=host, isolate_podman=isolate_podman)
 
     # Get isolation env for agent subprocesses so their podman calls
     # also use isolated storage (not just buildroot eval calls).

@@ -110,6 +110,7 @@ def launch_interactive_orchestrator(
     host: str | None = None,
     workspace: Path | None = None,
     target_score: float = 0.98,
+    isolate_podman: bool = False,
 ) -> int:
     """Run prepass + KB query, then launch an interactive Claude session with full context.
 
@@ -168,11 +169,15 @@ def launch_interactive_orchestrator(
 
     # 7. Print banner then launch interactive claude as a subprocess.
     import sys
-    from buildroot.utils.podman_isolation import PodmanIsolation
 
     print(_BANNER, file=sys.stderr)
 
-    isolation = PodmanIsolation.create()
+    isolation = None
+    env = None
+    if isolate_podman:
+        from buildroot.utils.podman_isolation import PodmanIsolation
+        isolation = PodmanIsolation.create()
+        env = isolation.get_env()
 
     cmd = [
         "claude",
@@ -183,11 +188,12 @@ def launch_interactive_orchestrator(
     ]
 
     try:
-        result = subprocess.run(cmd, env=isolation.get_env())
+        result = subprocess.run(cmd, env=env)
         return result.returncode
     finally:
         prompt_file.unlink(missing_ok=True)
-        isolation.cleanup()
+        if isolation:
+            isolation.cleanup()
 
 
 def _extract_jdk_version(prepass_findings: PrePassFindings) -> str:
@@ -213,6 +219,7 @@ def run_orchestrator(
     max_budget_usd: float = 0,
     max_agent_turns: int = 0,
     agent_timeout: int = 0,
+    isolate_podman: bool = False,
 ) -> OrchestratorResult:
     """Run the orchestrator: prepass → KB query → spawn Claude Code agent → parse result."""
     start_time = time.time()
@@ -311,12 +318,19 @@ def run_orchestrator(
     prepass_json = workspace / "prepass_findings.json"
     prepass_json.write_text(json.dumps(prepass_findings.to_dict(), indent=2))
 
-    # 6. Spawn the orchestrator agent with isolated podman storage
-    from buildroot.utils.podman_isolation import PodmanIsolation
-    isolation = PodmanIsolation.create()
-    logger.info("Spawning orchestrator agent for %s (budget=$%.2f, timeout=%s, podman_root=%s)",
-                coordinate, max_budget_usd, f"{agent_timeout}s" if agent_timeout > 0 else "unlimited",
-                isolation.graphroot)
+    # 6. Spawn the orchestrator agent
+    isolation = None
+    env = None
+    if isolate_podman:
+        from buildroot.utils.podman_isolation import PodmanIsolation
+        isolation = PodmanIsolation.create()
+        env = isolation.get_env()
+        logger.info("Spawning orchestrator agent for %s (budget=$%.2f, timeout=%s, podman_root=%s)",
+                    coordinate, max_budget_usd, f"{agent_timeout}s" if agent_timeout > 0 else "unlimited",
+                    isolation.graphroot)
+    else:
+        logger.info("Spawning orchestrator agent for %s (budget=$%.2f, timeout=%s)",
+                    coordinate, max_budget_usd, f"{agent_timeout}s" if agent_timeout > 0 else "unlimited")
 
     try:
         agent_result = spawn_claude_agent(
@@ -328,10 +342,11 @@ def run_orchestrator(
             timeout=agent_timeout,
             cwd=str(workspace),
             allowed_tools=["Bash", "Read", "Write", "Edit", "WebSearch", "WebFetch"],
-            env=isolation.get_env(),
+            env=env,
         )
     finally:
-        isolation.cleanup()
+        if isolation:
+            isolation.cleanup()
 
     result.cost_usd = agent_result.cost_usd
     result.elapsed_seconds = time.time() - start_time
@@ -370,6 +385,7 @@ def run_orchestrator(
             max_agent_turns=max_agent_turns,
             agent_timeout=agent_timeout,
             target_score=target_score,
+            isolate_podman=isolate_podman,
         )
 
         # 10. Output restructuring
@@ -427,6 +443,7 @@ def _run_trusted_phase(
     max_agent_turns: int,
     agent_timeout: int,
     target_score: float,
+    isolate_podman: bool = False,
 ) -> None:
     """Run Phase 3: same agent loop constrained to trusted sources, warm-started from Phase 2."""
     logger.info("Starting Phase 3 (trusted cascade) for %s", coordinate)
@@ -461,12 +478,16 @@ def _run_trusted_phase(
             logger.warning("No budget remaining for Phase 3")
             return
 
-    from buildroot.utils.podman_isolation import PodmanIsolation
-    isolation = PodmanIsolation.create()
+    isolation = None
+    env = None
+    if isolate_podman:
+        from buildroot.utils.podman_isolation import PodmanIsolation
+        isolation = PodmanIsolation.create()
+        env = isolation.get_env()
+
     logger.info(
-        "Spawning Phase 3 trusted agent (budget=$%.2f, timeout=%s, podman_root=%s)",
+        "Spawning Phase 3 trusted agent (budget=$%.2f, timeout=%s)",
         remaining_budget, f"{agent_timeout}s" if agent_timeout > 0 else "unlimited",
-        isolation.graphroot,
     )
 
     try:
@@ -479,10 +500,11 @@ def _run_trusted_phase(
             timeout=agent_timeout,
             cwd=str(trusted_workspace),
             allowed_tools=["Bash", "Read", "Write", "Edit", "WebSearch", "WebFetch"],
-            env=isolation.get_env(),
+            env=env,
         )
     finally:
-        isolation.cleanup()
+        if isolation:
+            isolation.cleanup()
 
     phase2_result.cost_usd += agent_result.cost_usd
 

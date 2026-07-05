@@ -28,12 +28,12 @@ logger = logging.getLogger(__name__)
 class Evaluator:
     """Runs 4-level evaluation: parse, build, command, JAR match."""
 
-    def __init__(self, host: str | None = None, timeout: int = 900, no_cache: bool = False) -> None:
+    def __init__(self, host: str | None = None, timeout: int = 900, no_cache: bool = False, isolate_podman: bool = False) -> None:
         self._host = host
         self._timeout = timeout
         self._no_cache = no_cache
         self._trust_registry = TrustedSourceRegistry()
-        self._isolation = PodmanIsolation.create() if not host else None
+        self._isolation = PodmanIsolation.create() if (isolate_podman and not host) else None
 
     def __del__(self):
         self.cleanup_storage()
