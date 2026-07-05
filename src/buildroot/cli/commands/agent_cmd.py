@@ -54,6 +54,11 @@ def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, 
         count = seed_recipes_from_results(Path(resume))
         click.echo(f"Seeded {count} recipes from {resume}")
 
+    if isolate_podman:
+        from buildroot.utils.podman_isolation import save_base_images
+        click.echo("Pre-warming base images for isolated podman storage...")
+        save_base_images()
+
     # Batch mode (always v3)
     if batch_file:
         from pathlib import Path
@@ -70,7 +75,7 @@ def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, 
         results = []
         for coord in coordinates:
             click.echo(f"\n{'='*60}\nProcessing: {coord}\n{'='*60}")
-            r = _run_v3(coord, host, max_iterations, resume)
+            r = _run_v3(coord, host, max_iterations, resume, isolate_podman)
             results.append({"coordinate": coord, **r.to_dict()})
 
             safe_name = coord.replace(":", "_").replace(".", "_")
@@ -88,11 +93,6 @@ def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, 
 
     if not coordinate:
         raise click.UsageError("Provide a COORDINATE or --batch FILE")
-
-    if isolate_podman:
-        from buildroot.utils.podman_isolation import save_base_images
-        click.echo("Pre-warming base images for isolated podman storage...")
-        save_base_images()
 
     if interactive:
         _run_interactive(coordinate, host, isolate_podman)

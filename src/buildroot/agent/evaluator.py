@@ -35,6 +35,10 @@ class Evaluator:
         self._trust_registry = TrustedSourceRegistry()
         self._isolation = PodmanIsolation.create() if (isolate_podman and not host) else None
 
+    def get_podman_env(self) -> dict[str, str] | None:
+        """Return env dict for podman isolation, or None if not isolated."""
+        return self._isolation.get_env() if self._isolation else None
+
     def __del__(self):
         self.cleanup_storage()
 

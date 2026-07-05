@@ -411,9 +411,7 @@ def run_v3_pipeline(
     group_id, artifact_id, version = parse_gav(coordinate)
     evaluator = Evaluator(host=host, isolate_podman=isolate_podman)
 
-    # Get isolation env for agent subprocesses so their podman calls
-    # also use isolated storage (not just buildroot eval calls).
-    _agent_env = evaluator._isolation.get_env() if evaluator._isolation else None
+    _agent_env = evaluator.get_podman_env()
 
     recipe_store = RecipeStore()
 
