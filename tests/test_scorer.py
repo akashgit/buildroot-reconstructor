@@ -82,8 +82,9 @@ class TestBuildScoreBreakdown:
 
 class TestComputeFallbackScore:
     def test_all_signals_pass_3_signal(self):
+        # structural_match defaults to None → 0
         score = compute_fallback_score(True, True, True)
-        assert score == pytest.approx(1.0)
+        assert score == pytest.approx(0.70)
 
     def test_all_signals_pass_4_signal(self):
         score = compute_fallback_score(True, True, True, 1.0)
@@ -98,18 +99,18 @@ class TestComputeFallbackScore:
         assert score == pytest.approx(0.0)
 
     def test_bytecode_only(self):
+        # Only bytecode=True, rest are None → 0
         score = compute_fallback_score(True, None, None)
-        assert score == pytest.approx(1.0)
+        assert score == pytest.approx(0.30)
 
     def test_bytecode_fail_only(self):
         score = compute_fallback_score(False, None, None)
         assert score == pytest.approx(0.0)
 
     def test_mixed_signals_3_signal(self):
-        # bytecode=True(0.30) + manifest=True(0.20) + tests=False(0.20)
-        # score = 0.50 / 0.70
+        # bytecode=True(0.30) + manifest=True(0.20) + tests=False(0) + structural=None(0)
         score = compute_fallback_score(True, True, False)
-        assert score == pytest.approx(0.50 / 0.70)
+        assert score == pytest.approx(0.50)
 
     def test_all_none(self):
         score = compute_fallback_score(None, None, None)
@@ -120,23 +121,24 @@ class TestComputeFallbackScore:
         assert score == pytest.approx(0.0)
 
     def test_bytecode_and_manifest_pass(self):
+        # bytecode=True(0.30) + manifest=True(0.20) + tests=None(0) + structural=None(0)
         score = compute_fallback_score(True, True, None)
-        expected = (0.30 + 0.20) / (0.30 + 0.20)
-        assert score == pytest.approx(expected)
+        assert score == pytest.approx(0.50)
 
     def test_only_unit_tests(self):
+        # tests=True(0.20), rest None → 0
         score = compute_fallback_score(None, None, True)
-        assert score == pytest.approx(1.0)
+        assert score == pytest.approx(0.20)
 
     def test_structural_match_partial(self):
+        # structural=0.75(0.30*0.75=0.225), rest None → 0
         score = compute_fallback_score(None, None, None, 0.75)
-        assert score == pytest.approx(0.75)
+        assert score == pytest.approx(0.225)
 
     def test_structural_match_with_other_signals(self):
-        # bytecode=True(0.30) + structural=0.5(0.30*0.5=0.15) + manifest=None + tests=None
+        # bytecode=True(0.30) + structural=0.5(0.30*0.5=0.15) + manifest=None(0) + tests=None(0)
         score = compute_fallback_score(True, None, None, 0.5)
-        expected = (0.30 + 0.30 * 0.5) / (0.30 + 0.30)
-        assert score == pytest.approx(expected)
+        assert score == pytest.approx(0.45)
 
     def test_backward_compat_3_args(self):
         score = compute_fallback_score(True, True, True)

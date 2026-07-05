@@ -91,13 +91,13 @@ class ComparisonReport:
         if self.bytecode.classes_compared > 0:
             bytecode_ratio = self.bytecode.classes_identical / self.bytecode.classes_compared
         else:
-            bytecode_ratio = 1.0
+            bytecode_ratio = 0.0
 
         total_resources = self.metadata.resource_matches + len(self.metadata.resource_mismatches)
         if total_resources > 0:
             resource_ratio = self.metadata.resource_matches / total_resources
         else:
-            resource_ratio = 1.0
+            resource_ratio = 0.0
 
         total_entries = max(self.structural.original_count, self.structural.rebuilt_count, 1)
         missing_extra = len(self.structural.diff.missing) + len(self.structural.diff.extra)

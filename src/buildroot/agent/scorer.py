@@ -116,34 +116,22 @@ def compute_fallback_score(
     unit_tests_pass: bool | None,
     structural_match: float | None = None,
 ) -> float:
-    """Compute weighted fallback score from available signals.
+    """Compute weighted fallback score from all 4 signals.
 
-    Weights: structural (0.30) + bytecode (0.30) + manifest (0.20) + tests (0.20)
-    Only scores on available (non-None) signals, re-normalizing weights.
-    For structural_match, the value is a float (Jaccard similarity 0.0-1.0).
+    Weights: bytecode (0.30) + structural (0.30) + manifest (0.20) + tests (0.20)
+    Missing signals (None) are treated as 0 so all builds are scored on the
+    same 4-signal basis — no re-normalization.
     """
-    signals: list[tuple[float | bool | None, float]] = [
-        (bytecode_version_match, 0.30),
-        (manifest_sanity, 0.20),
-        (unit_tests_pass, 0.20),
-        (structural_match, 0.30),
-    ]
-
-    total_weight = 0.0
     score = 0.0
-
-    for value, weight in signals:
-        if value is not None:
-            total_weight += weight
-            if isinstance(value, float):
-                score += weight * value
-            elif value:
-                score += weight
-
-    if total_weight == 0:
-        return 0.0
-
-    return score / total_weight
+    if bytecode_version_match:
+        score += 0.30
+    if manifest_sanity:
+        score += 0.20
+    if unit_tests_pass:
+        score += 0.20
+    if structural_match is not None and isinstance(structural_match, float):
+        score += 0.30 * structural_match
+    return score
 
 
 def check_bytecode_version_match(
