@@ -43,12 +43,6 @@ class Evaluator:
         else:
             self._storage_root = None
 
-    def _podman_base(self) -> list[str]:
-        """Return the base podman command, with --root for isolated storage."""
-        if self._storage_root:
-            return ["podman", "--root", str(self._storage_root)]
-        return ["podman"]
-
     def _run(self, cmd: list[str], **kwargs) -> subprocess.CompletedProcess:
         """Run a command locally, or via SSH if a host is configured."""
         if self._host:
@@ -57,6 +51,8 @@ class Evaluator:
                  self._host, shlex.join(cmd)],
                 **kwargs,
             )
+        if self._storage_root and cmd and cmd[0] == "podman":
+            cmd = ["podman", "--root", str(self._storage_root)] + cmd[1:]
         return subprocess.run(cmd, **kwargs)
 
     def _run_shell(self, shell_cmd: str, **kwargs) -> subprocess.CompletedProcess:
@@ -174,7 +170,7 @@ class Evaluator:
                 build_dir = _tmpfile.mkdtemp(prefix="buildroot-l2-")
                 cf_path = Path(build_dir) / "Containerfile"
                 cf_path.write_text(containerfile)
-                build_cmd_list = self._podman_base() + ["build"]
+                build_cmd_list = ["podman", "build"]
                 if self._no_cache:
                     build_cmd_list.append("--no-cache")
                 build_cmd_list.extend(["-t", tag, "-f", str(cf_path), build_dir])
@@ -219,7 +215,7 @@ class Evaluator:
                 "echo BUILD_SUCCESS"
             )
             proc = self._run(
-                self._podman_base() + ["run", "--rm", tag, "sh", "-c", check_cmd],
+                ["podman", "run", "--rm", tag, "sh", "-c", check_cmd],
                 capture_output=True, text=True, timeout=120,
             )
             output = proc.stdout + proc.stderr
@@ -338,7 +334,7 @@ class Evaluator:
         """Create a stopped container from an image, returning the container ID."""
         try:
             proc = self._run(
-                self._podman_base() + ["create", tag, "true"],
+                ["podman", "create", tag, "true"],
                 capture_output=True, text=True, timeout=30,
             )
             if proc.returncode == 0 and proc.stdout.strip():
@@ -352,7 +348,7 @@ class Evaluator:
         """Remove a stopped container."""
         try:
             self._run(
-                self._podman_base() + ["rm", container_id],
+                ["podman", "rm", container_id],
                 capture_output=True, timeout=30,
             )
         except Exception:
@@ -392,7 +388,7 @@ class Evaluator:
         local_jar = dest / f"{artifact_id}-{version}-rebuilt.jar"
 
         staged_proc = self._run(
-            self._podman_base() + ["cp", f"{container_id}:/output/rebuilt.jar", str(local_jar)],
+            ["podman", "cp", f"{container_id}:/output/rebuilt.jar", str(local_jar)],
             capture_output=True, text=True, timeout=60,
         )
         if staged_proc.returncode == 0 and local_jar.exists() and local_jar.stat().st_size > 1024:
@@ -404,7 +400,7 @@ class Evaluator:
 
         for src_path in ["/build/target", "/build/build/libs", "target", "build/libs"]:
             cp_proc = self._run(
-                self._podman_base() + ["cp", f"{container_id}:{src_path}/.", str(jar_dir)],
+                ["podman", "cp", f"{container_id}:{src_path}/.", str(jar_dir)],
                 capture_output=True, text=True, timeout=60,
             )
             if cp_proc.returncode == 0:
@@ -516,7 +512,7 @@ class Evaluator:
         dest.mkdir(parents=True, exist_ok=True)
 
         cp_proc = self._run(
-            self._podman_base() + ["cp", f"{container_id}:/build/src/.", str(dest)],
+            ["podman", "cp", f"{container_id}:/build/src/.", str(dest)],
             capture_output=True, text=True, timeout=60,
         )
         if cp_proc.returncode == 0:
@@ -533,7 +529,7 @@ class Evaluator:
                 sub_dest = dest / submod
                 sub_dest.mkdir(parents=True, exist_ok=True)
                 cp_proc = self._run(
-                    self._podman_base() + ["cp", f"{container_id}:/build/{submod}/src/.", str(sub_dest)],
+                    ["podman", "cp", f"{container_id}:/build/{submod}/src/.", str(sub_dest)],
                     capture_output=True, text=True, timeout=60,
                 )
                 if cp_proc.returncode == 0:
@@ -567,7 +563,7 @@ class Evaluator:
     def _cleanup_image(self, tag: str) -> None:
         try:
             self._run(
-                self._podman_base() + ["rmi", "-f", tag],
+                ["podman", "rmi", "-f", tag],
                 capture_output=True, timeout=30,
             )
         except Exception:
