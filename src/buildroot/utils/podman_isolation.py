@@ -114,7 +114,9 @@ def save_base_images(
                     logger.warning("Failed to pull %s: %s", img, pull.stderr[:200])
 
         if not available:
-            raise RuntimeError("No base images available to save")
+            logger.warning("No base images available to save — skipping prewarm")
+            _BASE_IMAGES_TARBALL = None
+            return output
 
         # Save to temp file, then atomic rename. Retry on failure
         # (podman save can fail under storage contention).
@@ -134,7 +136,9 @@ def save_base_images(
             import time
             time.sleep(5)
         else:
-            raise RuntimeError(f"podman save failed after 3 attempts: {last_err}")
+            logger.warning("podman save failed after 3 attempts (storage contention?) — skipping prewarm")
+            _BASE_IMAGES_TARBALL = None
+            return output
 
         tmp_output.rename(output)
         _BASE_IMAGES_TARBALL = output
