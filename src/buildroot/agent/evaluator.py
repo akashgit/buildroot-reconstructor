@@ -185,13 +185,19 @@ class Evaluator:
     def _l3_command(self, tag: str, result: EvalResult) -> bool:
         try:
             check_cmd = (
-                "find target/ build/libs/ */target/ */build/libs/ "
+                "JAR=$(find target/ build/libs/ */target/ */build/libs/ "
                 "-name '*.jar' "
                 "-not -name '*-sources.jar' "
                 "-not -name '*-javadoc.jar' "
                 "-not -name 'original-*.jar' "
-                "2>/dev/null | head -1 | grep -q . "
-                "&& echo BUILD_SUCCESS || echo BUILD_FAILED"
+                "-size +1k "
+                "2>/dev/null | head -1); "
+                "if [ -z \"$JAR\" ]; then echo BUILD_FAILED; exit 1; fi; "
+                "MAGIC=$(od -A n -t x1 -N 4 \"$JAR\" | tr -d ' '); "
+                "if [ \"$MAGIC\" != '504b0304' ]; then echo 'JAR_INVALID: not a ZIP file'; exit 1; fi; "
+                "if ! unzip -l \"$JAR\" 2>/dev/null | grep -q 'META-INF/MANIFEST.MF'; then "
+                "echo 'JAR_INVALID: no MANIFEST.MF'; exit 1; fi; "
+                "echo BUILD_SUCCESS"
             )
             proc = self._run(
                 ["podman", "run", "--rm", tag, "sh", "-c", check_cmd],
