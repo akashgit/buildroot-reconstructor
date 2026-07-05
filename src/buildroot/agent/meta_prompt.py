@@ -141,7 +141,30 @@ L4' score replaces L4 in the reward formula. Check `l4_signal_source` in eval ou
 
 Read `fallback_signals` in eval output for per-signal details.
 To improve L4' score: fix JDK version (bytecode), ensure correct GAV (manifest),
-fix test failures (tests), ensure all source compiles (structural)."""
+fix test failures (tests), ensure all source compiles (structural).
+
+### Recovering full L4 when the reference JAR is not found
+The evaluator automatically searches Maven Central for the canonical coordinate when the fork
+coordinate 404s (handles cases like `tools.jackson.core` → `com.fasterxml.jackson.core`).
+
+If eval still reports "JAR unavailable", the artifact name may have changed too. You should try
+to find the canonical reference JAR yourself:
+
+1. **Search Maven Central** — `curl 'https://search.maven.org/solrsearch/select?q=a:"ARTIFACT"&wt=json'`
+   to find all groupIds that publish an artifact with a similar name.
+2. **Common renames to check**: `commons-dbcp` → `commons-dbcp2`, `hikaricp` → `HikariCP`,
+   `bouncy-castle` → `bcprov-jdk18on`, `json-java` → `json`, `antlr` → `antlr4-runtime`.
+   Many forks just republish upstream JARs under a different groupId and sometimes a different artifactId.
+3. **WSO2 orbit bundles** (`org.wso2.orbit.*`) repackage upstream JARs — strip the `org.wso2.orbit.`
+   prefix to find the upstream groupId (e.g. `org.wso2.orbit.org.yaml:snakeyaml` → `org.yaml:snakeyaml`).
+4. **Web search** for the artifact name + "maven central" to find the canonical coordinate.
+5. Once found, download the canonical JAR and compare directly:
+   ```bash
+   # Download canonical reference JAR
+   curl -o /tmp/reference.jar 'https://repo1.maven.org/maven2/com/zaxxer/HikariCP/2.7.3/HikariCP-2.7.3.jar'
+   # Compare with your rebuilt JAR using the jar comparator
+   python -c "from buildroot.utils.jar_comparator import compare_jars; r = compare_jars('/tmp/reference.jar', '/path/to/rebuilt.jar', 'coord'); print(r.verdict, r.equivalence_score())"
+   ```"""
 
 
 def _tool_docs_section(v3_available: bool) -> str:
