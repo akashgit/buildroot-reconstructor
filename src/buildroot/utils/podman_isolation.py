@@ -116,16 +116,25 @@ def save_base_images(
         if not available:
             raise RuntimeError("No base images available to save")
 
-        # Save to temp file, then atomic rename
+        # Save to temp file, then atomic rename. Retry on failure
+        # (podman save can fail under storage contention).
         tmp_output = Path(str(output) + f".tmp.{os.getpid()}")
         logger.info("Saving %d base images to %s", len(available), output)
-        proc = subprocess.run(
-            ["podman", "save", "-o", str(tmp_output)] + available,
-            capture_output=True, text=True, timeout=600,
-        )
-        if proc.returncode != 0:
+        last_err = ""
+        for attempt in range(3):
+            proc = subprocess.run(
+                ["podman", "save", "-o", str(tmp_output)] + available,
+                capture_output=True, text=True, timeout=600,
+            )
+            if proc.returncode == 0:
+                break
+            last_err = proc.stderr[:300]
             tmp_output.unlink(missing_ok=True)
-            raise RuntimeError(f"podman save failed: {proc.stderr[:300]}")
+            logger.warning("podman save attempt %d failed: %s", attempt + 1, last_err[:100])
+            import time
+            time.sleep(5)
+        else:
+            raise RuntimeError(f"podman save failed after 3 attempts: {last_err}")
 
         tmp_output.rename(output)
         _BASE_IMAGES_TARBALL = output
