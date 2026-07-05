@@ -41,11 +41,23 @@ def _find_writable_base() -> Path:
 
 
 DEFAULT_BASE_IMAGES = [
+    # Generic temurin tags (79% of builds)
     "docker.io/eclipse-temurin:8-jdk",
     "docker.io/eclipse-temurin:11-jdk",
     "docker.io/eclipse-temurin:17-jdk",
     "docker.io/eclipse-temurin:21-jdk",
+    "docker.io/eclipse-temurin:17-jdk-focal",
+    "docker.io/eclipse-temurin:8-jdk-focal",
+    "docker.io/eclipse-temurin:22-jdk",
+    "docker.io/eclipse-temurin:23-jdk",
+    # Maven images
     "docker.io/library/maven:3.9.9-eclipse-temurin-8-focal",
+    "docker.io/library/maven:3.9.6-eclipse-temurin-11",
+    "docker.io/library/maven:3.9.6-eclipse-temurin-17",
+    "docker.io/library/maven:3.8.6-eclipse-temurin-11",
+    # Legacy JDKs
+    "docker.io/library/maven:3.2.5-jdk-8",
+    "docker.io/library/maven:3.2.5-jdk-6",
 ]
 
 _BASE_IMAGES_TARBALL: Path | None = None
