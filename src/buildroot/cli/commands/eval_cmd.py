@@ -24,7 +24,8 @@ import click
 @click.option("--trusted", is_flag=True, default=False,
               help="Enforce trusted-source-only constraint (L1.5 gate)")
 @click.option("--jdk-version", default="", help="Expected JDK version for fallback bytecode check")
-def eval_cmd(containerfile, coordinate, host, timeout, pretty, report, no_cache, trusted, jdk_version):
+@click.option("--isolate-podman", is_flag=True, help="Isolate podman storage for parallel scaling")
+def eval_cmd(containerfile, coordinate, host, timeout, pretty, report, no_cache, trusted, jdk_version, isolate_podman):
     """Evaluate a Containerfile against a Maven Central artifact.
 
     Returns JSON with L1-L4 scores, comparison report, and reward.
@@ -42,7 +43,7 @@ def eval_cmd(containerfile, coordinate, host, timeout, pretty, report, no_cache,
 
     cf_text = Path(containerfile).read_text()
     capture_full_log = report != "none"
-    evaluator = Evaluator(host=host, timeout=timeout, no_cache=no_cache)
+    evaluator = Evaluator(host=host, timeout=timeout, no_cache=no_cache, isolate_podman=isolate_podman)
     result = evaluator.evaluate(cf_text, coordinate, capture_full_log=capture_full_log, trusted=trusted, jdk_version=jdk_version)
 
     if report != "none":

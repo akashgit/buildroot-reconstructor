@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import logging
-import os
 import re
 import shlex
 import shutil
@@ -21,61 +20,24 @@ from buildroot.pipeline.orchestrator import parse_gav
 from buildroot.trust.registry import TrustedSourceRegistry
 from buildroot.utils.jar_comparator import compare_jars
 from buildroot.utils.maven_central import get_jar_path
+from buildroot.utils.podman_isolation import PodmanIsolation
 
 logger = logging.getLogger(__name__)
-
-
-def _default_storage_base() -> Path:
-    for candidate in [Path("/workspace"), Path(tempfile.gettempdir())]:
-        if candidate.exists() and os.access(candidate, os.W_OK):
-            return candidate / "containers-storage-isolated"
-    return Path(tempfile.gettempdir()) / "containers-storage-isolated"
-
-
-_cached_image_store: Path | None | str = "unset"
-
-
-def _default_image_store() -> Path | None:
-    """Find the default podman graphRoot to use as a shared read-only image store."""
-    global _cached_image_store
-    if _cached_image_store != "unset":
-        return _cached_image_store
-    try:
-        proc = subprocess.run(
-            ["podman", "info", "--format", "{{.Store.GraphRoot}}"],
-            capture_output=True, text=True, timeout=10,
-        )
-        if proc.returncode == 0 and proc.stdout.strip():
-            p = Path(proc.stdout.strip())
-            if p.exists():
-                _cached_image_store = p
-                return p
-    except Exception:
-        pass
-    _cached_image_store = None
-    return None
 
 
 class Evaluator:
     """Runs 4-level evaluation: parse, build, command, JAR match."""
 
-    def __init__(self, host: str | None = None, timeout: int = 900, no_cache: bool = False) -> None:
+    def __init__(self, host: str | None = None, timeout: int = 900, no_cache: bool = False, isolate_podman: bool = False) -> None:
         self._host = host
         self._timeout = timeout
         self._no_cache = no_cache
         self._trust_registry = TrustedSourceRegistry()
-        # Each evaluator gets an isolated podman storage root to avoid
-        # containers/storage lock contention when running many builds in parallel.
-        # --imagestore points to the shared default storage so base images are
-        # pulled once and reused across all evaluators.
-        if not host:
-            base = _default_storage_base()
-            self._storage_root = base / uuid.uuid4().hex
-            self._storage_root.mkdir(parents=True, exist_ok=True)
-            self._image_store = _default_image_store()
-        else:
-            self._storage_root = None
-            self._image_store = None
+        self._isolation = PodmanIsolation.create() if (isolate_podman and not host) else None
+
+    def get_podman_env(self) -> dict[str, str] | None:
+        """Return env dict for podman isolation, or None if not isolated."""
+        return self._isolation.get_env() if self._isolation else None
 
     def __del__(self):
         self.cleanup_storage()
@@ -94,11 +56,8 @@ class Evaluator:
                  self._host, shlex.join(cmd)],
                 **kwargs,
             )
-        if self._storage_root and cmd and cmd[0] == "podman":
-            prefix = ["podman", "--root", str(self._storage_root)]
-            if self._image_store:
-                prefix += ["--imagestore", str(self._image_store)]
-            cmd = prefix + cmd[1:]
+        if self._isolation:
+            cmd = self._isolation.wrap_command(cmd)
         return subprocess.run(cmd, **kwargs)
 
     def _run_shell(self, shell_cmd: str, **kwargs) -> subprocess.CompletedProcess:
@@ -109,11 +68,8 @@ class Evaluator:
                  self._host, shell_cmd],
                 **kwargs,
             )
-        if self._storage_root and "podman " in shell_cmd:
-            inject = f"podman --root {shlex.quote(str(self._storage_root))}"
-            if self._image_store:
-                inject += f" --imagestore {shlex.quote(str(self._image_store))}"
-            shell_cmd = shell_cmd.replace("podman", inject, 1)
+        if self._isolation:
+            shell_cmd = self._isolation.wrap_shell_command(shell_cmd)
         return subprocess.run(shell_cmd, shell=True, **kwargs)
 
     def evaluate(
@@ -153,8 +109,9 @@ class Evaluator:
         from buildroot.eval.test_runner import run_tests
         result.test_result = run_tests(
             tag, containerfile, host=self._host, timeout=300,
-            podman_root=str(self._storage_root) if self._storage_root else None,
-            podman_imagestore=str(self._image_store) if self._image_store else None,
+            podman_root=str(self._isolation.graphroot) if self._isolation else None,
+            podman_runroot=str(self._isolation.runroot) if self._isolation else None,
+            podman_tmpdir=str(self._isolation.tmpdir) if self._isolation else None,
         )
 
         self._l4_match(tag, coordinate, result, jdk_version=jdk_version)
@@ -622,16 +579,10 @@ class Evaluator:
             pass
 
     def cleanup_storage(self) -> None:
-        """Remove the isolated storage root. Call when this evaluator is no longer needed."""
-        if self._storage_root and self._storage_root.exists():
-            try:
-                subprocess.run(
-                    ["podman", "--root", str(self._storage_root), "system", "reset", "--force"],
-                    capture_output=True, timeout=60,
-                )
-                shutil.rmtree(self._storage_root, ignore_errors=True)
-            except Exception:
-                pass
+        """Remove the isolated storage. Call when this evaluator is no longer needed."""
+        if self._isolation:
+            self._isolation.cleanup()
+            self._isolation = None
 
 
 def _extract_download_urls(containerfile_content: str) -> list[tuple[int, str]]:

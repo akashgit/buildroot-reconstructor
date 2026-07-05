@@ -42,6 +42,7 @@ def spawn_claude_agent(
     cwd: str | None = None,
     allowed_tools: list[str] | None = None,
     disallowed_tools: list[str] | None = None,
+    env: dict[str, str] | None = None,
 ) -> AgentResult:
     """Spawn a Claude Code agent as a subprocess and return the parsed result.
 
@@ -101,6 +102,7 @@ def spawn_claude_agent(
             text=True,
             timeout=effective_timeout,
             cwd=cwd,
+            env=env,
         )
 
         if result.returncode != 0:

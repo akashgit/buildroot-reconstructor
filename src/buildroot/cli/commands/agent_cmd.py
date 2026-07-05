@@ -22,7 +22,8 @@ import click
 @click.option("--max-turns", default=0, type=int, help="Max agent turns (0 = unlimited)")
 @click.option("-v", "--verbose", is_flag=True, help="Enable debug logging")
 @click.option("--enable-google-mirror", is_flag=True, help="Use Google Cloud Storage as fallback on Maven Central 429 rate limits")
-def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, v3_only, interactive, max_budget, max_turns, verbose, enable_google_mirror):
+@click.option("--isolate-podman", is_flag=True, help="Isolate podman storage per worker for parallel scaling (avoids lock contention)")
+def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, v3_only, interactive, max_budget, max_turns, verbose, enable_google_mirror, isolate_podman):
     """Run agentic reconstruction loop for a Maven COORDINATE.
 
     Default mode uses the v4 orchestrator agent. Use --v3-only for the template pipeline.
@@ -53,6 +54,11 @@ def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, 
         count = seed_recipes_from_results(Path(resume))
         click.echo(f"Seeded {count} recipes from {resume}")
 
+    if isolate_podman:
+        from buildroot.utils.podman_isolation import save_base_images
+        click.echo("Pre-warming base images for isolated podman storage...")
+        save_base_images()
+
     # Batch mode (always v3)
     if batch_file:
         from pathlib import Path
@@ -69,7 +75,7 @@ def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, 
         results = []
         for coord in coordinates:
             click.echo(f"\n{'='*60}\nProcessing: {coord}\n{'='*60}")
-            r = _run_v3(coord, host, max_iterations, resume)
+            r = _run_v3(coord, host, max_iterations, resume, isolate_podman)
             results.append({"coordinate": coord, **r.to_dict()})
 
             safe_name = coord.replace(":", "_").replace(".", "_")
@@ -89,19 +95,19 @@ def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, 
         raise click.UsageError("Provide a COORDINATE or --batch FILE")
 
     if interactive:
-        _run_interactive(coordinate, host)
+        _run_interactive(coordinate, host, isolate_podman)
 
     if v3_only:
-        result = _run_v3(coordinate, host, max_iterations, resume)
+        result = _run_v3(coordinate, host, max_iterations, resume, isolate_podman)
         click.echo(json.dumps(result.to_dict(), indent=2))
         sys.exit(0 if result.status == "success" else 1)
     else:
-        result = _run_orchestrator(coordinate, host, max_budget, max_turns)
+        result = _run_orchestrator(coordinate, host, max_budget, max_turns, isolate_podman)
         click.echo(json.dumps(result.to_dict(), indent=2))
         sys.exit(0 if result.status == "success" else 1)
 
 
-def _run_v3(coordinate, host, max_iterations, resume):
+def _run_v3(coordinate, host, max_iterations, resume, isolate_podman=False):
     """Run a single coordinate through the v3 pipeline."""
     from buildroot.agent.pipeline_v3 import run_v3_pipeline
 
@@ -118,18 +124,19 @@ def _run_v3(coordinate, host, max_iterations, resume):
         max_iterations=max_iterations,
         host=host,
         warm_start_containerfile=warm_cf,
+        isolate_podman=isolate_podman,
     )
 
 
-def _run_interactive(coordinate, host):
+def _run_interactive(coordinate, host, isolate_podman=False):
     """Launch an interactive Claude session with orchestrator context."""
     from buildroot.agent.meta_agent import launch_interactive_orchestrator
 
-    rc = launch_interactive_orchestrator(coordinate, host=host)
+    rc = launch_interactive_orchestrator(coordinate, host=host, isolate_podman=isolate_podman)
     sys.exit(rc)
 
 
-def _run_orchestrator(coordinate, host, max_budget, max_turns):
+def _run_orchestrator(coordinate, host, max_budget, max_turns, isolate_podman=False):
     """Run a single coordinate through the v4 orchestrator."""
     from buildroot.agent.meta_agent import run_orchestrator
 
@@ -138,4 +145,5 @@ def _run_orchestrator(coordinate, host, max_budget, max_turns):
         host=host,
         max_budget_usd=max_budget,
         max_agent_turns=max_turns,
+        isolate_podman=isolate_podman,
     )
