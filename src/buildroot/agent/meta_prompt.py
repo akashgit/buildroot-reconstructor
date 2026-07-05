@@ -91,6 +91,15 @@ def _domain_expertise_section() -> str:
 - Maven: -Dproject.build.outputTimestamp=2000-01-01T00:00:00Z
 - JVM: -XX:-UsePerfData to suppress hsperfdata files
 
+## JAR Staging
+After building, always stage the target JAR to a known path so the evaluator finds \
+the right artifact (especially in multi-module projects or builds with shaded/dependency JARs):
+```dockerfile
+RUN mkdir -p /output && cp target/artifact-1.0.jar /output/rebuilt.jar
+```
+The evaluator checks `/output/rebuilt.jar` first. Without this, it guesses from all JARs \
+in target/ using substring matching, which can pick the wrong file.
+
 ## v3 Template Limitations
 The v3 pipeline uses Jinja2 templates for single-stage builds. It CANNOT express:
 - Multi-stage Docker builds (multiple FROM statements)

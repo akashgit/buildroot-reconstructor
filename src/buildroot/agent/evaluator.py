@@ -358,7 +358,21 @@ class Evaluator:
     def _extract_jar_from_container(
         self, container_id: str, artifact_id: str, version: str, dest: Path,
     ) -> Path | None:
-        """Extract JAR from a stopped container using podman cp."""
+        """Extract JAR from a stopped container using podman cp.
+
+        Checks /output/rebuilt.jar first (staged by agent), then falls back
+        to searching target/build dirs with substring matching.
+        """
+        local_jar = dest / f"{artifact_id}-{version}-rebuilt.jar"
+
+        staged_proc = self._run(
+            ["podman", "cp", f"{container_id}:/output/rebuilt.jar", str(local_jar)],
+            capture_output=True, text=True, timeout=60,
+        )
+        if staged_proc.returncode == 0 and local_jar.exists() and local_jar.stat().st_size > 1024:
+            logger.info("Using staged JAR from /output/rebuilt.jar")
+            return local_jar
+
         jar_dir = dest / "jars"
         jar_dir.mkdir(parents=True, exist_ok=True)
 
@@ -387,7 +401,6 @@ class Evaluator:
         if not target_jar:
             target_jar = jar_files[0]
 
-        local_jar = dest / f"{artifact_id}-{version}-rebuilt.jar"
         shutil.copy2(target_jar, local_jar)
         return local_jar
 
