@@ -282,16 +282,21 @@ class PipelineResult:
     elapsed_seconds: float = 0.0
     score_history: list[dict] = field(default_factory=list)
     error_message: str = ""
+    workspace: str = ""
 
     def to_dict(self) -> dict:
-        return {
+        d = {
             "coordinate": self.coordinate,
             "status": self.status,
             "best_reward": self.best_reward,
             "iterations": self.iterations,
             "elapsed_seconds": round(self.elapsed_seconds, 1),
             "score_history": self.score_history,
+            "workspace": self.workspace,
         }
+        if self.best_containerfile:
+            d["best_containerfile"] = self.best_containerfile
+        return d
 
 
 def _spec_to_dict(spec: BuildrootSpec) -> dict:
@@ -400,6 +405,7 @@ def run_v3_pipeline(
     if workspace is None:
         workspace = Path(tempfile.mkdtemp(prefix="buildroot-v3-ws-"))
     workspace.mkdir(parents=True, exist_ok=True)
+    result.workspace = str(workspace)
 
     group_id, artifact_id, version = parse_gav(coordinate)
     evaluator = Evaluator(host=host)
@@ -426,6 +432,9 @@ def run_v3_pipeline(
         result.elapsed_seconds = time.time() - start_time
         return result
 
+    draft_result: EvalResult | None = None
+    draft_cf: str = ""
+
     # Warm-start: reverse-parse existing Containerfile and start in feedback mode
     if warm_start_containerfile:
         logger.info("Warm-start: reverse-parsing existing Containerfile for %s", coordinate)
@@ -442,7 +451,6 @@ def run_v3_pipeline(
         fallback_values = _fallback_values_from_prepass(prepass_findings, coordinate)
         fallback_values = _ensure_defaults(fallback_values, prepass_findings)
 
-        draft_result: EvalResult | None = None
         if fallback_values.get("source_repo"):
             try:
                 draft_cf = _render_containerfile(fallback_values)
@@ -486,9 +494,28 @@ def run_v3_pipeline(
         current_values = _ensure_defaults(current_values, prepass_findings)
 
     best_values = dict(current_values)
-    best_reward = 0.0
-    best_containerfile = ""
-    best_eval_result: EvalResult | None = None
+
+    # Short-circuit: if the draft already scored near-perfect, skip iterations entirely
+    if draft_result and draft_result.reward >= 0.98:
+        logger.info("Draft scored %.4f — short-circuiting (iterations cannot improve a near-perfect draft)", draft_result.reward)
+        recipe_store.save(coordinate, draft_result.level_reached, draft_cf, draft_result.reward)
+        result.best_reward = draft_result.reward
+        result.best_values = best_values
+        result.best_containerfile = draft_cf
+        result.status = "success"
+        result.elapsed_seconds = time.time() - start_time
+        return result
+
+    # Seed best from draft if it produced a partial result worth preserving
+    if draft_result and draft_result.reward > 0:
+        best_reward = draft_result.reward
+        best_containerfile = draft_cf
+        best_eval_result = draft_result
+    else:
+        best_reward = 0.0
+        best_containerfile = ""
+        best_eval_result = None
+
     failed_approaches: list[FailedApproach] = []
     value_hashes: list[str] = []
     prev_values: dict | None = None
@@ -726,6 +753,11 @@ def run_v3_pipeline(
     result.best_values = best_values
     result.best_containerfile = best_containerfile
     result.elapsed_seconds = time.time() - start_time
+
+    # Persist best Containerfile to workspace so the orchestrator can find it
+    if best_containerfile:
+        (workspace / "Containerfile.best").write_text(best_containerfile)
+
     if result.status == "budget_exhausted":
         logger.info("Budget exhausted for %s after %d iterations (best=%.4f)",
                      coordinate, result.iterations, best_reward)
