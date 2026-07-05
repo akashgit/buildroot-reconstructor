@@ -33,9 +33,12 @@ Your goal: produce a Containerfile that BUILDS FROM SOURCE a JAR file matching t
 original Maven Central artifact with L4 score >= 0.98 (ideally 1.0).
 
 CRITICAL: You must build from source (git clone + mvn/gradle/ant). NEVER download \
-pre-built JARs from Maven Central or any mirror and place them in the output directory. \
-The L3 check validates that the JAR is a real compiled archive with a manifest — \
-downloaded or fake JARs will fail validation.
+pre-built JARs from Maven Central or any mirror via curl/wget and place them in the \
+output directory. Maven Central aggressively rate-limits (HTTP 429) and curl -sL will \
+silently save the HTML error page as a 96-byte .jar file — this is not a JAR and will \
+fail L3 validation. Never run commands like: \
+`curl -o target/artifact.jar https://repo1.maven.org/...` or \
+`wget -O target/artifact.jar https://...`. Always build from source.
 
 You have full tool access: bash, SSH, file read/write, web search. Use them."""
 
