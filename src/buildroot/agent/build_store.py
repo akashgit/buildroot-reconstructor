@@ -68,6 +68,29 @@ def init_table() -> bool:
             cur.execute("ALTER TABLE builds ADD COLUMN IF NOT EXISTS eval_result JSONB DEFAULT NULL")
             cur.execute("ALTER TABLE builds ADD COLUMN IF NOT EXISTS trusted_eval_result JSONB DEFAULT NULL")
             cur.execute("ALTER TABLE builds ADD COLUMN IF NOT EXISTS rebuilt_jar BYTEA DEFAULT NULL")
+
+            cur.execute("""
+                CREATE TABLE IF NOT EXISTS build_attempts (
+                    id SERIAL PRIMARY KEY,
+                    group_id TEXT NOT NULL,
+                    artifact_id TEXT NOT NULL,
+                    version TEXT NOT NULL,
+                    containerfile TEXT NOT NULL,
+                    reward FLOAT NOT NULL,
+                    level INTEGER NOT NULL,
+                    method TEXT,
+                    status TEXT,
+                    cost_usd FLOAT DEFAULT 0,
+                    elapsed_seconds FLOAT DEFAULT 0,
+                    error_message TEXT DEFAULT '',
+                    eval_result JSONB DEFAULT NULL,
+                    created_at TIMESTAMP DEFAULT NOW()
+                )
+            """)
+            cur.execute("""
+                CREATE INDEX IF NOT EXISTS idx_build_attempts_coord
+                ON build_attempts(group_id, artifact_id, version)
+            """)
         conn.commit()
         return True
     except Exception as e:
@@ -196,6 +219,51 @@ def save_build(
         return True
     except Exception as e:
         logger.warning("Failed to save build: %s", e)
+        return False
+    finally:
+        conn.close()
+
+
+def save_attempt(
+    coordinate: str,
+    containerfile: str,
+    reward: float,
+    level: int,
+    method: str = "",
+    status: str = "",
+    cost_usd: float = 0,
+    elapsed_seconds: float = 0,
+    error_message: str = "",
+    eval_result: dict | None = None,
+) -> bool:
+    """Save every build attempt regardless of reward score."""
+    parts = coordinate.split(":")
+    if len(parts) < 3:
+        return False
+    group_id, artifact_id, version = parts[0], parts[1], parts[2]
+
+    conn = _get_connection()
+    if not conn:
+        return False
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                INSERT INTO build_attempts
+                    (group_id, artifact_id, version, containerfile, reward, level,
+                     method, status, cost_usd, elapsed_seconds, error_message, eval_result)
+                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                """,
+                (group_id, artifact_id, version, containerfile, reward, level,
+                 method, status, cost_usd, elapsed_seconds, error_message,
+                 json.dumps(eval_result) if eval_result else None),
+            )
+        conn.commit()
+        logger.info("Saved attempt: %s (reward=%.4f, level=L%d, status=%s)",
+                     coordinate, reward, level, status)
+        return True
+    except Exception as e:
+        logger.warning("Failed to save attempt: %s", e)
         return False
     finally:
         conn.close()

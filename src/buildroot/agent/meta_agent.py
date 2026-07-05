@@ -391,7 +391,21 @@ def run_orchestrator(
         # 10. Output restructuring
         _restructure_output(result, workspace, coordinate)
 
-    # 11. Save to build store (high-quality builds for tracking and warm-start)
+    # 11. Save every attempt to build_attempts table
+    if result.best_containerfile:
+        try:
+            from buildroot.agent.build_store import save_attempt
+            save_attempt(
+                coordinate, result.best_containerfile, result.best_reward,
+                result.best_level, result.path, result.status,
+                result.cost_usd, result.elapsed_seconds,
+                error_message=result.error_message or "",
+                eval_result=result.eval_result_dict,
+            )
+        except Exception as e:
+            logger.debug("Attempt save skipped: %s", e)
+
+    # 12. Save to build store (high-quality builds for tracking and warm-start)
     if result.best_reward >= 0.9 and result.best_containerfile:
         try:
             from buildroot.agent.build_store import save_build
