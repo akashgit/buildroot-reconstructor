@@ -406,7 +406,8 @@ def run_orchestrator(
             logger.debug("Attempt save skipped: %s", e)
 
     # 12. Save to build store (high-quality builds for tracking and warm-start)
-    if result.best_reward >= 0.9 and result.best_containerfile:
+    save_reward = max(result.best_reward, result.trusted_reward)
+    if save_reward >= 0.9 and (result.best_containerfile or result.trusted_containerfile):
         try:
             from buildroot.agent.build_store import save_build
 
