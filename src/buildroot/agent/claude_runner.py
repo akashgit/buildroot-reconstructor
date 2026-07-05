@@ -98,12 +98,18 @@ def spawn_claude_agent(
         logger.info("Spawning Claude agent: model=%s, max_turns=%s, timeout=%s, session=%s", model, max_turns or "unlimited", f"{timeout}s" if timeout > 0 else "unlimited", session_id)
         logger.debug("Agent task: %s", task[:200])
 
+        env = dict(__import__("os").environ)
+        session_log_dir = Path("/tmp/buildroot-claude-sessions")
+        session_log_dir.mkdir(parents=True, exist_ok=True)
+        env["CLAUDE_CONFIG_DIR"] = str(session_log_dir)
+
         result = subprocess.run(
             cmd,
             capture_output=True,
             text=True,
             timeout=effective_timeout,
             cwd=cwd,
+            env=env,
         )
 
         if result.returncode != 0:
