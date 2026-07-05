@@ -32,6 +32,30 @@ def _default_storage_base() -> Path:
     return Path(tempfile.gettempdir()) / "containers-storage-isolated"
 
 
+_cached_image_store: Path | None | str = "unset"
+
+
+def _default_image_store() -> Path | None:
+    """Find the default podman graphRoot to use as a shared read-only image store."""
+    global _cached_image_store
+    if _cached_image_store != "unset":
+        return _cached_image_store
+    try:
+        proc = subprocess.run(
+            ["podman", "info", "--format", "{{.Store.GraphRoot}}"],
+            capture_output=True, text=True, timeout=10,
+        )
+        if proc.returncode == 0 and proc.stdout.strip():
+            p = Path(proc.stdout.strip())
+            if p.exists():
+                _cached_image_store = p
+                return p
+    except Exception:
+        pass
+    _cached_image_store = None
+    return None
+
+
 class Evaluator:
     """Runs 4-level evaluation: parse, build, command, JAR match."""
 
@@ -42,12 +66,16 @@ class Evaluator:
         self._trust_registry = TrustedSourceRegistry()
         # Each evaluator gets an isolated podman storage root to avoid
         # containers/storage lock contention when running many builds in parallel.
+        # --imagestore points to the shared default storage so base images are
+        # pulled once and reused across all evaluators.
         if not host:
             base = _default_storage_base()
             self._storage_root = base / uuid.uuid4().hex
             self._storage_root.mkdir(parents=True, exist_ok=True)
+            self._image_store = _default_image_store()
         else:
             self._storage_root = None
+            self._image_store = None
 
     def __del__(self):
         self.cleanup_storage()
@@ -67,7 +95,10 @@ class Evaluator:
                 **kwargs,
             )
         if self._storage_root and cmd and cmd[0] == "podman":
-            cmd = ["podman", "--root", str(self._storage_root)] + cmd[1:]
+            prefix = ["podman", "--root", str(self._storage_root)]
+            if self._image_store:
+                prefix += ["--imagestore", str(self._image_store)]
+            cmd = prefix + cmd[1:]
         return subprocess.run(cmd, **kwargs)
 
     def _run_shell(self, shell_cmd: str, **kwargs) -> subprocess.CompletedProcess:
@@ -79,7 +110,10 @@ class Evaluator:
                 **kwargs,
             )
         if self._storage_root and "podman " in shell_cmd:
-            shell_cmd = shell_cmd.replace("podman ", f"podman --root {shlex.quote(str(self._storage_root))} ", 1)
+            inject = f"podman --root {shlex.quote(str(self._storage_root))}"
+            if self._image_store:
+                inject += f" --imagestore {shlex.quote(str(self._image_store))}"
+            shell_cmd = shell_cmd.replace("podman", inject, 1)
         return subprocess.run(shell_cmd, shell=True, **kwargs)
 
     def evaluate(
@@ -120,6 +154,7 @@ class Evaluator:
         result.test_result = run_tests(
             tag, containerfile, host=self._host, timeout=300,
             podman_root=str(self._storage_root) if self._storage_root else None,
+            podman_imagestore=str(self._image_store) if self._image_store else None,
         )
 
         self._l4_match(tag, coordinate, result, jdk_version=jdk_version)
