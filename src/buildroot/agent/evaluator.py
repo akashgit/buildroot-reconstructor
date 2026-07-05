@@ -195,7 +195,7 @@ class Evaluator:
                 "if [ -z \"$JAR\" ]; then echo BUILD_FAILED; exit 1; fi; "
                 "MAGIC=$(od -A n -t x1 -N 4 \"$JAR\" | tr -d ' '); "
                 "if [ \"$MAGIC\" != '504b0304' ]; then echo 'JAR_INVALID: not a ZIP file'; exit 1; fi; "
-                "if ! unzip -l \"$JAR\" 2>/dev/null | grep -q 'META-INF/MANIFEST.MF'; then "
+                "if ! jar tf \"$JAR\" 2>/dev/null | grep -q 'META-INF/MANIFEST.MF'; then "
                 "echo 'JAR_INVALID: no MANIFEST.MF'; exit 1; fi; "
                 "echo BUILD_SUCCESS"
             )
