@@ -81,39 +81,61 @@ def save_base_images(
         _BASE_IMAGES_TARBALL = output
         return output
 
-    available = []
-    for img in images:
-        proc = subprocess.run(
-            ["podman", "image", "exists", img],
-            capture_output=True, timeout=10,
-        )
-        if proc.returncode == 0:
-            available.append(img)
-        else:
-            logger.info("Pulling %s...", img)
-            pull = subprocess.run(
-                ["podman", "pull", img],
-                capture_output=True, text=True, timeout=600,
+    # Lock to prevent concurrent workers from racing on the same tarball
+    lock_path = Path(str(output) + ".lock")
+    try:
+        fd = os.open(str(lock_path), os.O_CREAT | os.O_EXCL | os.O_WRONLY)
+        os.close(fd)
+    except FileExistsError:
+        logger.info("Another worker is saving base images, waiting...")
+        for _ in range(120):
+            import time
+            time.sleep(5)
+            if output.exists() and output.stat().st_size > 0:
+                _BASE_IMAGES_TARBALL = output
+                return output
+        raise RuntimeError("Timed out waiting for base images tarball")
+
+    try:
+        available = []
+        for img in images:
+            proc = subprocess.run(
+                ["podman", "image", "exists", img],
+                capture_output=True, timeout=10,
             )
-            if pull.returncode == 0:
+            if proc.returncode == 0:
                 available.append(img)
             else:
-                logger.warning("Failed to pull %s: %s", img, pull.stderr[:200])
+                logger.info("Pulling %s...", img)
+                pull = subprocess.run(
+                    ["podman", "pull", img],
+                    capture_output=True, text=True, timeout=600,
+                )
+                if pull.returncode == 0:
+                    available.append(img)
+                else:
+                    logger.warning("Failed to pull %s: %s", img, pull.stderr[:200])
 
-    if not available:
-        raise RuntimeError("No base images available to save")
+        if not available:
+            raise RuntimeError("No base images available to save")
 
-    logger.info("Saving %d base images to %s", len(available), output)
-    proc = subprocess.run(
-        ["podman", "save", "-o", str(output)] + available,
-        capture_output=True, text=True, timeout=600,
-    )
-    if proc.returncode != 0:
-        raise RuntimeError(f"podman save failed: {proc.stderr[:300]}")
+        # Save to temp file, then atomic rename
+        tmp_output = Path(str(output) + f".tmp.{os.getpid()}")
+        logger.info("Saving %d base images to %s", len(available), output)
+        proc = subprocess.run(
+            ["podman", "save", "-o", str(tmp_output)] + available,
+            capture_output=True, text=True, timeout=600,
+        )
+        if proc.returncode != 0:
+            tmp_output.unlink(missing_ok=True)
+            raise RuntimeError(f"podman save failed: {proc.stderr[:300]}")
 
-    _BASE_IMAGES_TARBALL = output
-    logger.info("Saved %d images (%.1f MB)", len(available), output.stat().st_size / 1e6)
-    return output
+        tmp_output.rename(output)
+        _BASE_IMAGES_TARBALL = output
+        logger.info("Saved %d images (%.1f MB)", len(available), output.stat().st_size / 1e6)
+        return output
+    finally:
+        lock_path.unlink(missing_ok=True)
 
 
 def get_base_images_tarball() -> Path | None:
