@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import os
 import re
 import shlex
 import shutil
@@ -24,7 +25,11 @@ from buildroot.utils.maven_central import get_jar_path
 logger = logging.getLogger(__name__)
 
 
-_PODMAN_STORAGE_BASE = Path("/workspace/containers-storage-isolated")
+def _default_storage_base() -> Path:
+    for candidate in [Path("/workspace"), Path(tempfile.gettempdir())]:
+        if candidate.exists() and os.access(candidate, os.W_OK):
+            return candidate / "containers-storage-isolated"
+    return Path(tempfile.gettempdir()) / "containers-storage-isolated"
 
 
 class Evaluator:
@@ -38,10 +43,20 @@ class Evaluator:
         # Each evaluator gets an isolated podman storage root to avoid
         # containers/storage lock contention when running many builds in parallel.
         if not host:
-            self._storage_root = _PODMAN_STORAGE_BASE / uuid.uuid4().hex[:12]
+            base = _default_storage_base()
+            self._storage_root = base / uuid.uuid4().hex
             self._storage_root.mkdir(parents=True, exist_ok=True)
         else:
             self._storage_root = None
+
+    def __del__(self):
+        self.cleanup_storage()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *exc):
+        self.cleanup_storage()
 
     def _run(self, cmd: list[str], **kwargs) -> subprocess.CompletedProcess:
         """Run a command locally, or via SSH if a host is configured."""
@@ -63,6 +78,8 @@ class Evaluator:
                  self._host, shell_cmd],
                 **kwargs,
             )
+        if self._storage_root and "podman " in shell_cmd:
+            shell_cmd = shell_cmd.replace("podman ", f"podman --root {shlex.quote(str(self._storage_root))} ", 1)
         return subprocess.run(shell_cmd, shell=True, **kwargs)
 
     def evaluate(
