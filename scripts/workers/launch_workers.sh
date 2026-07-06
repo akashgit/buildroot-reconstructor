@@ -2,22 +2,29 @@
 # Launch parallel worker tmux sessions for the batch build pipeline.
 # Automatically resumes from previous runs by excluding already-processed GAVs.
 #
-# Configuration: set values in .env at the project root (see .env.example).
-# Required: DB_PYTHON, NUM_WORKERS
+# Configuration: set DATABASE_URL, NUM_WORKERS in .env (see .env.example).
+# Requires: project .venv with buildroot installed.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+VENV_PYTHON="${PROJECT_DIR}/.venv/bin/python"
+BUILDROOT="${PROJECT_DIR}/.venv/bin/buildroot"
+
+if [[ ! -x "${VENV_PYTHON}" ]]; then
+    echo "ERROR: .venv not found at ${PROJECT_DIR}/.venv" >&2
+    echo "Run: uv venv && uv pip install -e ." >&2
+    exit 1
+fi
 
 # Load .env
 ENV_FILE="${PROJECT_DIR}/.env"
 [ -f "${ENV_FILE}" ] && set -a && source "${ENV_FILE}" && set +a
 
-DB_PYTHON="${DB_PYTHON:?Set DB_PYTHON in .env — path to Python with buildroot installed}"
 NUM_WORKERS="${NUM_WORKERS:-30}"
 
 echo "=== Splitting GAVs across ${NUM_WORKERS} workers (excluding already-processed) ==="
-python3 "${SCRIPT_DIR}/split_gavs.py"
+${VENV_PYTHON} "${SCRIPT_DIR}/split_gavs.py"
 
 echo ""
 echo "=== Clearing old progress/log files for fresh monitor counts ==="
@@ -28,7 +35,7 @@ echo "  Old logs cleared"
 
 echo ""
 echo "=== Pre-warming podman base images ==="
-${DB_PYTHON} -c "
+${VENV_PYTHON} -c "
 from buildroot.utils.podman_isolation import save_base_images
 save_base_images()
 print('Prewarm tarball ready')

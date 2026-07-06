@@ -2,8 +2,8 @@
 # Worker script: processes assigned GAVs sequentially through the v4 pipeline.
 # Usage: run_worker.sh <worker-index> <gavs-file>
 #
-# Configuration: set values in .env at the project root (see .env.example).
-# Required: DATABASE_URL, DB_PYTHON
+# Configuration: set DATABASE_URL in .env (see .env.example).
+# Requires: project .venv with buildroot installed.
 set -euo pipefail
 
 WORKER_ID="$1"
@@ -12,13 +12,14 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 LOG_DIR="${PROJECT_DIR}/logs/worker-${WORKER_ID}"
 PROGRESS_FILE="${LOG_DIR}/progress.csv"
+VENV_PYTHON="${PROJECT_DIR}/.venv/bin/python"
+BUILDROOT="${PROJECT_DIR}/.venv/bin/buildroot"
 
 # Load .env
 ENV_FILE="${PROJECT_DIR}/.env"
 [ -f "${ENV_FILE}" ] && set -a && source "${ENV_FILE}" && set +a
 
 DATABASE_URL="${DATABASE_URL:-postgresql:///postgres}"
-DB_PYTHON="${DB_PYTHON:?Set DB_PYTHON in .env — path to Python with buildroot installed}"
 
 mkdir -p "${LOG_DIR}"
 
@@ -30,7 +31,7 @@ check_db_exists() {
     local gav="$1"
     local group_id artifact_id version
     IFS=: read -r group_id artifact_id version <<< "${gav}"
-    ${DB_PYTHON} -c "
+    ${VENV_PYTHON} -c "
 import sys
 try:
     import psycopg2
@@ -74,7 +75,7 @@ while IFS= read -r gav; do
         start_ts=$(date +%s)
 
         set +e
-        buildroot agent "${gav}" --enable-google-mirror > "${log_file}" 2>&1
+        ${BUILDROOT} agent "${gav}" --enable-google-mirror > "${log_file}" 2>&1
         exit_code=$?
         set -e
 

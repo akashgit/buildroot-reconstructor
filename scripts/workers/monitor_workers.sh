@@ -2,12 +2,13 @@
 # Monitor all worker tmux sessions and optionally auto-restart dead ones.
 # Usage: monitor_workers.sh [--auto-restart]
 #
-# Configuration: set values in .env at the project root (see .env.example).
-# Required: DB_PYTHON, NUM_WORKERS, DATABASE_URL
+# Configuration: set DATABASE_URL, NUM_WORKERS in .env (see .env.example).
+# Requires: project .venv with buildroot installed.
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
+VENV_PYTHON="${PROJECT_DIR}/.venv/bin/python"
 
 # Load .env
 ENV_FILE="${PROJECT_DIR}/.env"
@@ -15,7 +16,6 @@ ENV_FILE="${PROJECT_DIR}/.env"
 
 NUM_WORKERS="${NUM_WORKERS:-30}"
 DATABASE_URL="${DATABASE_URL:-postgresql:///postgres}"
-DB_PYTHON="${DB_PYTHON:?Set DB_PYTHON in .env — path to Python with buildroot installed}"
 AUTO_RESTART="${1:-}"
 STALE_THRESHOLD=1800  # 30 minutes
 
@@ -93,7 +93,7 @@ done
 echo ""
 echo "Total: ${total_done}/${total_gavs} builds complete"
 
-db_total=$(${DB_PYTHON} -c "
+db_total=$(${VENV_PYTHON} -c "
 import psycopg2
 conn = psycopg2.connect('${DATABASE_URL}')
 cur = conn.cursor()
