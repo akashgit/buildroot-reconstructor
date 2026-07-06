@@ -34,7 +34,9 @@ original Maven Central artifact with L4 score >= 0.98 (ideally 1.0).
 
 CRITICAL: You must build from source (git clone + mvn/gradle/ant). NEVER download \
 pre-built JARs from Maven Central or any mirror via curl/wget and place them in the \
-output directory. Always build from source.
+output directory. Maven Central aggressively rate-limits (HTTP 429) — curl -sL will \
+silently save the HTML error page as a 96-byte file that is not a valid JAR. \
+Always build from source.
 
 IMPORTANT: For Maven builds, always configure Google's Maven Central mirror in \
 settings.xml to avoid HTTP 429 rate limiting from repo1.maven.org: \

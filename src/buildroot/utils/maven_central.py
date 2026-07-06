@@ -14,9 +14,10 @@ import requests
 
 logger = logging.getLogger(__name__)
 
-GOOGLE_MIRROR_BASE = "https://maven-central.storage.googleapis.com/maven2"
+GOOGLE_MIRROR_BASE = "https://maven-central.storage-download.googleapis.com/maven2"
 MAVEN_CENTRAL_DIRECT = "https://repo1.maven.org/maven2"
-MAVEN_CENTRAL_BASE = os.environ.get("MAVEN_MIRROR_URL") or GOOGLE_MIRROR_BASE
+_mirror_env = os.environ.get("MAVEN_MIRROR_URL", "").rstrip("/")
+MAVEN_CENTRAL_BASE = _mirror_env or GOOGLE_MIRROR_BASE
 FALLBACK_BASE = MAVEN_CENTRAL_DIRECT if MAVEN_CENTRAL_BASE == GOOGLE_MIRROR_BASE else GOOGLE_MIRROR_BASE
 DEFAULT_CACHE_DIR = Path.home() / ".cache" / "buildroot" / "poms"
 DEFAULT_JAR_CACHE_DIR = Path.home() / ".cache" / "buildroot" / "jars"
