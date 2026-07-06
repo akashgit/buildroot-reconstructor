@@ -98,6 +98,16 @@ RUN echo "aHR0cHM6Ly9yZXBvLm1hdmVuLm9yZw==" | base64 -d | xargs wget
         assert passed is False
         assert any("obfuscat" in v.lower() or "base64" in v.lower() for v in violations)
 
+    def test_rejects_hidden_jar_after_sources_jar(self):
+        cf = '''
+FROM eclipse-temurin:17-jdk
+RUN wget https://repo1.maven.org/maven2/org/example/lib-1.0-sources.jar && wget https://repo1.maven.org/maven2/org/example/lib-1.0.jar
+RUN git clone https://github.com/example/project.git && mvn install
+'''
+        passed, violations = validate_containerfile(cf, 'org.example:lib:1.0')
+        assert passed is False
+        assert any('JAR download' in v for v in violations)
+
     def test_rejects_curl_jar(self):
         cf = """\
 FROM eclipse-temurin:17-jdk

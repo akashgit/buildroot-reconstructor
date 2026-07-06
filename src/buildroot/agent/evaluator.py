@@ -628,8 +628,6 @@ def validate_containerfile(cf_text: str, target_gav: str) -> tuple[bool, list[st
         if instruction["instruction"] == "RUN":
             run_text += " " + instruction["value"]
 
-    run_lower = run_text.lower()
-
     has_source = bool(re.search(
         r'git\s+clone|svn\s+(checkout|co)\b|\.tar\.gz|\.tgz|-sources\.jar|-src\.',
         run_text, re.IGNORECASE,
@@ -645,17 +643,19 @@ def validate_containerfile(cf_text: str, target_gav: str) -> tuple[bool, list[st
         violations.append("No compilation command found (need mvn, gradle, ant, or javac)")
 
     jar_download_re = re.compile(
-        r'(wget|curl)\s+.*\.jar\b',
+        r'(wget|curl)\s+.*?\.jar\b',
         re.IGNORECASE,
     )
     allowed_jar_re = re.compile(
         r'-sources\.jar|-wrapper\.jar|maven-wrapper|gradle-wrapper|\bcfr\b',
         re.IGNORECASE,
     )
-    for match in jar_download_re.finditer(run_text):
-        matched_text = match.group(0)
-        if not allowed_jar_re.search(matched_text):
-            violations.append(f"JAR download detected: {matched_text.strip()[:120]}")
+    jar_segments = re.split(r'[;&|]+', run_text)
+    for segment in jar_segments:
+        for match in jar_download_re.finditer(segment):
+            matched_text = match.group(0)
+            if not allowed_jar_re.search(matched_text):
+                violations.append(f"JAR download detected: {matched_text.strip()[:120]}")
 
     synthetic_patterns = [
         (r'jar\s+cf\b(?!.*\bclasses\b)', "Synthetic JAR creation via 'jar cf' without compiled classes"),

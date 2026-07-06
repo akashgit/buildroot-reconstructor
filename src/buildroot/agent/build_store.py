@@ -76,7 +76,7 @@ def init_table() -> bool:
                         SELECT 1 FROM pg_constraint WHERE conname = 'l4_requires_eval'
                     ) THEN
                         ALTER TABLE builds ADD CONSTRAINT l4_requires_eval
-                        CHECK (level < 4 OR eval_result IS NOT NULL);
+                        CHECK (level < 4 OR eval_result IS NOT NULL) NOT VALID;
                     END IF;
                 END
                 $$;
