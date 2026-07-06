@@ -1,15 +1,21 @@
 #!/usr/bin/env bash
 # Launch parallel worker tmux sessions for the batch build pipeline.
 # Automatically resumes from previous runs by excluding already-processed GAVs.
+#
+# Configuration: set values in .env at the project root (see .env.example).
+# Required: DB_PYTHON, NUM_WORKERS
 set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
-DB_PYTHON="/home/lab/.local/share/uv/tools/buildroot/bin/python"
-NUM_WORKERS=45
 
-# Clean old progress files so the monitor starts fresh
-# (processed GAVs are already captured by split_gavs.py before this runs)
+# Load .env
+ENV_FILE="${PROJECT_DIR}/.env"
+[ -f "${ENV_FILE}" ] && set -a && source "${ENV_FILE}" && set +a
+
+DB_PYTHON="${DB_PYTHON:?Set DB_PYTHON in .env — path to Python with buildroot installed}"
+NUM_WORKERS="${NUM_WORKERS:-30}"
+
 echo "=== Splitting GAVs across ${NUM_WORKERS} workers (excluding already-processed) ==="
 python3 "${SCRIPT_DIR}/split_gavs.py"
 
@@ -20,7 +26,6 @@ for d in "${PROJECT_DIR}"/logs/worker-*; do
 done
 echo "  Old logs cleared"
 
-# Pre-warm base images tarball ONCE before workers start
 echo ""
 echo "=== Pre-warming podman base images ==="
 ${DB_PYTHON} -c "
