@@ -157,7 +157,7 @@ def launch_interactive_orchestrator(
     )
 
     # 4. Build task prompt
-    task = _build_task_prompt(coordinate, host, workspace, target_score)
+    task = _build_task_prompt(coordinate, host, workspace, target_score, isolate_podman=isolate_podman)
 
     # 5. Write prepass data to workspace
     prepass_json = workspace / "prepass_findings.json"
@@ -310,7 +310,7 @@ def run_orchestrator(
     )
 
     # 4. Build task prompt
-    task = _build_task_prompt(coordinate, host, workspace, target_score)
+    task = _build_task_prompt(coordinate, host, workspace, target_score, isolate_podman=isolate_podman)
     if sibling_context:
         task = task + "\n" + sibling_context
 
@@ -545,9 +545,11 @@ def _build_task_prompt(
     host: str | None,
     workspace: Path,
     target_score: float,
+    isolate_podman: bool = False,
 ) -> str:
     """Build the task prompt given to the orchestrator agent."""
     host_flag = f" --host {host}" if host else ""
+    isolate_flag = " --isolate-podman" if isolate_podman else ""
     build_mode = f"Build host: {host} (use SSH for all podman commands)" if host else "Builds run locally via podman."
     return f"""\
 Reconstruct the Maven Central artifact: {coordinate}
@@ -558,9 +560,9 @@ Target score: {target_score}
 
 ## Instructions
 
-1. **Run v3 first** (fast path):
+{"**IMPORTANT: Always pass `--isolate-podman` to ALL `buildroot agent` and `buildroot eval` commands. This prevents podman storage lock contention with other workers.**" + chr(10) + chr(10) if isolate_podman else ""}1. **Run v3 first** (fast path):
    ```bash
-   buildroot agent {coordinate} --v3-only --max-iterations 1{host_flag}
+   buildroot agent {coordinate} --v3-only --max-iterations 1{host_flag}{isolate_flag}
    ```
    **CRITICAL: NEVER stop, kill, or interrupt the v3 process. Not with TaskStop, not with Ctrl-C, not with any other method.**
    v3 builds normally take 20-30 minutes — this is expected. Put it in the background and let it finish.
@@ -570,12 +572,12 @@ Target score: {target_score}
 2. **While v3 runs**, you may prepare in parallel:
    - Analyze the original JAR (manifest, POM, structure)
    - Write your own Containerfile at {workspace}/Containerfile
-   - Run `buildroot eval` on your Containerfile
+   - Run `buildroot eval{isolate_flag}` on your Containerfile
    - But keep v3 running — when it finishes, compare its result against yours and use whichever scored higher
 
 3. **If v3 finishes below {target_score}**, take over:
    - Read the v3 JSON for `best_containerfile` — use it as your starting point
-   - Iterate on it with `buildroot eval`
+   - Iterate on it with `buildroot eval{isolate_flag}`
 
 4. **Save your best Containerfile** to {workspace}/Containerfile.best
 
