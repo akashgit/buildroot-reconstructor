@@ -11,6 +11,8 @@ import tempfile
 import uuid
 from pathlib import Path
 
+from urllib.parse import urlparse
+
 import requests
 from dockerfile_parse import DockerfileParser
 
@@ -658,8 +660,6 @@ def validate_containerfile(cf_text: str, target_gav: str) -> tuple[bool, list[st
     and direct download of the target artifact JAR by URL path.
     Returns (passed, list_of_violations).
     """
-    from urllib.parse import urlparse
-
     violations: list[str] = []
 
     try:
@@ -680,7 +680,7 @@ def validate_containerfile(cf_text: str, target_gav: str) -> tuple[bool, list[st
         run_text, re.IGNORECASE,
     ))
     has_compile = bool(re.search(
-        r'\bmvn\s|\./mvnw\b|\bgradle\b|\./gradlew\b|\bant\s|\bjavac\s|\bmx\s|\bnpm\s',
+        r'\bmvn\b|\./mvnw\b|\bgradle\b|\./gradlew\b|\bant\b|\bjavac\b|\bmx\b|\bnpm\b',
         run_text, re.IGNORECASE,
     ))
     has_stub = bool(re.search(
@@ -719,14 +719,16 @@ def check_build_log(log: str, artifact: str, version: str) -> tuple[bool, str]:
     Local file operations (jar uf, cp, mv) and dependency downloads are never flagged.
     Returns (passed, details).
     """
-    from urllib.parse import urlparse
-
     target_jar = f"{artifact}-{version}.jar"
 
     maven_downloads = re.findall(r'Downloading from \S+:\s+(https?://\S+)', log)
     all_urls = re.findall(r'https?://\S+', log)
+    seen: set[str] = set()
 
     for url in maven_downloads + all_urls:
+        if url in seen:
+            continue
+        seen.add(url)
         if urlparse(url).path.endswith(target_jar):
             return False, f"Target artifact downloaded: {url[:200]}"
 
