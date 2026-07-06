@@ -115,10 +115,13 @@ class Evaluator:
             result.build_log, artifact_id, version,
         )
         result.build_log_check_passed = log_passed
-        if not log_passed:
-            result.anticheat_warning = f"Build log: {log_details}"
+        warnings = []
         if not cf_passed:
-            result.anticheat_warning = f"Containerfile: {'; '.join(cf_violations)}"
+            warnings.append(f"Containerfile: {'; '.join(cf_violations)}")
+        if not log_passed:
+            warnings.append(f"Build log: {log_details}")
+        if warnings:
+            result.anticheat_warning = " | ".join(warnings)
 
         from buildroot.eval.test_runner import run_tests
         result.test_result = run_tests(
@@ -647,12 +650,6 @@ class Evaluator:
             self._isolation = None
 
 
-def _parse_gav(gav: str) -> tuple[str, str, str]:
-    parts = gav.split(":")
-    if len(parts) == 3:
-        return parts[0], parts[1], parts[2]
-    return "", "", ""
-
 
 def validate_containerfile(cf_text: str, target_gav: str) -> tuple[bool, list[str]]:
     """Pre-build static analysis gate for L4.
@@ -702,7 +699,7 @@ def validate_containerfile(cf_text: str, target_gav: str) -> tuple[bool, list[st
         if has_download:
             violations.append("Source checkout present but no compilation — artifact downloaded instead")
 
-    _, artifact_id, version = _parse_gav(target_gav)
+    _, artifact_id, version = parse_gav(target_gav)
     target_jar = f"{artifact_id}-{version}.jar"
     for inst in structure:
         if inst["instruction"] != "RUN":
