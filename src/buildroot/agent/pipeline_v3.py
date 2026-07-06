@@ -395,7 +395,7 @@ def run_v3_pipeline(
     workspace: Path | None = None,
     skip_deps: bool = True,
     warm_start_containerfile: str | None = None,
-    isolate_podman: bool = False,
+    isolate_podman: bool = True,
 ) -> PipelineResult:
     """Run the v3 pipeline: pre-pass → analysis agent → build+eval → feedback loop."""
     import tempfile
