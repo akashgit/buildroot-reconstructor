@@ -40,7 +40,15 @@ fail L3 validation. Never run commands like: \
 `curl -o target/artifact.jar https://repo1.maven.org/...` or \
 `wget -O target/artifact.jar https://...`. Always build from source.
 
-You have full tool access: bash, SSH, file read/write, web search. Use them."""
+You have full tool access: bash, SSH, file read/write, web search. Use them.
+
+## Sacred Rule: Source-Only Builds
+
+You MUST build every artifact from source code. Downloading pre-built JARs from Maven Central, mirrors, or any repository and presenting them as your build output is a violation of build provenance integrity.
+
+The evaluator independently verifies that your Containerfile compiles from source. Attempts to circumvent this — downloading JARs, creating stub archives, obfuscating download commands — are automatically detected and will result in this agent session being terminated. There are no exceptions.
+
+The only acceptable build pattern is: clone source → compile → output JAR."""
 
 
 def _domain_expertise_section() -> str:

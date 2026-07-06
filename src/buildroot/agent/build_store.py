@@ -70,6 +70,19 @@ def init_table() -> bool:
             cur.execute("ALTER TABLE builds ADD COLUMN IF NOT EXISTS rebuilt_jar BYTEA DEFAULT NULL")
 
             cur.execute("""
+                DO $$
+                BEGIN
+                    IF NOT EXISTS (
+                        SELECT 1 FROM pg_constraint WHERE conname = 'l4_requires_eval'
+                    ) THEN
+                        ALTER TABLE builds ADD CONSTRAINT l4_requires_eval
+                        CHECK (level < 4 OR eval_result IS NOT NULL);
+                    END IF;
+                END
+                $$;
+            """)
+
+            cur.execute("""
                 CREATE TABLE IF NOT EXISTS build_attempts (
                     id SERIAL PRIMARY KEY,
                     group_id TEXT NOT NULL,
@@ -163,6 +176,9 @@ def save_build(
     rebuilt_jar: bytes | None = None,
 ) -> bool:
     """Save a successful build to the store. Upserts on (group_id, artifact_id, version)."""
+    if level >= 4 and not eval_result:
+        raise ValueError("L4+ claims require eval_result — no self-reported scores allowed")
+
     parts = coordinate.split(":")
     if len(parts) < 3:
         return False

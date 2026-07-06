@@ -30,8 +30,13 @@ def seed_from_kb(kb_dir: Path) -> int:
         coord = data.get("coordinate", "")
         cf = data.get("containerfile", "")
         score = data.get("l4_score", 0)
-        if coord and cf and score > 0:
-            if save_build(coord, cf, score, 4, "kb-seed"):
+        eval_data = data.get("eval_result")
+        if not eval_data:
+            logger.info("Skipping %s — no eval_result in KB entry", coord)
+            continue
+        level = eval_data.get("level_reached", 0) if isinstance(eval_data, dict) else 0
+        if coord and cf and score > 0 and level > 0:
+            if save_build(coord, cf, score, level, "kb-seed", eval_result=eval_data):
                 count += 1
     return count
 
@@ -46,6 +51,7 @@ def seed_from_results(results_dir: Path) -> int:
             continue
         att = pkg_dir / "attempts.json"
         cf = pkg_dir / "Containerfile.best"
+        eval_file = pkg_dir / "eval_result.json"
         if not att.exists():
             continue
         try:
@@ -58,10 +64,21 @@ def seed_from_results(results_dir: Path) -> int:
         method = data.get("method", "")
         if status != "success" or reward < 0.98:
             continue
+        if not eval_file.exists():
+            logger.info("Skipping %s — no eval_result.json", coord)
+            continue
+        try:
+            eval_data = json.loads(eval_file.read_text())
+        except (json.JSONDecodeError, OSError):
+            logger.info("Skipping %s — unreadable eval_result.json", coord)
+            continue
+        level = eval_data.get("level_reached", 0)
+        if level < 1:
+            continue
         containerfile = cf.read_text() if cf.exists() else ""
         if not containerfile:
             continue
-        if save_build(coord, containerfile, reward, 4, method):
+        if save_build(coord, containerfile, reward, level, method, eval_result=eval_data):
             count += 1
     return count
 
