@@ -155,6 +155,9 @@ class EvalResult:
     dependency_graph_match: float | None = None
     resource_completeness: float | None = None
     l4_signal_source: str = ""
+    cf_validation_passed: bool | None = None
+    cf_violations: list[str] = field(default_factory=list)
+    build_log_check_passed: bool | None = None
     rebuilt_jar_bytes: bytes | None = None
 
     def compute_reward(self) -> float:
@@ -197,6 +200,12 @@ class EvalResult:
             d["test_result"] = self.test_result.to_dict()
         if self.trust_violations:
             d["trust_violations"] = self.trust_violations
+        if self.cf_validation_passed is not None:
+            d["cf_validation_passed"] = self.cf_validation_passed
+        if self.cf_violations:
+            d["cf_violations"] = self.cf_violations
+        if self.build_log_check_passed is not None:
+            d["build_log_check_passed"] = self.build_log_check_passed
         if self.l4_signal_source:
             d["l4_signal_source"] = self.l4_signal_source
         if self.l4_signal_source == "fallback_signals":

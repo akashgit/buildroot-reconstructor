@@ -63,7 +63,8 @@ class TestSaveBuild:
         from buildroot.agent.build_store import save_build
 
         result = save_build(
-            "com.example:lib:1.0.0", "FROM jdk:17", 0.99, 4, "v4-agent"
+            "com.example:lib:1.0.0", "FROM jdk:17", 0.99, 4, "v4-agent",
+            eval_result={"l4_match": True, "reward": 0.99},
         )
         assert result is True
         mock_cursor.execute.assert_called_once()
@@ -75,7 +76,7 @@ class TestSaveBuild:
     def test_save_rejects_bad_coordinate(self):
         from buildroot.agent.build_store import save_build
 
-        result = save_build("bad-coord", "FROM jdk:17", 0.99, 4)
+        result = save_build("bad-coord", "FROM jdk:17", 0.50, 3)
         assert result is False
 
     @patch("buildroot.agent.build_store._get_connection")
@@ -84,7 +85,7 @@ class TestSaveBuild:
 
         from buildroot.agent.build_store import save_build
 
-        result = save_build("g:a:1.0", "FROM jdk:17", 0.99, 4)
+        result = save_build("g:a:1.0", "FROM jdk:17", 0.50, 3)
         assert result is False
 
     @patch("buildroot.agent.build_store._get_connection")

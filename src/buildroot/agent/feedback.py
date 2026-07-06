@@ -51,6 +51,24 @@ def build_feedback_context(
         f"Delta: {delta:+.4f} from best ({best_reward:.4f})"
     )
 
+    if eval_result.cf_validation_passed is False or eval_result.build_log_check_passed is False:
+        sections.append("\n### Anti-Cheat Violation Detected\n")
+        sections.append(
+            "Your Containerfile was rejected because it violates source-only build requirements:"
+        )
+        if eval_result.cf_violations:
+            for v in eval_result.cf_violations:
+                sections.append(f"- {v}")
+        if eval_result.build_log_check_passed is False:
+            sections.append(f"- Build log check failed: target artifact JAR was downloaded during build")
+        sections.append(
+            "\nL4: FAIL — This violates build provenance rules. "
+            "Do not attempt to circumvent source-only build requirements. "
+            "Re-read your Sacred Rules on source-only builds and rewrite the "
+            "Containerfile to compile from source.\n"
+            "\nThe ONLY acceptable pattern: git clone <repo> → mvn/gradle/ant build → output JAR"
+        )
+
     if reward < best_reward and best_reward > 0:
         sections.append(
             "**REGRESSION**: Your last attempt scored lower than the best. "
