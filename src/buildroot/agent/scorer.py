@@ -369,7 +369,7 @@ def _extract_jar_api_javap(
             return None
 
         sample = class_names[:100]
-        class_list = " ".join(sample)
+        class_list = " ".join(shlex.quote(c) for c in sample)
 
         javap_cmd = (
             f"cd /tmp && jar xf /output/rebuilt.jar && "

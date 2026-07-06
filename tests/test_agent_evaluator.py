@@ -357,24 +357,40 @@ class TestSelfBuiltReferencePath:
         assert result.l4_signal_source == "fallback_signals"
         assert result.l4_score > 0
 
-    @patch("buildroot.agent.evaluator.subprocess.run")
-    def test_l4_fallback_signals_includes_new_signals(self, mock_run):
-        mock_run.side_effect = [
-            MagicMock(returncode=0, stdout="shared-cid\n", stderr=""),
-            MagicMock(returncode=1, stdout="", stderr=""),
-            MagicMock(returncode=1, stdout="", stderr=""),
-            MagicMock(returncode=1, stdout="", stderr=""),
-            MagicMock(returncode=1, stdout="", stderr=""),
-            MagicMock(returncode=1, stdout="", stderr=""),
-            MagicMock(returncode=0, stdout="", stderr=""),
-        ]
+    def test_l4_fallback_signals_includes_new_signals(self):
         evaluator = Evaluator()
-        with patch("buildroot.agent.scorer.compute_api_surface_match", return_value=0.8), \
-             patch("buildroot.agent.scorer.compute_dependency_match", return_value=0.7), \
-             patch("buildroot.agent.scorer.compute_resource_completeness", return_value=0.9):
-            signals = evaluator.l4_fallback_signals("tag", "org.example:test:1.0")
 
-        assert "bytecode_version_match" not in signals or signals.get("bytecode_version_match") is None
+        with tempfile.TemporaryDirectory() as tmpdir:
+            tmp = Path(tmpdir)
+            jar_path = tmp / "rebuilt.jar"
+            jar_path.write_bytes(b"PK\x03\x04fake jar")
+            source_root = tmp / "source"
+            source_root.mkdir()
+            pom = source_root / "pom.xml"
+            pom.write_text("<project/>")
+
+            mock_api = MagicMock(return_value=0.8)
+            mock_dep = MagicMock(return_value=0.7)
+            mock_res = MagicMock(return_value=0.9)
+
+            with patch.object(evaluator, "_create_container", return_value="fake-cid"), \
+                 patch.object(evaluator, "_extract_rebuilt_jar", return_value=jar_path), \
+                 patch.object(evaluator, "_extract_source_root", return_value=source_root), \
+                 patch.object(evaluator, "_remove_container"), \
+                 patch("buildroot.agent.scorer.check_bytecode_version_match", return_value=True), \
+                 patch("buildroot.agent.scorer.check_manifest_sanity", return_value=True), \
+                 patch("buildroot.agent.scorer.check_structural_match", return_value=0.75), \
+                 patch("buildroot.agent.scorer.compute_api_surface_match", mock_api), \
+                 patch("buildroot.agent.scorer.compute_dependency_match", mock_dep), \
+                 patch("buildroot.agent.scorer.compute_resource_completeness", mock_res):
+                signals = evaluator.l4_fallback_signals("tag", "org.example:test:1.0", jdk_version="17")
+
+            mock_api.assert_called_once()
+            mock_dep.assert_called_once()
+            mock_res.assert_called_once()
+            assert signals["api_surface_match"] == 0.8
+            assert signals["dependency_graph_match"] == 0.7
+            assert signals["resource_completeness"] == 0.9
 
 
 class TestPodmanCreateCpPattern:
