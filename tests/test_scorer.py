@@ -10,14 +10,22 @@ from pathlib import Path
 import pytest
 
 from buildroot.agent.models import EvalResult
+from unittest.mock import MagicMock, patch
+
 from buildroot.agent.scorer import (
     ScoreBreakdown,
     _jdk_version_to_bytecode_major,
+    _extract_source_imports,
+    _parse_javap_output,
+    _parse_jdeps_output,
     build_score_breakdown,
     check_bytecode_version_match,
     check_manifest_sanity,
     check_structural_match,
+    compute_api_surface_match,
+    compute_dependency_match,
     compute_fallback_score,
+    compute_resource_completeness,
 )
 
 
@@ -97,24 +105,27 @@ class TestComputeFallbackScore:
         score = compute_fallback_score(False, True)
         assert score == pytest.approx(0.40)
 
-    def test_none_bytecode(self):
+    def test_none_bytecode_excluded_from_pool(self):
+        # None excludes the signal from the weight pool (renormalization)
         score = compute_fallback_score(None, True)
-        assert score == pytest.approx(0.40)
+        assert score == pytest.approx(1.0)
 
-    def test_none_manifest(self):
+    def test_none_manifest_excluded_from_pool(self):
         score = compute_fallback_score(True, None)
-        assert score == pytest.approx(0.60)
+        assert score == pytest.approx(1.0)
 
     def test_both_none(self):
         score = compute_fallback_score(None, None)
         assert score == pytest.approx(0.0)
 
-    def test_inactive_signals_ignored(self):
-        # structural_match and unit_tests_pass are accepted but not scored
+    def test_four_signals_all_active(self):
+        # With renormalization, all 4 signals now contribute
         score = compute_fallback_score(True, True, True, 1.0)
         assert score == pytest.approx(1.0)
         score = compute_fallback_score(True, True, False, 0.0)
-        assert score == pytest.approx(1.0)
+        # structural=0.15×0.0, bytecode=0.15×1.0, manifest=0.10×1.0, tests=0.10×0.0
+        # = 0.25 / 0.50 = 0.50
+        assert score == pytest.approx(0.50)
 
     def test_backward_compat_3_args(self):
         score = compute_fallback_score(True, True, True)
@@ -363,3 +374,196 @@ class TestCheckStructuralMatch:
             )
             score = check_structural_match(jar, src)
             assert score == pytest.approx(1.0)
+
+
+class TestBackwardCompatPr106:
+    """Phase 3 extension preserves PR #106 scores when new signals are None."""
+
+    def test_both_pass(self):
+        score = compute_fallback_score(True, True)
+        assert score == pytest.approx(1.0)
+
+    def test_bytecode_only(self):
+        score = compute_fallback_score(True, False)
+        assert score == pytest.approx(0.60)
+
+    def test_manifest_only(self):
+        score = compute_fallback_score(False, True)
+        assert score == pytest.approx(0.40)
+
+    def test_both_fail(self):
+        score = compute_fallback_score(False, False)
+        assert score == pytest.approx(0.0)
+
+    def test_with_explicit_none_new_signals(self):
+        score = compute_fallback_score(
+            True, True, None, None,
+            api_surface_match=None,
+            dependency_graph_match=None,
+            resource_completeness=None,
+        )
+        assert score == pytest.approx(1.0)
+
+        score = compute_fallback_score(
+            True, False, None, None,
+            api_surface_match=None,
+            dependency_graph_match=None,
+            resource_completeness=None,
+        )
+        assert score == pytest.approx(0.60)
+
+
+class TestAllSevenSignals:
+    def test_all_signals_present(self):
+        score = compute_fallback_score(
+            True,   # bytecode 0.15
+            True,   # manifest 0.10
+            True,   # tests 0.10
+            1.0,    # structural 0.15
+            api_surface_match=0.9,     # 0.25
+            dependency_graph_match=0.85,  # 0.15
+            resource_completeness=1.0,    # 0.10
+        )
+        expected = (
+            0.15 * 1.0   # structural
+            + 0.15 * 1.0  # bytecode
+            + 0.10 * 1.0  # manifest
+            + 0.10 * 1.0  # tests
+            + 0.25 * 0.9  # api
+            + 0.15 * 0.85  # deps
+            + 0.10 * 1.0  # resource
+        )
+        assert score == pytest.approx(expected)
+
+
+class TestRenormalizationFourSignals:
+    def test_structural_bytecode_manifest_tests(self):
+        score = compute_fallback_score(
+            True,   # bytecode: 0.15
+            True,   # manifest: 0.10
+            True,   # tests: 0.10
+            0.8,    # structural: 0.15
+        )
+        total_weight = 0.15 + 0.15 + 0.10 + 0.10  # = 0.50
+        expected = (0.15 * 0.8 + 0.15 * 1.0 + 0.10 * 1.0 + 0.10 * 1.0) / total_weight
+        assert score == pytest.approx(expected)
+
+        bytecode_eff = 0.15 / total_weight
+        manifest_eff = 0.10 / total_weight
+        structural_eff = 0.15 / total_weight
+        tests_eff = 0.10 / total_weight
+        assert bytecode_eff == pytest.approx(0.30)
+        assert manifest_eff == pytest.approx(0.20)
+        assert structural_eff == pytest.approx(0.30)
+        assert tests_eff == pytest.approx(0.20)
+
+
+class TestApiSurfaceMatch:
+    def test_parse_javap_output(self):
+        output = """\
+Compiled from "Main.java"
+public class com.example.Main {
+  public com.example.Main();
+    descriptor: ()V
+
+  public java.lang.String getMessage();
+    descriptor: ()Ljava/lang/String;
+
+  public void setValue(int);
+    descriptor: (I)V
+}
+"""
+        methods = _parse_javap_output(output)
+        assert len(methods) >= 2
+        assert any("getMessage" in m for m in methods)
+        assert any("setValue" in m for m in methods)
+
+
+class TestDependencyMatch:
+    def test_parse_jdeps_output(self):
+        output = """\
+test.jar -> java.base
+test.jar -> java.logging
+   com.example (test.jar)
+      -> java.lang
+      -> java.util
+      -> org.slf4j
+"""
+        deps = _parse_jdeps_output(output)
+        assert "java.lang" in deps
+        assert "java.util" in deps
+        assert "org.slf4j" in deps
+
+    def test_extract_source_imports(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            src = Path(tmpdir) / "src" / "main" / "java" / "com" / "example"
+            src.mkdir(parents=True)
+            (src / "Main.java").write_text(
+                "package com.example;\n"
+                "import java.util.List;\n"
+                "import org.slf4j.Logger;\n"
+                "import static java.util.Objects.requireNonNull;\n"
+                "class Main {}\n"
+            )
+            imports = _extract_source_imports(Path(tmpdir))
+        assert "java.util" in imports
+        assert "org.slf4j" in imports
+        assert "java.util" in imports
+
+
+class TestResourceCompleteness:
+    def test_all_present(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            jar_path = Path(tmpdir) / "test.jar"
+            source_root = Path(tmpdir) / "source"
+            res_dir = source_root / "src" / "main" / "resources"
+            res_dir.mkdir(parents=True)
+            (res_dir / "config.properties").write_text("key=value")
+            (res_dir / "data.xml").write_text("<data/>")
+
+            with zipfile.ZipFile(jar_path, "w") as zf:
+                zf.writestr("META-INF/MANIFEST.MF", "Manifest-Version: 1.0\n")
+                zf.writestr("config.properties", "key=value")
+                zf.writestr("data.xml", "<data/>")
+                zf.writestr("com/example/Main.class", b"\xca\xfe\xba\xbe" + b"\x00" * 20)
+
+            score = compute_resource_completeness(jar_path, source_root)
+            assert score == pytest.approx(1.0)
+
+    def test_partial(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            jar_path = Path(tmpdir) / "test.jar"
+            source_root = Path(tmpdir) / "source"
+            res_dir = source_root / "src" / "main" / "resources"
+            res_dir.mkdir(parents=True)
+            (res_dir / "config.properties").write_text("key=value")
+            (res_dir / "missing.xml").write_text("<data/>")
+
+            with zipfile.ZipFile(jar_path, "w") as zf:
+                zf.writestr("META-INF/MANIFEST.MF", "Manifest-Version: 1.0\n")
+                zf.writestr("config.properties", "key=value")
+                zf.writestr("com/example/Main.class", b"\xca\xfe\xba\xbe" + b"\x00" * 20)
+
+            score = compute_resource_completeness(jar_path, source_root)
+            assert score is not None
+            assert score == pytest.approx(0.5)
+
+    def test_shade_plugin_returns_none(self):
+        pom_content = """\
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0">
+  <build><plugins>
+    <plugin><artifactId>maven-shade-plugin</artifactId></plugin>
+  </plugins></build>
+</project>"""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            jar_path = Path(tmpdir) / "test.jar"
+            source_root = Path(tmpdir) / "source"
+            source_root.mkdir()
+            (source_root / "pom.xml").write_text(pom_content)
+
+            with zipfile.ZipFile(jar_path, "w") as zf:
+                zf.writestr("META-INF/MANIFEST.MF", "Manifest-Version: 1.0\n")
+
+            score = compute_resource_completeness(jar_path, source_root)
+            assert score is None

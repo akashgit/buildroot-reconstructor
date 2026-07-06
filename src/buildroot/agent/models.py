@@ -151,6 +151,9 @@ class EvalResult:
     manifest_sanity: bool | None = None
     unit_tests_pass: bool | None = None
     structural_match: float | None = None
+    api_surface_match: float | None = None
+    dependency_graph_match: float | None = None
+    resource_completeness: float | None = None
     l4_signal_source: str = ""
     rebuilt_jar_bytes: bytes | None = None
 
@@ -202,7 +205,16 @@ class EvalResult:
                 "manifest_sanity": self.manifest_sanity,
                 "unit_tests_pass": self.unit_tests_pass,
                 "structural_match": self.structural_match,
+                "api_surface_match": self.api_surface_match,
+                "dependency_graph_match": self.dependency_graph_match,
+                "resource_completeness": self.resource_completeness,
             }
+        if self.l4_signal_source == "self_built_reference" and self.comparison_report is not None:
+            d["comparison_report"] = (
+                self.comparison_report.to_dict()
+                if hasattr(self.comparison_report, "to_dict")
+                else self.comparison_report
+            )
         return d
 
 

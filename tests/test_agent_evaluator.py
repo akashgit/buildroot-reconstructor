@@ -318,6 +318,65 @@ class TestL4FallbackPath:
         assert "fallback_signals" not in d
 
 
+class TestSelfBuiltReferencePath:
+    def test_l4_self_built_reference_path(self):
+        evaluator = Evaluator()
+        result = EvalResult(l3_command=True)
+
+        mock_report = MagicMock()
+        mock_report.verdict = "EQUIVALENT"
+        mock_report.equivalence_score.return_value = 0.85
+
+        import tempfile
+        with tempfile.TemporaryDirectory() as tmpdir:
+            jar_path = Path(tmpdir) / "self_built.jar"
+            jar_path.write_bytes(b"fake self-built jar")
+            rebuilt_path = Path(tmpdir) / "rebuilt.jar"
+            rebuilt_path.write_bytes(b"fake rebuilt jar")
+
+            with patch.object(evaluator, "_download_original_jar", return_value=None), \
+                 patch("buildroot.eval.self_reference.build_reference_jar", return_value=jar_path), \
+                 patch.object(evaluator, "_extract_rebuilt_jar", return_value=rebuilt_path), \
+                 patch("buildroot.agent.evaluator.compare_jars", return_value=mock_report):
+                evaluator._l4_match("test-tag", "org.example:test:1.0", result)
+
+        assert result.l4_signal_source == "self_built_reference"
+        assert result.l4_score == 0.85
+        assert result.comparison_verdict == "EQUIVALENT"
+
+    def test_l4_self_built_failure_falls_to_l4prime(self):
+        evaluator = Evaluator()
+        result = EvalResult(l3_command=True)
+        with patch.object(evaluator, "_download_original_jar", return_value=None), \
+             patch("buildroot.eval.self_reference.build_reference_jar", return_value=None), \
+             patch.object(evaluator, "l4_fallback_signals", return_value={
+                 "bytecode_version_match": True,
+                 "manifest_sanity": True,
+             }):
+            evaluator._l4_match("test-tag", "org.example:test:1.0", result)
+        assert result.l4_signal_source == "fallback_signals"
+        assert result.l4_score > 0
+
+    @patch("buildroot.agent.evaluator.subprocess.run")
+    def test_l4_fallback_signals_includes_new_signals(self, mock_run):
+        mock_run.side_effect = [
+            MagicMock(returncode=0, stdout="shared-cid\n", stderr=""),
+            MagicMock(returncode=1, stdout="", stderr=""),
+            MagicMock(returncode=1, stdout="", stderr=""),
+            MagicMock(returncode=1, stdout="", stderr=""),
+            MagicMock(returncode=1, stdout="", stderr=""),
+            MagicMock(returncode=1, stdout="", stderr=""),
+            MagicMock(returncode=0, stdout="", stderr=""),
+        ]
+        evaluator = Evaluator()
+        with patch("buildroot.agent.scorer.compute_api_surface_match", return_value=0.8), \
+             patch("buildroot.agent.scorer.compute_dependency_match", return_value=0.7), \
+             patch("buildroot.agent.scorer.compute_resource_completeness", return_value=0.9):
+            signals = evaluator.l4_fallback_signals("tag", "org.example:test:1.0")
+
+        assert "bytecode_version_match" not in signals or signals.get("bytecode_version_match") is None
+
+
 class TestPodmanCreateCpPattern:
     """Tests for the podman create + podman cp extraction pattern."""
 
