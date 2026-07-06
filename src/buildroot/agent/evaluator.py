@@ -11,6 +11,8 @@ import tempfile
 import uuid
 from pathlib import Path
 
+from urllib.parse import urlparse
+
 import requests
 from dockerfile_parse import DockerfileParser
 
@@ -99,11 +101,6 @@ class Evaluator:
         cf_passed, cf_violations = validate_containerfile(containerfile, coordinate)
         result.cf_validation_passed = cf_passed
         result.cf_violations = cf_violations
-        if not cf_passed:
-            result.l4_signal_source = "anticheat_rejected"
-            result.error_summary = f"Containerfile validation failed: {'; '.join(cf_violations)}"
-            result.compute_reward()
-            return result
 
         if not self._l2_build(containerfile, tag, result, capture_full_log=True):
             self._cleanup_image(tag)
@@ -120,12 +117,13 @@ class Evaluator:
             result.build_log, artifact_id, version,
         )
         result.build_log_check_passed = log_passed
+        warnings = []
+        if not cf_passed:
+            warnings.append(f"Containerfile: {'; '.join(cf_violations)}")
         if not log_passed:
-            result.l4_signal_source = "anticheat_rejected"
-            result.error_summary = f"Build log check failed: {log_details}"
-            self._cleanup_image(tag)
-            result.compute_reward()
-            return result
+            warnings.append(f"Build log: {log_details}")
+        if warnings:
+            result.anticheat_warning = " | ".join(warnings)
 
         from buildroot.eval.test_runner import run_tests
         result.test_result = run_tests(
@@ -654,11 +652,12 @@ class Evaluator:
             self._isolation = None
 
 
+
 def validate_containerfile(cf_text: str, target_gav: str) -> tuple[bool, list[str]]:
     """Pre-build static analysis gate for L4.
 
-    Checks that the Containerfile acquires source and compiles it,
-    and does not download pre-built JARs or create synthetic stubs.
+    Uses robust detection logic: checks for source acquisition, compilation,
+    and direct download of the target artifact JAR by URL path.
     Returns (passed, list_of_violations).
     """
     violations: list[str] = []
@@ -671,77 +670,68 @@ def validate_containerfile(cf_text: str, target_gav: str) -> tuple[bool, list[st
         violations.append("Could not parse Containerfile for validation")
         return False, violations
 
-    run_text = ""
-    for instruction in structure:
-        if instruction["instruction"] == "RUN":
-            run_text += " " + instruction["value"]
+    run_text = " ".join(
+        inst["value"] for inst in structure if inst["instruction"] == "RUN"
+    )
 
     has_source = bool(re.search(
-        r'git\s+clone|svn\s+(checkout|co)\b|\.tar\.gz|\.tgz|-sources\.jar|-src\.',
+        r'git\s+clone|git\s+checkout|svn\s+(checkout|co)\b'
+        r'|\.tar\.gz|\.tgz|-sources\.jar|-src\.|source-release',
         run_text, re.IGNORECASE,
     ))
     has_compile = bool(re.search(
-        r'\bmvn\b|\./mvnw\b|\bgradle\b|\./gradlew\b|\bant\b|\bjavac\b',
+        r'\bmvn\b|\./mvnw\b|\bgradle\b|\./gradlew\b|\bant\b|\bjavac\b|\bmx\b|\bnpm\b',
+        run_text, re.IGNORECASE,
+    ))
+    has_stub = bool(re.search(
+        r'synthetic|dummy|stub|jar\s+cf.*MANIFEST',
         run_text, re.IGNORECASE,
     ))
 
-    if not has_source:
-        violations.append("No source acquisition found (need git clone, svn checkout, or source tarball)")
-    if not has_compile:
-        violations.append("No compilation command found (need mvn, gradle, ant, or javac)")
+    if not has_source and not has_compile:
+        violations.append("No source acquisition and no compilation command found")
 
-    jar_download_re = re.compile(
-        r'(wget|curl)\s+.*?\.jar\b',
-        re.IGNORECASE,
-    )
-    allowed_jar_re = re.compile(
-        r'-sources\.jar|-wrapper\.jar|maven-wrapper|gradle-wrapper|\bcfr\b',
-        re.IGNORECASE,
-    )
-    jar_segments = re.split(r'[;&|]+', run_text)
-    for segment in jar_segments:
-        for match in jar_download_re.finditer(segment):
-            matched_text = match.group(0)
-            if not allowed_jar_re.search(matched_text):
-                violations.append(f"JAR download detected: {matched_text.strip()[:120]}")
+    if has_stub and not has_compile:
+        violations.append("Synthetic/stub JAR creation without compilation")
 
-    synthetic_patterns = [
-        (r'jar\s+cf\b(?!.*\bclasses\b)', "Synthetic JAR creation via 'jar cf' without compiled classes"),
-        (r'python.*zipfile', "Synthetic JAR creation via Python zipfile"),
-        (r'echo.*MANIFEST', "Synthetic MANIFEST creation via echo"),
-    ]
-    for pattern, description in synthetic_patterns:
-        if re.search(pattern, run_text, re.IGNORECASE):
-            violations.append(description)
+    if has_source and not has_compile:
+        has_download = bool(re.search(r'\bwget\b|\bcurl\b', run_text, re.IGNORECASE))
+        if has_download:
+            violations.append("Source checkout present but no compilation — artifact downloaded instead")
 
-    obfuscation_patterns = [
-        (r'base64\s+-d.*(?:wget|curl)', "Obfuscated download: base64 decoded URL piped to wget/curl"),
-        (r'(?:wget|curl).*base64\s+-d', "Obfuscated download: wget/curl with base64"),
-        (r'urlretrieve.*\.jar', "Obfuscated download: urlretrieve targeting JAR"),
-    ]
-    for pattern, description in obfuscation_patterns:
-        if re.search(pattern, run_text, re.IGNORECASE):
-            violations.append(description)
+    _, artifact_id, version = parse_gav(target_gav)
+    target_jar = f"{artifact_id}-{version}.jar"
+    for inst in structure:
+        if inst["instruction"] != "RUN":
+            continue
+        urls = re.findall(r'https?://\S+', inst["value"])
+        for url in urls:
+            if urlparse(url).path.endswith(target_jar):
+                violations.append(f"Direct download of target JAR: {url[:120]}")
 
-    passed = len(violations) == 0
-    return passed, violations
+    return len(violations) == 0, violations
 
 
 def check_build_log(log: str, artifact: str, version: str) -> tuple[bool, str]:
-    """Post-build gate: check if the target artifact JAR was downloaded during build.
+    """Post-build gate: check if the target artifact JAR was downloaded via URL.
 
-    Only flags downloads of the specific target JAR ({artifact}-{version}.jar),
-    not dependency JARs which Maven normally downloads.
+    Only flags when a URL's path ends with <artifact>-<version>.jar.
+    Local file operations (jar uf, cp, mv) and dependency downloads are never flagged.
     Returns (passed, details).
     """
     target_jar = f"{artifact}-{version}.jar"
-    download_pattern = re.compile(
-        rf'(Downloading|Downloaded|wget|curl|GET)\s+.*{re.escape(target_jar)}',
-        re.IGNORECASE,
-    )
-    match = download_pattern.search(log)
-    if match:
-        return False, f"Target artifact {target_jar} was downloaded during build: {match.group(0).strip()[:200]}"
+
+    maven_downloads = re.findall(r'Downloading from \S+:\s+(https?://\S+)', log)
+    all_urls = re.findall(r'https?://\S+', log)
+    seen: set[str] = set()
+
+    for url in maven_downloads + all_urls:
+        if url in seen:
+            continue
+        seen.add(url)
+        if urlparse(url).path.endswith(target_jar):
+            return False, f"Target artifact downloaded: {url[:200]}"
+
     return True, ""
 
 

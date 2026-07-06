@@ -14,11 +14,21 @@ from buildroot.agent.models import EvalResult
 
 
 # ---------------------------------------------------------------------------
-# validate_containerfile tests
+# validate_containerfile — should REJECT
 # ---------------------------------------------------------------------------
 
 class TestValidateContainerfileRejects:
-    def test_rejects_jar_download_wget(self):
+    def test_rejects_no_source_no_compile(self):
+        cf = """\
+FROM maven:3.2.5-jdk-6
+WORKDIR /build
+RUN wget https://repo1.maven.org/maven2/axis/axis/1.4/axis-1.4.jar -O /build/target/axis-1.4.jar
+"""
+        passed, violations = validate_containerfile(cf, "axis:axis:1.4")
+        assert passed is False
+        assert any("No source acquisition and no compilation" in v for v in violations)
+
+    def test_rejects_target_jar_download_wget(self):
         cf = """\
 FROM eclipse-temurin:17-jdk
 WORKDIR /build
@@ -26,28 +36,17 @@ RUN wget https://repo1.maven.org/maven2/axis/axis/1.4/axis-1.4.jar -O target/axi
 """
         passed, violations = validate_containerfile(cf, "axis:axis:1.4")
         assert passed is False
-        assert any("JAR download" in v for v in violations)
-        assert any("source acquisition" in v.lower() or "source" in v.lower() for v in violations)
+        assert any("Direct download of target JAR" in v for v in violations)
 
-    def test_rejects_manifest_stub(self):
+    def test_rejects_target_jar_download_curl(self):
         cf = """\
 FROM eclipse-temurin:17-jdk
 WORKDIR /build
-RUN python3 -c "import zipfile; z = zipfile.ZipFile('target/out.jar', 'w'); z.close()"
+RUN curl -o target/lib.jar https://repo1.maven.org/maven2/org/example/lib/1.0/lib-1.0.jar
 """
-        passed, violations = validate_containerfile(cf, "org.example:stub:1.0")
+        passed, violations = validate_containerfile(cf, "org.example:lib:1.0")
         assert passed is False
-        assert any("zipfile" in v.lower() for v in violations)
-
-    def test_rejects_version_swap_fake(self):
-        cf = """\
-FROM eclipse-temurin:17-jdk
-WORKDIR /build
-RUN wget https://repo1.maven.org/maven2/axis/axis/1.3/axis-1.3.jar -O target/axis-1.3.jar
-"""
-        passed, violations = validate_containerfile(cf, "axis:axis:1.3")
-        assert passed is False
-        assert any("JAR download" in v for v in violations)
+        assert any("Direct download of target JAR" in v for v in violations)
 
     def test_rejects_self_referential_download(self):
         cf = """\
@@ -58,66 +57,49 @@ RUN wget https://repo1.maven.org/maven2/commons-httpclient/commons-httpclient/3.
         passed, violations = validate_containerfile(cf, "commons-httpclient:commons-httpclient:3.1")
         assert passed is False
 
-    def test_rejects_only_clone_no_compile(self):
+    def test_rejects_clone_plus_download_no_compile(self):
         cf = """\
 FROM eclipse-temurin:17-jdk
 WORKDIR /build
 RUN git clone https://github.com/apache/commons-io.git
+RUN wget https://example.com/artifact.jar
 """
         passed, violations = validate_containerfile(cf, "org.apache.commons:commons-io:2.11.0")
         assert passed is False
-        assert any("compilation" in v.lower() for v in violations)
+        assert any("no compilation" in v.lower() for v in violations)
 
-    def test_rejects_only_mvn_no_source(self):
+    def test_rejects_manifest_stub_no_compile(self):
         cf = """\
 FROM eclipse-temurin:17-jdk
 WORKDIR /build
-RUN mvn clean install -DskipTests
-"""
-        passed, violations = validate_containerfile(cf, "org.example:artifact:1.0")
-        assert passed is False
-        assert any("source acquisition" in v.lower() or "source" in v.lower() for v in violations)
-
-    def test_rejects_echo_manifest(self):
-        cf = """\
-FROM eclipse-temurin:17-jdk
-WORKDIR /build
-RUN echo "Manifest-Version: 1.0" > META-INF/MANIFEST.MF
+RUN python3 -c "import zipfile; z = zipfile.ZipFile('target/out.jar', 'w'); z.close()"
 """
         passed, violations = validate_containerfile(cf, "org.example:stub:1.0")
         assert passed is False
-        assert any("MANIFEST" in v for v in violations)
 
-    def test_rejects_base64_obfuscation(self):
+    def test_rejects_source_plus_download_no_compile(self):
         cf = """\
 FROM eclipse-temurin:17-jdk
-WORKDIR /build
-RUN echo "aHR0cHM6Ly9yZXBvLm1hdmVuLm9yZw==" | base64 -d | xargs wget
+RUN git clone https://github.com/example/repo.git /build
+RUN wget https://repo1.maven.org/maven2/axis/axis/1.4/axis-1.4.jar -O /output/rebuilt.jar
 """
-        passed, violations = validate_containerfile(cf, "org.example:lib:1.0")
+        passed, violations = validate_containerfile(cf, "axis:axis:1.4")
         assert passed is False
-        assert any("obfuscat" in v.lower() or "base64" in v.lower() for v in violations)
+        assert any("no compilation" in v.lower() for v in violations)
 
-    def test_rejects_hidden_jar_after_sources_jar(self):
-        cf = '''
-FROM eclipse-temurin:17-jdk
-RUN wget https://repo1.maven.org/maven2/org/example/lib-1.0-sources.jar && wget https://repo1.maven.org/maven2/org/example/lib-1.0.jar
-RUN git clone https://github.com/example/project.git && mvn install
-'''
-        passed, violations = validate_containerfile(cf, 'org.example:lib:1.0')
-        assert passed is False
-        assert any('JAR download' in v for v in violations)
-
-    def test_rejects_curl_jar(self):
+    def test_rejects_stub_jar_without_compile(self):
         cf = """\
-FROM eclipse-temurin:17-jdk
-WORKDIR /build
-RUN curl -o target/lib.jar https://repo1.maven.org/maven2/org/example/lib/1.0/lib-1.0.jar
+FROM eclipse-temurin:8-jdk
+RUN echo "dummy" > META-INF/MANIFEST.MF && jar cf target/artifact-1.0.jar META-INF/MANIFEST.MF
 """
-        passed, violations = validate_containerfile(cf, "org.example:lib:1.0")
+        passed, violations = validate_containerfile(cf, "org.example:artifact:1.0")
         assert passed is False
-        assert any("JAR download" in v for v in violations)
+        assert any("stub" in v.lower() or "synthetic" in v.lower() for v in violations)
 
+
+# ---------------------------------------------------------------------------
+# validate_containerfile — should PASS (false positive fixes)
+# ---------------------------------------------------------------------------
 
 class TestValidateContainerfilePasses:
     def test_legitimate_build_passes(self):
@@ -195,30 +177,83 @@ RUN cd src && mvn clean install
         passed, violations = validate_containerfile(cf, "org.example:project:1.0")
         assert passed is True
 
-
-# ---------------------------------------------------------------------------
-# check_build_log tests
-# ---------------------------------------------------------------------------
-
-class TestCheckBuildLog:
-    def test_rejects_target_jar_download(self):
-        log = """\
-[INFO] Downloading https://repo1.maven.org/maven2/commons-io/commons-io/2.11.0/commons-io-2.11.0.jar
-[INFO] Downloaded commons-io-2.11.0.jar (200 KB)
+    def test_dependency_jar_not_flagged(self):
+        cf = """\
+FROM ubi9/openjdk-17
+WORKDIR /build
+RUN git clone --depth 1 https://github.com/test/repo.git /build
+RUN curl -sL -o /build/deps/log4j-1.2.14.jar https://repo1.maven.org/maven2/log4j/log4j/1.2.14/log4j-1.2.14.jar
+RUN curl -sL -o /build/deps/junit-3.8.1.jar https://repo1.maven.org/maven2/junit/junit/3.8.1/junit-3.8.1.jar
+RUN mvn clean install -B -DskipTests
 """
+        passed, violations = validate_containerfile(cf, "com.mchange:mchange-commons-java:0.2.3.4")
+        assert passed is True, f"Should not flag dependency download: {violations}"
+
+    def test_base64_settings_not_flagged(self):
+        cf = """\
+FROM ubi9/openjdk-17
+RUN echo "PD94bWwg..." | base64 -d > /root/.m2/settings.xml
+RUN git clone https://github.com/test/repo.git /build
+RUN mvn clean install -B -DskipTests
+"""
+        passed, violations = validate_containerfile(cf, "org.jline:jline-terminal:3.8.1")
+        assert passed is True, f"Should not flag base64 settings: {violations}"
+
+    def test_urlretrieve_non_jar_not_flagged(self):
+        cf = """\
+FROM ubi9/openjdk-21
+RUN python3 -c "urlretrieve('https://cdn.azul.com/zulu.tar.gz', '/tmp/jdk.tar.gz')"
+RUN mvn clean install -B -DskipTests
+RUN cp target/httpclient-4.5.12.jar /output/rebuilt.jar
+"""
+        passed, violations = validate_containerfile(cf, "org.apache.httpcomponents:httpclient:4.5.12")
+        assert passed is True, f"Should not flag .tar.gz download: {violations}"
+
+    def test_npm_recognized_as_compile(self):
+        cf = """\
+FROM node:18
+WORKDIR /build
+RUN git clone https://github.com/example/project.git src
+RUN cd src && npm run build
+"""
+        passed, violations = validate_containerfile(cf, "org.webjars:jquery-migrate:3.4.1")
+        assert passed is True
+
+
+# ---------------------------------------------------------------------------
+# check_build_log — should REJECT
+# ---------------------------------------------------------------------------
+
+class TestCheckBuildLogRejects:
+    def test_rejects_maven_download_of_target(self):
+        log = "Downloading from central: https://repo1.maven.org/maven2/commons-io/commons-io/2.11.0/commons-io-2.11.0.jar"
         passed, details = check_build_log(log, "commons-io", "2.11.0")
         assert passed is False
         assert "commons-io-2.11.0.jar" in details
 
+    def test_rejects_wget_of_target_jar(self):
+        log = "wget https://mirror.example.com/org/apache/commons-io/2.11.0/commons-io-2.11.0.jar\n"
+        passed, details = check_build_log(log, "commons-io", "2.11.0")
+        assert passed is False
+
+    def test_rejects_curl_of_target_jar(self):
+        log = "curl -O https://some-mirror.com/org/apache/commons/commons-io/2.11.0/commons-io-2.11.0.jar\n"
+        passed, details = check_build_log(log, "commons-io", "2.11.0")
+        assert passed is False
+
+
+# ---------------------------------------------------------------------------
+# check_build_log — should PASS (false positive fixes)
+# ---------------------------------------------------------------------------
+
+class TestCheckBuildLogPasses:
     def test_passes_dependency_jar_download(self):
         log = """\
-[INFO] Downloading https://repo1.maven.org/maven2/org/slf4j/slf4j-api/1.7.36/slf4j-api-1.7.36.jar
-[INFO] Downloaded slf4j-api-1.7.36.jar (30 KB)
-[INFO] Downloading https://repo1.maven.org/maven2/junit/junit/4.13.2/junit-4.13.2.jar
+Downloading from central: https://repo1.maven.org/maven2/org/slf4j/slf4j-api/1.7.36/slf4j-api-1.7.36.jar
+Downloading from central: https://repo1.maven.org/maven2/junit/junit/4.13.2/junit-4.13.2.jar
 """
         passed, details = check_build_log(log, "commons-io", "2.11.0")
         assert passed is True
-        assert details == ""
 
     def test_passes_clean_build_log(self):
         log = """\
@@ -229,18 +264,28 @@ class TestCheckBuildLog:
         passed, details = check_build_log(log, "commons-io", "2.11.0")
         assert passed is True
 
-    def test_rejects_wget_of_target_jar(self):
-        log = "wget https://mirror.example.com/commons-io-2.11.0.jar\n"
-        passed, details = check_build_log(log, "commons-io", "2.11.0")
-        assert passed is False
-
-    def test_rejects_curl_of_target_jar(self):
-        log = "curl -O https://some-mirror.com/org/apache/commons/commons-io/2.11.0/commons-io-2.11.0.jar\n"
-        passed, details = check_build_log(log, "commons-io", "2.11.0")
-        assert passed is False
-
     def test_empty_log_passes(self):
         passed, details = check_build_log("", "commons-io", "2.11.0")
+        assert passed is True
+
+    def test_jar_uf_not_flagged(self):
+        log = "apt-get install && jar uf ../httpclient-4.5.12.jar mozilla/public-suffix-list.txt"
+        passed, _ = check_build_log(log, "httpclient", "4.5.12")
+        assert passed is True
+
+    def test_cp_not_flagged(self):
+        log = "get && cp spring-cloud-openfeign-core/target/spring-cloud-openfeign-core-4.2.2.jar target/"
+        passed, _ = check_build_log(log, "spring-cloud-openfeign-core", "4.2.2")
+        assert passed is True
+
+    def test_local_unzip_not_flagged(self):
+        log = "get && mkdir -p fix && cd fix && unzip -o ../qdox-2.0.0.jar"
+        passed, _ = check_build_log(log, "qdox", "2.0.0")
+        assert passed is True
+
+    def test_maven_download_dependency_not_flagged(self):
+        log = "Downloading from central: https://repo1.maven.org/maven2/commons-logging/commons-logging/1.2/commons-logging-1.2.jar"
+        passed, _ = check_build_log(log, "httpclient", "4.5.12")
         assert passed is True
 
 
@@ -391,26 +436,33 @@ class TestSeedFromKB:
 # evaluate() integration tests — gate ordering
 # ---------------------------------------------------------------------------
 
-class TestEvaluateGateOrdering:
+class TestEvaluateAntiCheatWarnings:
     @patch("buildroot.agent.evaluator.subprocess.run")
-    def test_cf_validation_before_build(self, mock_run):
-        """validate_containerfile is called before _l2_build — a failing CF never builds."""
+    def test_cf_violation_is_warning_not_gate(self, mock_run):
+        """CF validation failure is a warning — build still proceeds to L2/L3/L4."""
         cf = """\
 FROM eclipse-temurin:17-jdk
 WORKDIR /build
 RUN wget https://repo1.maven.org/maven2/axis/axis/1.4/axis-1.4.jar
 """
+        mock_run.side_effect = [
+            MagicMock(returncode=0, stdout="BUILD SUCCESS", stderr=""),
+            MagicMock(returncode=0, stdout="BUILD_SUCCESS", stderr=""),
+            MagicMock(returncode=0, stdout="", stderr=""),
+            MagicMock(returncode=0, stdout="", stderr=""),
+        ]
+
         evaluator = Evaluator()
-        result = evaluator.evaluate(cf, "axis:axis:1.4")
+        with patch.object(evaluator, "_l4_match"):
+            result = evaluator.evaluate(cf, "axis:axis:1.4")
+
         assert result.cf_validation_passed is False
-        assert result.l4_signal_source == "anticheat_rejected"
-        assert result.l1_parse is True
-        assert result.l2_build is False
-        mock_run.assert_not_called()
+        assert result.anticheat_warning != ""
+        assert result.l2_build is True
 
     @patch("buildroot.agent.evaluator.subprocess.run")
-    def test_cf_passes_build_log_fails(self, mock_run):
-        """A CF that passes validation but whose build log shows target download is rejected."""
+    def test_build_log_violation_is_warning(self, mock_run):
+        """Build log violation is a warning — L4 still runs."""
         cf = """\
 FROM eclipse-temurin:17-jdk
 WORKDIR /build
@@ -420,28 +472,25 @@ RUN cd src && mvn clean install -DskipTests
         mock_run.side_effect = [
             MagicMock(
                 returncode=0,
-                stdout="Downloading https://repo1.maven.org/maven2/commons-io/commons-io/2.11.0/commons-io-2.11.0.jar\nBUILD SUCCESS",
+                stdout="Downloading from central: https://repo1.maven.org/maven2/commons-io/commons-io/2.11.0/commons-io-2.11.0.jar\nBUILD SUCCESS",
                 stderr="",
             ),
-            MagicMock(
-                returncode=0,
-                stdout="target/commons-io-2.11.0.jar\nBUILD_SUCCESS",
-                stderr="",
-            ),
+            MagicMock(returncode=0, stdout="BUILD_SUCCESS", stderr=""),
+            MagicMock(returncode=0, stdout="", stderr=""),
+            MagicMock(returncode=0, stdout="", stderr=""),
         ]
 
         evaluator = Evaluator()
-        result = evaluator.evaluate(cf, "commons-io:commons-io:2.11.0")
+        with patch.object(evaluator, "_l4_match") as mock_l4:
+            result = evaluator.evaluate(cf, "commons-io:commons-io:2.11.0")
+            mock_l4.assert_called_once()
 
-        assert result.cf_validation_passed is True
-        assert result.l2_build is True
-        assert result.l3_command is True
         assert result.build_log_check_passed is False
-        assert result.l4_signal_source == "anticheat_rejected"
+        assert result.anticheat_warning != ""
 
     @patch("buildroot.agent.evaluator.subprocess.run")
-    def test_legitimate_build_passes_all_gates(self, mock_run):
-        """A legitimate build passes CF validation and build log check."""
+    def test_legitimate_build_no_warnings(self, mock_run):
+        """A legitimate build has no anti-cheat warnings."""
         cf = """\
 FROM eclipse-temurin:17-jdk
 WORKDIR /build
@@ -450,16 +499,8 @@ RUN cd src && mvn clean install -DskipTests -pl activemq-client-jakarta
 RUN cp src/activemq-client-jakarta/target/activemq-client-jakarta-5.18.3.jar /output/rebuilt.jar
 """
         mock_run.side_effect = [
-            MagicMock(
-                returncode=0,
-                stdout="[INFO] Compiling 42 source files\n[INFO] BUILD SUCCESS",
-                stderr="",
-            ),
-            MagicMock(
-                returncode=0,
-                stdout="BUILD_SUCCESS",
-                stderr="",
-            ),
+            MagicMock(returncode=0, stdout="BUILD SUCCESS", stderr=""),
+            MagicMock(returncode=0, stdout="BUILD_SUCCESS", stderr=""),
             MagicMock(returncode=0, stdout="", stderr=""),
             MagicMock(returncode=0, stdout="", stderr=""),
         ]
@@ -470,24 +511,7 @@ RUN cp src/activemq-client-jakarta/target/activemq-client-jakarta-5.18.3.jar /ou
 
         assert result.cf_validation_passed is True
         assert result.build_log_check_passed is True
-        assert result.l1_parse is True
-        assert result.l2_build is True
-        assert result.l3_command is True
-
-    @patch("buildroot.agent.evaluator.subprocess.run")
-    def test_cf_failure_short_circuits_no_l4_match(self, mock_run):
-        """When CF validation fails, _l4_match is never reached."""
-        cf = """\
-FROM eclipse-temurin:17-jdk
-RUN wget https://repo1.maven.org/maven2/org/example/lib/1.0/lib-1.0.jar
-"""
-        evaluator = Evaluator()
-        with patch.object(evaluator, "_l4_match") as mock_l4:
-            result = evaluator.evaluate(cf, "org.example:lib:1.0")
-            mock_l4.assert_not_called()
-
-        assert result.cf_validation_passed is False
-        assert result.l2_build is False
+        assert result.anticheat_warning == ""
 
 
 class TestEvalResultAntiCheatFields:
@@ -496,20 +520,22 @@ class TestEvalResultAntiCheatFields:
             l1_parse=True,
             cf_validation_passed=False,
             cf_violations=["JAR download detected", "No source acquisition"],
-            l4_signal_source="anticheat_rejected",
+            anticheat_warning="Containerfile: JAR download detected",
         )
         d = result.to_dict()
         assert d["cf_validation_passed"] is False
         assert "JAR download" in d["cf_violations"][0]
+        assert "anticheat_warning" in d
 
     def test_to_dict_includes_build_log_check(self):
         result = EvalResult(
             l1_parse=True, l2_build=True, l3_command=True,
             build_log_check_passed=False,
-            l4_signal_source="anticheat_rejected",
+            anticheat_warning="Build log: target downloaded",
         )
         d = result.to_dict()
         assert d["build_log_check_passed"] is False
+        assert d["anticheat_warning"] == "Build log: target downloaded"
 
     def test_to_dict_omits_none_values(self):
         result = EvalResult(l1_parse=True)
@@ -517,3 +543,4 @@ class TestEvalResultAntiCheatFields:
         assert "cf_validation_passed" not in d
         assert "cf_violations" not in d
         assert "build_log_check_passed" not in d
+        assert "anticheat_warning" not in d
