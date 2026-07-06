@@ -705,7 +705,7 @@ def validate_containerfile(cf_text: str, target_gav: str) -> tuple[bool, list[st
             for url in urls:
                 clean_url = url.rstrip("'\"),(;")
                 path = urlparse(clean_url).path
-                if path.endswith(target_jar) and not allowed_jar_re.search(path):
+                if path.rstrip('/').endswith(target_jar) and not allowed_jar_re.search(path):
                     violations.append(f"JAR download detected: {clean_url.strip()[:120]}")
 
     synthetic_patterns = [
@@ -740,12 +740,12 @@ def check_build_log(log: str, artifact: str, version: str) -> tuple[bool, str]:
     maven_urls = re.findall(r'Downloading from \S+:\s+(https?://\S+)', log)
     for url in maven_urls:
         clean_url = url.rstrip("'\"),(;")
-        if urlparse(clean_url).path.endswith(target_jar):
+        if urlparse(clean_url).path.rstrip('/').endswith(target_jar):
             return False, f"Target artifact {target_jar} was downloaded during build: {clean_url.strip()[:200]}"
     all_urls = re.findall(r'https?://\S+', log)
     for url in all_urls:
         clean_url = url.rstrip("'\"),(;")
-        if urlparse(clean_url).path.endswith(target_jar):
+        if urlparse(clean_url).path.rstrip('/').endswith(target_jar):
             return False, f"Target artifact {target_jar} was downloaded during build: {clean_url.strip()[:200]}"
     return True, ""
 
