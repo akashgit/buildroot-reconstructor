@@ -2,6 +2,12 @@
 
 These scripts run the buildroot agent across hundreds of Maven coordinates in parallel using tmux sessions.
 
+## Prerequisites
+
+- Project `.venv` with buildroot installed: `uv venv && uv pip install -e .`
+- PostgreSQL accessible (local or remote)
+- `tmux` installed
+
 ## Setup
 
 1. Copy `.env.example` to `.env` at the project root and fill in values for your machine:
@@ -15,16 +21,16 @@ cp .env.example .env
 ```bash
 # On lw-preserve (local Postgres):
 DATABASE_URL=postgresql:///postgres
-DB_PYTHON=/home/lab/.local/share/uv/tools/buildroot/bin/python
 NUM_WORKERS=30
 GAVS_CSV_PATH=/workspace/shared/packages_remaining.csv
 
 # On remote workers (connecting to Postgres on another machine):
 DATABASE_URL=postgresql://user:password@db-host/postgres
-DB_PYTHON=/home/lab/.local/share/uv/tools/buildroot/bin/python
 NUM_WORKERS=10
 GAVS_CSV_PATH=/workspace/shared/packages_remaining.csv
 ```
+
+All scripts auto-detect the project `.venv` — no need to activate it or configure a Python path.
 
 ## Scripts
 
@@ -33,7 +39,7 @@ GAVS_CSV_PATH=/workspace/shared/packages_remaining.csv
 Launches `NUM_WORKERS` parallel tmux sessions. Each session runs `run_worker.sh` on its assigned slice of GAVs.
 
 ```bash
-./scripts/scripts/launch_workers.sh
+./scripts/workers/launch_workers.sh
 ```
 
 What it does:
@@ -55,7 +61,7 @@ Processes GAVs sequentially from its assigned file. For each GAV:
 Shows status of all workers in a table:
 
 ```bash
-./scripts/scripts/monitor_workers.sh
+./scripts/workers/monitor_workers.sh
 ```
 
 ```
@@ -68,7 +74,7 @@ w-2      DEAD          12/   156  13:50:22 (32m ago)  com.google.protobuf:protob
 
 Auto-restart dead workers:
 ```bash
-./scripts/scripts/monitor_workers.sh --auto-restart
+./scripts/workers/monitor_workers.sh --auto-restart
 ```
 
 ### `split_gavs.py`
