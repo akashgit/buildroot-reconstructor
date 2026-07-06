@@ -207,6 +207,31 @@ class PodmanIsolation:
 
         return instance
 
+    @classmethod
+    def from_env(cls) -> PodmanIsolation | None:
+        """Reconstruct a PodmanIsolation from inherited CONTAINERS_STORAGE_CONF env var.
+
+        Returns None if the env var is not set or the config file doesn't exist.
+        """
+        conf_path = os.environ.get("CONTAINERS_STORAGE_CONF")
+        if not conf_path:
+            return None
+        storage_conf = Path(conf_path)
+        if not storage_conf.exists():
+            return None
+        graphroot = storage_conf.parent
+        containers_conf_path = os.environ.get("CONTAINERS_CONF", "")
+        containers_conf = Path(containers_conf_path) if containers_conf_path else graphroot / "containers.conf"
+        runroot = graphroot.parent.parent / "containers-run-isolated" / graphroot.name
+        tmpdir = graphroot.parent.parent / "containers-tmp-isolated" / graphroot.name
+        return cls(
+            graphroot=graphroot,
+            runroot=runroot,
+            tmpdir=tmpdir,
+            storage_conf=storage_conf,
+            containers_conf=containers_conf,
+        )
+
     def wrap_command(self, cmd: list[str]) -> list[str]:
         """Inject --root/--runroot/--tmpdir into a podman command list."""
         if cmd and cmd[0] == "podman":

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+import os
 import re
 import shlex
 import shutil
@@ -33,7 +34,12 @@ class Evaluator:
         self._timeout = timeout
         self._no_cache = no_cache
         self._trust_registry = TrustedSourceRegistry()
-        self._isolation = PodmanIsolation.create() if (isolate_podman and not host) else None
+        if isolate_podman and not host:
+            self._isolation = PodmanIsolation.create()
+        elif not host and os.environ.get("CONTAINERS_STORAGE_CONF"):
+            self._isolation = PodmanIsolation.from_env()
+        else:
+            self._isolation = None
 
     def get_podman_env(self) -> dict[str, str] | None:
         """Return env dict for podman isolation, or None if not isolated."""

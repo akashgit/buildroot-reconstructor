@@ -560,7 +560,7 @@ Target score: {target_score}
 
 ## Instructions
 
-{"**IMPORTANT: Always pass `--isolate-podman` to ALL `buildroot agent` and `buildroot eval` commands. This prevents podman storage lock contention with other workers.**" + chr(10) + chr(10) if isolate_podman else ""}1. **Run v3 first** (fast path):
+{"**IMPORTANT: Always pass `--isolate-podman` to ALL `buildroot agent` and `buildroot eval` commands. This prevents podman storage lock contention with other workers. NEVER run `unset CONTAINERS_STORAGE_CONF` or `unset CONTAINERS_CONF` — these environment variables are required for isolation.**" + chr(10) + chr(10) if isolate_podman else ""}1. **Run v3 first** (fast path):
    ```bash
    buildroot agent {coordinate} --v3-only --max-iterations 1{host_flag}{isolate_flag}
    ```
