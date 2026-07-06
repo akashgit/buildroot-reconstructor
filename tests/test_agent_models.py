@@ -114,6 +114,45 @@ class TestEvalResult:
         assert d["level_reached"] == 2
 
 
+class TestEvalResultNewFields:
+    def test_new_fields_serialization(self):
+        er = EvalResult(
+            l1_parse=True, l2_build=True, l3_command=True,
+            l4_score=0.75, l4_signal_source="fallback_signals",
+            bytecode_version_match=True,
+            manifest_sanity=True,
+            api_surface_match=0.9,
+            dependency_graph_match=0.85,
+            resource_completeness=1.0,
+        )
+        d = er.to_dict()
+        assert d["l4_signal_source"] == "fallback_signals"
+        assert "fallback_signals" in d
+        fs = d["fallback_signals"]
+        assert fs["api_surface_match"] == 0.9
+        assert fs["dependency_graph_match"] == 0.85
+        assert fs["resource_completeness"] == 1.0
+
+    def test_self_built_reference_to_dict(self):
+        from unittest.mock import MagicMock
+        mock_report = MagicMock()
+        mock_report.to_dict.return_value = {
+            "verdict": "EQUIVALENT",
+            "structural": {"match": True},
+        }
+        er = EvalResult(
+            l1_parse=True, l2_build=True, l3_command=True,
+            l4_score=0.85, l4_signal_source="self_built_reference",
+            comparison_report=mock_report,
+            comparison_verdict="EQUIVALENT",
+        )
+        d = er.to_dict()
+        assert d["l4_signal_source"] == "self_built_reference"
+        assert "comparison_report" in d
+        assert d["comparison_report"]["verdict"] == "EQUIVALENT"
+        assert "fallback_signals" not in d
+
+
 class TestBuildAttempt:
     def test_default_id(self):
         ba = BuildAttempt()

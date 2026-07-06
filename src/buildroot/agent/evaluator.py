@@ -252,6 +252,31 @@ class Evaluator:
                     group_id, artifact_id, version, tmp
                 )
                 if not original_jar:
+                    from buildroot.eval.self_reference import build_reference_jar
+                    self_built_jar = None
+                    try:
+                        self_built_jar = build_reference_jar(
+                            group_id, artifact_id, version, jdk_version, tmp,
+                        )
+                    except Exception as e:
+                        logger.warning("Self-built reference failed: %s", e)
+
+                    if self_built_jar:
+                        rebuilt_jar = self._extract_rebuilt_jar(
+                            tag, artifact_id, version, tmp,
+                        )
+                        if rebuilt_jar:
+                            try:
+                                result.rebuilt_jar_bytes = rebuilt_jar.read_bytes()
+                            except OSError:
+                                pass
+                            report = compare_jars(self_built_jar, rebuilt_jar, coordinate)
+                            result.comparison_report = report
+                            result.comparison_verdict = report.verdict
+                            result.l4_score = report.equivalence_score()
+                            result.l4_signal_source = "self_built_reference"
+                            return
+
                     signals = self.l4_fallback_signals(tag, coordinate, jdk_version)
                     test_pass = None
                     if result.test_result and result.test_result.available:
@@ -263,12 +288,18 @@ class Evaluator:
                         signals.get("manifest_sanity"),
                         test_pass,
                         signals.get("structural_match"),
+                        api_surface_match=signals.get("api_surface_match"),
+                        dependency_graph_match=signals.get("dependency_graph_match"),
+                        resource_completeness=signals.get("resource_completeness"),
                     )
                     result.l4_score = fallback
                     result.bytecode_version_match = signals.get("bytecode_version_match")
                     result.manifest_sanity = signals.get("manifest_sanity")
                     result.unit_tests_pass = test_pass
                     result.structural_match = signals.get("structural_match")
+                    result.api_surface_match = signals.get("api_surface_match")
+                    result.dependency_graph_match = signals.get("dependency_graph_match")
+                    result.resource_completeness = signals.get("resource_completeness")
                     result.l4_signal_source = "fallback_signals"
                     if signals.get("rebuilt_jar_bytes"):
                         result.rebuilt_jar_bytes = signals["rebuilt_jar_bytes"]
@@ -276,12 +307,15 @@ class Evaluator:
                         f"L4 (approximate): fallback score = {fallback:.2f} (JAR unavailable)"
                     )
                     logger.info(
-                        "L4' fallback score = %.2f | bytecode=%s manifest=%s tests=%s structural=%s",
+                        "L4' fallback score = %.2f | bytecode=%s manifest=%s tests=%s structural=%s api=%s deps=%s resource=%s",
                         fallback,
                         signals.get("bytecode_version_match"),
                         signals.get("manifest_sanity"),
                         test_pass,
                         signals.get("structural_match"),
+                        signals.get("api_surface_match"),
+                        signals.get("dependency_graph_match"),
+                        signals.get("resource_completeness"),
                     )
                     return
 
@@ -447,6 +481,9 @@ class Evaluator:
             check_bytecode_version_match,
             check_manifest_sanity,
             check_structural_match,
+            compute_api_surface_match,
+            compute_dependency_match,
+            compute_resource_completeness,
         )
 
         group_id, artifact_id, version = parse_gav(coordinate)
@@ -482,6 +519,17 @@ class Evaluator:
                     if source_root:
                         signals["structural_match"] = check_structural_match(
                             rebuilt_jar, source_root,
+                        )
+                        signals["api_surface_match"] = compute_api_surface_match(
+                            rebuilt_jar, source_root, tag, self._host,
+                        )
+                        signals["dependency_graph_match"] = compute_dependency_match(
+                            rebuilt_jar, source_root, tag, self._host,
+                        )
+                        pom_path = source_root / "pom.xml"
+                        signals["resource_completeness"] = compute_resource_completeness(
+                            rebuilt_jar, source_root,
+                            pom_path if pom_path.exists() else None,
                         )
         except Exception as e:
             logger.warning("Fallback signal extraction failed: %s", e)
