@@ -1,27 +1,11 @@
 """CLI entry point for the buildroot reconstructor."""
 
-import os
-from pathlib import Path
-
 import click
 
 from buildroot import __version__
+from buildroot.utils.dotenv import load_dotenv
 
-
-def _load_dotenv() -> None:
-    """Load .env from project root if it exists. Does not override existing env vars."""
-    env_file = Path(__file__).resolve().parents[3] / ".env"
-    if not env_file.exists():
-        return
-    for line in env_file.read_text().splitlines():
-        line = line.strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-        key, val = line.split("=", 1)
-        os.environ.setdefault(key.strip(), val.strip())
-
-
-_load_dotenv()
+load_dotenv()
 from buildroot.cli.commands.agent_cmd import agent_cmd
 from buildroot.cli.commands.compare import compare
 from buildroot.cli.commands.db_cmd import db_cmd

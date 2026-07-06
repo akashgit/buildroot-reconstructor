@@ -13,16 +13,10 @@ from collections import defaultdict
 from pathlib import Path
 
 PROJECT_DIR = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(PROJECT_DIR / "src"))
+from buildroot.utils.dotenv import load_dotenv
 
-# Load .env
-env_file = PROJECT_DIR / ".env"
-if env_file.exists():
-    for line in env_file.read_text().splitlines():
-        line = line.strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-        key, val = line.split("=", 1)
-        os.environ.setdefault(key.strip(), val.strip())
+load_dotenv(PROJECT_DIR / ".env")
 
 NUM_WORKERS = int(os.environ.get("NUM_WORKERS", "30"))
 CSV_PATH = Path(os.environ.get("GAVS_CSV_PATH", "/workspace/shared/packages_remaining.csv"))
@@ -33,9 +27,10 @@ def get_processed_gavs():
     """Query DB + progress logs for already-attempted GAVs."""
     processed = set()
 
+    db_url = os.environ.get("DATABASE_URL", "postgresql:///postgres")
     try:
         result = subprocess.run(
-            ["psql", "-d", "postgres", "-t", "-A", "-c",
+            ["psql", db_url, "-t", "-A", "-c",
              "SELECT group_id || ':' || artifact_id || ':' || version FROM builds"],
             capture_output=True, text=True, timeout=30,
         )

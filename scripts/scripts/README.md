@@ -19,8 +19,8 @@ DB_PYTHON=/home/lab/.local/share/uv/tools/buildroot/bin/python
 NUM_WORKERS=30
 GAVS_CSV_PATH=/workspace/shared/packages_remaining.csv
 
-# On remote workers (lw2, lw3, lw4):
-DATABASE_URL=postgresql://lab:instructlab@10.241.65.8/postgres
+# On remote workers (connecting to Postgres on another machine):
+DATABASE_URL=postgresql://user:password@db-host/postgres
 DB_PYTHON=/home/lab/.local/share/uv/tools/buildroot/bin/python
 NUM_WORKERS=10
 GAVS_CSV_PATH=/workspace/shared/packages_remaining.csv
