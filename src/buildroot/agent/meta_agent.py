@@ -359,7 +359,7 @@ def run_orchestrator(
         _parse_agent_output(agent_result.text, result, workspace, coordinate, host)
 
     # 7. Post-run: find best Containerfile in workspace
-    _scan_workspace_for_best(result, workspace, coordinate, host)
+    _scan_workspace_for_best(result, workspace, coordinate, host, isolate_podman=isolate_podman)
 
     # 8. Learning loop — record success
     if result.best_reward >= target_score and result.best_containerfile:
@@ -524,7 +524,7 @@ def _run_trusted_phase(
     if not agent_result.is_error:
         trusted_result = OrchestratorResult(coordinate=coordinate)
         _parse_agent_output(agent_result.text, trusted_result, trusted_workspace, coordinate, host)
-        _scan_workspace_for_best(trusted_result, trusted_workspace, coordinate, host)
+        _scan_workspace_for_best(trusted_result, trusted_workspace, coordinate, host, isolate_podman=isolate_podman)
 
         phase2_result.trusted_reward = trusted_result.best_reward
         phase2_result.trusted_level = trusted_result.best_level
@@ -626,6 +626,7 @@ def _scan_workspace_for_best(
     workspace: Path,
     coordinate: str,
     host: str | None = None,
+    isolate_podman: bool = False,
 ) -> None:
     """Scan workspace for Containerfile.best or Containerfile and evaluate if needed."""
     best_cf_path = workspace / "Containerfile.best"
@@ -664,7 +665,7 @@ def _scan_workspace_for_best(
             except (json.JSONDecodeError, OSError):
                 pass
 
-        evaluator = Evaluator(host=host)
+        evaluator = Evaluator(host=host, isolate_podman=isolate_podman)
         eval_result = evaluator.evaluate(cf_text, coordinate, jdk_version=jdk_version)
         result.best_reward = eval_result.reward
         result.best_level = eval_result.level_reached
