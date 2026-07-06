@@ -61,6 +61,8 @@ DEFAULT_TRUSTED_DOMAINS = frozenset({
     "dlcdn.apache.org",
     "repo1.maven.org",
     "repo.maven.apache.org",
+    "maven-central.storage-download.googleapis.com",
+    "maven-central.storage.googleapis.com",
     "plugins.gradle.org",
     "services.gradle.org",
     "github.com",

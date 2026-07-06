@@ -34,11 +34,13 @@ original Maven Central artifact with L4 score >= 0.98 (ideally 1.0).
 
 CRITICAL: You must build from source (git clone + mvn/gradle/ant). NEVER download \
 pre-built JARs from Maven Central or any mirror via curl/wget and place them in the \
-output directory. Maven Central aggressively rate-limits (HTTP 429) and curl -sL will \
-silently save the HTML error page as a 96-byte .jar file — this is not a JAR and will \
-fail L3 validation. Never run commands like: \
-`curl -o target/artifact.jar https://repo1.maven.org/...` or \
-`wget -O target/artifact.jar https://...`. Always build from source.
+output directory. Always build from source.
+
+IMPORTANT: For Maven builds, always configure Google's Maven Central mirror in \
+settings.xml to avoid HTTP 429 rate limiting from repo1.maven.org: \
+`mkdir -p /root/.m2 && printf '<settings><mirrors><mirror><id>google</id>\
+<mirrorOf>central</mirrorOf><url>https://maven-central.storage-download.googleapis.com/maven2\
+</url></mirror></mirrors></settings>' > /root/.m2/settings.xml`
 
 You have full tool access: bash, SSH, file read/write, web search. Use them.
 
@@ -184,7 +186,7 @@ to find the canonical reference JAR yourself:
 5. Once found, download the canonical JAR and compare directly:
    ```bash
    # Download canonical reference JAR
-   curl -o /tmp/reference.jar 'https://repo1.maven.org/maven2/com/zaxxer/HikariCP/2.7.3/HikariCP-2.7.3.jar'
+   curl -o /tmp/reference.jar 'https://maven-central.storage-download.googleapis.com/maven2/com/zaxxer/HikariCP/2.7.3/HikariCP-2.7.3.jar'
    # Compare with your rebuilt JAR using the jar comparator
    python -c "from buildroot.utils.jar_comparator import compare_jars; r = compare_jars('/tmp/reference.jar', '/path/to/rebuilt.jar', 'coord'); print(r.verdict, r.equivalence_score())"
    ```"""

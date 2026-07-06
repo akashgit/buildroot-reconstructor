@@ -14,22 +14,23 @@ import requests
 
 logger = logging.getLogger(__name__)
 
-MAVEN_CENTRAL_BASE = os.environ.get("MAVEN_MIRROR_URL") or "https://repo1.maven.org/maven2"
 GOOGLE_MIRROR_BASE = "https://maven-central.storage.googleapis.com/maven2"
+MAVEN_CENTRAL_DIRECT = "https://repo1.maven.org/maven2"
+MAVEN_CENTRAL_BASE = os.environ.get("MAVEN_MIRROR_URL") or GOOGLE_MIRROR_BASE
+FALLBACK_BASE = MAVEN_CENTRAL_DIRECT if MAVEN_CENTRAL_BASE == GOOGLE_MIRROR_BASE else GOOGLE_MIRROR_BASE
 DEFAULT_CACHE_DIR = Path.home() / ".cache" / "buildroot" / "poms"
 DEFAULT_JAR_CACHE_DIR = Path.home() / ".cache" / "buildroot" / "jars"
 MAX_RETRIES = 5
 BACKOFF_BASE = 2.0
 _MAX_JAR_BYTES = 50 * 1024 * 1024  # 50 MB
 
-_google_mirror_enabled = True
+_fallback_enabled = True
 
 
 def enable_google_mirror() -> None:
-    """Enable Google Cloud Storage mirror as fallback on 429 rate limits."""
-    global _google_mirror_enabled
-    _google_mirror_enabled = True
-    logger.info("Google mirror fallback enabled: %s", GOOGLE_MIRROR_BASE)
+    """Enable fallback mirror on 429 rate limits. No-op since Google mirror is now the default."""
+    global _fallback_enabled
+    _fallback_enabled = True
 
 
 def _cache_key(group_id: str, artifact_id: str, version: str) -> str:
@@ -168,9 +169,9 @@ def get_jar_path(
         try:
             with requests.get(url, timeout=120, stream=True) as resp:
                 if resp.status_code == 429:
-                    if _google_mirror_enabled and MAVEN_CENTRAL_BASE in url:
-                        mirror_url = url.replace(MAVEN_CENTRAL_BASE, GOOGLE_MIRROR_BASE)
-                        logger.info("429 on JAR download, trying Google mirror: %s", mirror_url)
+                    if _fallback_enabled and MAVEN_CENTRAL_BASE in url:
+                        mirror_url = url.replace(MAVEN_CENTRAL_BASE, FALLBACK_BASE)
+                        logger.info("429 on JAR download, trying fallback: %s", mirror_url)
                         url = mirror_url
                         continue
                     wait = BACKOFF_BASE * (2 ** attempt)
@@ -376,20 +377,20 @@ def resolve_canonical_coordinate(
     return None
 
 
-def _try_google_mirror(url: str) -> str | None:
-    """Try fetching from Google mirror if enabled and URL is on Maven Central."""
-    if not _google_mirror_enabled:
+def _try_fallback(url: str) -> str | None:
+    """Try fetching from fallback mirror if enabled."""
+    if not _fallback_enabled:
         return None
     if MAVEN_CENTRAL_BASE not in url:
         return None
-    mirror_url = url.replace(MAVEN_CENTRAL_BASE, GOOGLE_MIRROR_BASE)
+    mirror_url = url.replace(MAVEN_CENTRAL_BASE, FALLBACK_BASE)
     try:
-        logger.info("Trying Google mirror: %s", mirror_url)
+        logger.info("Trying fallback mirror: %s", mirror_url)
         resp = requests.get(mirror_url, timeout=30)
         resp.raise_for_status()
         return resp.text
     except requests.RequestException as e:
-        logger.warning("Google mirror failed: %s", e)
+        logger.warning("Fallback mirror failed: %s", e)
         return None
 
 
@@ -399,7 +400,7 @@ def _fetch_with_retry(url: str) -> str:
         try:
             resp = requests.get(url, timeout=30)
             if resp.status_code == 429:
-                mirror_result = _try_google_mirror(url)
+                mirror_result = _try_fallback(url)
                 if mirror_result is not None:
                     return mirror_result
                 wait = BACKOFF_BASE * (2 ** attempt)
