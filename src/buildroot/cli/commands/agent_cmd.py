@@ -22,8 +22,8 @@ import click
 @click.option("--max-turns", default=0, type=int, help="Max agent turns (0 = unlimited)")
 @click.option("-v", "--verbose", is_flag=True, help="Enable debug logging")
 @click.option("--enable-google-mirror", is_flag=True, help="Use Google Cloud Storage as fallback on Maven Central 429 rate limits")
-@click.option("--isolate-podman", is_flag=True, help="Isolate podman storage per worker for parallel scaling (avoids lock contention)")
-def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, v3_only, interactive, max_budget, max_turns, verbose, enable_google_mirror, isolate_podman):
+@click.option("--no-isolate-podman", is_flag=True, default=False, help="Disable podman storage isolation (not recommended for parallel runs)")
+def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, v3_only, interactive, max_budget, max_turns, verbose, enable_google_mirror, no_isolate_podman):
     """Run agentic reconstruction loop for a Maven COORDINATE.
 
     Default mode uses the v4 orchestrator agent. Use --v3-only for the template pipeline.
@@ -54,6 +54,7 @@ def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, 
         count = seed_recipes_from_results(Path(resume))
         click.echo(f"Seeded {count} recipes from {resume}")
 
+    isolate_podman = not no_isolate_podman
     if isolate_podman:
         from buildroot.utils.podman_isolation import save_base_images
         click.echo("Pre-warming base images for isolated podman storage...")
@@ -107,7 +108,7 @@ def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, 
         sys.exit(0 if result.status == "success" else 1)
 
 
-def _run_v3(coordinate, host, max_iterations, resume, isolate_podman=False):
+def _run_v3(coordinate, host, max_iterations, resume, isolate_podman=True):
     """Run a single coordinate through the v3 pipeline."""
     from buildroot.agent.pipeline_v3 import run_v3_pipeline
 
@@ -128,7 +129,7 @@ def _run_v3(coordinate, host, max_iterations, resume, isolate_podman=False):
     )
 
 
-def _run_interactive(coordinate, host, isolate_podman=False):
+def _run_interactive(coordinate, host, isolate_podman=True):
     """Launch an interactive Claude session with orchestrator context."""
     from buildroot.agent.meta_agent import launch_interactive_orchestrator
 
@@ -136,7 +137,7 @@ def _run_interactive(coordinate, host, isolate_podman=False):
     sys.exit(rc)
 
 
-def _run_orchestrator(coordinate, host, max_budget, max_turns, isolate_podman=False):
+def _run_orchestrator(coordinate, host, max_budget, max_turns, isolate_podman=True):
     """Run a single coordinate through the v4 orchestrator."""
     from buildroot.agent.meta_agent import run_orchestrator
 

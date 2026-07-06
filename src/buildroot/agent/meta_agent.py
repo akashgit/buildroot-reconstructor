@@ -110,7 +110,7 @@ def launch_interactive_orchestrator(
     host: str | None = None,
     workspace: Path | None = None,
     target_score: float = 0.98,
-    isolate_podman: bool = False,
+    isolate_podman: bool = True,
 ) -> int:
     """Run prepass + KB query, then launch an interactive Claude session with full context.
 
@@ -219,7 +219,7 @@ def run_orchestrator(
     max_budget_usd: float = 0,
     max_agent_turns: int = 0,
     agent_timeout: int = 0,
-    isolate_podman: bool = False,
+    isolate_podman: bool = True,
 ) -> OrchestratorResult:
     """Run the orchestrator: prepass → KB query → spawn Claude Code agent → parse result."""
     start_time = time.time()
@@ -456,7 +456,7 @@ def _run_trusted_phase(
     max_agent_turns: int,
     agent_timeout: int,
     target_score: float,
-    isolate_podman: bool = False,
+    isolate_podman: bool = True,
 ) -> None:
     """Run Phase 3: same agent loop constrained to trusted sources, warm-started from Phase 2."""
     logger.info("Starting Phase 3 (trusted cascade) for %s", coordinate)
@@ -545,11 +545,11 @@ def _build_task_prompt(
     host: str | None,
     workspace: Path,
     target_score: float,
-    isolate_podman: bool = False,
+    isolate_podman: bool = True,
 ) -> str:
     """Build the task prompt given to the orchestrator agent."""
     host_flag = f" --host {host}" if host else ""
-    isolate_flag = " --isolate-podman" if isolate_podman else ""
+    no_isolate_flag = " --no-isolate-podman" if not isolate_podman else ""
     build_mode = f"Build host: {host} (use SSH for all podman commands)" if host else "Builds run locally via podman."
     return f"""\
 Reconstruct the Maven Central artifact: {coordinate}
@@ -560,9 +560,9 @@ Target score: {target_score}
 
 ## Instructions
 
-{"**IMPORTANT: Always pass `--isolate-podman` to ALL `buildroot agent` and `buildroot eval` commands. This prevents podman storage lock contention with other workers.**" + chr(10) + chr(10) if isolate_podman else ""}1. **Run v3 first** (fast path):
+1. **Run v3 first** (fast path):
    ```bash
-   buildroot agent {coordinate} --v3-only --max-iterations 1{host_flag}{isolate_flag}
+   buildroot agent {coordinate} --v3-only --max-iterations 1{host_flag}{no_isolate_flag}
    ```
    **CRITICAL: NEVER stop, kill, or interrupt the v3 process. Not with TaskStop, not with Ctrl-C, not with any other method.**
    v3 builds normally take 20-30 minutes — this is expected. Put it in the background and let it finish.
@@ -572,12 +572,12 @@ Target score: {target_score}
 2. **While v3 runs**, you may prepare in parallel:
    - Analyze the original JAR (manifest, POM, structure)
    - Write your own Containerfile at {workspace}/Containerfile
-   - Run `buildroot eval{isolate_flag}` on your Containerfile
+   - Run `buildroot eval{no_isolate_flag}` on your Containerfile
    - But keep v3 running — when it finishes, compare its result against yours and use whichever scored higher
 
 3. **If v3 finishes below {target_score}**, take over:
    - Read the v3 JSON for `best_containerfile` — use it as your starting point
-   - Iterate on it with `buildroot eval{isolate_flag}`
+   - Iterate on it with `buildroot eval{no_isolate_flag}`
 
 4. **Save your best Containerfile** to {workspace}/Containerfile.best
 
@@ -628,7 +628,7 @@ def _scan_workspace_for_best(
     workspace: Path,
     coordinate: str,
     host: str | None = None,
-    isolate_podman: bool = False,
+    isolate_podman: bool = True,
 ) -> None:
     """Scan workspace for Containerfile.best or Containerfile and evaluate if needed."""
     best_cf_path = workspace / "Containerfile.best"

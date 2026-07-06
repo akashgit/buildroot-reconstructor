@@ -223,7 +223,9 @@ You can use podman directly for debugging:
 ```bash
 podman images | grep buildroot
 podman run --rm <image-tag> find / -name '*.jar' 2>/dev/null
-```""")
+```
+
+**NEVER run `unset CONTAINERS_STORAGE_CONF` or `unset CONTAINERS_CONF`. These environment variables control podman storage isolation and must not be modified.**""")
 
     return "\n\n".join(sections)
 
