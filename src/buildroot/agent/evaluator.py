@@ -10,6 +10,7 @@ import subprocess
 import tempfile
 import uuid
 from pathlib import Path
+from urllib.parse import urlparse
 
 import requests
 from dockerfile_parse import DockerfileParser
@@ -690,20 +691,22 @@ def validate_containerfile(cf_text: str, target_gav: str) -> tuple[bool, list[st
     if not has_compile:
         violations.append("No compilation command found (need mvn, gradle, ant, or javac)")
 
-    jar_download_re = re.compile(
-        r'(wget|curl)\s+.*?\.jar\b',
-        re.IGNORECASE,
-    )
+    parts = target_gav.split(":")
+    artifact_id = parts[1] if len(parts) >= 3 else ""
+    version = parts[2] if len(parts) >= 3 else ""
+    target_jar = f"{artifact_id}-{version}.jar"
     allowed_jar_re = re.compile(
         r'-sources\.jar|-wrapper\.jar|maven-wrapper|gradle-wrapper|\bcfr\b',
         re.IGNORECASE,
     )
-    jar_segments = re.split(r'[;&|]+', run_text)
-    for segment in jar_segments:
-        for match in jar_download_re.finditer(segment):
-            matched_text = match.group(0)
-            if not allowed_jar_re.search(matched_text):
-                violations.append(f"JAR download detected: {matched_text.strip()[:120]}")
+    for instruction in structure:
+        if instruction["instruction"] == "RUN":
+            urls = re.findall(r'https?://\S+', instruction["value"])
+            for url in urls:
+                clean_url = url.rstrip("'\"),(;")
+                path = urlparse(clean_url).path
+                if path.endswith(target_jar) and not allowed_jar_re.search(path):
+                    violations.append(f"JAR download detected: {clean_url.strip()[:120]}")
 
     synthetic_patterns = [
         (r'jar\s+cf\b(?!.*\bclasses\b)', "Synthetic JAR creation via 'jar cf' without compiled classes"),
@@ -717,7 +720,6 @@ def validate_containerfile(cf_text: str, target_gav: str) -> tuple[bool, list[st
     obfuscation_patterns = [
         (r'base64\s+-d.*(?:wget|curl)', "Obfuscated download: base64 decoded URL piped to wget/curl"),
         (r'(?:wget|curl).*base64\s+-d', "Obfuscated download: wget/curl with base64"),
-        (r'urlretrieve.*\.jar', "Obfuscated download: urlretrieve targeting JAR"),
     ]
     for pattern, description in obfuscation_patterns:
         if re.search(pattern, run_text, re.IGNORECASE):
@@ -735,13 +737,16 @@ def check_build_log(log: str, artifact: str, version: str) -> tuple[bool, str]:
     Returns (passed, details).
     """
     target_jar = f"{artifact}-{version}.jar"
-    download_pattern = re.compile(
-        rf'(Downloading|Downloaded|wget|curl|GET)\s+.*{re.escape(target_jar)}',
-        re.IGNORECASE,
-    )
-    match = download_pattern.search(log)
-    if match:
-        return False, f"Target artifact {target_jar} was downloaded during build: {match.group(0).strip()[:200]}"
+    maven_urls = re.findall(r'Downloading from \S+:\s+(https?://\S+)', log)
+    for url in maven_urls:
+        clean_url = url.rstrip("'\"),(;")
+        if urlparse(clean_url).path.endswith(target_jar):
+            return False, f"Target artifact {target_jar} was downloaded during build: {clean_url.strip()[:200]}"
+    all_urls = re.findall(r'https?://\S+', log)
+    for url in all_urls:
+        clean_url = url.rstrip("'\"),(;")
+        if urlparse(clean_url).path.endswith(target_jar):
+            return False, f"Target artifact {target_jar} was downloaded during build: {clean_url.strip()[:200]}"
     return True, ""
 
 

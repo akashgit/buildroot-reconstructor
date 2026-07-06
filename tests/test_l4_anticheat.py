@@ -118,6 +118,13 @@ RUN curl -o target/lib.jar https://repo1.maven.org/maven2/org/example/lib/1.0/li
         assert passed is False
         assert any("JAR download" in v for v in violations)
 
+    def test_wget_target_jar_url_flagged(self):
+        cf = '''FROM ubi9/openjdk-21
+RUN wget https://repo1.maven.org/maven2/org/apache/httpcomponents/httpclient/4.5.12/httpclient-4.5.12.jar -O /output/rebuilt.jar
+'''
+        passed, _ = validate_containerfile(cf, "org.apache.httpcomponents:httpclient:4.5.12")
+        assert not passed
+
 
 class TestValidateContainerfilePasses:
     def test_legitimate_build_passes(self):
@@ -195,6 +202,15 @@ RUN cd src && mvn clean install
         passed, violations = validate_containerfile(cf, "org.example:project:1.0")
         assert passed is True
 
+    def test_urlretrieve_non_jar_not_flagged(self):
+        cf = '''FROM ubi9/openjdk-21
+RUN python3 -c "urlretrieve('https://cdn.azul.com/zulu.tar.gz', '/tmp/jdk.tar.gz')"
+RUN mvn clean install -B -DskipTests
+RUN cp target/httpclient-4.5.12.jar /output/rebuilt.jar
+'''
+        passed, violations = validate_containerfile(cf, "org.apache.httpcomponents:httpclient:4.5.12")
+        assert passed, f"Should not flag .tar.gz download: {violations}"
+
 
 # ---------------------------------------------------------------------------
 # check_build_log tests
@@ -242,6 +258,31 @@ class TestCheckBuildLog:
     def test_empty_log_passes(self):
         passed, details = check_build_log("", "commons-io", "2.11.0")
         assert passed is True
+
+    def test_jar_uf_not_flagged(self):
+        log = "jar uf ../httpclient-4.5.12.jar mozilla/public-suffix-list.txt"
+        passed, _ = check_build_log(log, "httpclient", "4.5.12")
+        assert passed
+
+    def test_apt_get_not_flagged(self):
+        log = "apt-get install -y && jar uf ../httpclient-4.5.12.jar"
+        passed, _ = check_build_log(log, "httpclient", "4.5.12")
+        assert passed
+
+    def test_maven_download_target_flagged(self):
+        log = "Downloading from central: https://repo1.maven.org/maven2/org/apache/httpcomponents/httpclient/4.5.12/httpclient-4.5.12.jar"
+        passed, _ = check_build_log(log, "httpclient", "4.5.12")
+        assert not passed
+
+    def test_maven_download_dependency_not_flagged(self):
+        log = "Downloading from central: https://repo1.maven.org/maven2/commons-logging/commons-logging/1.2/commons-logging-1.2.jar"
+        passed, _ = check_build_log(log, "httpclient", "4.5.12")
+        assert passed
+
+    def test_wget_download_in_log_flagged(self):
+        log = "2026-07-06 Saving to https://repo1.maven.org/maven2/org/apache/httpcomponents/httpclient/4.5.12/httpclient-4.5.12.jar"
+        passed, _ = check_build_log(log, "httpclient", "4.5.12")
+        assert not passed
 
 
 # ---------------------------------------------------------------------------
