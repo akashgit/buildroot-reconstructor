@@ -1,25 +1,36 @@
 #!/usr/bin/env python3
-"""Extract GAVs from fixed CSV, group by artifact, distribute across workers."""
+"""Extract GAVs from CSV, group by artifact, distribute across workers.
+
+Configuration: set values in .env at the project root (see .env.example).
+Required: GAVS_CSV_PATH, NUM_WORKERS
+"""
 
 import csv
+import os
 import subprocess
 import sys
 from collections import defaultdict
 from pathlib import Path
 
-NUM_WORKERS = 45
-CSV_PATH = Path("/workspace/shared/packages_remaining_split_1_of_4.csv")
-OUTPUT_DIR = Path(__file__).resolve().parent.parent.parent / "gavs"
+PROJECT_DIR = Path(__file__).resolve().parent.parent.parent
+sys.path.insert(0, str(PROJECT_DIR / "src"))
+from buildroot.utils.dotenv import load_dotenv
+
+load_dotenv(PROJECT_DIR / ".env")
+
+NUM_WORKERS = int(os.environ.get("NUM_WORKERS", "30"))
+CSV_PATH = Path(os.environ.get("GAVS_CSV_PATH", "/workspace/shared/packages_remaining.csv"))
+OUTPUT_DIR = PROJECT_DIR / "gavs"
 
 
 def get_processed_gavs():
     """Query DB + progress logs for already-attempted GAVs."""
     processed = set()
 
-    # From DB
+    db_url = os.environ.get("DATABASE_URL", "postgresql:///postgres")
     try:
         result = subprocess.run(
-            ["psql", "-d", "postgres", "-t", "-A", "-c",
+            ["psql", db_url, "-t", "-A", "-c",
              "SELECT group_id || ':' || artifact_id || ':' || version FROM builds"],
             capture_output=True, text=True, timeout=30,
         )
@@ -29,8 +40,7 @@ def get_processed_gavs():
     except Exception as e:
         print(f"WARNING: Could not query DB for processed GAVs: {e}", file=sys.stderr)
 
-    # From prior worker progress logs
-    log_dir = Path(__file__).resolve().parent.parent.parent / "logs"
+    log_dir = PROJECT_DIR / "logs"
     for progress_file in log_dir.glob("worker-*/progress.csv"):
         with open(progress_file) as f:
             for line in f:
@@ -44,12 +54,16 @@ def get_processed_gavs():
 
 
 def main():
+    if not CSV_PATH.exists():
+        print(f"ERROR: GAVS_CSV_PATH not found: {CSV_PATH}", file=sys.stderr)
+        print("Set GAVS_CSV_PATH in .env (see .env.example)", file=sys.stderr)
+        sys.exit(1)
+
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
     processed = get_processed_gavs()
     print(f"Already processed (in DB): {len(processed)}")
 
-    # Read all valid GAVs
     all_gavs = []
     with open(CSV_PATH, newline="", encoding="utf-8-sig") as f:
         content = f.read().replace("\r\n", "\n").replace("\r", "\n")
@@ -64,14 +78,11 @@ def main():
     gavs = [g for g in all_gavs if g not in processed]
     print(f"Skipping {len(all_gavs) - len(gavs)} already-processed GAVs")
 
-    # Group by groupId:artifactId
     groups = defaultdict(list)
     for gav in gavs:
         g, a, v = gav.split(":")
         groups[f"{g}:{a}"].append(gav)
 
-    # Assign artifact groups to workers, balancing by total GAV count
-    # Sort groups largest-first, then greedily assign each to the lightest worker
     sorted_groups = sorted(groups.items(), key=lambda x: -len(x[1]))
     workers = [[] for _ in range(NUM_WORKERS)]
     worker_counts = [0] * NUM_WORKERS
@@ -80,12 +91,10 @@ def main():
         workers[lightest].extend(group_gavs)
         worker_counts[lightest] += len(group_gavs)
 
-    # Write worker files
     for i, worker_gavs in enumerate(workers):
         out = OUTPUT_DIR / f"worker-{i}.txt"
         out.write_text("\n".join(worker_gavs) + "\n")
 
-    # Summary
     print(f"Total GAVs: {len(gavs)}")
     print(f"Artifact groups: {len(groups)}")
     print(f"Workers: {NUM_WORKERS}")

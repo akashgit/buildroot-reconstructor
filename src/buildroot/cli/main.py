@@ -3,6 +3,9 @@
 import click
 
 from buildroot import __version__
+from buildroot.utils.dotenv import load_dotenv
+
+load_dotenv()
 from buildroot.cli.commands.agent_cmd import agent_cmd
 from buildroot.cli.commands.compare import compare
 from buildroot.cli.commands.db_cmd import db_cmd

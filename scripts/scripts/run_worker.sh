@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # Worker script: processes assigned GAVs sequentially through the v4 pipeline.
 # Usage: run_worker.sh <worker-index> <gavs-file>
+#
+# Configuration: set values in .env at the project root (see .env.example).
+# Required: DATABASE_URL, DB_PYTHON
 set -euo pipefail
 
 WORKER_ID="$1"
@@ -9,7 +12,13 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(cd "${SCRIPT_DIR}/../.." && pwd)"
 LOG_DIR="${PROJECT_DIR}/logs/worker-${WORKER_ID}"
 PROGRESS_FILE="${LOG_DIR}/progress.csv"
-DB_PYTHON="/home/lab/.local/share/uv/tools/buildroot/bin/python"
+
+# Load .env
+ENV_FILE="${PROJECT_DIR}/.env"
+[ -f "${ENV_FILE}" ] && set -a && source "${ENV_FILE}" && set +a
+
+DATABASE_URL="${DATABASE_URL:-postgresql:///postgres}"
+DB_PYTHON="${DB_PYTHON:?Set DB_PYTHON in .env — path to Python with buildroot installed}"
 
 mkdir -p "${LOG_DIR}"
 
@@ -25,7 +34,7 @@ check_db_exists() {
 import sys
 try:
     import psycopg2
-    conn = psycopg2.connect('postgresql:///postgres')
+    conn = psycopg2.connect('${DATABASE_URL}')
     cur = conn.cursor()
     cur.execute('SELECT reward FROM builds WHERE group_id=%s AND artifact_id=%s AND version=%s AND reward >= 0.98', ('${group_id}', '${artifact_id}', '${version}'))
     row = cur.fetchone()
