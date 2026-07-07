@@ -211,7 +211,7 @@ class Evaluator:
                 build_cmd = (
                     f"cd $(mktemp -d) && "
                     f"cat > Containerfile << '{delimiter}'\n{safe_containerfile}\n{delimiter}\n"
-                    f"podman build{cache_flag} -t {tag} -f Containerfile ."
+                    f"podman build --pull=missing{cache_flag} -t {tag} -f Containerfile ."
                 )
                 proc = self._run_shell(
                     build_cmd,
@@ -222,7 +222,7 @@ class Evaluator:
                 build_dir = _tmpfile.mkdtemp(prefix="buildroot-l2-")
                 cf_path = Path(build_dir) / "Containerfile"
                 cf_path.write_text(containerfile)
-                build_cmd_list = ["podman", "build"]
+                build_cmd_list = ["podman", "build", "--pull=missing"]
                 if self._no_cache:
                     build_cmd_list.append("--no-cache")
                 build_cmd_list.extend(["-t", tag, "-f", str(cf_path), build_dir])
