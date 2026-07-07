@@ -257,9 +257,6 @@ def run_orchestrator(
                 result.best_reward = existing["reward"]
                 result.best_level = existing["level"]
                 result.best_containerfile = existing["containerfile"]
-                result.trusted_containerfile = existing.get("trusted_containerfile") or ""
-                result.trusted_reward = existing.get("trusted_reward") or 0.0
-                result.trusted_level = existing.get("trusted_level") or 0
                 result.path = existing.get("method") or "db"
                 result.elapsed_seconds = time.time() - start_time
                 return result

@@ -98,23 +98,19 @@ def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, 
     if interactive:
         _run_interactive(coordinate, host, isolate_podman)
 
-    if v3_only:
-        result = _run_v3(coordinate, host, max_iterations, resume, isolate_podman, force)
-    else:
-        result = _run_orchestrator(coordinate, host, max_budget, max_turns, isolate_podman, force)
-
-    if result.status == "db_skip":
+    # DB check before running the pipeline — single query, no double-fetch
+    if not force:
         from pathlib import Path
         from buildroot.agent.build_store import fetch_build
         from buildroot.pipeline.orchestrator import parse_gav
-        g, a, v = parse_gav(coordinate)
-        db_record = fetch_build(g, a, v)
+        group_id, artifact_id, version = parse_gav(coordinate)
+        db_record = fetch_build(group_id, artifact_id, version, min_reward=0.98)
         if db_record:
             if output_dir:
                 out = Path(output_dir)
                 out.mkdir(parents=True, exist_ok=True)
                 (out / "Containerfile").write_text(db_record["containerfile"])
-                meta = {k: v for k, v in db_record.items() if k != "containerfile"}
+                meta = {k: val for k, val in db_record.items() if k != "containerfile"}
                 (out / "build-metadata.json").write_text(json.dumps(meta, indent=2))
                 click.echo(f"Saved to {out}/")
                 click.echo(json.dumps(meta, indent=2))
@@ -122,8 +118,13 @@ def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, 
                 click.echo(json.dumps(db_record, indent=2))
             sys.exit(0)
 
+    if v3_only:
+        result = _run_v3(coordinate, host, max_iterations, resume, isolate_podman, force)
+    else:
+        result = _run_orchestrator(coordinate, host, max_budget, max_turns, isolate_podman, force)
+
     click.echo(json.dumps(result.to_dict(), indent=2))
-    sys.exit(0 if result.status in ("success", "db_skip") else 1)
+    sys.exit(0 if result.status == "success" else 1)
 
 
 def _run_v3(coordinate, host, max_iterations, resume, isolate_podman=True, force=False):

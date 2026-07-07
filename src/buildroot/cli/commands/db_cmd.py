@@ -64,12 +64,18 @@ def db_fetch(gav: str, output_dir: str | None):
         buildroot db fetch net.minidev:json-smart:2.4.8\n
         buildroot db fetch com.fasterxml.jackson.core:jackson-databind:2.13.4.1 -o /tmp/build
     """
-    from buildroot.agent.build_store import fetch_build
+    from buildroot.agent.build_store import _get_connection, fetch_build
 
     parts = gav.split(":")
     if len(parts) != 3:
         click.echo(f"Invalid GAV format: {gav!r} — expected groupId:artifactId:version", err=True)
         raise SystemExit(1)
+
+    conn = _get_connection()
+    if not conn:
+        click.echo("Cannot connect to build store.", err=True)
+        raise SystemExit(1)
+    conn.close()
 
     group_id, artifact_id, version = parts
     result = fetch_build(group_id, artifact_id, version)
