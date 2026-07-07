@@ -2,8 +2,12 @@
 
 from __future__ import annotations
 
+import json
 import logging
 import re
+import shutil
+import subprocess
+import time
 from dataclasses import dataclass, field
 from enum import Enum
 from urllib.parse import urlparse
@@ -110,13 +114,24 @@ DEFAULT_SOURCES = [
 ]
 
 
+MAVEN_CHECKSUMS: dict[str, str] = {
+    "3.6.3": "26ad91d751b3a9a53087aefa743f4e16a17741d3915b219cf74112bf87a438c5",
+    "3.8.8": "17811e108701af5985bf5167abbd47c06e92c6c6bd1c13a1a1c095c9b4ecc32a",
+    "3.9.6": "6eedd2cae3626d6ad3a5c9ee324bd265853d64297f07f033430755bd0e0c3a4b",
+    "3.9.9": "7a9cdf674fc1703d6382f5f330b3d110ea1b512b51f1652846d9e4e8a588d766",
+}
+
+
 class TrustedSourceRegistry:
     """Registry of trusted JDK sources with version resolution."""
+
+    _DIGEST_TTL = 86400  # 24 hours
 
     def __init__(self, config: dict | None = None) -> None:
         self._sources: list[TrustedSource] = []
         self._default_provider: str = "adoptium"
         self._trusted_domains: frozenset[str] = DEFAULT_TRUSTED_DOMAINS
+        self._digest_cache: dict[str, tuple[str, float]] = {}
 
         if config:
             self._default_provider = config.get("default_tier1_provider", "adoptium")
@@ -241,10 +256,47 @@ class TrustedSourceRegistry:
             return False
         return domain in self._trusted_domains
 
+    def resolve_image_digest(self, image_ref: str) -> str | None:
+        """Query the registry for the current manifest digest via skopeo."""
+        now = time.time()
+        cached = self._digest_cache.get(image_ref)
+        if cached and (now - cached[1]) < self._DIGEST_TTL:
+            return cached[0]
+
+        if not shutil.which("skopeo"):
+            logger.debug("skopeo not available, skipping digest resolution")
+            return None
+
+        try:
+            proc = subprocess.run(
+                ["skopeo", "inspect", "--raw", f"docker://{image_ref}"],
+                capture_output=True, text=True, timeout=30,
+            )
+            if proc.returncode != 0:
+                logger.debug("skopeo inspect failed for %s: %s", image_ref, proc.stderr)
+                return None
+
+            import hashlib
+            raw_bytes = proc.stdout.encode("utf-8")
+            digest = f"sha256:{hashlib.sha256(raw_bytes).hexdigest()}"
+
+            self._digest_cache[image_ref] = (digest, now)
+            return digest
+        except (subprocess.TimeoutExpired, OSError) as e:
+            logger.debug("Digest resolution failed for %s: %s", image_ref, e)
+            return None
+
+    def get_maven_checksum(self, version: str) -> str | None:
+        """Return SHA-256 checksum for a Maven binary distribution."""
+        return MAVEN_CHECKSUMS.get(version)
+
     @staticmethod
     def _normalize_image_ref(image_ref: str) -> str:
         """Normalize Docker image references for matching."""
-        ref = image_ref.replace("index.docker.io", "docker.io")
+        ref = image_ref
+        if "@sha256:" in ref:
+            ref = ref.split("@sha256:")[0]
+        ref = ref.replace("index.docker.io", "docker.io")
         if "/" not in ref.split(":")[0]:
             ref = f"docker.io/library/{ref}"
         if ref.startswith("docker.io/library/"):

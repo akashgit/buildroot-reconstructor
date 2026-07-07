@@ -150,7 +150,7 @@ class Evaluator:
             result.compute_reward()
             return result
 
-        self._l4_match(tag, coordinate, result, jdk_version=jdk_version)
+        self._l4_match(tag, coordinate, result, jdk_version=jdk_version, trusted=trusted)
         self._cleanup_image(tag)
         result.compute_reward()
         return result
@@ -188,6 +188,13 @@ class Evaluator:
                 violations.append(
                     f"Untrusted download URL at line {line_num}: {url}"
                 )
+
+        download_lines = _find_unverified_downloads(containerfile)
+        for line_num, cmd_snippet in download_lines:
+            logger.warning(
+                "L1.5: trusted CF downloads binary without checksum at line %d: %s",
+                line_num, cmd_snippet,
+            )
 
         if violations:
             result.trust_violations = violations
@@ -279,7 +286,7 @@ class Evaluator:
             result.error_summary = f"L3 command error: {e}"
             return False
 
-    def _l4_match(self, tag: str, coordinate: str, result: EvalResult, *, jdk_version: str = "") -> None:
+    def _l4_match(self, tag: str, coordinate: str, result: EvalResult, *, jdk_version: str = "", trusted: bool = False) -> None:
         group_id, artifact_id, version = parse_gav(coordinate)
         try:
             with tempfile.TemporaryDirectory(prefix="buildroot-l4-") as tmpdir:
@@ -306,10 +313,10 @@ class Evaluator:
                                 result.rebuilt_jar_bytes = rebuilt_jar.read_bytes()
                             except OSError:
                                 pass
-                            report = compare_jars(self_built_jar, rebuilt_jar, coordinate)
+                            report = compare_jars(self_built_jar, rebuilt_jar, coordinate, trusted=trusted)
                             result.comparison_report = report
                             result.comparison_verdict = report.verdict
-                            result.l4_score = report.equivalence_score()
+                            result.l4_score = report.equivalence_score(trusted=trusted)
                             result.l4_signal_source = "self_built_reference"
                             return
 
@@ -367,12 +374,12 @@ class Evaluator:
                 except OSError:
                     pass
 
-                report = compare_jars(original_jar, rebuilt_jar, coordinate)
+                report = compare_jars(original_jar, rebuilt_jar, coordinate, trusted=trusted)
                 result.comparison_report = report
                 result.comparison_verdict = report.verdict
-                result.l4_score = report.equivalence_score()
+                result.l4_score = report.equivalence_score(trusted=trusted)
                 result.l4_signal_source = "full_comparison"
-                if report.verdict in ("IDENTICAL", "EQUIVALENT"):
+                if report.verdict in ("IDENTICAL", "EQUIVALENT", "TRUSTED_EQUIVALENT"):
                     result.l4_match = True
                 else:
                     parts = [
@@ -923,6 +930,31 @@ def _extract_download_urls(containerfile_content: str) -> list[tuple[int, str]]:
             if token in ("curl", "wget"):
                 for url_match in url_re.finditer(" ".join(tokens[i:])):
                     results.append((line_num, url_match.group()))
+
+    return results
+
+
+def _find_unverified_downloads(containerfile_content: str) -> list[tuple[int, str]]:
+    """Find curl/wget downloads in RUN instructions that lack sha256sum verification."""
+    results: list[tuple[int, str]] = []
+    download_re = re.compile(r'\b(curl|wget)\b.*https?://\S+', re.IGNORECASE)
+
+    lines = containerfile_content.splitlines()
+    for i, line in enumerate(lines, 1):
+        stripped = line.strip()
+        if not stripped.upper().startswith("RUN "):
+            continue
+
+        run_block = stripped[4:]
+        j = i
+        while run_block.endswith("\\") and j < len(lines):
+            run_block = run_block[:-1] + " " + lines[j].strip()
+            j += 1
+
+        if download_re.search(run_block) and "sha256sum" not in run_block:
+            match = download_re.search(run_block)
+            if match:
+                results.append((i, match.group(0)[:120]))
 
     return results
 
