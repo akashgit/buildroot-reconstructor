@@ -116,6 +116,35 @@ class TestReplaceAptMaven:
         assert changed is True
         registry.get_maven_checksum.assert_called_with("3.8.6")
 
+    def test_replaces_with_reversed_flag_order(self):
+        registry = MagicMock()
+        registry.get_maven_checksum.return_value = "abc123checksum"
+        cf = "RUN apt-get install --no-install-recommends -y maven"
+        new_cf, changed, skip = _replace_apt_maven(cf, registry)
+        assert changed is True
+        assert "sha256sum -c" in new_cf
+
+    def test_replaces_multiline_run_block(self):
+        registry = MagicMock()
+        registry.get_maven_checksum.return_value = "abc123checksum"
+        cf = (
+            "FROM eclipse-temurin:17-jdk\n"
+            "RUN apt-get update && \\\n"
+            "    apt-get install -y maven && \\\n"
+            "    rm -rf /var/lib/apt/lists/*\n"
+            "RUN mvn clean install"
+        )
+        new_cf, changed, skip = _replace_apt_maven(cf, registry)
+        assert changed is True
+        assert skip is None
+        assert "apt-get install" not in new_cf
+        assert "apt-get update" not in new_cf
+        assert "rm -rf" not in new_cf
+        assert "sha256sum -c" in new_cf
+        assert "archive.apache.org" in new_cf
+        assert "FROM eclipse-temurin:17-jdk" in new_cf
+        assert "RUN mvn clean install" in new_cf
+
 
 class TestAddChecksumVerification:
     def test_adds_checksum_to_tarball(self):

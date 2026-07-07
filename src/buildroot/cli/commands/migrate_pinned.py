@@ -92,11 +92,7 @@ def _pin_from_line(line: str, registry) -> tuple[str, bool]:
     if not digest:
         return line, False
 
-    if ":" in image_ref:
-        pinned = f"{image_ref}@{digest}"
-    else:
-        pinned = f"{image_ref}@{digest}"
-
+    pinned = f"{image_ref}@{digest}"
     return f"{prefix}{pinned}{suffix}", True
 
 
@@ -115,13 +111,29 @@ def _replace_apt_maven(containerfile: str, registry) -> tuple[str, bool, str | N
 
     replacement = PINNED_MAVEN_TEMPLATE.format(version=version, checksum=checksum)
 
-    new_cf = re.sub(
-        r"^.*apt-get\s+install\s+(?:-y\s+)?(?:--no-install-recommends\s+)?maven.*$",
-        replacement,
-        containerfile,
-        flags=re.MULTILINE | re.IGNORECASE,
-    )
-    changed = new_cf != containerfile
+    lines = containerfile.split("\n")
+    blocks: list[tuple[int, int]] = []
+    i = 0
+    while i < len(lines):
+        start = i
+        while i < len(lines) - 1 and lines[i].rstrip().endswith("\\"):
+            i += 1
+        blocks.append((start, i))
+        i += 1
+
+    result_lines: list[str] = []
+    changed = False
+    for start, end in blocks:
+        if any(
+            re.search(r"apt-get\s+install.*maven", lines[j], re.IGNORECASE)
+            for j in range(start, end + 1)
+        ):
+            result_lines.append(replacement)
+            changed = True
+        else:
+            result_lines.extend(lines[start : end + 1])
+
+    new_cf = "\n".join(result_lines)
     return new_cf, changed, None
 
 
