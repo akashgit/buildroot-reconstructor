@@ -116,7 +116,7 @@ def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, 
     else:
         result = _run_orchestrator(coordinate, host, max_budget, max_turns, isolate_podman, force)
 
-    if result.status != "success":
+    if result.status not in ("success", "recipe_skip"):
         click.echo(json.dumps(result.to_dict(), indent=2))
         sys.exit(1)
 
