@@ -158,6 +158,26 @@ class TestUbuntuLatestMapping:
         assert "FROM ubuntu:24.04" in content
 
 
+class TestProvenanceDigestAndChecksum:
+    def test_template_context_populates_digest_and_checksum(self):
+        spec = _minimal_spec(
+            maven_version="3.9.6",
+            provenance_provider="trusted-builds",
+        )
+        gen = ContainerfileGenerator()
+        gen._trust_registry.resolve_image_digest = (
+            lambda img: "sha256:abc123" if img == "eclipse-temurin:17-jdk" else None
+        )
+        gen._trust_registry.get_maven_checksum = (
+            lambda ver: "sha512:def456" if ver == "3.9.6" else None
+        )
+
+        ctx = gen._build_template_context(spec)
+
+        assert ctx["base_image_digest"] == "sha256:abc123"
+        assert ctx["maven_checksum"] == "sha512:def456"
+
+
 class TestSourceAnnotationsInComments:
     def test_jdk_source_in_comments(self, tmp_path: Path):
         spec = _minimal_spec()

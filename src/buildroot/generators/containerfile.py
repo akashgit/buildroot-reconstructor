@@ -189,7 +189,7 @@ class ContainerfileGenerator:
 
         build_tool = self._detect_build_tool(build_command)
 
-        return {
+        context = {
             "source_repo": spec.source_repo,
             "git_tag": spec.git_tag,
             "timestamp": timestamp,
