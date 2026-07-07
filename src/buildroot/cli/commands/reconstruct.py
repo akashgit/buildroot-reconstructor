@@ -24,8 +24,12 @@ from buildroot.pipeline.orchestrator import BuildrootOrchestrator, parse_gav
     default="podman",
     help="Container runtime for build steps.",
 )
-def reconstruct(coordinate, repo_url, ci_type, no_cache, skip_deps, output_dir, runtime):
+@click.option("--enable-google-mirror", is_flag=True, hidden=True, help="Deprecated: Google mirror is now the default.")
+def reconstruct(coordinate, repo_url, ci_type, no_cache, skip_deps, output_dir, runtime, enable_google_mirror):
     """Reconstruct build environment for a Maven COORDINATE (groupId:artifactId:version)."""
+    if enable_google_mirror:
+        click.echo("Warning: --enable-google-mirror is deprecated (Google mirror is now the default)", err=True)
+
     try:
         group_id, artifact_id, version = parse_gav(coordinate)
     except ValueError as e:
