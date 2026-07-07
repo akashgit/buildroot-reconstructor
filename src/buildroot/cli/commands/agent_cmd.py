@@ -98,33 +98,52 @@ def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, 
     if interactive:
         _run_interactive(coordinate, host, isolate_podman)
 
-    # DB check before running the pipeline — single query, no double-fetch
+    from pathlib import Path
+    from buildroot.agent.build_store import fetch_build
+    from buildroot.pipeline.orchestrator import parse_gav
+    group_id, artifact_id, version = parse_gav(coordinate)
+
+    # DB check before running the pipeline
     if not force:
-        from pathlib import Path
-        from buildroot.agent.build_store import fetch_build
-        from buildroot.pipeline.orchestrator import parse_gav
-        group_id, artifact_id, version = parse_gav(coordinate)
         db_record = fetch_build(group_id, artifact_id, version, min_reward=0.98)
         if db_record:
-            if output_dir:
-                out = Path(output_dir)
-                out.mkdir(parents=True, exist_ok=True)
-                (out / "Containerfile").write_text(db_record["containerfile"])
-                meta = {k: val for k, val in db_record.items() if k != "containerfile"}
-                (out / "build-metadata.json").write_text(json.dumps(meta, indent=2))
-                click.echo(f"Saved to {out}/")
-                click.echo(json.dumps(meta, indent=2))
-            else:
-                click.echo(json.dumps(db_record, indent=2))
+            _output_record(db_record, output_dir)
             sys.exit(0)
 
+    # No DB hit (or --force) — run the full pipeline
     if v3_only:
         result = _run_v3(coordinate, host, max_iterations, resume, isolate_podman, force)
     else:
         result = _run_orchestrator(coordinate, host, max_budget, max_turns, isolate_podman, force)
 
+    if result.status != "success":
+        click.echo(json.dumps(result.to_dict(), indent=2))
+        sys.exit(1)
+
+    # Build succeeded — re-query DB for the saved record and output in db fetch format
+    db_record = fetch_build(group_id, artifact_id, version)
+    if db_record:
+        _output_record(db_record, output_dir)
+        sys.exit(0)
+
+    # Fallback: build succeeded but wasn't saved to DB (reward < 0.9)
     click.echo(json.dumps(result.to_dict(), indent=2))
-    sys.exit(0 if result.status == "success" else 1)
+    sys.exit(0)
+
+
+def _output_record(record: dict, output_dir: str | None) -> None:
+    """Output a DB record as JSON, optionally saving Containerfile + metadata to a directory."""
+    from pathlib import Path
+    if output_dir:
+        out = Path(output_dir)
+        out.mkdir(parents=True, exist_ok=True)
+        (out / "Containerfile").write_text(record["containerfile"])
+        meta = {k: val for k, val in record.items() if k != "containerfile"}
+        (out / "build-metadata.json").write_text(json.dumps(meta, indent=2))
+        click.echo(f"Saved to {out}/")
+        click.echo(json.dumps(meta, indent=2))
+    else:
+        click.echo(json.dumps(record, indent=2))
 
 
 def _run_v3(coordinate, host, max_iterations, resume, isolate_podman=True, force=False):
