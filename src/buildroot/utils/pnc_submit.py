@@ -39,7 +39,13 @@ class PncBuildResult:
 
 
 def parse_containerfile_for_pnc(containerfile: str) -> PncBuildParams:
-    lines = containerfile.strip().splitlines()
+    raw_lines = containerfile.strip().splitlines()
+    lines: list[str] = []
+    for raw in raw_lines:
+        if lines and lines[-1].endswith("\\"):
+            lines[-1] = lines[-1][:-1] + " " + raw.strip()
+        else:
+            lines.append(raw)
 
     git_url = ""
     git_tag = ""
@@ -114,6 +120,15 @@ def _run_bacon(args: list[str], *, profile: str = "stage", timeout: int = 300) -
     return result.stdout
 
 
+def _parse_bacon_json(raw: str) -> dict | list:
+    """Parse JSON from bacon output, skipping log/color lines."""
+    for line in raw.strip().splitlines():
+        stripped = line.strip()
+        if stripped.startswith(("{", "[")):
+            return json.loads(stripped)
+    return json.loads(raw)
+
+
 def match_pnc_environment(
     jdk_version: str, maven_version: str | None = None, *, profile: str = "stage"
 ) -> str:
@@ -121,17 +136,24 @@ def match_pnc_environment(
 
     if _environment_cache is None:
         raw = _run_bacon(
-            ["pnc", "environment", "list", "--query=deprecated==false", "-o", "json"],
+            ["pnc", "environment", "list", "--query=deprecated==false", "-o"],
             profile=profile,
         )
-        _environment_cache = json.loads(raw)
+        data = _parse_bacon_json(raw)
+        _environment_cache = data if isinstance(data, list) else [data]
 
     candidates = []
     for env in _environment_cache:
         attrs = env.get("attributes", {})
-        env_jdk = attrs.get("JDK", "") or env.get("name", "")
-        if jdk_version in env_jdk:
+        env_jdk = attrs.get("JDK", "")
+        if env_jdk and jdk_version == env_jdk:
             candidates.append(env)
+
+    if not candidates:
+        for env in _environment_cache:
+            name = env.get("name", "")
+            if f"JDK {jdk_version}" in name or f"j{jdk_version}" in name.lower():
+                candidates.append(env)
 
     if not candidates:
         raise ValueError(f"No PNC environment found for JDK {jdk_version}")
@@ -155,10 +177,12 @@ def submit_pnc_build(
 ) -> PncBuildResult:
     # a. Create/sync SCM repo
     scm_raw = _run_bacon(
-        ["pnc", "scm-repository", "create-and-sync", params.git_url, "-o", "json"],
+        ["pnc", "scm-repository", "create-and-sync", params.git_url, "-o"],
         profile=profile,
     )
-    scm_data = json.loads(scm_raw)
+    scm_data = _parse_bacon_json(scm_raw)
+    if isinstance(scm_data, list):
+        scm_data = scm_data[0]
     scm_repo_id = str(scm_data.get("id", ""))
 
     # b. Match environment
@@ -181,11 +205,11 @@ def submit_pnc_build(
             f"--scm-revision={params.git_tag}",
             f"--build-type={params.build_type}",
             config_name,
-            "-o", "json",
+            "-o",
         ],
         profile=profile,
     )
-    bc_data = json.loads(bc_raw)
+    bc_data = _parse_bacon_json(bc_raw)
     build_config_id = str(bc_data.get("id", ""))
 
     # d. Start build
@@ -196,12 +220,12 @@ def submit_pnc_build(
             "--rebuild-mode=FORCE", "--no-build-dependencies",
             f"--timeout={timeout}",
             build_config_id,
-            "-o", "json",
+            "-o",
         ],
         profile=profile,
         timeout=timeout * 60 + 120,
     )
-    build_data = json.loads(build_raw)
+    build_data = _parse_bacon_json(build_raw)
     build_id = str(build_data.get("id", ""))
     status = build_data.get("status", "UNKNOWN")
 
@@ -209,10 +233,11 @@ def submit_pnc_build(
     artifacts: list[dict] = []
     if status == "SUCCESS":
         art_raw = _run_bacon(
-            ["pnc", "build", "list-built-artifacts", build_id, "-o", "json"],
+            ["pnc", "build", "list-built-artifacts", build_id, "-o"],
             profile=profile,
         )
-        artifacts = json.loads(art_raw)
+        art_data = _parse_bacon_json(art_raw)
+        artifacts = art_data if isinstance(art_data, list) else [art_data]
 
     return PncBuildResult(
         build_id=build_id,
