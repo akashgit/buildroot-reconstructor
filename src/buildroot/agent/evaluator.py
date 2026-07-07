@@ -82,7 +82,6 @@ class Evaluator:
         *,
         trusted: bool = False,
         jdk_version: str = "",
-        skip_anticheat: bool = False,
     ) -> EvalResult:
         containerfile = sanitize_gha_expressions(containerfile)
         result = EvalResult()
@@ -137,7 +136,7 @@ class Evaluator:
         self._l4_match(tag, coordinate, result, jdk_version=jdk_version)
         self._cleanup_image(tag)
 
-        if not skip_anticheat and (result.l4_match or result.l4_score >= 0.95):
+        if result.l4_match or result.l4_score >= 0.95:
             cheat_verdict = self.verify_build_legitimacy(containerfile, result.build_log, coordinate)
             if not cheat_verdict["legitimate"]:
                 result.l4_match = False
