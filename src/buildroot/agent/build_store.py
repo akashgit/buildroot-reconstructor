@@ -114,16 +114,18 @@ def init_table() -> bool:
         conn.close()
 
 
-def get_existing_build(
+def fetch_build(
     group_id: str,
     artifact_id: str,
     version: str,
-    min_reward: float = 0.98,
+    min_reward: float = 0.0,
 ) -> dict[str, Any] | None:
-    """Check if a successful build already exists for this exact GAV.
+    """Fetch a build record for a GAV coordinate.
 
-    Returns a dict matching the shape of ``buildroot db fetch`` output so callers
-    get consistent data regardless of whether the build was fresh or cached.
+    Shared implementation behind both ``buildroot db fetch`` and the agent
+    DB-skip check.  Returns the same dict shape everywhere so callers get
+    consistent data.  *min_reward* filters out low-scoring rows (set to
+    0.98 for the agent skip gate, 0.0 for the CLI fetch command).
     """
     conn = _get_connection()
     if not conn:
@@ -132,11 +134,17 @@ def get_existing_build(
         with conn.cursor() as cur:
             cur.execute(
                 """
-                SELECT id, containerfile, reward, level,
-                       trusted_containerfile, trusted_reward, trusted_level,
-                       method,
-                       CASE WHEN rebuilt_jar IS NOT NULL THEN length(rebuilt_jar) ELSE 0 END,
-                       created_at
+                SELECT
+                    id,
+                    containerfile,
+                    reward,
+                    level,
+                    trusted_containerfile,
+                    trusted_reward,
+                    trusted_level,
+                    method,
+                    CASE WHEN rebuilt_jar IS NOT NULL THEN length(rebuilt_jar) ELSE 0 END,
+                    created_at
                 FROM builds
                 WHERE group_id = %s AND artifact_id = %s AND version = %s
                   AND reward >= %s
@@ -144,26 +152,35 @@ def get_existing_build(
                 (group_id, artifact_id, version, min_reward),
             )
             row = cur.fetchone()
-            if row:
-                use_trusted = bool(row[4] and row[4].strip())
-                return {
-                    "status": "found",
-                    "gav": f"{group_id}:{artifact_id}:{version}",
-                    "build_id": row[0],
-                    "containerfile": row[4] if use_trusted else row[1],
-                    "source": "trusted" if use_trusted else "regular",
-                    "reward": row[5] if use_trusted else row[2],
-                    "level": row[6] if use_trusted else row[3],
-                    "trusted_containerfile": row[4] or "",
-                    "trusted_reward": row[5] or 0.0,
-                    "trusted_level": row[6] or 0,
-                    "method": row[7],
-                    "rebuilt_jar_bytes": row[8],
-                    "created_at": str(row[9]),
-                }
-        return None
+            if not row:
+                return None
+
+            (build_id, containerfile, reward, level,
+             trusted_cf, trusted_reward, trusted_level,
+             method, jar_size, created_at) = row
+
+            use_trusted = bool(trusted_cf and trusted_cf.strip())
+            cf = trusted_cf if use_trusted else containerfile
+            cf_reward = trusted_reward if use_trusted else reward
+            cf_level = trusted_level if use_trusted else level
+
+            return {
+                "status": "found",
+                "gav": f"{group_id}:{artifact_id}:{version}",
+                "group_id": group_id,
+                "artifact_id": artifact_id,
+                "version": version,
+                "build_id": build_id,
+                "source": "trusted" if use_trusted else "regular",
+                "level": cf_level,
+                "reward": cf_reward,
+                "method": method,
+                "rebuilt_jar_bytes": jar_size,
+                "created_at": str(created_at),
+                "containerfile": cf,
+            }
     except Exception as e:
-        logger.debug("Existing build lookup failed: %s", e)
+        logger.debug("Build lookup failed: %s", e)
         return None
     finally:
         conn.close()

@@ -248,8 +248,8 @@ def run_orchestrator(
     # 0a. DB check — skip if a successful build already exists
     if not force:
         try:
-            from buildroot.agent.build_store import get_existing_build
-            existing = get_existing_build(group_id, artifact_id, version)
+            from buildroot.agent.build_store import fetch_build
+            existing = fetch_build(group_id, artifact_id, version, min_reward=0.98)
             if existing:
                 logger.info("DB build exists for %s (reward=%.4f, L%d) — skipping",
                            coordinate, existing["reward"], existing["level"])
