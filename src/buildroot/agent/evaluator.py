@@ -717,7 +717,7 @@ class Evaluator:
                 json_schema=schema,
                 max_turns=1,
                 max_budget_usd=0.05,
-                timeout=60,
+                timeout=120,
                 disallowed_tools=["Bash", "Edit", "Write", "Read"],
             )
 
