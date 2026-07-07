@@ -133,24 +133,25 @@ class Evaluator:
             podman_tmpdir=str(self._isolation.tmpdir) if self._isolation else None,
         )
 
+        cheat_verdict = self.verify_build_legitimacy(containerfile, result.build_log, coordinate)
+        if not cheat_verdict["legitimate"]:
+            result.l4_match = False
+            result.l4_score = 0.0
+            result.anticheat_warning = (
+                f"CHEAT DETECTED ({cheat_verdict['pattern']}): {cheat_verdict['reason']}. "
+                f"STOP CHEATING. You MUST rebuild from source — git clone the repository, "
+                f"compile with mvn/gradle/ant, and produce the JAR from real source code."
+            )
+            logger.warning(
+                "Anti-cheat agent flagged %s as cheat: %s",
+                coordinate, cheat_verdict["reason"],
+            )
+            self._cleanup_image(tag)
+            result.compute_reward()
+            return result
+
         self._l4_match(tag, coordinate, result, jdk_version=jdk_version)
         self._cleanup_image(tag)
-
-        if result.l4_match or result.l4_score >= 0.95:
-            cheat_verdict = self.verify_build_legitimacy(containerfile, result.build_log, coordinate)
-            if not cheat_verdict["legitimate"]:
-                result.l4_match = False
-                result.l4_score = 0.0
-                result.anticheat_warning = (
-                    f"CHEAT DETECTED ({cheat_verdict['pattern']}): {cheat_verdict['reason']}. "
-                    f"STOP CHEATING. You MUST rebuild from source — git clone the repository, "
-                    f"compile with mvn/gradle/ant, and produce the JAR from real source code."
-                )
-                logger.warning(
-                    "Anti-cheat agent flagged %s as cheat: %s",
-                    coordinate, cheat_verdict["reason"],
-                )
-
         result.compute_reward()
         return result
 
