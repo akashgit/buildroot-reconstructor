@@ -10,6 +10,7 @@ from buildroot.cli.commands.migrate_pinned import (
     _add_checksum_verification,
     _extract_maven_version_from_cf,
     _pin_from_line,
+    _query_candidates,
     _replace_apt_maven,
 )
 
@@ -174,3 +175,17 @@ class TestAddChecksumVerification:
         cf = "RUN tar xzf apache-maven-99.99.99-bin.tar.gz"
         new_cf, changed = _add_checksum_verification(cf, registry)
         assert changed is False
+
+
+class TestQueryCandidates:
+    def test_excludes_l4_without_eval_result(self):
+        mock_conn = MagicMock()
+        mock_cursor = MagicMock()
+        mock_cursor.fetchall.return_value = []
+        mock_conn.cursor.return_value.__enter__ = lambda self: mock_cursor
+        mock_conn.cursor.return_value.__exit__ = MagicMock(return_value=False)
+
+        _query_candidates(mock_conn)
+
+        sql = mock_cursor.execute.call_args[0][0]
+        assert "level < 4 OR eval_result IS NOT NULL" in sql

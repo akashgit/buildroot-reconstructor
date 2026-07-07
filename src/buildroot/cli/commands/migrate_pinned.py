@@ -50,6 +50,7 @@ def _query_candidates(conn, limit: int | None = None) -> list[dict]:
                 trusted_containerfile ~* 'apt-get\\s+install.*maven'
                 OR trusted_containerfile !~ '@sha256:'
               )
+              AND (level < 4 OR eval_result IS NOT NULL)
             ORDER BY id
             """
             + (" LIMIT %s" % int(limit) if limit else ""),
