@@ -114,6 +114,61 @@ def init_table() -> bool:
         conn.close()
 
 
+def get_existing_build(
+    group_id: str,
+    artifact_id: str,
+    version: str,
+    min_reward: float = 0.98,
+) -> dict[str, Any] | None:
+    """Check if a successful build already exists for this exact GAV.
+
+    Returns a dict matching the shape of ``buildroot db fetch`` output so callers
+    get consistent data regardless of whether the build was fresh or cached.
+    """
+    conn = _get_connection()
+    if not conn:
+        return None
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT id, containerfile, reward, level,
+                       trusted_containerfile, trusted_reward, trusted_level,
+                       method,
+                       CASE WHEN rebuilt_jar IS NOT NULL THEN length(rebuilt_jar) ELSE 0 END,
+                       created_at
+                FROM builds
+                WHERE group_id = %s AND artifact_id = %s AND version = %s
+                  AND reward >= %s
+                """,
+                (group_id, artifact_id, version, min_reward),
+            )
+            row = cur.fetchone()
+            if row:
+                use_trusted = bool(row[4] and row[4].strip())
+                return {
+                    "status": "found",
+                    "gav": f"{group_id}:{artifact_id}:{version}",
+                    "build_id": row[0],
+                    "containerfile": row[4] if use_trusted else row[1],
+                    "source": "trusted" if use_trusted else "regular",
+                    "reward": row[5] if use_trusted else row[2],
+                    "level": row[6] if use_trusted else row[3],
+                    "trusted_containerfile": row[4] or "",
+                    "trusted_reward": row[5] or 0.0,
+                    "trusted_level": row[6] or 0,
+                    "method": row[7],
+                    "rebuilt_jar_bytes": row[8],
+                    "created_at": str(row[9]),
+                }
+        return None
+    except Exception as e:
+        logger.debug("Existing build lookup failed: %s", e)
+        return None
+    finally:
+        conn.close()
+
+
 def get_sibling_build(
     group_id: str,
     artifact_id: str,
