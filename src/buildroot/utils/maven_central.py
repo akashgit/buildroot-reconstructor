@@ -28,12 +28,6 @@ _MAX_JAR_BYTES = 50 * 1024 * 1024  # 50 MB
 _fallback_enabled = True
 
 
-def enable_google_mirror() -> None:
-    """Enable fallback mirror on 429 rate limits. No-op since Google mirror is now the default."""
-    global _fallback_enabled
-    _fallback_enabled = True
-
-
 def _cache_key(group_id: str, artifact_id: str, version: str) -> str:
     gav = f"{group_id}:{artifact_id}:{version}"
     return hashlib.sha256(gav.encode()).hexdigest()

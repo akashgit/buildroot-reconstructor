@@ -52,7 +52,7 @@ What it does:
 
 Processes GAVs sequentially from its assigned file. For each GAV:
 1. Checks Postgres — skips if already built with reward >= 0.98
-2. Runs `buildroot agent <gav> --enable-google-mirror`
+2. Runs `buildroot agent <gav>`
 3. Retries up to 3 times on failure
 4. Logs progress to `logs/worker-N/progress.csv`
 

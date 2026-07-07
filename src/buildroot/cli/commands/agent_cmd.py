@@ -21,9 +21,8 @@ import click
 @click.option("--max-budget", default=0, type=float, help="Max budget in USD (0 = unlimited)")
 @click.option("--max-turns", default=0, type=int, help="Max agent turns (0 = unlimited)")
 @click.option("-v", "--verbose", is_flag=True, help="Enable debug logging")
-@click.option("--enable-google-mirror", is_flag=True, help="Use Google Cloud Storage as fallback on Maven Central 429 rate limits")
 @click.option("--no-isolate-podman", is_flag=True, default=False, help="Disable podman storage isolation (not recommended for parallel runs)")
-def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, v3_only, interactive, max_budget, max_turns, verbose, enable_google_mirror, no_isolate_podman):
+def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, v3_only, interactive, max_budget, max_turns, verbose, no_isolate_podman):
     """Run agentic reconstruction loop for a Maven COORDINATE.
 
     Default mode uses the v4 orchestrator agent. Use --v3-only for the template pipeline.
@@ -38,10 +37,6 @@ def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, 
         level=logging.DEBUG if verbose else logging.INFO,
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     )
-
-    if enable_google_mirror:
-        from buildroot.utils.maven_central import enable_google_mirror as _enable_mirror
-        _enable_mirror()
 
     if interactive and v3_only:
         raise click.UsageError("--interactive cannot be combined with --v3-only")

@@ -24,13 +24,8 @@ from buildroot.pipeline.orchestrator import BuildrootOrchestrator, parse_gav
     default="podman",
     help="Container runtime for build steps.",
 )
-@click.option("--enable-google-mirror", is_flag=True, help="Use Google Cloud Storage as fallback on Maven Central 429 rate limits")
-def reconstruct(coordinate, repo_url, ci_type, no_cache, skip_deps, output_dir, runtime, enable_google_mirror):
+def reconstruct(coordinate, repo_url, ci_type, no_cache, skip_deps, output_dir, runtime):
     """Reconstruct build environment for a Maven COORDINATE (groupId:artifactId:version)."""
-    if enable_google_mirror:
-        from buildroot.utils.maven_central import enable_google_mirror as _enable_mirror
-        _enable_mirror()
-
     try:
         group_id, artifact_id, version = parse_gav(coordinate)
     except ValueError as e:
