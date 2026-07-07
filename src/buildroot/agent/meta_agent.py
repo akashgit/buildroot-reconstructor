@@ -220,6 +220,7 @@ def run_orchestrator(
     max_agent_turns: int = 0,
     agent_timeout: int = 0,
     isolate_podman: bool = True,
+    force: bool = False,
 ) -> OrchestratorResult:
     """Run the orchestrator: prepass → KB query → spawn Claude Code agent → parse result."""
     start_time = time.time()
@@ -244,7 +245,25 @@ def run_orchestrator(
             result.elapsed_seconds = time.time() - start_time
             return result
 
-    # 0. Sibling check — find a successful build of a different version
+    # 0a. DB check — skip if a successful build already exists
+    if not force:
+        try:
+            from buildroot.agent.build_store import fetch_build
+            existing = fetch_build(group_id, artifact_id, version, min_reward=0.98)
+            if existing:
+                logger.info("DB build exists for %s (reward=%.4f, L%d) — skipping",
+                           coordinate, existing["reward"], existing["level"])
+                result.status = "db_skip"
+                result.best_reward = existing["reward"]
+                result.best_level = existing["level"]
+                result.best_containerfile = existing["containerfile"]
+                result.path = existing.get("method") or "db"
+                result.elapsed_seconds = time.time() - start_time
+                return result
+        except Exception as e:
+            logger.debug("DB check skipped: %s", e)
+
+    # 0b. Sibling check — find a successful build of a different version
     sibling_context = ""
     try:
         from buildroot.agent.build_store import get_sibling_build

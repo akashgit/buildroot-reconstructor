@@ -14,7 +14,7 @@ import click
 @click.option("--host", default=None, help="SSH host for remote builds (default: run locally)")
 @click.option("--max-iterations", default=1, type=int, help="Max inner loop iterations (default: 1)")
 @click.option("--batch", "batch_file", type=click.Path(exists=True), help="File with one coordinate per line for batch processing")
-@click.option("--output", "output_dir", type=click.Path(), help="Output directory for batch results")
+@click.option("--output", "-o", "output_dir", type=click.Path(), help="Output directory for results")
 @click.option("--resume", type=click.Path(exists=True), help="Resume from prior results directory (seeds RecipeStore for warm-start)")
 @click.option("--v3-only", is_flag=True, help="Use v3 template pipeline only (no orchestrator)")
 @click.option("--interactive", is_flag=True, help="Launch interactive Claude session with orchestrator context")
@@ -23,7 +23,8 @@ import click
 @click.option("-v", "--verbose", is_flag=True, help="Enable debug logging")
 @click.option("--enable-google-mirror", is_flag=True, hidden=True, help="Deprecated: Google mirror is now the default.")
 @click.option("--no-isolate-podman", is_flag=True, default=False, help="Disable podman storage isolation (not recommended for parallel runs)")
-def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, v3_only, interactive, max_budget, max_turns, verbose, enable_google_mirror, no_isolate_podman):
+@click.option("--force", is_flag=True, help="Rebuild even if a successful build exists in the DB")
+def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, v3_only, interactive, max_budget, max_turns, verbose, enable_google_mirror, no_isolate_podman, force):
     """Run agentic reconstruction loop for a Maven COORDINATE.
 
     Default mode uses the v4 orchestrator agent. Use --v3-only for the template pipeline.
@@ -97,17 +98,36 @@ def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, 
     if interactive:
         _run_interactive(coordinate, host, isolate_podman)
 
+    # DB check before running the pipeline — single query, no double-fetch
+    if not force:
+        from pathlib import Path
+        from buildroot.agent.build_store import fetch_build
+        from buildroot.pipeline.orchestrator import parse_gav
+        group_id, artifact_id, version = parse_gav(coordinate)
+        db_record = fetch_build(group_id, artifact_id, version, min_reward=0.98)
+        if db_record:
+            if output_dir:
+                out = Path(output_dir)
+                out.mkdir(parents=True, exist_ok=True)
+                (out / "Containerfile").write_text(db_record["containerfile"])
+                meta = {k: val for k, val in db_record.items() if k != "containerfile"}
+                (out / "build-metadata.json").write_text(json.dumps(meta, indent=2))
+                click.echo(f"Saved to {out}/")
+                click.echo(json.dumps(meta, indent=2))
+            else:
+                click.echo(json.dumps(db_record, indent=2))
+            sys.exit(0)
+
     if v3_only:
-        result = _run_v3(coordinate, host, max_iterations, resume, isolate_podman)
-        click.echo(json.dumps(result.to_dict(), indent=2))
-        sys.exit(0 if result.status == "success" else 1)
+        result = _run_v3(coordinate, host, max_iterations, resume, isolate_podman, force)
     else:
-        result = _run_orchestrator(coordinate, host, max_budget, max_turns, isolate_podman)
-        click.echo(json.dumps(result.to_dict(), indent=2))
-        sys.exit(0 if result.status == "success" else 1)
+        result = _run_orchestrator(coordinate, host, max_budget, max_turns, isolate_podman, force)
+
+    click.echo(json.dumps(result.to_dict(), indent=2))
+    sys.exit(0 if result.status == "success" else 1)
 
 
-def _run_v3(coordinate, host, max_iterations, resume, isolate_podman=True):
+def _run_v3(coordinate, host, max_iterations, resume, isolate_podman=True, force=False):
     """Run a single coordinate through the v3 pipeline."""
     from buildroot.agent.pipeline_v3 import run_v3_pipeline
 
@@ -125,6 +145,7 @@ def _run_v3(coordinate, host, max_iterations, resume, isolate_podman=True):
         host=host,
         warm_start_containerfile=warm_cf,
         isolate_podman=isolate_podman,
+        force=force,
     )
 
 
@@ -136,7 +157,7 @@ def _run_interactive(coordinate, host, isolate_podman=True):
     sys.exit(rc)
 
 
-def _run_orchestrator(coordinate, host, max_budget, max_turns, isolate_podman=True):
+def _run_orchestrator(coordinate, host, max_budget, max_turns, isolate_podman=True, force=False):
     """Run a single coordinate through the v4 orchestrator."""
     from buildroot.agent.meta_agent import run_orchestrator
 
@@ -146,4 +167,5 @@ def _run_orchestrator(coordinate, host, max_budget, max_turns, isolate_podman=Tr
         max_budget_usd=max_budget,
         max_agent_turns=max_turns,
         isolate_podman=isolate_podman,
+        force=force,
     )

@@ -396,6 +396,7 @@ def run_v3_pipeline(
     skip_deps: bool = True,
     warm_start_containerfile: str | None = None,
     isolate_podman: bool = True,
+    force: bool = False,
 ) -> PipelineResult:
     """Run the v3 pipeline: pre-pass → analysis agent → build+eval → feedback loop."""
     import tempfile
@@ -424,6 +425,22 @@ def run_v3_pipeline(
             result.best_reward = 1.0
             result.elapsed_seconds = time.time() - start_time
             return result
+
+    # 0. DB check — skip if a successful build already exists
+    if not force:
+        try:
+            from buildroot.agent.build_store import fetch_build
+            existing = fetch_build(group_id, artifact_id, version, min_reward=0.98)
+            if existing:
+                logger.info("DB build exists for %s (reward=%.4f, L%d) — skipping",
+                           coordinate, existing["reward"], existing["level"])
+                result.status = "db_skip"
+                result.best_reward = existing["reward"]
+                result.best_containerfile = existing["containerfile"]
+                result.elapsed_seconds = time.time() - start_time
+                return result
+        except Exception as e:
+            logger.debug("DB check skipped: %s", e)
 
     # 1. Deterministic pre-pass
     logger.info("Running pre-pass for %s", coordinate)

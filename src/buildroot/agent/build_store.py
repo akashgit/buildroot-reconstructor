@@ -114,6 +114,78 @@ def init_table() -> bool:
         conn.close()
 
 
+def fetch_build(
+    group_id: str,
+    artifact_id: str,
+    version: str,
+    min_reward: float = 0.0,
+) -> dict[str, Any] | None:
+    """Fetch a build record for a GAV coordinate.
+
+    Shared implementation behind both ``buildroot db fetch`` and the agent
+    DB-skip check.  Returns the same dict shape everywhere so callers get
+    consistent data.  *min_reward* filters out low-scoring rows (set to
+    0.98 for the agent skip gate, 0.0 for the CLI fetch command).
+    """
+    conn = _get_connection()
+    if not conn:
+        return None
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                """
+                SELECT
+                    id,
+                    containerfile,
+                    reward,
+                    level,
+                    trusted_containerfile,
+                    trusted_reward,
+                    trusted_level,
+                    method,
+                    CASE WHEN rebuilt_jar IS NOT NULL THEN length(rebuilt_jar) ELSE 0 END,
+                    created_at
+                FROM builds
+                WHERE group_id = %s AND artifact_id = %s AND version = %s
+                  AND reward >= %s
+                """,
+                (group_id, artifact_id, version, min_reward),
+            )
+            row = cur.fetchone()
+            if not row:
+                return None
+
+            (build_id, containerfile, reward, level,
+             trusted_cf, trusted_reward, trusted_level,
+             method, jar_size, created_at) = row
+
+            use_trusted = bool(trusted_cf and trusted_cf.strip())
+            cf = trusted_cf if use_trusted else containerfile
+            cf_reward = trusted_reward if use_trusted else reward
+            cf_level = trusted_level if use_trusted else level
+
+            return {
+                "status": "found",
+                "gav": f"{group_id}:{artifact_id}:{version}",
+                "group_id": group_id,
+                "artifact_id": artifact_id,
+                "version": version,
+                "build_id": build_id,
+                "source": "trusted" if use_trusted else "regular",
+                "level": cf_level,
+                "reward": cf_reward,
+                "method": method,
+                "rebuilt_jar_bytes": jar_size,
+                "created_at": str(created_at),
+                "containerfile": cf,
+            }
+    except Exception as e:
+        logger.debug("Build lookup failed: %s", e)
+        return None
+    finally:
+        conn.close()
+
+
 def get_sibling_build(
     group_id: str,
     artifact_id: str,
