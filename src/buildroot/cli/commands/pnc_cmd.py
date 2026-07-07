@@ -1,9 +1,10 @@
-"""CLI command for standalone PNC build environment lookups."""
+"""CLI commands for PNC build environment lookups and submissions."""
 
 from __future__ import annotations
 
 import json
 import logging
+import os
 import sys
 
 import click
@@ -88,3 +89,102 @@ def pnc_lookup_cmd(coordinate: str, output_path: str | None, json_output: bool, 
         click.echo(f"  Downstream SCM:  {info.scm_url or 'N/A'}")
         click.echo(f"  Downstream Tag:  {info.scm_tag or 'N/A'}")
         click.echo(f"  Environment ID:  {info.environment_id or 'N/A'}")
+
+
+@click.command("pnc-submit")
+@click.argument("coordinate")
+@click.option("--profile", default="stage", help="PNC profile (stage or prod)")
+@click.option("--project-id", default="4249", help="PNC project ID")
+@click.option("--timeout", default=20, type=int, help="Build timeout in minutes")
+@click.option(
+    "--containerfile",
+    type=click.Path(exists=True),
+    help="Path to Containerfile (overrides DB lookup)",
+)
+@click.option("-v", "--verbose", is_flag=True, help="Enable debug logging")
+def pnc_submit(
+    coordinate: str,
+    profile: str,
+    project_id: str,
+    timeout: int,
+    containerfile: str | None,
+    verbose: bool,
+) -> None:
+    """Submit a PNC build for a Maven COORDINATE (group:artifact:version).
+
+    Parses the Containerfile (from --containerfile or the builds DB) to extract
+    build parameters, then submits to PNC staging via bacon.
+    """
+    logging.basicConfig(
+        level=logging.DEBUG if verbose else logging.INFO,
+        format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+    )
+
+    from buildroot.utils.pnc_submit import parse_containerfile_for_pnc, submit_pnc_build
+
+    if containerfile:
+        with open(containerfile) as f:
+            containerfile_text = f.read()
+    else:
+        containerfile_text = _fetch_containerfile_from_db(coordinate)
+
+    params = parse_containerfile_for_pnc(containerfile_text)
+    click.echo(f"Parsed build params for {coordinate}:")
+    click.echo(f"  Git URL:       {params.git_url}")
+    click.echo(f"  Git Tag:       {params.git_tag}")
+    click.echo(f"  Build Command: {params.build_command}")
+    click.echo(f"  Build Type:    {params.build_type}")
+    click.echo(f"  JDK Version:   {params.jdk_version}")
+
+    click.echo(f"\nSubmitting to PNC ({profile})...")
+    result = submit_pnc_build(
+        params, profile=profile, project_id=project_id, timeout=timeout
+    )
+
+    click.echo(f"\nBuild Result:")
+    click.echo(f"  Build ID: {result.build_id}")
+    click.echo(f"  Status:   {result.status}")
+    if result.artifacts:
+        click.echo(f"  Artifacts ({len(result.artifacts)}):")
+        for art in result.artifacts:
+            click.echo(f"    - {art.get('identifier', 'unknown')}")
+
+
+def _fetch_containerfile_from_db(coordinate: str) -> str:
+    parts = coordinate.split(":")
+    if len(parts) < 3:
+        raise click.ClickException(
+            f"Invalid coordinate format: {coordinate} (expected group:artifact:version)"
+        )
+    group_id, artifact_id, version = parts[0], parts[1], parts[2]
+
+    try:
+        import psycopg2
+
+        url = os.environ.get("DATABASE_URL", "postgresql:///postgres")
+        conn = psycopg2.connect(url)
+        try:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "SELECT containerfile FROM builds "
+                    "WHERE group_id = %s AND artifact_id = %s AND version = %s",
+                    (group_id, artifact_id, version),
+                )
+                row = cur.fetchone()
+                if not row or not row[0]:
+                    raise click.ClickException(
+                        f"No Containerfile found in DB for {coordinate}. "
+                        "Use --containerfile to provide one directly."
+                    )
+                return row[0]
+        finally:
+            conn.close()
+    except ImportError:
+        raise click.ClickException(
+            "psycopg2 not installed — cannot query builds DB. "
+            "Use --containerfile to provide a Containerfile directly."
+        )
+    except click.ClickException:
+        raise
+    except Exception as e:
+        raise click.ClickException(f"DB lookup failed: {e}")
