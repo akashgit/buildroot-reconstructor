@@ -233,18 +233,6 @@ def run_orchestrator(
     group_id, artifact_id, version = parse_gav(coordinate)
     recipe_store = RecipeStore()
 
-    existing_level = recipe_store.best_level(coordinate)
-    if existing_level >= 4:
-        existing_cf = recipe_store.get_containerfile(coordinate, 4)
-        if existing_cf:
-            logger.info("Recipe already exists at L4 for %s — skipping", coordinate)
-            result.status = "recipe_skip"
-            result.best_reward = 1.0
-            result.best_level = 4
-            result.best_containerfile = existing_cf
-            result.elapsed_seconds = time.time() - start_time
-            return result
-
     # 0a. DB check — skip if a successful build already exists
     if not force:
         try:
