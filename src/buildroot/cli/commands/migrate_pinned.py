@@ -97,8 +97,42 @@ def _pin_from_line(line: str, registry) -> tuple[str, bool]:
     return f"{prefix}{pinned}{suffix}", True
 
 
+def _remove_maven_ensure_wget(line: str) -> str:
+    """Remove 'maven' from an apt-get install line and ensure 'wget' is present."""
+    m = re.search(r"apt-get\s+install\s+", line, re.IGNORECASE)
+    if not m:
+        return line
+
+    prefix = line[: m.end()]
+    rest = line[m.end() :]
+
+    token_re = re.compile(r"[-\w][-\w.]*")
+    tokens = []
+    last_end = 0
+    for tok_match in token_re.finditer(rest):
+        between = rest[last_end : tok_match.start()]
+        if between.strip():
+            break
+        tokens.append(tok_match.group())
+        last_end = tok_match.end()
+
+    suffix = rest[last_end:]
+
+    flags = [t for t in tokens if t.startswith("-")]
+    packages = [t for t in tokens if not t.startswith("-")]
+    packages = [p for p in packages if p.lower() != "maven"]
+    if "wget" not in packages:
+        packages.append("wget")
+
+    new_args = " ".join(flags + packages)
+    return prefix + new_args + suffix
+
+
 def _replace_apt_maven(containerfile: str, registry) -> tuple[str, bool, str | None]:
     """Replace apt-get install maven with pinned tarball block.
+
+    Keeps the apt-get line with remaining packages (removing only maven,
+    ensuring wget is present) and appends the pinned Maven tarball block.
 
     Returns (new_containerfile, changed, reason_if_skipped).
     """
@@ -129,6 +163,11 @@ def _replace_apt_maven(containerfile: str, registry) -> tuple[str, bool, str | N
             re.search(r"apt-get\s+install.*maven", lines[j], re.IGNORECASE)
             for j in range(start, end + 1)
         ):
+            for j in range(start, end + 1):
+                if re.search(r"apt-get\s+install", lines[j], re.IGNORECASE):
+                    result_lines.append(_remove_maven_ensure_wget(lines[j]))
+                else:
+                    result_lines.append(lines[j])
             result_lines.append(replacement)
             changed = True
         else:
