@@ -27,7 +27,7 @@ RUN microdnf install -y maven && \
 {% if maven_checksum %}
 RUN apt-get update && \
     apt-get install -y --no-install-recommends wget tar && \
-    wget -q https://archive.apache.org/dist/maven/maven-3/{{ maven_version }}/binaries/apache-maven-{{ maven_version }}-bin.tar.gz -O /tmp/maven.tar.gz && \
+    wget -q https://maven-central.storage.googleapis.com/maven2/org/apache/maven/apache-maven/{{ maven_version }}/apache-maven-{{ maven_version }}-bin.tar.gz -O /tmp/maven.tar.gz && \
     echo "{{ maven_checksum }}  /tmp/maven.tar.gz" | sha256sum -c - && \
     tar xzf /tmp/maven.tar.gz -C /opt && \
     ln -s /opt/apache-maven-{{ maven_version }}/bin/mvn /usr/local/bin/mvn && \
@@ -38,7 +38,7 @@ RUN apt-get update && \
 {% else %}
 RUN apt-get update && \
     apt-get install -y --no-install-recommends wget tar && \
-    wget -q https://archive.apache.org/dist/maven/maven-3/{{ maven_version }}/binaries/apache-maven-{{ maven_version }}-bin.tar.gz -O /tmp/maven.tar.gz && \
+    wget -q https://maven-central.storage.googleapis.com/maven2/org/apache/maven/apache-maven/{{ maven_version }}/apache-maven-{{ maven_version }}-bin.tar.gz -O /tmp/maven.tar.gz && \
     tar xzf /tmp/maven.tar.gz -C /opt && \
     ln -s /opt/apache-maven-{{ maven_version }}/bin/mvn /usr/local/bin/mvn && \
     rm /tmp/maven.tar.gz && \

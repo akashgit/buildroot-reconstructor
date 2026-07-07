@@ -14,7 +14,7 @@ DEFAULT_MAVEN_VERSION = "3.9.6"
 PINNED_MAVEN_TEMPLATE = """\
 ENV MAVEN_VERSION={version}
 RUN cd /tmp && \\
-    wget -q https://archive.apache.org/dist/maven/maven-3/${{MAVEN_VERSION}}/binaries/apache-maven-${{MAVEN_VERSION}}-bin.tar.gz && \\
+    wget -q https://maven-central.storage.googleapis.com/maven2/org/apache/maven/apache-maven/${{MAVEN_VERSION}}/apache-maven-${{MAVEN_VERSION}}-bin.tar.gz && \\
     echo "{checksum}  apache-maven-${{MAVEN_VERSION}}-bin.tar.gz" | sha256sum -c - && \\
     tar xzf apache-maven-${{MAVEN_VERSION}}-bin.tar.gz -C /opt && \\
     ln -s /opt/apache-maven-${{MAVEN_VERSION}}/bin/mvn /usr/local/bin/mvn && \\

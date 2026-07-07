@@ -126,9 +126,9 @@ class TestReplaceAptMaven:
         assert changed is True
         assert skip is None
         assert "apt-get install -y wget" in new_cf
-        assert "maven" not in new_cf.split("archive.apache.org")[0]
+        assert "maven" not in new_cf.split("maven-central.storage.googleapis.com")[0]
         assert "sha256sum -c" in new_cf
-        assert "archive.apache.org" in new_cf
+        assert "maven-central.storage.googleapis.com" in new_cf
         assert "FROM eclipse-temurin:17-jdk" in new_cf
         assert "RUN mvn clean install" in new_cf
         registry.get_maven_checksum.assert_called()
@@ -222,7 +222,7 @@ class TestReplaceAptMaven:
         assert "rm -rf /var/lib/apt/lists/*" in new_cf
         assert "wget" in new_cf
         assert "sha256sum -c" in new_cf
-        assert "archive.apache.org" in new_cf
+        assert "maven-central.storage.googleapis.com" in new_cf
         assert "FROM eclipse-temurin:17-jdk" in new_cf
         assert "RUN mvn clean install" in new_cf
         install_line = [l for l in new_cf.split("\n") if "apt-get install" in l][0]
