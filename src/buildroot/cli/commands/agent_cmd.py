@@ -104,12 +104,22 @@ def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, 
         result = _run_orchestrator(coordinate, host, max_budget, max_turns, isolate_podman, force)
 
     if result.status == "db_skip":
+        from pathlib import Path
         from buildroot.agent.build_store import fetch_build
         from buildroot.pipeline.orchestrator import parse_gav
         g, a, v = parse_gav(coordinate)
         db_record = fetch_build(g, a, v)
         if db_record:
-            click.echo(json.dumps(db_record, indent=2))
+            if output_dir:
+                out = Path(output_dir)
+                out.mkdir(parents=True, exist_ok=True)
+                (out / "Containerfile").write_text(db_record["containerfile"])
+                meta = {k: v for k, v in db_record.items() if k != "containerfile"}
+                (out / "build-metadata.json").write_text(json.dumps(meta, indent=2))
+                click.echo(f"Saved to {out}/")
+                click.echo(json.dumps(meta, indent=2))
+            else:
+                click.echo(json.dumps(db_record, indent=2))
             sys.exit(0)
 
     click.echo(json.dumps(result.to_dict(), indent=2))
