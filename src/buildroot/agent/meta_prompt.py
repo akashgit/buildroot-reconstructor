@@ -383,7 +383,15 @@ def _trusted_sources_section() -> str:
 ## Package Manager Differences
 - Temurin (Ubuntu): `apt-get update && apt-get install -y <package>`
 - UBI (Red Hat): `microdnf install -y <package> && microdnf clean all`
-- If the Phase 2 recipe uses apt-get and you switch to UBI, update the package manager commands."""
+- If the Phase 2 recipe uses apt-get and you switch to UBI, update the package manager commands.
+
+## Mandatory Pinning Rules
+1. **Base image digest**: The FROM line MUST use `@sha256:` digest format. Floating tags are forbidden. \
+Example: `FROM eclipse-temurin:17-jdk@sha256:abc123...` not `FROM eclipse-temurin:17-jdk`.
+2. **Maven installation**: MUST use pinned tarball from `archive.apache.org` with `sha256sum -c` verification. \
+NEVER use `apt-get install maven`. Download the exact version tarball, verify its SHA-256 checksum, then extract.
+3. **Download verification**: ALL `curl`/`wget` downloads MUST include checksum verification \
+(`sha256sum -c` or `sha512sum -c`). No unverified downloads allowed."""
 
 
 def _phase2_findings_section(phase2_findings: dict) -> str:
@@ -448,6 +456,13 @@ try a different tag variant or adjust compiler flags
 ## Freedom to Explore
 If the Phase 2 recipe doesn't translate cleanly to trusted sources, you are free to \
 try your own approach. The warm start gives you a head start, not a straitjacket.
+
+## Pinning Verification Checklist
+Before submitting your Containerfile, verify ALL of the following:
+- [ ] FROM uses `@sha256:` digest (no floating tags)
+- [ ] Maven installed via checksummed tarball (not `apt-get install maven`)
+- [ ] All downloads have checksum verification (`sha256sum -c` or `sha512sum -c`)
+- [ ] Maven version matches reference JAR `Created-By` header (if available)
 
 ## Evaluation
 Use `buildroot eval --trusted` for ALL evaluations. This enforces the trust gate at L1.5.

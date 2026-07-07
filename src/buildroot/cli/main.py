@@ -14,6 +14,7 @@ from buildroot.cli.commands.inspect_cmd import inspect_cmd
 from buildroot.cli.commands.kb_cmd import kb_cmd
 from buildroot.cli.commands.reconstruct import reconstruct
 from buildroot.cli.commands.regression_cmd import regression_cmd
+from buildroot.cli.commands.migrate_pinned import migrate_pinned_cmd
 from buildroot.cli.commands.validate import validate
 from buildroot.cli.commands.verify import verify
 
@@ -32,5 +33,6 @@ cli.add_command(inspect_cmd, name="inspect")
 cli.add_command(kb_cmd, name="kb")
 cli.add_command(reconstruct)
 cli.add_command(regression_cmd, name="regression")
+cli.add_command(migrate_pinned_cmd)
 cli.add_command(validate)
 cli.add_command(verify)

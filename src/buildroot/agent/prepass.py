@@ -282,6 +282,14 @@ def run_prepass(coordinate: str, workspace: Path) -> PrePassFindings:
                             confidence="medium",
                             evidence=f"MANIFEST.MF Created-By: {created_by}",
                         )
+                    mvn_ver = _extract_maven_version(created_by)
+                    if mvn_ver and findings.maven_version is None:
+                        findings.maven_version = PrePassFinding(
+                            value=mvn_ver,
+                            source="manifest",
+                            confidence="medium",
+                            evidence=f"MANIFEST.MF Created-By: {created_by}",
+                        )
 
             # Extract bytecode major version from first .class file
             class_files = [n for n in zf.namelist() if n.endswith(".class") and not n.startswith("META-INF/")]
@@ -482,6 +490,15 @@ def _extract_jdk_major(build_jdk: str) -> str:
     if parts[0] == "1" and len(parts) >= 2:
         return parts[1]
     return parts[0]
+
+
+def _extract_maven_version(created_by: str) -> str | None:
+    """Extract Maven version from Created-By header (e.g. 'Apache Maven 3.6.3')."""
+    import re
+    m = re.search(r"Maven\s+(\d+\.\d+\.\d+)", created_by)
+    if m:
+        return m.group(1)
+    return None
 
 
 def _extract_minor_version(created_by: str) -> str | None:
