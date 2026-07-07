@@ -137,7 +137,7 @@ class Evaluator:
         self._cleanup_image(tag)
 
         if result.l4_match or result.l4_score >= 0.95:
-            cheat_verdict = self._l4_anticheat_verify(containerfile, result.build_log, coordinate)
+            cheat_verdict = self.verify_build_legitimacy(containerfile, result.build_log, coordinate)
             if not cheat_verdict["legitimate"]:
                 result.l4_match = False
                 result.l4_score = 0.0
@@ -661,7 +661,7 @@ class Evaluator:
         except Exception:
             pass
 
-    def _l4_anticheat_verify(
+    def verify_build_legitimacy(
         self, containerfile: str, build_log: str, coordinate: str,
     ) -> dict:
         """Spawn a Claude agent to verify the build is legitimate, not a cheat.
