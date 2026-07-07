@@ -100,12 +100,20 @@ def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, 
 
     if v3_only:
         result = _run_v3(coordinate, host, max_iterations, resume, isolate_podman, force)
-        click.echo(json.dumps(result.to_dict(), indent=2))
-        sys.exit(0 if result.status in ("success", "db_skip") else 1)
     else:
         result = _run_orchestrator(coordinate, host, max_budget, max_turns, isolate_podman, force)
-        click.echo(json.dumps(result.to_dict(), indent=2))
-        sys.exit(0 if result.status in ("success", "db_skip") else 1)
+
+    if result.status == "db_skip":
+        from buildroot.agent.build_store import get_existing_build
+        from buildroot.pipeline.orchestrator import parse_gav
+        g, a, v = parse_gav(coordinate)
+        db_record = get_existing_build(g, a, v)
+        if db_record:
+            click.echo(json.dumps(db_record, indent=2))
+            sys.exit(0)
+
+    click.echo(json.dumps(result.to_dict(), indent=2))
+    sys.exit(0 if result.status in ("success", "db_skip") else 1)
 
 
 def _run_v3(coordinate, host, max_iterations, resume, isolate_podman=True, force=False):
