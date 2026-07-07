@@ -75,7 +75,7 @@ while IFS= read -r gav; do
         start_ts=$(date +%s)
 
         set +e
-        ${BUILDROOT} agent "${gav}" --enable-google-mirror > "${log_file}" 2>&1
+        ${BUILDROOT} agent "${gav}" > "${log_file}" 2>&1
         exit_code=$?
         set -e
 

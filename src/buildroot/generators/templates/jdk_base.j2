@@ -36,6 +36,7 @@ RUN apt-get update && \
     apt-get install -y --no-install-recommends maven && \
     rm -rf /var/lib/apt/lists/*
 {% endif %}
+RUN mkdir -p /root/.m2 && printf '<settings>\n  <mirrors>\n    <mirror>\n      <id>google-maven-central</id>\n      <mirrorOf>central</mirrorOf>\n      <url>https://maven-central.storage-download.googleapis.com/maven2</url>\n    </mirror>\n  </mirrors>\n</settings>\n' > /root/.m2/settings.xml
 {% endif %}
 
 {% if env_vars %}
