@@ -30,8 +30,20 @@ PROPERTIES_TIMESTAMP_RE = re.compile(r"^#.*\b\w{3}\s+\w{3}\s+\d{1,2}.*$", re.MUL
 class Verdict:
     IDENTICAL = "IDENTICAL"
     EQUIVALENT = "EQUIVALENT"
+    TRUSTED_EQUIVALENT = "TRUSTED_EQUIVALENT"
     DIVERGENT = "DIVERGENT"
     FAILED = "FAILED"
+
+
+TRUSTED_ALLOWED_DIVERGENT_KEYS = frozenset({
+    "Build-Jdk",
+    "Build-Jdk-Spec",
+    "Created-By",
+    "Built-By",
+    "Bnd-LastModified",
+    "Tool",
+    "Build-Timestamp",
+})
 
 
 @dataclass
@@ -79,10 +91,11 @@ class ComparisonReport:
     bytecode: BytecodeResult = field(default_factory=BytecodeResult)
     error: str | None = None
 
-    def equivalence_score(self) -> float:
+    def equivalence_score(self, *, trusted: bool = False) -> float:
         """Continuous 0.0-1.0 equivalence score.
 
-        Weights: 70% bytecode, 15% metadata, 15% structural.
+        Default weights: 70% bytecode, 15% metadata, 15% structural.
+        Trusted weights: 85% bytecode, 10% structural, 5% metadata.
         """
         if self.verdict == Verdict.IDENTICAL:
             return 1.0
@@ -107,6 +120,8 @@ class ComparisonReport:
         byte_fidelity = max(0.0, 1.0 - (crc_size_issues / total_entries))
         structural_score = 0.70 * completeness + 0.30 * byte_fidelity
 
+        if trusted:
+            return 0.85 * bytecode_ratio + 0.10 * structural_score + 0.05 * metadata_score
         return 0.70 * bytecode_ratio + 0.15 * metadata_score + 0.15 * structural_score
 
     def to_dict(self) -> dict:
@@ -150,10 +165,20 @@ def _sha256(path: Path) -> str:
     return h.hexdigest()
 
 
+def _is_trusted_metadata_divergence(metadata: MetadataResult) -> bool:
+    """Check if all divergent manifest keys are in the trusted-allowed set."""
+    return all(
+        key in TRUSTED_ALLOWED_DIVERGENT_KEYS
+        for key in metadata.manifest_diff_keys
+    )
+
+
 def compare_jars(
     original_jar: Path,
     rebuilt_jar: Path,
     coordinate: str = "",
+    *,
+    trusted: bool = False,
 ) -> ComparisonReport:
     report = ComparisonReport(coordinate=coordinate)
 
@@ -192,7 +217,28 @@ def compare_jars(
     elif not report.bytecode.match:
         report.verdict = Verdict.DIVERGENT
     elif not report.metadata.match:
-        report.verdict = Verdict.DIVERGENT
+        if trusted:
+            if report.bytecode.classes_compared > 0:
+                bytecode_ratio = report.bytecode.classes_identical / report.bytecode.classes_compared
+            else:
+                bytecode_ratio = 0.0
+            total_entries = max(report.structural.original_count, report.structural.rebuilt_count, 1)
+            missing_extra = len(report.structural.diff.missing) + len(report.structural.diff.extra)
+            completeness = max(0.0, 1.0 - (missing_extra / total_entries))
+            crc_size_issues = len(report.structural.diff.crc_mismatches) + len(report.structural.diff.size_mismatches)
+            byte_fidelity = max(0.0, 1.0 - (crc_size_issues / total_entries))
+            structural_score = 0.70 * completeness + 0.30 * byte_fidelity
+
+            if (
+                bytecode_ratio >= 0.98
+                and structural_score >= 0.90
+                and _is_trusted_metadata_divergence(report.metadata)
+            ):
+                report.verdict = Verdict.TRUSTED_EQUIVALENT
+            else:
+                report.verdict = Verdict.DIVERGENT
+        else:
+            report.verdict = Verdict.DIVERGENT
     else:
         report.verdict = Verdict.EQUIVALENT
 
@@ -438,11 +484,11 @@ def _layer3_bytecode(original: Path, rebuilt: Path) -> BytecodeResult:
 
 def generate_summary(reports: list[ComparisonReport]) -> dict:
     total = len(reports)
-    verdicts = {v: 0 for v in [Verdict.IDENTICAL, Verdict.EQUIVALENT, Verdict.DIVERGENT, Verdict.FAILED]}
+    verdicts = {v: 0 for v in [Verdict.IDENTICAL, Verdict.EQUIVALENT, Verdict.TRUSTED_EQUIVALENT, Verdict.DIVERGENT, Verdict.FAILED]}
     for r in reports:
         verdicts[r.verdict] = verdicts.get(r.verdict, 0) + 1
 
-    reproducible = verdicts[Verdict.IDENTICAL] + verdicts[Verdict.EQUIVALENT]
+    reproducible = verdicts[Verdict.IDENTICAL] + verdicts[Verdict.EQUIVALENT] + verdicts[Verdict.TRUSTED_EQUIVALENT]
     score = reproducible / total if total > 0 else 0.0
 
     return {

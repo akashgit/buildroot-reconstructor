@@ -10,6 +10,7 @@ from pathlib import Path
 from jinja2 import Environment, FileSystemLoader
 
 from buildroot.pipeline.models import BuildrootSpec, Source
+from buildroot.trust.registry import TrustedSourceRegistry
 
 logger = logging.getLogger(__name__)
 
@@ -39,6 +40,7 @@ class ContainerfileGenerator:
             trim_blocks=True,
             lstrip_blocks=True,
         )
+        self._trust_registry = TrustedSourceRegistry()
 
     def generate(
         self, spec: BuildrootSpec, output_dir: Path
@@ -187,7 +189,7 @@ class ContainerfileGenerator:
 
         build_tool = self._detect_build_tool(build_command)
 
-        return {
+        context = {
             "source_repo": spec.source_repo,
             "git_tag": spec.git_tag,
             "timestamp": timestamp,
@@ -224,7 +226,20 @@ class ContainerfileGenerator:
             "provenance_verification": spec.provenance_verification or [],
             "jdk_resolution_type": spec.jdk_resolution_type or "",
             "jdk_requested": spec.jdk_requested_version or "",
+            "base_image_digest": "",
+            "maven_checksum": "",
         }
+
+        if spec.provenance_provider:
+            digest = self._trust_registry.resolve_image_digest(jdk.base_image)
+            if digest:
+                context["base_image_digest"] = digest
+            if spec.maven_version:
+                checksum = self._trust_registry.get_maven_checksum(spec.maven_version)
+                if checksum:
+                    context["maven_checksum"] = checksum
+
+        return context
 
     def _resolve_build_command(self, spec: BuildrootSpec) -> str:
         cmd = spec.build_commands[0] if spec.build_commands else DEFAULT_BUILD_COMMAND
