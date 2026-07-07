@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-import json
+import hashlib
 import logging
 import re
 import shutil
@@ -276,7 +276,6 @@ class TrustedSourceRegistry:
                 logger.debug("skopeo inspect failed for %s: %s", image_ref, proc.stderr)
                 return None
 
-            import hashlib
             raw_bytes = proc.stdout.encode("utf-8")
             digest = f"sha256:{hashlib.sha256(raw_bytes).hexdigest()}"
 
