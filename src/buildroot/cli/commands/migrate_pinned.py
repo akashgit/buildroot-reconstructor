@@ -14,7 +14,7 @@ DEFAULT_MAVEN_VERSION = "3.9.6"
 PINNED_MAVEN_TEMPLATE = """\
 ENV MAVEN_VERSION={version}
 RUN cd /tmp && \\
-    wget -q https://maven-central.storage.googleapis.com/maven2/org/apache/maven/apache-maven/${{MAVEN_VERSION}}/apache-maven-${{MAVEN_VERSION}}-bin.tar.gz && \\
+    curl -fsSL --retry 3 https://maven-central.storage.googleapis.com/maven2/org/apache/maven/apache-maven/${{MAVEN_VERSION}}/apache-maven-${{MAVEN_VERSION}}-bin.tar.gz -o apache-maven-${{MAVEN_VERSION}}-bin.tar.gz && \\
     echo "{checksum}  apache-maven-${{MAVEN_VERSION}}-bin.tar.gz" | sha256sum -c - && \\
     tar xzf apache-maven-${{MAVEN_VERSION}}-bin.tar.gz -C /opt && \\
     ln -s /opt/apache-maven-${{MAVEN_VERSION}}/bin/mvn /usr/local/bin/mvn && \\
@@ -97,8 +97,8 @@ def _pin_from_line(line: str, registry) -> tuple[str, bool]:
     return f"{prefix}{pinned}{suffix}", True
 
 
-def _remove_maven_ensure_wget(line: str) -> str:
-    """Remove 'maven' from an apt-get install line and ensure 'wget' is present."""
+def _remove_maven(line: str) -> str:
+    """Remove 'maven' from an apt-get install line."""
     m = re.search(r"apt-get\s+install\s+", line, re.IGNORECASE)
     if not m:
         return line
@@ -121,8 +121,6 @@ def _remove_maven_ensure_wget(line: str) -> str:
     flags = [t for t in tokens if t.startswith("-")]
     packages = [t for t in tokens if not t.startswith("-")]
     packages = [p for p in packages if p.lower() != "maven"]
-    if "wget" not in packages:
-        packages.append("wget")
 
     new_args = " ".join(flags + packages)
     return prefix + new_args + suffix
@@ -131,8 +129,9 @@ def _remove_maven_ensure_wget(line: str) -> str:
 def _replace_apt_maven(containerfile: str, registry) -> tuple[str, bool, str | None]:
     """Replace apt-get install maven with pinned tarball block.
 
-    Keeps the apt-get line with remaining packages (removing only maven,
-    ensuring wget is present) and appends the pinned Maven tarball block.
+    Keeps the apt-get line with remaining packages (removing only maven)
+    and appends the pinned Maven tarball block. curl is pre-installed on
+    both UBI and Debian-based images, so no download tool needs to be added.
 
     Returns (new_containerfile, changed, reason_if_skipped).
     """
@@ -165,7 +164,7 @@ def _replace_apt_maven(containerfile: str, registry) -> tuple[str, bool, str | N
         ):
             for j in range(start, end + 1):
                 if re.search(r"apt-get\s+install", lines[j], re.IGNORECASE):
-                    result_lines.append(_remove_maven_ensure_wget(lines[j]))
+                    result_lines.append(_remove_maven(lines[j]))
                 else:
                     result_lines.append(lines[j])
             result_lines.append(replacement)
