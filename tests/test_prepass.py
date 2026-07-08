@@ -11,6 +11,7 @@ from buildroot.agent.prepass import (
     PrePassFindings,
     _detect_build_system_from_findings,
     _extract_jdk_major,
+    _extract_maven_version,
     _extract_minor_version,
     _parse_manifest,
     _pom_data_to_dict,
@@ -147,6 +148,14 @@ class TestHelpers:
         assert _extract_minor_version("17.0.9 (Eclipse Adoptium)") == "17.0.9"
         assert _extract_minor_version("11.0.20+8") == "11.0.20"
         assert _extract_minor_version("Apache Maven") is None
+
+    def test_extract_maven_version(self):
+        assert _extract_maven_version("Apache Maven 3.6.3") == "3.6.3"
+        assert _extract_maven_version("Apache Maven 3.9.6") == "3.9.6"
+        assert _extract_maven_version("Maven 3.8.1 (build)") == "3.8.1"
+        assert _extract_maven_version("17.0.9 (Eclipse Adoptium)") is None
+        assert _extract_maven_version("") is None
+        assert _extract_maven_version("Gradle 7.6.1") is None
 
     def test_jdk_bytecode_major_map(self):
         assert JDK_BYTECODE_MAJOR[52] == "8"
