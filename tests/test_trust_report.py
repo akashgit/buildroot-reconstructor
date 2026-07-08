@@ -2,6 +2,7 @@
 
 import pytest
 
+from buildroot.agent.models import AdvisoryFinding, EvalResult
 from buildroot.pipeline.models import (
     BuildrootSpec,
     GapEntry,
@@ -11,7 +12,7 @@ from buildroot.pipeline.models import (
     Source,
 )
 from buildroot.trust.delta import DeltaReport, VariantResult
-from buildroot.trust.report import generate_trust_report
+from buildroot.trust.report import _pinning_findings_section, generate_trust_report
 
 
 def _make_spec(**overrides) -> BuildrootSpec:
@@ -317,3 +318,63 @@ class TestJdkSubstitution:
         assert "JDK Substitution Risks" in text
         assert "API compatibility risk" in text
         assert "substituted" in text
+
+
+class TestPinningFindingsSection:
+    def test_trust_report_includes_pinning_section(self):
+        er = EvalResult()
+        er.advisory_findings = [
+            AdvisoryFinding(
+                category="checksum_verification",
+                severity="error",
+                message="sha256 mismatch",
+                location="build.log:42",
+                evidence={"raw_line": "sha256sum: FAILED"},
+            ),
+            AdvisoryFinding(
+                category="digest_pinning",
+                severity="info",
+                message="Unpinned base image: maven:3.9",
+                location="Containerfile:1",
+                evidence={"image": "maven:3.9", "has_digest": False},
+            ),
+        ]
+        section = _pinning_findings_section(er)
+        assert "## Advisory Findings" in section
+        assert "| Category | Severity | Location | Message |" in section
+        assert "checksum_verification" in section
+        assert "digest_pinning" in section
+        assert "Finding Details" in section
+
+    def test_no_findings_returns_empty(self):
+        er = EvalResult()
+        section = _pinning_findings_section(er)
+        assert section == ""
+
+    def test_none_eval_result_returns_empty(self):
+        section = _pinning_findings_section(None)
+        assert section == ""
+
+    def test_report_with_findings_has_section(self, tmp_path):
+        spec = _make_spec()
+        delta = _make_delta()
+        er = EvalResult()
+        er.advisory_findings = [
+            AdvisoryFinding(
+                category="download_verification",
+                severity="warning",
+                message="Unverified download",
+                location="Containerfile:5",
+            ),
+        ]
+        generate_trust_report(spec, delta, tmp_path, eval_result=er)
+        text = (tmp_path / "trust_report.md").read_text()
+        assert "## Advisory Findings" in text
+        assert "download_verification" in text
+
+    def test_report_without_findings_omits_section(self, tmp_path):
+        spec = _make_spec()
+        delta = _make_delta()
+        generate_trust_report(spec, delta, tmp_path)
+        text = (tmp_path / "trust_report.md").read_text()
+        assert "## Advisory Findings" not in text

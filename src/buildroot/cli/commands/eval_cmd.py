@@ -106,6 +106,10 @@ def eval_cmd(containerfile, coordinate, host, timeout, pretty, report, no_cache,
         output["trust_check"] = result.trust_check
         output["trust_violations"] = result.trust_violations
 
+    if result.advisory_findings:
+        output["advisory_findings"] = [f.to_dict() for f in result.advisory_findings]
+        output["pinning_status"] = result.pinning_status
+
     if hasattr(result, "comparison_report") and result.comparison_report:
         cr = result.comparison_report
         output["comparison_report"] = {
@@ -121,4 +125,12 @@ def eval_cmd(containerfile, coordinate, host, timeout, pretty, report, no_cache,
 
     indent = 2 if pretty else None
     click.echo(json.dumps(output, indent=indent))
+    if pretty and result.advisory_findings:
+        status = result.pinning_status
+        counts = status["counts"]
+        parts = []
+        for sev in ("error", "warning", "info"):
+            if counts[sev]:
+                parts.append(f"{counts[sev]} {sev}{'s' if counts[sev] > 1 else ''}")
+        click.echo(f"Pinning: {', '.join(parts)}", err=True)
     sys.exit(0 if result.reward >= 0.98 else 1)

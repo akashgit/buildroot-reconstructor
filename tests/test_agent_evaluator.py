@@ -4,8 +4,13 @@ import tempfile
 from pathlib import Path
 from unittest.mock import MagicMock, call, patch
 
-from buildroot.agent.evaluator import Evaluator, _extract_error_lines
-from buildroot.agent.models import EvalResult, TestResult
+from buildroot.agent.evaluator import (
+    Evaluator,
+    _check_digest_pinning,
+    _extract_error_lines,
+    _parse_checksum_failures,
+)
+from buildroot.agent.models import AdvisoryFinding, EvalResult, TestResult
 
 
 VALID_CONTAINERFILE = """\
@@ -493,3 +498,94 @@ class TestPodmanCreateCpPattern:
             podman_run_calls = [c for c in mock_run.call_args_list
                                if isinstance(c.args[0], list) and len(c.args[0]) > 1 and c.args[0][1] == "run"]
             assert len(podman_run_calls) == 0
+
+
+class TestChecksumFailureParsing:
+    def test_checksum_mismatch_detected_in_build_log(self):
+        build_log = (
+            "Step 5/12: RUN wget https://example.com/lib.tar.gz\n"
+            "Step 6/12: RUN sha256sum -c checksums.txt\n"
+            "sha256sum: WARNING: 1 computed checksum did NOT match\n"
+            "Step 7/12: RUN mvn install\n"
+        )
+        findings = _parse_checksum_failures(build_log)
+        assert len(findings) == 1
+        assert findings[0].category == "checksum_verification"
+        assert findings[0].severity == "error"
+        assert "build.log:3" == findings[0].location
+
+    def test_sha256sum_failed_pattern(self):
+        build_log = "sha256sum: lib.tar.gz: FAILED\n"
+        findings = _parse_checksum_failures(build_log)
+        assert len(findings) == 1
+        assert findings[0].category == "checksum_verification"
+
+    def test_hash_sum_mismatch_pattern(self):
+        build_log = "E: Failed to fetch ... Hash Sum mismatch\n"
+        findings = _parse_checksum_failures(build_log)
+        assert len(findings) == 1
+
+    def test_content_digest_not_found_pattern(self):
+        build_log = "ERROR: content digest sha256:abc123 not found\n"
+        findings = _parse_checksum_failures(build_log)
+        assert len(findings) == 1
+
+    def test_clean_log_no_findings(self):
+        build_log = (
+            "Step 1: FROM maven:3.9\n"
+            "Step 2: RUN mvn clean install\n"
+            "BUILD SUCCESS\n"
+        )
+        findings = _parse_checksum_failures(build_log)
+        assert findings == []
+
+
+class TestDigestPinningCheck:
+    def test_unpinned_build_flagged(self):
+        containerfile = (
+            "FROM docker.io/eclipse-temurin:17-jdk\n"
+            "WORKDIR /build\n"
+            "RUN wget https://example.com/lib.tar.gz\n"
+        )
+        evaluator = Evaluator()
+        result = EvalResult()
+        evaluator._l1_parse(containerfile, result)
+        evaluator._l1_5_trust(containerfile, result)
+        has_digest = any(f.category == "digest_pinning" for f in result.advisory_findings)
+        has_download = any(f.category == "download_verification" for f in result.advisory_findings)
+        assert has_digest
+        assert has_download
+
+    def test_clean_build_passes(self):
+        containerfile = (
+            "FROM docker.io/eclipse-temurin@sha256:abcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890\n"
+            "WORKDIR /build\n"
+            "RUN wget https://example.com/lib.tar.gz && sha256sum -c checksums.txt\n"
+        )
+        evaluator = Evaluator()
+        result = EvalResult()
+        evaluator._l1_parse(containerfile, result)
+        evaluator._l1_5_trust(containerfile, result)
+        assert result.advisory_findings == []
+
+    def test_check_digest_pinning_function(self):
+        containerfile = (
+            "FROM maven:3.9 AS builder\n"
+            "RUN mvn install\n"
+            "FROM eclipse-temurin:17-jdk\n"
+            "COPY --from=builder /app /app\n"
+        )
+        findings = _check_digest_pinning(containerfile)
+        assert len(findings) == 2
+        assert all(f.category == "digest_pinning" for f in findings)
+        assert all(f.severity == "info" for f in findings)
+
+    def test_pinned_image_no_finding(self):
+        containerfile = "FROM maven@sha256:abc123def456\nRUN mvn install\n"
+        findings = _check_digest_pinning(containerfile)
+        assert findings == []
+
+    def test_scratch_not_flagged(self):
+        containerfile = "FROM scratch\nCOPY app /app\n"
+        findings = _check_digest_pinning(containerfile)
+        assert findings == []

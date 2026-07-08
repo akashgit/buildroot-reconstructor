@@ -129,6 +129,29 @@ class DeadEndEntry:
 
 
 @dataclass
+class AdvisoryFinding:
+    """A non-blocking advisory finding from pinning/verification checks."""
+
+    category: str  # checksum_verification | digest_pinning | download_verification
+    severity: str  # info | warning | error
+    message: str
+    location: str | None = None
+    evidence: dict | None = None
+
+    def to_dict(self) -> dict:
+        d: dict[str, Any] = {
+            "category": self.category,
+            "severity": self.severity,
+            "message": self.message,
+        }
+        if self.location is not None:
+            d["location"] = self.location
+        if self.evidence is not None:
+            d["evidence"] = self.evidence
+        return d
+
+
+@dataclass
 class EvalResult:
     """Result from the 4-level evaluation pipeline."""
 
@@ -160,6 +183,19 @@ class EvalResult:
     build_log_check_passed: bool | None = None
     anticheat_warning: str = ""
     rebuilt_jar_bytes: bytes | None = None
+    advisory_findings: list[AdvisoryFinding] = field(default_factory=list)
+
+    @property
+    def pinning_status(self) -> dict:
+        if not self.advisory_findings:
+            return {"has_findings": False, "counts": {"error": 0, "warning": 0, "info": 0}, "categories": []}
+        counts = {"error": 0, "warning": 0, "info": 0}
+        categories: list[str] = []
+        for f in self.advisory_findings:
+            counts[f.severity] = counts.get(f.severity, 0) + 1
+            if f.category not in categories:
+                categories.append(f.category)
+        return {"has_findings": True, "counts": counts, "categories": categories}
 
     def compute_reward(self) -> float:
         if self.l4_match:
@@ -227,6 +263,9 @@ class EvalResult:
                 if hasattr(self.comparison_report, "to_dict")
                 else self.comparison_report
             )
+        if self.advisory_findings:
+            d["advisory_findings"] = [f.to_dict() for f in self.advisory_findings]
+            d["pinning_status"] = self.pinning_status
         return d
 
 
