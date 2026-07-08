@@ -221,6 +221,8 @@ def run_orchestrator(
     agent_timeout: int = 0,
     isolate_podman: bool = True,
     force: bool = False,
+    enable_pnc: bool = False,
+    pnc_output: bool = False,
 ) -> OrchestratorResult:
     """Run the orchestrator: prepass → KB query → spawn Claude Code agent → parse result."""
     start_time = time.time()
@@ -291,13 +293,26 @@ def run_orchestrator(
     # 1. Pre-pass
     logger.info("Running pre-pass for %s", coordinate)
     try:
-        prepass_findings = run_prepass(coordinate, workspace / "prepass")
+        prepass_findings = run_prepass(coordinate, workspace / "prepass", enable_pnc=enable_pnc)
     except Exception as e:
         logger.error("Pre-pass failed: %s", e)
         result.status = "prepass_failed"
         result.error_message = str(e)
         result.elapsed_seconds = time.time() - start_time
         return result
+
+    # 1b. Populate PNC spec overrides when pnc_output requested and PNC data found
+    pnc_spec_overrides: dict[str, str] = {}
+    if pnc_output and prepass_findings.pnc_build_info is not None:
+        pnc_info = prepass_findings.pnc_build_info
+        pnc_spec_overrides["provenance_provider"] = "pnc"
+        if prepass_findings.pnc_builder_image:
+            pnc_spec_overrides["pnc_builder_image"] = prepass_findings.pnc_builder_image.value
+        if prepass_findings.pnc_build_id:
+            pnc_spec_overrides["pnc_build_id"] = prepass_findings.pnc_build_id
+        if pnc_info.rhel_version:
+            pnc_spec_overrides["rhel_version"] = pnc_info.rhel_version
+        logger.info("PNC output enabled — spec overrides: %s", pnc_spec_overrides)
 
     prepass_summary = prepass_findings.to_prompt()
 
@@ -332,10 +347,25 @@ def run_orchestrator(
     task = _build_task_prompt(coordinate, host, workspace, target_score, isolate_podman=isolate_podman)
     if sibling_context:
         task = task + "\n" + sibling_context
+    if pnc_spec_overrides:
+        task += f"""
+
+## PNC Provenance
+
+This artifact was built by PNC (Project Newcastle). Use the PNC template (`pnc_base.j2`) when generating the Containerfile.
+Set these spec fields:
+- provenance_provider: {pnc_spec_overrides.get('provenance_provider', 'pnc')}
+- pnc_builder_image: {pnc_spec_overrides.get('pnc_builder_image', '')}
+- pnc_build_id: {pnc_spec_overrides.get('pnc_build_id', '')}
+- rhel_version: {pnc_spec_overrides.get('rhel_version', '')}
+"""
 
     # 5. Write prepass data to workspace for agent access
     prepass_json = workspace / "prepass_findings.json"
-    prepass_json.write_text(json.dumps(prepass_findings.to_dict(), indent=2))
+    prepass_data = prepass_findings.to_dict()
+    if pnc_spec_overrides:
+        prepass_data["pnc_spec_overrides"] = pnc_spec_overrides
+    prepass_json.write_text(json.dumps(prepass_data, indent=2))
 
     # 6. Spawn the orchestrator agent
     isolation = None

@@ -140,3 +140,6 @@ class BuildrootSpec:
     jdk_resolution_type: str = ""
     jdk_requested_version: str = ""
     trusted_base_image: str = ""
+    pnc_builder_image: str = ""
+    pnc_build_id: str = ""
+    rhel_version: str = ""

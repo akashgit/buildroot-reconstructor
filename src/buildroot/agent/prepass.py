@@ -8,6 +8,8 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
+import requests
+
 from buildroot.parsers.ci import CIParser
 from buildroot.parsers.pom import PomParser
 from buildroot.pipeline.models import PomData
@@ -52,6 +54,11 @@ class PrePassFindings:
     base_image: PrePassFinding | None = None
     module_path: PrePassFinding | None = None
 
+    pnc_builder_image: PrePassFinding | None = None
+    pnc_build_id: str | None = None
+    pnc_scm_url: PrePassFinding | None = None
+    pnc_build_info: Any | None = None  # PncBuildInfo when available
+
     env_vars: dict[str, str] = field(default_factory=dict)
     pom_data: dict = field(default_factory=dict)
     ci_data: dict | None = None
@@ -80,6 +87,8 @@ class PrePassFindings:
             ("maven_version", self.maven_version),
             ("base_image", self.base_image),
             ("module_path", self.module_path),
+            ("pnc_builder_image", self.pnc_builder_image),
+            ("pnc_scm_url", self.pnc_scm_url),
         ]
 
         for name, finding in finding_fields:
@@ -150,6 +159,7 @@ class PrePassFindings:
             "source_repo", "git_tag", "jdk_version", "jdk_minor_version",
             "jdk_distribution", "build_system", "build_command",
             "use_maven_wrapper", "maven_version", "base_image", "module_path",
+            "pnc_builder_image", "pnc_scm_url",
         ):
             finding = getattr(self, name)
             if finding is not None:
@@ -167,15 +177,18 @@ class PrePassFindings:
             result["bytecode_major_version"] = self.bytecode_major_version
         if self.jar_entry_count is not None:
             result["jar_entry_count"] = self.jar_entry_count
+        if self.pnc_build_id:
+            result["pnc_build_id"] = self.pnc_build_id
         if self.attempted_but_failed:
             result["attempted_but_failed"] = self.attempted_but_failed
         return result
 
 
-def run_prepass(coordinate: str, workspace: Path) -> PrePassFindings:
+def run_prepass(coordinate: str, workspace: Path, *, enable_pnc: bool = False) -> PrePassFindings:
     """Run the deterministic pre-pass: POM parse, repo discovery, JAR extraction.
 
     Data-gathering only — no template rendering, no spec decisions.
+    When enable_pnc is True, queries the PNC API for build environment data.
     """
     group_id, artifact_id, version = parse_gav(coordinate)
     findings = PrePassFindings()
@@ -317,6 +330,72 @@ def run_prepass(coordinate: str, workspace: Path) -> PrePassFindings:
     except Exception as e:
         logger.warning("JAR download/extract failed: %s", e)
         findings.attempted_but_failed.append(f"JAR download/extract: {e}")
+
+    # 4.5. PNC lookup (opt-in, VPN required)
+    if enable_pnc:
+        try:
+            from buildroot.utils.pnc_api import PncClient
+
+            pnc = PncClient()
+            pnc_info = None
+
+            if findings.jar_path and findings.jar_path.exists():
+                import hashlib as _hashlib
+                jar_sha256 = _hashlib.sha256(findings.jar_path.read_bytes()).hexdigest()
+                pnc_info = pnc.query_by_sha256(jar_sha256)
+
+            if pnc_info is None:
+                pnc_info = pnc.query_by_gav(group_id, artifact_id, version)
+
+            if pnc_info is not None:
+                findings.pnc_build_info = pnc_info
+                findings.pnc_build_id = pnc_info.build_id
+
+                if pnc_info.builder_image:
+                    findings.pnc_builder_image = PrePassFinding(
+                        value=pnc_info.builder_image,
+                        source="pnc_api",
+                        confidence="high",
+                        evidence=f"PNC build {pnc_info.build_id}",
+                    )
+
+                if pnc_info.scm_external_url:
+                    findings.pnc_scm_url = PrePassFinding(
+                        value=pnc_info.scm_external_url,
+                        source="pnc_api",
+                        confidence="high",
+                        evidence=f"PNC build {pnc_info.build_id} upstream SCM",
+                    )
+
+                if pnc_info.jdk_version:
+                    findings.jdk_version = PrePassFinding(
+                        value=pnc_info.jdk_version,
+                        source="pnc_api",
+                        confidence="high",
+                        evidence=f"PNC builder image: {pnc_info.builder_image}",
+                    )
+
+                if pnc_info.maven_version:
+                    findings.maven_version = PrePassFinding(
+                        value=pnc_info.maven_version,
+                        source="pnc_api",
+                        confidence="high",
+                        evidence=f"PNC builder image: {pnc_info.builder_image}",
+                    )
+
+                logger.info(
+                    "PNC lookup succeeded: build_id=%s, builder_image=%s",
+                    pnc_info.build_id, pnc_info.builder_image,
+                )
+            else:
+                findings.attempted_but_failed.append("PNC lookup: artifact not found in PNC")
+
+        except (requests.ConnectionError, requests.Timeout, requests.RequestException) as e:
+            logger.warning("PNC lookup failed: %s (VPN required?)", e)
+            findings.attempted_but_failed.append(f"PNC lookup: {e}")
+        except Exception as e:
+            logger.warning("PNC lookup failed: %s", e)
+            findings.attempted_but_failed.append(f"PNC lookup: {e}")
 
     # 5. CI workflow parsing (if repo discovered)
     if findings.source_repo:

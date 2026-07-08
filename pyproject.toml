@@ -40,6 +40,7 @@ markers = [
     "level1: Level 1 inference correctness verification",
     "level2: Level 2 Podman build verification",
     "slow: tests that take a long time to run (container builds, etc.)",
+    "vpn_required: requires Red Hat VPN to reach PNC staging API",
 ]
 
 [dependency-groups]

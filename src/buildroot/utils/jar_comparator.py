@@ -24,6 +24,19 @@ NON_DETERMINISTIC_MANIFEST_KEYS = frozenset({
     "Bnd-LastModified",
 })
 
+PNC_METADATA_MANIFEST_KEYS = frozenset({
+    "Implementation-Version",
+    "Git-Commit-Id",
+    "Scm-Connection",
+    "Scm-Revision",
+    "Scm-Tag",
+})
+
+_PNC_REDHAT_PATTERNS = [
+    re.compile(r"(\d+(?:\.\d+)+?)(?:\.\d+)*\.(?:temporary-)?redhat-\d+"),
+    re.compile(r"(\d+(?:\.\d+)+)\.(?:temporary-)?redhat-\d+"),
+]
+
 PROPERTIES_TIMESTAMP_RE = re.compile(r"^#.*\b\w{3}\s+\w{3}\s+\d{1,2}.*$", re.MULTILINE)
 
 
@@ -177,6 +190,7 @@ def compare_jars(
     original_jar: Path,
     rebuilt_jar: Path,
     coordinate: str = "",
+    pnc_mode: bool = False,
     *,
     trusted: bool = False,
 ) -> ComparisonReport:
@@ -202,7 +216,7 @@ def compare_jars(
 
     try:
         report.structural = _layer1_structural(original_jar, rebuilt_jar)
-        report.metadata = _layer2_metadata(original_jar, rebuilt_jar)
+        report.metadata = _layer2_metadata(original_jar, rebuilt_jar, pnc_mode=pnc_mode)
         report.bytecode = _layer3_bytecode(original_jar, rebuilt_jar)
     except (zipfile.BadZipFile, OSError) as e:
         report.error = str(e)
@@ -311,8 +325,28 @@ def _strip_properties_timestamps(content: str) -> str:
     return PROPERTIES_TIMESTAMP_RE.sub("", content).strip()
 
 
-def _layer2_metadata(original: Path, rebuilt: Path) -> MetadataResult:
+def _is_pnc_version_match(orig_content: str, rebu_content: str) -> bool:
+    """Check if rebuilt content only differs by PNC redhat version suffixes.
+
+    PNC version alignment rewrites e.g. '0.21' to '0.21.0.temporary-redhat-00001'
+    or '1.2.3' to '1.2.3.redhat-00005'. Tries multiple regex patterns to handle
+    both cases (with and without extra version segments before the redhat suffix).
+    """
+    if "redhat-" not in rebu_content:
+        return False
+    for pattern in _PNC_REDHAT_PATTERNS:
+        candidate = pattern.sub(r"\1", rebu_content)
+        if candidate == orig_content:
+            return True
+    return False
+
+
+def _layer2_metadata(original: Path, rebuilt: Path, *, pnc_mode: bool = False) -> MetadataResult:
     result = MetadataResult()
+    ignored_manifest_keys = NON_DETERMINISTIC_MANIFEST_KEYS
+    if pnc_mode:
+        ignored_manifest_keys = ignored_manifest_keys | PNC_METADATA_MANIFEST_KEYS
+
     with zipfile.ZipFile(original) as zf_orig, zipfile.ZipFile(rebuilt) as zf_rebu:
         orig_names = set(zf_orig.namelist())
         rebu_names = set(zf_rebu.namelist())
@@ -328,7 +362,7 @@ def _layer2_metadata(original: Path, rebuilt: Path) -> MetadataResult:
             diff_keys = []
             all_keys = set(orig_manifest.keys()) | set(rebu_manifest.keys())
             for key in sorted(all_keys):
-                if key in NON_DETERMINISTIC_MANIFEST_KEYS:
+                if key in ignored_manifest_keys:
                     continue
                 if orig_manifest.get(key) != rebu_manifest.get(key):
                     diff_keys.append(key)
@@ -360,10 +394,24 @@ def _layer2_metadata(original: Path, rebuilt: Path) -> MetadataResult:
                 if orig_stripped == rebu_stripped:
                     result.resource_matches += 1
                     continue
+            if pnc_mode and _is_pnc_maven_resource(name):
+                orig_text = orig_bytes.decode("utf-8", errors="replace")
+                rebu_text = rebu_bytes.decode("utf-8", errors="replace")
+                if _is_pnc_version_match(orig_text, rebu_text):
+                    result.resource_matches += 1
+                    continue
             result.resource_mismatches.append(name)
 
     result.match = result.manifest_match and len(result.resource_mismatches) == 0
     return result
+
+
+def _is_pnc_maven_resource(name: str) -> bool:
+    """Check if a resource is a pom.properties or pom.xml under META-INF/maven/."""
+    if not name.startswith("META-INF/maven/"):
+        return False
+    basename = name.rsplit("/", 1)[-1]
+    return basename in ("pom.properties", "pom.xml")
 
 
 def _find_cfr() -> str | None:

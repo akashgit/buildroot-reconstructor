@@ -24,7 +24,9 @@ import click
 @click.option("--enable-google-mirror", is_flag=True, hidden=True, help="Deprecated: Google mirror is now the default.")
 @click.option("--no-isolate-podman", is_flag=True, default=False, help="Disable podman storage isolation (not recommended for parallel runs)")
 @click.option("--force", is_flag=True, help="Rebuild even if a successful build exists in the DB")
-def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, v3_only, interactive, max_budget, max_turns, verbose, enable_google_mirror, no_isolate_podman, force):
+@click.option("--enable-pnc", is_flag=True, help="Enable PNC API lookup during prepass (VPN required)")
+@click.option("--pnc-output", is_flag=True, help="Generate PNC-style Containerfile (auto-enables --enable-pnc)")
+def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, v3_only, interactive, max_budget, max_turns, verbose, enable_google_mirror, no_isolate_podman, force, enable_pnc, pnc_output):
     """Run agentic reconstruction loop for a Maven COORDINATE.
 
     Default mode uses the v4 orchestrator agent. Use --v3-only for the template pipeline.
@@ -42,6 +44,10 @@ def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, 
         level=logging.DEBUG if verbose else logging.INFO,
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
     )
+
+    if pnc_output:
+        enable_pnc = True
+
 
     if interactive and v3_only:
         raise click.UsageError("--interactive cannot be combined with --v3-only")
@@ -114,7 +120,7 @@ def agent_cmd(coordinate, host, max_iterations, batch_file, output_dir, resume, 
     if v3_only:
         result = _run_v3(coordinate, host, max_iterations, resume, isolate_podman, force)
     else:
-        result = _run_orchestrator(coordinate, host, max_budget, max_turns, isolate_podman, force)
+        result = _run_orchestrator(coordinate, host, max_budget, max_turns, isolate_podman, force, enable_pnc=enable_pnc, pnc_output=pnc_output)
 
     if result.status not in ("success", "recipe_skip"):
         click.echo(json.dumps(result.to_dict(), indent=2))
@@ -176,7 +182,7 @@ def _run_interactive(coordinate, host, isolate_podman=True):
     sys.exit(rc)
 
 
-def _run_orchestrator(coordinate, host, max_budget, max_turns, isolate_podman=True, force=False):
+def _run_orchestrator(coordinate, host, max_budget, max_turns, isolate_podman=True, force=False, enable_pnc=False, pnc_output=False):
     """Run a single coordinate through the v4 orchestrator."""
     from buildroot.agent.meta_agent import run_orchestrator
 
@@ -187,4 +193,6 @@ def _run_orchestrator(coordinate, host, max_budget, max_turns, isolate_podman=Tr
         max_agent_turns=max_turns,
         isolate_podman=isolate_podman,
         force=force,
+        enable_pnc=enable_pnc,
+        pnc_output=pnc_output,
     )

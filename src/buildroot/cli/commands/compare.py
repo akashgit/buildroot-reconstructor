@@ -30,7 +30,8 @@ from buildroot.utils.maven_central import download_jar
     type=click.Path(exists=True, dir_okay=False, path_type=Path),
     help="Path to original JAR (downloads from Maven Central if not provided).",
 )
-def compare(coordinate: str, rebuilt_jar: Path, output_dir: Path, original_jar: Path | None) -> None:
+@click.option("--pnc-mode", is_flag=True, default=False, help="PNC-aware comparison (filter redhat version-alignment diffs)")
+def compare(coordinate: str, rebuilt_jar: Path, output_dir: Path, original_jar: Path | None, pnc_mode: bool) -> None:
     """Compare a rebuilt JAR against the original Maven Central artifact.
 
     COORDINATE is groupId:artifactId:version (e.g. org.apache.commons:commons-lang3:3.14.0)
@@ -51,7 +52,7 @@ def compare(coordinate: str, rebuilt_jar: Path, output_dir: Path, original_jar: 
             raise SystemExit(1) from e
 
     click.echo("Comparing JARs...")
-    report = compare_jars(original_jar, rebuilt_jar, coordinate=coordinate)
+    report = compare_jars(original_jar, rebuilt_jar, coordinate=coordinate, pnc_mode=pnc_mode)
     report_path = write_report(report, output_dir)
 
     click.echo(json.dumps(report.to_dict(), indent=2))

@@ -1,0 +1,38 @@
+{
+  "totalHits": 1,
+  "content": [
+    {
+      "id": "54321",
+      "identifier": "maven:com.fasterxml.jackson.core:jackson-annotations:jar:2.9.9.redhat-00001",
+      "artifactQuality": "NEW",
+      "build": {
+        "id": "67890",
+        "submitTime": "2021-06-20T14:00:00.000Z",
+        "status": "SUCCESS",
+        "scmUrl": "git+ssh://code.engineering.redhat.com/jackson-annotations.git",
+        "scmTag": "jackson-annotations-2.9.9.redhat-00001",
+        "scmRevision": "def789abc012",
+        "scmRepository": {
+          "id": "501",
+          "internalUrl": "git+ssh://code.engineering.redhat.com/jackson-annotations.git",
+          "externalUrl": "https://github.com/FasterXML/jackson-annotations.git"
+        },
+        "buildConfigRevision": {
+          "id": "601",
+          "scmRevision": "jackson-annotations-2.9.9"
+        },
+        "environment": {
+          "id": "201",
+          "name": "OpenJDK 1.8; Mvn 3.6.3 on RHEL 7",
+          "systemImageRepositoryUrl": "quay.io/rh-newcastle",
+          "systemImageId": "builder-rhel-7-j8-mvn3.6.3:latest",
+          "attributes": {
+            "IMAGE_DIGEST_REF": "builder-rhel-7-j8-mvn3.6.3@sha256:17c069af230739573bbfbb4daf8cecda02e45decf7c10fd2c05e9995b4249e42",
+            "JDK": "1.8",
+            "MAVEN": "3.6.3"
+          }
+        }
+      }
+    }
+  ]
+}
