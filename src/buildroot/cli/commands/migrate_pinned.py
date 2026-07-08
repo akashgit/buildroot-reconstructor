@@ -122,6 +122,9 @@ def _remove_maven(line: str) -> str:
     packages = [t for t in tokens if not t.startswith("-")]
     packages = [p for p in packages if p.lower() != "maven"]
 
+    if not packages:
+        return ""
+
     new_args = " ".join(flags + packages)
     return prefix + new_args + suffix
 
@@ -164,7 +167,9 @@ def _replace_apt_maven(containerfile: str, registry) -> tuple[str, bool, str | N
         ):
             for j in range(start, end + 1):
                 if re.search(r"apt-get\s+install", lines[j], re.IGNORECASE):
-                    result_lines.append(_remove_maven(lines[j]))
+                    rewritten = _remove_maven(lines[j])
+                    if rewritten:
+                        result_lines.append(rewritten)
                 else:
                     result_lines.append(lines[j])
             result_lines.append(replacement)

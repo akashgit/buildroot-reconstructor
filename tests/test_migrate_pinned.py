@@ -74,10 +74,20 @@ class TestPinFromLine:
 
 class TestRemoveMaven:
     def test_removes_maven(self):
-        line = "    apt-get install -y maven && \\"
+        line = "    apt-get install -y maven git && \\"
         result = _remove_maven(line)
         assert "maven" not in result
-        assert result == "    apt-get install -y && \\"
+        assert "git" in result
+
+    def test_maven_only_returns_empty(self):
+        line = "RUN apt-get install -y maven"
+        result = _remove_maven(line)
+        assert result == ""
+
+    def test_maven_only_with_flags_returns_empty(self):
+        line = "RUN apt-get install -y --no-install-recommends maven"
+        result = _remove_maven(line)
+        assert result == ""
 
     def test_preserves_other_packages(self):
         line = "RUN apt-get install -y maven git"
@@ -158,13 +168,26 @@ class TestReplaceAptMaven:
     def test_replaces_with_no_install_recommends(self):
         registry = MagicMock()
         registry.get_maven_checksum.return_value = "abc123checksum"
-        cf = "RUN apt-get install -y --no-install-recommends maven"
+        cf = "RUN apt-get install -y --no-install-recommends maven git"
         new_cf, changed, skip = _replace_apt_maven(cf, registry)
         assert changed is True
         assert "apt-get install" in new_cf
         assert "--no-install-recommends" in new_cf
+        assert "git" in new_cf
         assert "curl" in new_cf
         assert "sha256sum -c" in new_cf
+
+    def test_maven_only_removes_apt_line(self):
+        registry = MagicMock()
+        registry.get_maven_checksum.return_value = "abc123checksum"
+        cf = "FROM eclipse-temurin:17-jdk\nRUN apt-get install -y maven\nRUN mvn clean install"
+        new_cf, changed, skip = _replace_apt_maven(cf, registry)
+        assert changed is True
+        assert "apt-get install" not in new_cf
+        assert "curl" in new_cf
+        assert "sha256sum -c" in new_cf
+        assert "FROM eclipse-temurin:17-jdk" in new_cf
+        assert "RUN mvn clean install" in new_cf
 
     def test_no_apt_maven(self):
         registry = MagicMock()
@@ -194,10 +217,11 @@ class TestReplaceAptMaven:
     def test_replaces_with_reversed_flag_order(self):
         registry = MagicMock()
         registry.get_maven_checksum.return_value = "abc123checksum"
-        cf = "RUN apt-get install --no-install-recommends -y maven"
+        cf = "RUN apt-get install --no-install-recommends -y maven git"
         new_cf, changed, skip = _replace_apt_maven(cf, registry)
         assert changed is True
         assert "apt-get install" in new_cf
+        assert "git" in new_cf
         assert "curl" in new_cf
         assert "sha256sum -c" in new_cf
 
@@ -215,14 +239,29 @@ class TestReplaceAptMaven:
         assert changed is True
         assert skip is None
         assert "apt-get update" in new_cf
-        assert "apt-get install" in new_cf
+        assert "apt-get install" not in new_cf
         assert "rm -rf /var/lib/apt/lists/*" in new_cf
         assert "curl" in new_cf
         assert "sha256sum -c" in new_cf
         assert "maven-central.storage.googleapis.com" in new_cf
         assert "FROM eclipse-temurin:17-jdk" in new_cf
         assert "RUN mvn clean install" in new_cf
+
+    def test_preserves_multiline_run_block_with_other_packages(self):
+        registry = MagicMock()
+        registry.get_maven_checksum.return_value = "abc123checksum"
+        cf = (
+            "FROM eclipse-temurin:17-jdk\n"
+            "RUN apt-get update && \\\n"
+            "    apt-get install -y maven git && \\\n"
+            "    rm -rf /var/lib/apt/lists/*\n"
+            "RUN mvn clean install"
+        )
+        new_cf, changed, skip = _replace_apt_maven(cf, registry)
+        assert changed is True
+        assert "apt-get install" in new_cf
         install_line = [l for l in new_cf.split("\n") if "apt-get install" in l][0]
+        assert "git" in install_line
         assert "maven" not in install_line
 
     def test_preserves_cleanup_in_chained_command(self):
