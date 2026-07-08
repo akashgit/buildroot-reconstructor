@@ -25,7 +25,8 @@ import click
               help="Enforce trusted-source-only constraint (L1.5 gate)")
 @click.option("--jdk-version", default="", help="Expected JDK version for fallback bytecode check")
 @click.option("--no-isolate-podman", is_flag=True, default=False, help="Disable podman storage isolation")
-def eval_cmd(containerfile, coordinate, host, timeout, pretty, report, no_cache, trusted, jdk_version, no_isolate_podman):
+@click.option("--pnc-mode", is_flag=True, default=False, help="PNC-aware JAR comparison (filter redhat version-alignment diffs)")
+def eval_cmd(containerfile, coordinate, host, timeout, pretty, report, no_cache, trusted, jdk_version, no_isolate_podman, pnc_mode):
     """Evaluate a Containerfile against a Maven Central artifact.
 
     Returns JSON with L1-L4 scores, comparison report, and reward.
@@ -45,7 +46,7 @@ def eval_cmd(containerfile, coordinate, host, timeout, pretty, report, no_cache,
     capture_full_log = report != "none"
     isolate_podman = not no_isolate_podman
     evaluator = Evaluator(host=host, timeout=timeout, no_cache=no_cache, isolate_podman=isolate_podman)
-    result = evaluator.evaluate(cf_text, coordinate, capture_full_log=capture_full_log, trusted=trusted, jdk_version=jdk_version)
+    result = evaluator.evaluate(cf_text, coordinate, capture_full_log=capture_full_log, trusted=trusted, jdk_version=jdk_version, pnc_mode=pnc_mode)
 
     if report != "none":
         from buildroot.eval.audit import build_audit_log, extract_dynamic_assets, extract_static_assets

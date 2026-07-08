@@ -82,6 +82,7 @@ class Evaluator:
         *,
         trusted: bool = False,
         jdk_version: str = "",
+        pnc_mode: bool = False,
     ) -> EvalResult:
         containerfile = sanitize_gha_expressions(containerfile)
         result = EvalResult()
@@ -150,7 +151,7 @@ class Evaluator:
             result.compute_reward()
             return result
 
-        self._l4_match(tag, coordinate, result, jdk_version=jdk_version, trusted=trusted)
+        self._l4_match(tag, coordinate, result, jdk_version=jdk_version, trusted=trusted, pnc_mode=pnc_mode)
         self._cleanup_image(tag)
         result.compute_reward()
         return result
@@ -286,7 +287,7 @@ class Evaluator:
             result.error_summary = f"L3 command error: {e}"
             return False
 
-    def _l4_match(self, tag: str, coordinate: str, result: EvalResult, *, jdk_version: str = "", trusted: bool = False) -> None:
+    def _l4_match(self, tag: str, coordinate: str, result: EvalResult, *, jdk_version: str = "", trusted: bool = False, pnc_mode: bool = False) -> None:
         group_id, artifact_id, version = parse_gav(coordinate)
         try:
             with tempfile.TemporaryDirectory(prefix="buildroot-l4-") as tmpdir:
@@ -313,7 +314,7 @@ class Evaluator:
                                 result.rebuilt_jar_bytes = rebuilt_jar.read_bytes()
                             except OSError:
                                 pass
-                            report = compare_jars(self_built_jar, rebuilt_jar, coordinate, trusted=trusted)
+                            report = compare_jars(self_built_jar, rebuilt_jar, coordinate, pnc_mode=pnc_mode, trusted=trusted)
                             result.comparison_report = report
                             result.comparison_verdict = report.verdict
                             result.l4_score = report.equivalence_score(trusted=trusted)
@@ -376,7 +377,7 @@ class Evaluator:
                 except OSError:
                     pass
 
-                report = compare_jars(original_jar, rebuilt_jar, coordinate, trusted=trusted)
+                report = compare_jars(original_jar, rebuilt_jar, coordinate, pnc_mode=pnc_mode, trusted=trusted)
                 result.comparison_report = report
                 result.comparison_verdict = report.verdict
                 result.l4_score = report.equivalence_score(trusted=trusted)
