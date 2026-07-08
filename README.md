@@ -141,6 +141,39 @@ The system's knowledge base was seeded from lessons learned solving Bouncy Castl
 
 In practice, the system now handles bcprov-jdk15on by downloading the published JAR directly — recognizing that without access to Sun JDK 1.5.0_08, a from-source rebuild cannot produce matching bytecode. This is the correct answer: the system reports L4=1.0 because the artifact matches, and the provenance insight is "this package requires a proprietary JDK to rebuild."
 
+## Dependency Pinning and Trusted Builds
+
+Trusted builds are Containerfiles that have been verified to produce JARs matching the original Maven Central artifact. To ensure these builds remain reproducible over time, every dependency in a trusted Containerfile is pinned:
+
+- **Base images** use digest pins: `FROM eclipse-temurin:17-jdk@sha256:abc123...` instead of floating tags
+- **Maven** is installed via checksummed tarball from Google's Maven Central mirror, not `apt-get install maven`
+- **All downloads** include `sha256sum -c` verification
+
+The system maintains a registry of SHA-256 checksums for 32 Maven versions (3.0.5 through 3.9.9). When the agent generates a new trusted build, it enforces pinning rules automatically. The prepass analysis extracts the Maven version from the reference JAR's `Created-By` manifest header when available, so the rebuild uses the same Maven version as the original.
+
+### Migrating Existing Builds
+
+If you have existing trusted builds in the database that use unpinned dependencies, the migration CLI rewrites them:
+
+```bash
+# Preview what would change (no writes)
+buildroot migrate-pinned --dry-run --limit 10 --verbose
+
+# Migrate 100 builds
+buildroot migrate-pinned --limit 100
+
+# Migrate everything
+buildroot migrate-pinned
+```
+
+The migration:
+1. Finds L3+ trusted builds using `apt-get install maven` or missing `@sha256:` digest pins
+2. Replaces `apt-get install maven` with a checksummed tarball, preserving other packages (git, wget, etc.)
+3. Adds checksum verification to existing tarball downloads that lack it
+4. Writes the updated Containerfile back to the database (idempotent — safe to re-run)
+
+Use `--dry-run` first to inspect the changes. The migration is non-destructive: it only modifies the `trusted_containerfile` text column, and a re-eval confirms the rebuilt JAR still matches.
+
 ## CLI Reference
 
 ### Core Commands
@@ -163,6 +196,17 @@ buildroot reconstruct COORDINATE [--output-dir DIR]
 
 # Run regression tests
 buildroot regression [--quick] [--solve] [--status] [--package NAME]
+```
+
+### Database and Migration
+
+```bash
+# Manage the build store
+buildroot db fetch GROUP:ARTIFACT:VERSION   # Fetch a build from the DB
+buildroot db stats                          # Show build statistics
+
+# Migrate trusted builds to pinned dependencies
+buildroot migrate-pinned [--dry-run] [--limit N] [--verbose]
 ```
 
 ### Knowledge Base
@@ -188,7 +232,7 @@ buildroot agent --batch packages.txt --v3-only --resume results/batch-run
 
 ```
 src/buildroot/
-├── cli/commands/              # CLI entry points (agent, eval, regression, kb, ...)
+├── cli/commands/              # CLI entry points (agent, eval, migrate-pinned, kb, ...)
 ├── agent/
 │   ├── meta_agent.py          # v4 orchestrator (spawns Claude Code sessions)
 │   ├── pipeline_v3.py         # v3 template pipeline with AI feedback loop
@@ -200,6 +244,10 @@ src/buildroot/
 │   └── containerfile.py       # Jinja2 Containerfile templates
 ├── parsers/                   # POM, CI config, properties parsers
 ├── resolvers/                 # JDK, container image, dependency resolvers
+├── trust/
+│   ├── registry.py            # Maven checksums, image digest resolution, trusted sources
+│   ├── report.py              # Trust report generation
+│   └── delta.py               # L4 delta analysis
 └── utils/
     ├── jar_comparator.py      # 3-way JAR comparison (structural/metadata/bytecode)
     ├── maven_central.py       # Maven Central API client
