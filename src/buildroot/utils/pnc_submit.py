@@ -97,6 +97,11 @@ def parse_containerfile_for_pnc(containerfile: str) -> PncBuildParams:
     )
 
 
+def _is_auth_error(stderr: str) -> bool:
+    lower = stderr.lower()
+    return "keycloak authentication failed" in lower or "401" in stderr
+
+
 def _run_bacon(args: list[str], *, profile: str = "stage", timeout: int = 300) -> str:
     if not os.path.exists(BACON_PATH):
         raise FileNotFoundError(
@@ -109,12 +114,16 @@ def _run_bacon(args: list[str], *, profile: str = "stage", timeout: int = 300) -
 
     result = subprocess.run(cmd, capture_output=True, text=True, timeout=timeout)
 
+    if result.returncode != 0 and _is_auth_error(result.stderr):
+        import sys
+        logger.info("Auth token expired — retrying with interactive login")
+        print("\n--- PNC authentication required ---", file=sys.stderr)
+        print("Bacon will open a login URL. Paste the code when prompted.\n", file=sys.stderr)
+        result = subprocess.run(cmd, stdin=sys.stdin, stdout=subprocess.PIPE,
+                                stderr=sys.stderr, text=True, timeout=timeout)
+
     if result.returncode != 0:
-        stderr = result.stderr.strip()
-        if "auth" in stderr.lower() or "token" in stderr.lower() or "401" in stderr:
-            raise RuntimeError(
-                f"PNC authentication error. Re-authenticate with: bacon auth login\n{stderr}"
-            )
+        stderr = result.stderr.strip() if result.stderr else ""
         raise RuntimeError(f"bacon command failed (rc={result.returncode}): {stderr}")
 
     return result.stdout
