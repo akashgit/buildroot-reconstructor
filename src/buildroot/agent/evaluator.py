@@ -17,7 +17,7 @@ import requests
 from dockerfile_parse import DockerfileParser
 
 from buildroot.agent.analyzer import sanitize_gha_expressions
-from buildroot.agent.models import EvalResult
+from buildroot.agent.models import AdvisoryFinding, EvalResult
 from buildroot.pipeline.orchestrator import parse_gav
 from buildroot.trust.registry import TrustedSourceRegistry
 from buildroot.utils.jar_comparator import compare_jars
@@ -126,6 +126,8 @@ class Evaluator:
         if warnings:
             result.anticheat_warning = " | ".join(warnings)
 
+        result.advisory_findings.extend(_parse_checksum_failures(result.build_log))
+
         from buildroot.eval.test_runner import run_tests
         result.test_result = run_tests(
             tag, containerfile, host=self._host, timeout=300,
@@ -196,6 +198,15 @@ class Evaluator:
                 "L1.5: trusted CF downloads binary without checksum at line %d: %s",
                 line_num, cmd_snippet,
             )
+            result.advisory_findings.append(AdvisoryFinding(
+                category="download_verification",
+                severity="warning",
+                message=f"Download without checksum verification at line {line_num}",
+                location=f"Containerfile:{line_num}",
+                evidence={"url": cmd_snippet, "recommendation": "Add sha256sum -c verification after download"},
+            ))
+
+        result.advisory_findings.extend(_check_digest_pinning(containerfile))
 
         if violations:
             result.trust_violations = violations
@@ -960,6 +971,50 @@ def _find_unverified_downloads(containerfile_content: str) -> list[tuple[int, st
                 results.append((i, match.group(0)[:120]))
 
     return results
+
+
+def _parse_checksum_failures(build_log: str) -> list[AdvisoryFinding]:
+    """Parse build log for sha256/checksum verification failures."""
+    findings: list[AdvisoryFinding] = []
+    patterns = [
+        re.compile(r'sha256sum:.*FAILED', re.IGNORECASE),
+        re.compile(r'computed checksum did NOT match', re.IGNORECASE),
+        re.compile(r'Hash Sum mismatch', re.IGNORECASE),
+        re.compile(r'content digest sha256:\S+ not found', re.IGNORECASE),
+    ]
+    for line_num, line in enumerate(build_log.splitlines(), 1):
+        for pat in patterns:
+            if pat.search(line):
+                findings.append(AdvisoryFinding(
+                    category="checksum_verification",
+                    severity="error",
+                    message=f"Checksum verification failure: {line.strip()[:200]}",
+                    location=f"build.log:{line_num}",
+                    evidence={"raw_line": line.strip()[:500]},
+                ))
+                break
+    return findings
+
+
+def _check_digest_pinning(containerfile: str) -> list[AdvisoryFinding]:
+    """Check FROM lines for images without @sha256: digest pin."""
+    findings: list[AdvisoryFinding] = []
+    for line_num, line in enumerate(containerfile.splitlines(), 1):
+        stripped = line.strip()
+        if not stripped.upper().startswith("FROM "):
+            continue
+        image_ref = stripped.split()[1] if len(stripped.split()) > 1 else ""
+        if image_ref.upper() == "SCRATCH":
+            continue
+        if "@sha256:" not in image_ref:
+            findings.append(AdvisoryFinding(
+                category="digest_pinning",
+                severity="info",
+                message=f"Base image not pinned by digest: {image_ref}",
+                location=f"Containerfile:{line_num}",
+                evidence={"image": image_ref, "has_digest": False},
+            ))
+    return findings
 
 
 def _extract_error_lines(log: str, max_lines: int = 15) -> str:

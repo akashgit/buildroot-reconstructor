@@ -1,6 +1,7 @@
-"""Tests for agent data models — BuildAttempt, DeadEndEntry, EvalResult."""
+"""Tests for agent data models — BuildAttempt, DeadEndEntry, EvalResult, AdvisoryFinding."""
 
 from buildroot.agent.models import (
+    AdvisoryFinding,
     BuildAttempt,
     DeadEndEntry,
     EvalResult,
@@ -165,3 +166,80 @@ class TestBuildAttempt:
         assert d["reward"] == 0.5
         assert d["level_reached"] == 3
         assert d["error_class"] == "test"
+
+
+class TestAdvisoryFindingsInEvalDict:
+    def test_advisory_findings_in_eval_dict(self):
+        er = EvalResult(l1_parse=True, l2_build=True)
+        er.advisory_findings = [
+            AdvisoryFinding(
+                category="checksum_verification",
+                severity="error",
+                message="sha256 mismatch",
+                location="build.log:42",
+                evidence={"raw_line": "sha256sum: FAILED"},
+            ),
+            AdvisoryFinding(
+                category="digest_pinning",
+                severity="info",
+                message="Unpinned base image",
+                location="Containerfile:1",
+            ),
+        ]
+        er.compute_reward()
+        d = er.to_dict()
+        assert "advisory_findings" in d
+        assert len(d["advisory_findings"]) == 2
+        assert d["advisory_findings"][0]["category"] == "checksum_verification"
+        assert "pinning_status" in d
+        assert d["pinning_status"]["has_findings"] is True
+
+    def test_no_findings_not_in_dict(self):
+        er = EvalResult(l1_parse=True)
+        er.compute_reward()
+        d = er.to_dict()
+        assert "advisory_findings" not in d
+        assert "pinning_status" not in d
+
+
+class TestPinningStatusDerivation:
+    def test_pinning_status_counts(self):
+        er = EvalResult()
+        er.advisory_findings = [
+            AdvisoryFinding(category="checksum_verification", severity="error", message="a"),
+            AdvisoryFinding(category="checksum_verification", severity="error", message="b"),
+            AdvisoryFinding(category="download_verification", severity="warning", message="c"),
+            AdvisoryFinding(category="digest_pinning", severity="info", message="d"),
+        ]
+        status = er.pinning_status
+        assert status["has_findings"] is True
+        assert status["counts"]["error"] == 2
+        assert status["counts"]["warning"] == 1
+        assert status["counts"]["info"] == 1
+        assert "checksum_verification" in status["categories"]
+        assert "download_verification" in status["categories"]
+        assert "digest_pinning" in status["categories"]
+
+    def test_empty_findings_status(self):
+        er = EvalResult()
+        status = er.pinning_status
+        assert status["has_findings"] is False
+        assert status["counts"] == {"error": 0, "warning": 0, "info": 0}
+        assert status["categories"] == []
+
+
+class TestRewardUnaffectedByFindings:
+    def test_reward_unaffected_by_findings(self):
+        er_clean = EvalResult(l1_parse=True, l2_build=True, l3_command=True, l4_match=True)
+        reward_clean = er_clean.compute_reward()
+
+        er_with_findings = EvalResult(l1_parse=True, l2_build=True, l3_command=True, l4_match=True)
+        er_with_findings.advisory_findings = [
+            AdvisoryFinding(category="checksum_verification", severity="error", message="fail"),
+            AdvisoryFinding(category="digest_pinning", severity="info", message="unpinned"),
+            AdvisoryFinding(category="download_verification", severity="warning", message="no checksum"),
+        ]
+        reward_with = er_with_findings.compute_reward()
+
+        assert reward_clean == reward_with
+        assert er_clean.level_reached == er_with_findings.level_reached

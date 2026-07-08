@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from buildroot import __version__
+from buildroot.agent.models import EvalResult
 from buildroot.pipeline.models import BuildrootSpec
 from buildroot.trust.delta import DeltaReport
 
@@ -33,6 +34,7 @@ def generate_trust_report(
     spec: BuildrootSpec,
     delta: DeltaReport,
     output_dir: Path,
+    eval_result: EvalResult | None = None,
 ) -> Path:
     """Generate a comprehensive Markdown trust report.
 
@@ -45,6 +47,7 @@ def generate_trust_report(
         _how_to_use(output_dir),
         _trust_assessment(spec, delta),
         _variant_comparison(delta),
+        _pinning_findings_section(eval_result),
         _gaps_and_risks(spec),
         _security_checklist(spec, delta),
         _next_steps(coordinate, delta),
@@ -246,6 +249,43 @@ def _variant_comparison(delta: DeltaReport) -> str:
             "> **Note**: Functional equivalence has not been evaluated yet. "
             "Run `buildroot agent <coordinate>` to perform a full build comparison.",
         ]
+
+    return "\n".join(lines) + "\n"
+
+
+def _pinning_findings_section(eval_result: EvalResult | None) -> str:
+    """Render advisory findings section. Returns empty string when no findings."""
+    if eval_result is None or not eval_result.advisory_findings:
+        return ""
+
+    import json
+
+    status = eval_result.pinning_status
+    counts = status["counts"]
+    summary_parts = []
+    for sev in ("error", "warning", "info"):
+        if counts[sev]:
+            summary_parts.append(f"{counts[sev]} {sev}")
+
+    lines = [
+        "## Advisory Findings — Dependency Pinning",
+        "",
+        f"**Summary**: {', '.join(summary_parts)} across categories: {', '.join(status['categories'])}",
+        "",
+        "| Category | Severity | Location | Message |",
+        "|----------|----------|----------|---------|",
+    ]
+    for f in eval_result.advisory_findings:
+        lines.append(f"| {f.category} | {f.severity} | {f.location or '-'} | {f.message} |")
+
+    lines.append("")
+    lines.append("### Finding Details")
+    lines.append("")
+    for i, f in enumerate(eval_result.advisory_findings, 1):
+        lines.append(f"**{i}. [{f.severity.upper()}] {f.category}**: {f.message}")
+        if f.evidence:
+            lines.append(f"```json\n{json.dumps(f.evidence, indent=2)}\n```")
+        lines.append("")
 
     return "\n".join(lines) + "\n"
 
