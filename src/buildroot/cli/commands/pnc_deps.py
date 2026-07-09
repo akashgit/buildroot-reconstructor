@@ -44,7 +44,10 @@ def pnc_deps_cmd(coordinate: str, json_output: bool, verbose: bool) -> None:
     from buildroot.resolvers.dependencies import DependencyResolver
     from buildroot.utils.pnc_api import PncClient, find_closest_pnc_version
 
-    group_id, artifact_id, version = parse_gav(coordinate)
+    try:
+        group_id, artifact_id, version = parse_gav(coordinate)
+    except ValueError as e:
+        raise click.BadParameter(str(e), param_hint="COORDINATE") from e
 
     resolver = DependencyResolver()
     tree = resolver.resolve(group_id, artifact_id, version)

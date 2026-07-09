@@ -188,6 +188,12 @@ class TestPncDepsCommand:
         data = json.loads(result.output)
         assert data["total"] == 3
 
+    def test_invalid_coordinate(self):
+        runner = CliRunner()
+        result = runner.invoke(pnc_deps_cmd, ["bad-coordinate"])
+        assert result.exit_code == 2
+        assert "COORDINATE" in result.output
+
     @patch("buildroot.agent.build_store.fetch_build")
     @patch("buildroot.utils.pnc_api.find_closest_pnc_version")
     @patch("buildroot.utils.pnc_api.PncClient")
