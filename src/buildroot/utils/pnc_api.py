@@ -243,6 +243,35 @@ def extract_scm_info(response: dict) -> dict | None:
     return None
 
 
+def find_closest_pnc_version(
+    group_id: str,
+    artifact_id: str,
+    version: str,
+    client: PncClient | None = None,
+) -> tuple[str, PncBuildInfo] | None:
+    """Try common Red Hat version suffixes to find a PNC build.
+
+    Returns (redhat_version_string, PncBuildInfo) on match, or None.
+    """
+    if client is None:
+        client = PncClient()
+
+    suffixes = [
+        f"{version}.redhat-00001",
+        f"{version}.redhat-00002",
+        f"{version}.redhat-00003",
+        f"{version}.redhat-00004",
+        f"{version}.redhat-00005",
+        f"{version}-redhat-1",
+        f"{version}-redhat-00001",
+    ]
+    for candidate in suffixes:
+        info = client.query_by_gav(group_id, artifact_id, candidate)
+        if info is not None:
+            return (candidate, info)
+    return None
+
+
 def parse_image_name_versions(image_ref: str) -> dict[str, str | None]:
     m = _IMAGE_NAME_RE.search(image_ref)
     if not m:
