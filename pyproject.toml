@@ -1,0 +1,29 @@
+[project]
+name = "nv-001052-cve-remediation"
+version = "1.0.0"
+description = "CVE NV-001052 remediation for org.springframework.orm 5.3.33.LIFERAY-PATCHED-1"
+requires-python = ">=3.8"
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "ruff>=0.8",
+    "mypy>=1.13",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--cov=scripts --cov=eval --cov-report=term -v"
+
+[tool.ruff]
+line-length = 120
+target-version = "py38"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W"]
+
+[tool.mypy]
+strict = true
+warn_return_any = true
+disallow_untyped_defs = true
