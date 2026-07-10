@@ -68,12 +68,12 @@ def _load_containerfile() -> str | None:
 
 
 def eval_syntax_check() -> dict[str, Any]:
-    """Validate Containerfile has required directives. Weight: 0.30."""
+    """Validate Containerfile has required directives. Weight: 0.20."""
     logger.info("Running syntax_check evaluation")
     containerfile = _load_containerfile()
     if containerfile is None:
         return {
-            "name": "syntax_check", "score": 0.0, "weight": 0.30,
+            "name": "syntax_check", "score": 0.0, "weight": 0.20,
             "passed": False, "details": "Containerfile not found",
         }
 
@@ -120,7 +120,7 @@ def eval_syntax_check() -> dict[str, Any]:
     return {
         "name": "syntax_check",
         "score": round(score, 4),
-        "weight": 0.30,
+        "weight": 0.20,
         "passed": passed,
         "details": f"Found {len(found)}/{total_checks} structural checks: {', '.join(found)}",
     }
@@ -253,7 +253,7 @@ def eval_capability_surface() -> dict[str, Any]:
 
 
 def eval_test_coverage() -> dict[str, Any]:
-    """Check for test files and pytest configuration. Weight: 0.20."""
+    """Check for test files and pytest configuration. Weight: 0.10."""
     logger.info("Running test_coverage evaluation")
     tests_dir = PROJECT_ROOT / "tests"
     pyproject = PROJECT_ROOT / "pyproject.toml"
@@ -291,9 +291,115 @@ def eval_test_coverage() -> dict[str, Any]:
     return {
         "name": "test_coverage",
         "score": round(score, 4),
-        "weight": 0.20,
+        "weight": 0.10,
         "passed": passed,
         "details": f"Found {len(checks_found)}/{total} checks: {', '.join(checks_found)}",
+    }
+
+
+def eval_qa_compliance() -> dict[str, Any]:
+    """Check archive for 5 QA sections with PASS verdicts. Weight: 0.10."""
+    logger.info("Running qa_compliance evaluation")
+    archive_path = FACTORY_DIR / "archive" / "cve-remediation.md"
+
+    if not archive_path.exists():
+        logger.warning("Archive not found at %s", archive_path)
+        return {
+            "name": "qa_compliance",
+            "score": 0.0,
+            "weight": 0.10,
+            "passed": False,
+            "details": "Archive file not found",
+        }
+
+    content = archive_path.read_text(encoding="utf-8")
+
+    qa_sections = [
+        "Health Check",
+        "Scope Check",
+        "Exploit Verification",
+        "Conservativeness",
+        "Leak Check",
+    ]
+
+    passed_sections: list[str] = []
+    failed_sections: list[str] = []
+
+    has_global_pass = "CLEAN" in content or "All 5 QA sections pass" in content
+
+    for section in qa_sections:
+        if section not in content:
+            failed_sections.append(section)
+            continue
+        section_idx = content.index(section)
+        section_context = content[section_idx:section_idx + 500]
+        if "PASS" in section_context or has_global_pass:
+            passed_sections.append(section)
+        else:
+            failed_sections.append(section)
+
+    score = len(passed_sections) / len(qa_sections)
+    passed = score >= 0.8
+
+    logger.info("qa_compliance: passed=%s failed=%s score=%.2f", passed_sections, failed_sections, score)
+    return {
+        "name": "qa_compliance",
+        "score": round(score, 4),
+        "weight": 0.10,
+        "passed": passed,
+        "details": f"{len(passed_sections)}/{len(qa_sections)} QA sections passed: {', '.join(passed_sections)}",
+    }
+
+
+def eval_experiment_diversity() -> dict[str, Any]:
+    """Check fix-plan.md for technique diversity. Weight: 0.10."""
+    logger.info("Running experiment_diversity evaluation")
+    fix_plan_path = FACTORY_DIR / "cve" / "fix-plan.md"
+
+    if not fix_plan_path.exists():
+        logger.warning("fix-plan.md not found at %s", fix_plan_path)
+        return {
+            "name": "experiment_diversity",
+            "score": 0.0,
+            "weight": 0.10,
+            "passed": False,
+            "details": "fix-plan.md not found",
+        }
+
+    content = fix_plan_path.read_text(encoding="utf-8").lower()
+
+    categories: dict[str, list[str]] = {
+        "sed_patch": ["sed"],
+        "source_replacement": ["restore", "replace"],
+        "alternative_approaches": ["alternative", "preferred"],
+        "upstream_comparison": ["upstream"],
+        "minimal_change": ["minimal", "conservative"],
+    }
+
+    found_categories: list[str] = []
+    missing_categories: list[str] = []
+
+    for category, keywords in categories.items():
+        if any(kw in content for kw in keywords):
+            found_categories.append(category)
+        else:
+            missing_categories.append(category)
+
+    score = len(found_categories) / len(categories)
+    passed = score >= 0.6
+
+    logger.info(
+        "experiment_diversity: found=%s missing=%s score=%.2f",
+        found_categories,
+        missing_categories,
+        score,
+    )
+    return {
+        "name": "experiment_diversity",
+        "score": round(score, 4),
+        "weight": 0.10,
+        "passed": passed,
+        "details": f"{len(found_categories)}/{len(categories)} technique categories: {', '.join(found_categories)}",
     }
 
 
@@ -307,6 +413,8 @@ def main() -> None:
         eval_observability(),
         eval_capability_surface(),
         eval_test_coverage(),
+        eval_qa_compliance(),
+        eval_experiment_diversity(),
     ]
 
     total_weight = sum(r["weight"] for r in results)
