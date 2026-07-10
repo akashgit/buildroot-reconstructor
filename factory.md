@@ -21,7 +21,10 @@ Remediate CVE NV-001052 (CWE-400: Uncontrolled Resource Consumption) in `com.lif
 - Patches must preserve all non-vulnerable Liferay modifications (LPD-15177 logger field change)
 - The fix must align with upstream Spring Framework 5.3.33 behavior — no novel logic
 
-## Eval
+## eval_command
 
-- **eval_command**: `python eval/score.py`
-- **eval_threshold**: 0.7
+python eval/score.py
+
+## eval_threshold
+
+0.7
