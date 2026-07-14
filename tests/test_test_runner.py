@@ -165,7 +165,7 @@ class TestParseGradleTestOutput:
 class TestRunTests:
     def test_no_framework_returns_none(self):
         cf = "FROM python:3.11\nRUN pip install ."
-        result = run_tests("tag", "host", cf)
+        result = run_tests("tag", cf, host="host")
         assert result is None
 
     @patch("buildroot.eval.test_runner.subprocess.run")
@@ -176,7 +176,7 @@ class TestRunTests:
             stderr="",
         )
         cf = "FROM openjdk:17\nRUN mvn install -B"
-        result = run_tests("tag", "host", cf, timeout=60)
+        result = run_tests("tag", cf, host="host", timeout=60)
 
         assert result is not None
         assert result.available is True
@@ -193,7 +193,7 @@ class TestRunTests:
             stderr="",
         )
         cf = "FROM openjdk:17\nRUN mvn install -B"
-        result = run_tests("tag", "host", cf)
+        result = run_tests("tag", cf, host="host")
 
         assert result is not None
         assert result.passed is False
@@ -204,7 +204,7 @@ class TestRunTests:
     def test_timeout(self, mock_run):
         mock_run.side_effect = subprocess.TimeoutExpired(cmd="ssh", timeout=300)
         cf = "FROM openjdk:17\nRUN mvn install -B"
-        result = run_tests("tag", "host", cf, timeout=300)
+        result = run_tests("tag", cf, host="host", timeout=300)
 
         assert result is not None
         assert result.status == "timeout"
@@ -215,7 +215,7 @@ class TestRunTests:
     def test_ssh_error(self, mock_run):
         mock_run.side_effect = OSError("Connection refused")
         cf = "FROM openjdk:17\nRUN mvn install -B"
-        result = run_tests("tag", "host", cf)
+        result = run_tests("tag", cf, host="host")
 
         assert result is not None
         assert result.status == "error"
@@ -229,7 +229,7 @@ class TestRunTests:
             stderr="",
         )
         cf = "FROM openjdk:17\nRUN ./gradlew build"
-        result = run_tests("tag", "host", cf)
+        result = run_tests("tag", cf, host="host")
 
         assert result is not None
         assert result.framework == "gradle"
@@ -242,7 +242,7 @@ class TestRunTests:
             returncode=0, stdout="BUILD SUCCESSFUL", stderr="",
         )
         cf = "FROM openjdk:17\nCOPY build.xml .\nRUN ant build"
-        result = run_tests("tag", "host", cf)
+        result = run_tests("tag", cf, host="host")
 
         assert result is not None
         assert result.framework == "ant"
@@ -251,5 +251,70 @@ class TestRunTests:
 
     def test_to_dict(self):
         cf = "FROM python:3.11\nRUN pip install ."
-        result = run_tests("tag", "host", cf)
+        result = run_tests("tag", cf, host="host")
         assert result is None
+
+
+class TestCdToProjectRoot:
+    """Verify test_runner prepends build-file discovery to find the project root."""
+
+    @patch("buildroot.eval.test_runner.subprocess.run")
+    def test_maven_prepends_pom_discovery(self, mock_run):
+        mock_run.return_value = MagicMock(
+            returncode=0,
+            stdout="Tests run: 5, Failures: 0, Errors: 0, Skipped: 0\nBUILD SUCCESS",
+            stderr="",
+        )
+        cf = "FROM openjdk:17\nRUN mvn install -B"
+        result = run_tests("tag", cf)
+        assert result is not None
+        cmd = mock_run.call_args[0][0]
+        shell_script = cmd[-1]
+        assert "find . -maxdepth 5 -name pom.xml" in shell_script
+        assert "cd \"$(dirname \"$POM\")\"" in shell_script
+        assert shell_script.endswith("mvn test -B")
+
+    @patch("buildroot.eval.test_runner.subprocess.run")
+    def test_gradle_prepends_gradlew_discovery(self, mock_run):
+        mock_run.return_value = MagicMock(
+            returncode=0,
+            stdout="10 tests completed, 0 failed\n",
+            stderr="",
+        )
+        cf = "FROM openjdk:17\nRUN ./gradlew build"
+        result = run_tests("tag", cf)
+        assert result is not None
+        cmd = mock_run.call_args[0][0]
+        shell_script = cmd[-1]
+        assert "find . -maxdepth 5 -name gradlew" in shell_script
+        assert "cd \"$(dirname \"$GW\")\"" in shell_script
+        assert shell_script.endswith("./gradlew test")
+
+    @patch("buildroot.eval.test_runner.subprocess.run")
+    def test_ant_no_cd_prefix(self, mock_run):
+        mock_run.return_value = MagicMock(
+            returncode=0, stdout="BUILD SUCCESSFUL", stderr="",
+        )
+        cf = "FROM openjdk:17\nCOPY build.xml .\nRUN ant build"
+        result = run_tests("tag", cf)
+        assert result is not None
+        cmd = mock_run.call_args[0][0]
+        shell_script = cmd[-1]
+        assert "find ." not in shell_script
+        assert shell_script == "ant test"
+
+    @patch("buildroot.eval.test_runner.subprocess.run")
+    def test_maven_cd_falls_back_to_workdir(self, mock_run):
+        """When find returns nothing, the if-guard is a no-op and test runs from WORKDIR."""
+        mock_run.return_value = MagicMock(
+            returncode=0,
+            stdout="Tests run: 3, Failures: 0, Errors: 0, Skipped: 0",
+            stderr="",
+        )
+        cf = "FROM openjdk:17\nRUN mvn install -B"
+        result = run_tests("tag", cf)
+        assert result is not None
+        cmd = mock_run.call_args[0][0]
+        shell_script = cmd[-1]
+        assert "if [ -n \"$POM\" ]" in shell_script
+        assert "|| true" in shell_script
