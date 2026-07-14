@@ -340,7 +340,10 @@ class JdkResolver:
         tag_version = self._normalize_version_for_tag(version)
         suffix = IMAGE_TAG_SUFFIX.get(image_base, "")
         if image_base.startswith("registry.access.redhat.com/") and image_base.endswith("/openjdk"):
-            image = f"{image_base}-{tag_version}"
+            if tag_version not in ("11", "17", "21"):
+                image = f"docker.io/library/eclipse-temurin:{tag_version}-jdk"
+            else:
+                image = f"{image_base}-{tag_version}"
         else:
             image = f"{image_base}:{tag_version}{suffix}"
         if "." not in image_base.split("/")[0]:
