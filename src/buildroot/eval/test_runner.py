@@ -155,6 +155,21 @@ def run_tests(
         return None
 
     command = build_test_command(framework)
+
+    if framework == "maven":
+        cd_prefix = (
+            "POM=$(find . -maxdepth 5 -name pom.xml -type f 2>/dev/null | sort | head -1); "
+            "if [ -n \"$POM\" ]; then cd \"$(dirname \"$POM\")\" 2>/dev/null || true; fi; "
+        )
+    elif framework == "gradle":
+        cd_prefix = (
+            "GW=$(find . -maxdepth 5 -name gradlew -type f 2>/dev/null | sort | head -1); "
+            "if [ -n \"$GW\" ]; then cd \"$(dirname \"$GW\")\" 2>/dev/null || true; fi; "
+        )
+    else:
+        cd_prefix = ""
+    command = cd_prefix + command
+
     result = TestResult(
         available=True,
         framework=framework,

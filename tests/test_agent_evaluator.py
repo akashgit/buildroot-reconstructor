@@ -422,33 +422,58 @@ class TestPodmanCreateCpPattern:
         assert call_args[-2:] == ["rm", "abc123"]
 
     @patch("buildroot.agent.evaluator.subprocess.run")
-    def test_extract_rebuilt_jar_uses_podman_cp(self, mock_run):
+    def test_extract_rebuilt_jar_uses_in_container_find(self, mock_run):
         evaluator = Evaluator()
         with tempfile.TemporaryDirectory() as tmpdir:
             dest = Path(tmpdir)
-            jar_dir = dest / "jars"
-            jar_dir.mkdir(parents=True)
-            fake_jar = jar_dir / "test-1.0.jar"
-            fake_jar.write_bytes(b"fake jar content")
+            local_jar = dest / "test-1.0-rebuilt.jar"
 
-            mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
+            def side_effect(cmd, **kwargs):
+                if isinstance(cmd, list) and "start" in cmd:
+                    return MagicMock(returncode=0)
+                if isinstance(cmd, list) and "exec" in cmd:
+                    return MagicMock(returncode=0, stdout="./target/test-1.0.jar\n", stderr="")
+                if isinstance(cmd, list) and "stop" in cmd:
+                    return MagicMock(returncode=0)
+                if isinstance(cmd, list) and "cp" in cmd:
+                    if "/output/rebuilt.jar" in str(cmd):
+                        return MagicMock(returncode=1, stdout="", stderr="")
+                    local_jar.write_bytes(b"x" * 2048)
+                    return MagicMock(returncode=0, stdout="", stderr="")
+                return MagicMock(returncode=1, stdout="", stderr="")
 
+            mock_run.side_effect = side_effect
             result = evaluator._extract_jar_from_container(
                 "container-id", "test", "1.0", dest,
             )
-            cp_calls = [c for c in mock_run.call_args_list if "cp" in str(c)]
-            assert len(cp_calls) >= 1
+            assert result == local_jar
+            exec_calls = [c for c in mock_run.call_args_list
+                         if isinstance(c[0][0], list) and "exec" in c[0][0]]
+            assert len(exec_calls) == 1
+            exec_cmd = " ".join(exec_calls[0][0][0])
+            assert "find . -maxdepth 5" in exec_cmd
 
     @patch("buildroot.agent.evaluator.subprocess.run")
     def test_extract_rebuilt_jar_creates_own_container_when_none_given(self, mock_run):
-        mock_run.side_effect = [
-            MagicMock(returncode=0, stdout="cid123\n", stderr=""),
-            MagicMock(returncode=1, stdout="", stderr="no such dir"),
-            MagicMock(returncode=1, stdout="", stderr="no such dir"),
-            MagicMock(returncode=1, stdout="", stderr="no such dir"),
-            MagicMock(returncode=1, stdout="", stderr="no such dir"),
-            MagicMock(returncode=0, stdout="", stderr=""),
-        ]
+        call_count = [0]
+
+        def side_effect(cmd, **kwargs):
+            call_count[0] += 1
+            if isinstance(cmd, list) and "create" in cmd:
+                return MagicMock(returncode=0, stdout="cid123\n", stderr="")
+            if isinstance(cmd, list) and "cp" in cmd and "/output/rebuilt.jar" in str(cmd):
+                return MagicMock(returncode=1, stdout="", stderr="")
+            if isinstance(cmd, list) and "start" in cmd:
+                return MagicMock(returncode=0)
+            if isinstance(cmd, list) and "exec" in cmd:
+                return MagicMock(returncode=0, stdout="", stderr="")
+            if isinstance(cmd, list) and "stop" in cmd:
+                return MagicMock(returncode=0)
+            if isinstance(cmd, list) and "rm" in cmd:
+                return MagicMock(returncode=0)
+            return MagicMock(returncode=1, stdout="", stderr="")
+
+        mock_run.side_effect = side_effect
         evaluator = Evaluator()
         with tempfile.TemporaryDirectory() as tmpdir:
             result = evaluator._extract_rebuilt_jar("tag", "art", "1.0", Path(tmpdir))
@@ -460,14 +485,22 @@ class TestPodmanCreateCpPattern:
     @patch("buildroot.agent.evaluator.subprocess.run")
     def test_fallback_signals_creates_one_container(self, mock_run):
         """l4_fallback_signals creates one container and reuses it."""
-        mock_run.side_effect = [
-            MagicMock(returncode=0, stdout="shared-cid\n", stderr=""),
-            MagicMock(returncode=1, stdout="", stderr=""),
-            MagicMock(returncode=1, stdout="", stderr=""),
-            MagicMock(returncode=1, stdout="", stderr=""),
-            MagicMock(returncode=1, stdout="", stderr=""),
-            MagicMock(returncode=0, stdout="", stderr=""),
-        ]
+        def side_effect(cmd, **kwargs):
+            if isinstance(cmd, list) and "create" in cmd:
+                return MagicMock(returncode=0, stdout="shared-cid\n", stderr="")
+            if isinstance(cmd, list) and "cp" in cmd:
+                return MagicMock(returncode=1, stdout="", stderr="")
+            if isinstance(cmd, list) and "start" in cmd:
+                return MagicMock(returncode=0)
+            if isinstance(cmd, list) and "exec" in cmd:
+                return MagicMock(returncode=0, stdout="", stderr="")
+            if isinstance(cmd, list) and "stop" in cmd:
+                return MagicMock(returncode=0)
+            if isinstance(cmd, list) and "rm" in cmd:
+                return MagicMock(returncode=0)
+            return MagicMock(returncode=0, stdout="", stderr="")
+
+        mock_run.side_effect = side_effect
         evaluator = Evaluator()
         signals = evaluator.l4_fallback_signals("tag", "org.example:test:1.0")
         create_calls = [c for c in mock_run.call_args_list if "create" in str(c)]
@@ -476,20 +509,140 @@ class TestPodmanCreateCpPattern:
         assert len(rm_calls) == 1
 
     @patch("buildroot.agent.evaluator.subprocess.run")
-    def test_extract_source_uses_podman_cp(self, mock_run):
-        """_extract_source_from_container uses podman cp, not podman run."""
+    def test_extract_source_uses_find_and_podman_cp(self, mock_run):
+        """_extract_source_from_container uses find then podman cp."""
         evaluator = Evaluator()
         with tempfile.TemporaryDirectory() as tmpdir:
             dest = Path(tmpdir) / "source"
             dest.mkdir()
-            java_file = dest / "main" / "java" / "com" / "Test.java"
-            java_file.parent.mkdir(parents=True)
-            java_file.write_text("class Test {}")
 
-            mock_run.return_value = MagicMock(returncode=0, stdout="", stderr="")
+            def side_effect(cmd, **kwargs):
+                if isinstance(cmd, list) and "start" in cmd:
+                    return MagicMock(returncode=0)
+                if isinstance(cmd, list) and "exec" in cmd:
+                    return MagicMock(returncode=0, stdout="/build/src/main/java\n", stderr="")
+                if isinstance(cmd, list) and "stop" in cmd:
+                    return MagicMock(returncode=0)
+                if isinstance(cmd, list) and "cp" in cmd:
+                    java_file = dest / "main" / "java" / "com" / "Test.java"
+                    java_file.parent.mkdir(parents=True, exist_ok=True)
+                    java_file.write_text("class Test {}")
+                    return MagicMock(returncode=0, stdout="", stderr="")
+                return MagicMock(returncode=0, stdout="", stderr="")
+
+            mock_run.side_effect = side_effect
             result = evaluator._extract_source_from_container("cid", dest)
             assert result == dest
-            run_calls = [c for c in mock_run.call_args_list if "run" in str(c.args[0]) if isinstance(c.args[0], list)]
             podman_run_calls = [c for c in mock_run.call_args_list
                                if isinstance(c.args[0], list) and len(c.args[0]) > 1 and c.args[0][1] == "run"]
             assert len(podman_run_calls) == 0
+
+
+class TestBroadenedJarDiscovery:
+    """Verify the broadened find pattern discovers deep JARs and excludes caches."""
+
+    @patch("buildroot.agent.evaluator.subprocess.run")
+    def test_deep_submodule_jar_found(self, mock_run):
+        """A JAR at lib/submodule/target/foo.jar is found by the broader find."""
+        evaluator = Evaluator()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            dest = Path(tmpdir)
+            local_jar = dest / "foo-1.0-rebuilt.jar"
+
+            def side_effect(cmd, **kwargs):
+                if isinstance(cmd, list) and "cp" in cmd and "/output/rebuilt.jar" in str(cmd):
+                    return MagicMock(returncode=1, stdout="", stderr="")
+                if isinstance(cmd, list) and "start" in cmd:
+                    return MagicMock(returncode=0)
+                if isinstance(cmd, list) and "exec" in cmd:
+                    return MagicMock(
+                        returncode=0,
+                        stdout="./lib/submodule/target/foo-1.0.jar\n",
+                        stderr="",
+                    )
+                if isinstance(cmd, list) and "stop" in cmd:
+                    return MagicMock(returncode=0)
+                if isinstance(cmd, list) and "cp" in cmd:
+                    local_jar.write_bytes(b"x" * 2048)
+                    return MagicMock(returncode=0, stdout="", stderr="")
+                return MagicMock(returncode=1, stdout="", stderr="")
+
+            mock_run.side_effect = side_effect
+            result = evaluator._extract_jar_from_container(
+                "cid", "foo", "1.0", dest,
+            )
+            assert result is not None
+            assert result == local_jar
+
+    @patch("buildroot.agent.evaluator.subprocess.run")
+    def test_l3_find_command_excludes_m2(self, mock_run):
+        """.m2 cache JARs are excluded from the L3 find command."""
+        mock_run.return_value = MagicMock(
+            returncode=0, stdout="BUILD_SUCCESS", stderr=""
+        )
+        evaluator = Evaluator()
+        result = EvalResult()
+        evaluator._l3_command("test-tag", result)
+        shell_cmd = mock_run.call_args[0][0]
+        sh_script = shell_cmd[-1]
+        assert "-not -path './.m2/*'" in sh_script
+
+    @patch("buildroot.agent.evaluator.subprocess.run")
+    def test_l3_find_command_excludes_webinf_lib(self, mock_run):
+        """WEB-INF/lib JARs are excluded from the L3 find command."""
+        mock_run.return_value = MagicMock(
+            returncode=0, stdout="BUILD_SUCCESS", stderr=""
+        )
+        evaluator = Evaluator()
+        result = EvalResult()
+        evaluator._l3_command("test-tag", result)
+        shell_cmd = mock_run.call_args[0][0]
+        sh_script = shell_cmd[-1]
+        assert "-not -path '*/WEB-INF/lib/*'" in sh_script
+
+    @patch("buildroot.agent.evaluator.subprocess.run")
+    def test_l4_find_excludes_m2_and_webinf(self, mock_run):
+        """.m2 and WEB-INF/lib are excluded in the L4 in-container find."""
+        evaluator = Evaluator()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            dest = Path(tmpdir)
+
+            def side_effect(cmd, **kwargs):
+                if isinstance(cmd, list) and "cp" in cmd and "/output/rebuilt.jar" in str(cmd):
+                    return MagicMock(returncode=1, stdout="", stderr="")
+                if isinstance(cmd, list) and "start" in cmd:
+                    return MagicMock(returncode=0)
+                if isinstance(cmd, list) and "exec" in cmd:
+                    find_script = cmd[-1]
+                    assert "-not -path './.m2/*'" in find_script
+                    assert "-not -path '*/WEB-INF/lib/*'" in find_script
+                    return MagicMock(returncode=0, stdout="", stderr="")
+                if isinstance(cmd, list) and "stop" in cmd:
+                    return MagicMock(returncode=0)
+                return MagicMock(returncode=1, stdout="", stderr="")
+
+            mock_run.side_effect = side_effect
+            evaluator._extract_jar_from_container("cid", "art", "1.0", dest)
+
+    @patch("buildroot.agent.evaluator.subprocess.run")
+    def test_l4_find_excludes_gradle_cache(self, mock_run):
+        """.gradle cache JARs are excluded in the L4 in-container find."""
+        evaluator = Evaluator()
+        with tempfile.TemporaryDirectory() as tmpdir:
+            dest = Path(tmpdir)
+
+            def side_effect(cmd, **kwargs):
+                if isinstance(cmd, list) and "cp" in cmd and "/output/rebuilt.jar" in str(cmd):
+                    return MagicMock(returncode=1, stdout="", stderr="")
+                if isinstance(cmd, list) and "start" in cmd:
+                    return MagicMock(returncode=0)
+                if isinstance(cmd, list) and "exec" in cmd:
+                    find_script = cmd[-1]
+                    assert "-not -path '*/.gradle/*'" in find_script
+                    return MagicMock(returncode=0, stdout="", stderr="")
+                if isinstance(cmd, list) and "stop" in cmd:
+                    return MagicMock(returncode=0)
+                return MagicMock(returncode=1, stdout="", stderr="")
+
+            mock_run.side_effect = side_effect
+            evaluator._extract_jar_from_container("cid", "art", "1.0", dest)

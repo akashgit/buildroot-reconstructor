@@ -253,8 +253,14 @@ class Evaluator:
     def _l3_command(self, tag: str, result: EvalResult) -> bool:
         try:
             check_cmd = (
-                "JAR=$(find target/ build/libs/ */target/ */build/libs/ "
-                "-name '*.jar' "
+                "JAR=$(find . -maxdepth 5 -name '*.jar' "
+                "-not -path './.m2/*' "
+                "-not -path './.mvn/*' "
+                "-not -path '*/.gradle/*' "
+                "-not -path '*/repository/*' "
+                "-not -path '*/test-classes/*' "
+                "-not -path '*/WEB-INF/lib/*' "
+                "-not -path '*/wrapper/*' "
                 "-not -name '*-sources.jar' "
                 "-not -name '*-javadoc.jar' "
                 "-not -name 'original-*.jar' "
@@ -484,36 +490,48 @@ class Evaluator:
             logger.info("Using staged JAR from /output/rebuilt.jar")
             return local_jar
 
-        jar_dir = dest / "jars"
-        jar_dir.mkdir(parents=True, exist_ok=True)
+        find_cmd = (
+            "find . -maxdepth 5 -name '*.jar' "
+            "-not -path './.m2/*' "
+            "-not -path './.mvn/*' "
+            "-not -path '*/.gradle/*' "
+            "-not -path '*/repository/*' "
+            "-not -path '*/test-classes/*' "
+            "-not -path '*/WEB-INF/lib/*' "
+            "-not -path '*/wrapper/*' "
+            "-not -name '*-sources.jar' "
+            "-not -name '*-javadoc.jar' "
+            "-not -name 'original-*.jar' "
+            "-size +1k 2>/dev/null | sort"
+        )
+        self._run(["podman", "start", container_id], capture_output=True, timeout=30)
+        find_proc = self._run(
+            ["podman", "exec", container_id, "sh", "-c", find_cmd],
+            capture_output=True, text=True, timeout=60,
+        )
+        self._run(["podman", "stop", "-t", "0", container_id], capture_output=True, timeout=30)
 
-        for src_path in ["/build/target", "/build/build/libs", "target", "build/libs"]:
-            cp_proc = self._run(
-                ["podman", "cp", f"{container_id}:{src_path}/.", str(jar_dir)],
-                capture_output=True, text=True, timeout=60,
-            )
-            if cp_proc.returncode == 0:
-                break
-
-        jar_files = [
-            p for p in jar_dir.rglob("*.jar")
-            if not p.name.endswith("-sources.jar")
-            and not p.name.endswith("-javadoc.jar")
-            and not p.name.startswith("original-")
-        ]
-        if not jar_files:
+        jar_paths = [p.strip() for p in find_proc.stdout.strip().splitlines() if p.strip()]
+        if not jar_paths:
             return None
 
-        target_jar = None
-        for jp in jar_files:
-            if artifact_id in jp.name and version in jp.name:
-                target_jar = jp
+        target_path = None
+        for jp in jar_paths:
+            name = jp.rsplit("/", 1)[-1]
+            if artifact_id in name and version in name:
+                target_path = jp
                 break
-        if not target_jar:
-            target_jar = jar_files[0]
+        if not target_path:
+            target_path = jar_paths[0]
 
-        shutil.copy2(target_jar, local_jar)
-        return local_jar
+        cp_proc = self._run(
+            ["podman", "cp", f"{container_id}:{target_path}", str(local_jar)],
+            capture_output=True, text=True, timeout=60,
+        )
+        if cp_proc.returncode == 0 and local_jar.exists() and local_jar.stat().st_size > 1024:
+            return local_jar
+
+        return None
 
     def l4_fallback_signals(
         self, tag: str, coordinate: str, jdk_version: str = "",
@@ -614,31 +632,36 @@ class Evaluator:
         """Extract source tree from a stopped container using podman cp."""
         dest.mkdir(parents=True, exist_ok=True)
 
-        cp_proc = self._run(
-            ["podman", "cp", f"{container_id}:/build/src/.", str(dest)],
+        find_src_cmd = (
+            "find /build -maxdepth 5 -type d -name java -path '*/src/main/java' "
+            "2>/dev/null | sort"
+        )
+        self._run(["podman", "start", container_id], capture_output=True, timeout=30)
+        find_proc = self._run(
+            ["podman", "exec", container_id, "sh", "-c", find_src_cmd],
             capture_output=True, text=True, timeout=60,
         )
-        if cp_proc.returncode == 0:
-            java_files = list(dest.rglob("*.java"))
-            if java_files:
-                return dest
+        self._run(["podman", "stop", "-t", "0", container_id], capture_output=True, timeout=30)
 
-        if artifact_id:
-            submod_names = [artifact_id]
-            parts = artifact_id.split("-")
-            if len(parts) > 1:
-                submod_names.append(parts[-1])
-            for submod in submod_names:
-                sub_dest = dest / submod
-                sub_dest.mkdir(parents=True, exist_ok=True)
-                cp_proc = self._run(
-                    ["podman", "cp", f"{container_id}:/build/{submod}/src/.", str(sub_dest)],
-                    capture_output=True, text=True, timeout=60,
-                )
-                if cp_proc.returncode == 0:
-                    java_files = list(sub_dest.rglob("*.java"))
-                    if java_files:
-                        return sub_dest
+        src_paths = [p.strip() for p in find_proc.stdout.strip().splitlines() if p.strip()]
+        if src_paths:
+            chosen = None
+            if artifact_id:
+                for sp in src_paths:
+                    if f"/{artifact_id}/" in sp:
+                        chosen = sp
+                        break
+            if not chosen:
+                chosen = src_paths[0]
+            src_root = chosen.rsplit("/main/java", 1)[0]
+            cp_proc = self._run(
+                ["podman", "cp", f"{container_id}:{src_root}/.", str(dest)],
+                capture_output=True, text=True, timeout=60,
+            )
+            if cp_proc.returncode == 0:
+                java_files = list(dest.rglob("*.java"))
+                if java_files:
+                    return dest
 
         return None
 
