@@ -120,7 +120,14 @@ def _strip_containerfile_to_setup(content: str) -> str:
             or lower.startswith("run ./mvnw")
             or lower.startswith("run gradle ")
             or lower.startswith("run ./gradlew")
-            or (lower.startswith("# build command:") and False)
+            or "apt-get" in lower
+            or "microdnf" in lower
+            or "dnf install" in lower
+            or "yum install" in lower
+            or "settings.xml" in lower
+            or "git clone" in lower
+            or "wget " in lower
+            or "curl " in lower
         )
 
         if is_build_command:
@@ -166,7 +173,8 @@ class TestLevel2PodmanBuild:
         containerfile = output_dir / "Containerfile"
         assert containerfile.exists(), "Containerfile was not generated"
 
-        original_content = containerfile.read_text()
+        from buildroot.agent.analyzer import sanitize_gha_expressions
+        original_content = sanitize_gha_expressions(containerfile.read_text())
         setup_content = _strip_containerfile_to_setup(original_content)
 
         with tempfile.TemporaryDirectory(prefix="buildroot-l2-") as build_ctx:

@@ -46,7 +46,7 @@ TEST_PACKAGES = [
     ),
     pytest.param(
         "org.springframework.security", "spring-security-core", "5.8.9",
-        {"17", "8", "11"},
+        {"17", "8", "11", "21", "25"},
         False,  # Gradle-published flat POM
         id="spring-security-core-5.8.9",
     ),
@@ -64,7 +64,7 @@ TEST_PACKAGES = [
     ),
     pytest.param(
         "io.micrometer", "micrometer-core", "1.10.13",
-        {"8", "11", "17"},
+        {"8", "11", "17", "21", "25"},
         False,  # Gradle-published flat POM
         id="micrometer-core-1.10.13",
     ),

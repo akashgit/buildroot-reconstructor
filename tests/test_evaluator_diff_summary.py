@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import tempfile
+from pathlib import Path
 from unittest.mock import patch
 
 from buildroot.agent.evaluator import Evaluator
@@ -62,12 +64,17 @@ class TestDiffSummaryExtraction:
         result.l2_build = True
         result.l3_command = True
 
-        with (
-            patch.object(evaluator, "_download_original_jar", return_value="/tmp/orig.jar"),
-            patch.object(evaluator, "_extract_rebuilt_jar", return_value="/tmp/rebuilt.jar"),
-            patch("buildroot.agent.evaluator.compare_jars", return_value=report),
-        ):
-            evaluator._l4_match("test-tag", "org.example:test:1.0", result)
+        with tempfile.TemporaryDirectory() as tmpdir:
+            orig = Path(tmpdir) / "orig.jar"
+            rebuilt = Path(tmpdir) / "rebuilt.jar"
+            orig.write_bytes(b"PK\x03\x04fake")
+            rebuilt.write_bytes(b"PK\x03\x04fake")
+            with (
+                patch.object(evaluator, "_download_original_jar", return_value=orig),
+                patch.object(evaluator, "_extract_rebuilt_jar", return_value=rebuilt),
+                patch("buildroot.agent.evaluator.compare_jars", return_value=report),
+            ):
+                evaluator._l4_match("test-tag", "org.example:test:1.0", result)
         return result
 
     def test_missing_files_in_diff_summary(self):

@@ -257,7 +257,7 @@ class TestCascadePipeline:
     @patch("buildroot.agent.meta_agent._scan_workspace_for_best")
     def test_orchestrator_result_has_trusted_fields(self, mock_scan, mock_spawn, tmp_path):
         """After cascade, trusted_reward and trusted_level are populated."""
-        def populate_scan(res, ws, coord, host):
+        def populate_scan(res, ws, coord, host, **kwargs):
             res.best_reward = 0.85
             res.best_level = 3
             res.best_containerfile = "FROM eclipse-temurin:17-jdk\nRUN mvn install"
