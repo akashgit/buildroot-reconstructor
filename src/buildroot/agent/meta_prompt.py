@@ -114,6 +114,19 @@ RUN mkdir -p /output && cp target/artifact-1.0.jar /output/rebuilt.jar
 The evaluator checks `/output/rebuilt.jar` first. Without this, it guesses from all JARs \
 in target/ using substring matching, which can pick the wrong file.
 
+## Containerfile Portability Rules
+- **curl flags**: Always use `curl -fSL` (not `curl -sL`) for all downloads. The `-f` flag \
+makes curl fail fast on HTTP 404/500 instead of silently saving error HTML as if the \
+download succeeded. Add `--retry 3` for resilience.
+- **JDK verification**: After installing or downloading a JDK, verify it works with \
+`<jdk-path>/bin/java -version`. Fail early if the binary is corrupted or missing.
+- **Never pipe build output through tail or head**: A failing `mvn` build piped through \
+`2>&1 | tail -50` will appear to succeed because `tail` always exits 0, masking the \
+real exit code. Capture output to a file instead if you need to truncate it.
+- **Gradle JAVA_TOOL_OPTIONS isolation**: Add `ENV JAVA_TOOL_OPTIONS=""` early in Gradle \
+Containerfiles to prevent environment-injected JVM flags (e.g. `-XX:ActiveProcessorCount` \
+from CI systems) from breaking JDK 9 toolchain probes.
+
 ## v3 Template Limitations
 The v3 pipeline uses Jinja2 templates for single-stage builds. It CANNOT express:
 - Multi-stage Docker builds (multiple FROM statements)

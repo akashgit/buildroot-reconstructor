@@ -137,6 +137,32 @@ def seed_bouncy_castle_entries(kb_dir: Path) -> int:
                      "-Dproject.build.outputTimestamp=2000-01-01T00:00:00Z",
             caveats="Some tools ignore SOURCE_DATE_EPOCH — verify with jar -tvf that timestamps are zeroed",
         ),
+        TipEntry(
+            name="curl-fail-fast",
+
+            description="Always use curl -fSL for downloading JDK, Maven, or any build tool",
+            tags=["curl", "download", "jdk"],
+            build_systems=["maven", "gradle", "ant"],
+            trigger="Downloading JDK, Maven, or any build tool via curl",
+            solution="Always use curl -fSL --retry 3, never curl -sL. The -f flag fails on HTTP "
+                     "errors instead of silently saving error pages",
+            caveats="Some CDNs return 200 with error HTML instead of proper HTTP errors — "
+                     "verify downloaded file size or checksum",
+        ),
+        TrickEntry(
+            name="gradle-java-tool-options-isolation",
+
+            description="Isolate JAVA_TOOL_OPTIONS to prevent env-injected JVM flags from breaking Gradle toolchain probes",
+            tags=["gradle", "toolchain", "jvm"],
+            build_systems=["gradle"],
+            error_pattern="Unrecognized VM option",
+            fix="Add ENV JAVA_TOOL_OPTIONS=\"\" early in the Containerfile to prevent "
+                "environment-injected JVM flags from reaching Gradle toolchain probes. "
+                "Flags like -XX:ActiveProcessorCount require JDK 10+ but JDK 9 probes inherit them",
+            example_log="Error: Could not create the Java Virtual Machine.\n"
+                        "Error: A fatal exception has occurred. Program will exit.\n"
+                        "Unrecognized VM option ActiveProcessorCount=4",
+        ),
     ]
 
     count = 0

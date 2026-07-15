@@ -741,3 +741,129 @@ class TestBroadenedJarDiscovery:
 
             mock_run.side_effect = side_effect
             evaluator._extract_jar_from_container("cid", "art", "1.0", dest)
+
+
+class TestLintContainerfilePortability:
+    """Tests for _lint_containerfile_portability advisory checks."""
+
+    def _lint(self, containerfile: str) -> list[AdvisoryFinding]:
+        evaluator = Evaluator()
+        return evaluator._lint_containerfile_portability(containerfile)
+
+    # --- curl -s without -f ---
+
+    def test_curl_s_without_f_detected(self):
+        cf = "FROM maven:3.9\nRUN curl -sL https://example.com/jdk.tar.gz -o jdk.tar.gz\n"
+        findings = self._lint(cf)
+        curl_findings = [f for f in findings if "curl" in f.message.lower()]
+        assert len(curl_findings) == 1
+        assert curl_findings[0].severity == "warning"
+        assert curl_findings[0].category == "portability"
+
+    def test_curl_fSL_no_warning(self):
+        cf = "FROM maven:3.9\nRUN curl -fSL https://example.com/jdk.tar.gz -o jdk.tar.gz\n"
+        findings = self._lint(cf)
+        curl_findings = [f for f in findings if "curl" in f.message.lower()]
+        assert len(curl_findings) == 0
+
+    def test_curl_no_s_flag_no_warning(self):
+        cf = "FROM maven:3.9\nRUN curl -L https://example.com/jdk.tar.gz -o jdk.tar.gz\n"
+        findings = self._lint(cf)
+        curl_findings = [f for f in findings if "curl" in f.message.lower()]
+        assert len(curl_findings) == 0
+
+    # --- tail/head pipe ---
+
+    def test_pipe_tail_detected(self):
+        cf = "FROM maven:3.9\nRUN mvn clean install 2>&1 | tail -50\n"
+        findings = self._lint(cf)
+        tail_findings = [f for f in findings if "tail" in f.message.lower()]
+        assert len(tail_findings) == 1
+        assert tail_findings[0].severity == "warning"
+
+    def test_pipe_head_detected(self):
+        cf = "FROM maven:3.9\nRUN mvn clean install 2>&1 | head -20\n"
+        findings = self._lint(cf)
+        head_findings = [f for f in findings if "head" in f.message.lower()]
+        assert len(head_findings) == 1
+        assert head_findings[0].severity == "warning"
+
+    def test_no_pipe_tail_clean(self):
+        cf = "FROM maven:3.9\nRUN mvn clean install -B\n"
+        findings = self._lint(cf)
+        pipe_findings = [f for f in findings if "tail" in f.message.lower() or "head" in f.message.lower()]
+        assert len(pipe_findings) == 0
+
+    # --- Gradle without JAVA_TOOL_OPTIONS ---
+
+    def test_gradle_without_java_tool_options_detected(self):
+        cf = "FROM eclipse-temurin:17-jdk\nRUN ./gradlew build -x test\n"
+        findings = self._lint(cf)
+        gradle_findings = [f for f in findings if "JAVA_TOOL_OPTIONS" in f.message]
+        assert len(gradle_findings) == 1
+        assert gradle_findings[0].severity == "warning"
+
+    def test_gradle_with_java_tool_options_clean(self):
+        cf = 'FROM eclipse-temurin:17-jdk\nENV JAVA_TOOL_OPTIONS=""\nRUN ./gradlew build -x test\n'
+        findings = self._lint(cf)
+        gradle_findings = [f for f in findings if "JAVA_TOOL_OPTIONS" in f.message]
+        assert len(gradle_findings) == 0
+
+    def test_maven_build_no_gradle_warning(self):
+        cf = "FROM maven:3.9\nRUN mvn clean install -B\n"
+        findings = self._lint(cf)
+        gradle_findings = [f for f in findings if "JAVA_TOOL_OPTIONS" in f.message]
+        assert len(gradle_findings) == 0
+
+    # --- JDK download without java -version ---
+
+    def test_jdk_download_without_verification_detected(self):
+        cf = (
+            "FROM ubuntu:22.04\n"
+            "RUN curl -fSL https://api.adoptium.net/v3/binary/jdk-17.tar.gz -o jdk.tar.gz\n"
+        )
+        findings = self._lint(cf)
+        jdk_findings = [f for f in findings if "java -version" in f.message]
+        assert len(jdk_findings) == 1
+        assert jdk_findings[0].severity == "info"
+
+    def test_jdk_download_with_verification_clean(self):
+        cf = (
+            "FROM ubuntu:22.04\n"
+            "RUN curl -fSL https://api.adoptium.net/v3/binary/jdk-17.tar.gz -o jdk.tar.gz\n"
+            "RUN /opt/jdk/bin/java -version\n"
+        )
+        findings = self._lint(cf)
+        jdk_findings = [f for f in findings if "java -version" in f.message]
+        assert len(jdk_findings) == 0
+
+    def test_non_jdk_curl_no_jdk_warning(self):
+        cf = "FROM maven:3.9\nRUN curl -fSL https://example.com/lib.tar.gz -o lib.tar.gz\n"
+        findings = self._lint(cf)
+        jdk_findings = [f for f in findings if "java -version" in f.message]
+        assert len(jdk_findings) == 0
+
+    # --- Clean Containerfile produces no findings ---
+
+    def test_clean_containerfile_no_findings(self):
+        cf = (
+            "FROM eclipse-temurin:17-jdk\n"
+            "WORKDIR /build\n"
+            "RUN git clone https://github.com/example/repo.git .\n"
+            "RUN mvn clean install -B\n"
+        )
+        findings = self._lint(cf)
+        assert len(findings) == 0
+
+    # --- Integration: lint findings appear in evaluate result ---
+
+    def test_lint_findings_in_evaluate_result(self):
+        cf = "FROM maven:3.9\nRUN curl -sL https://example.com/tool.tar.gz -o tool.tar.gz\n"
+        evaluator = Evaluator()
+        result = EvalResult()
+        evaluator._l1_parse(cf, result)
+        result.advisory_findings.extend(
+            evaluator._lint_containerfile_portability(cf)
+        )
+        portability = [f for f in result.advisory_findings if f.category == "portability"]
+        assert len(portability) >= 1

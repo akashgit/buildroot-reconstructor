@@ -91,6 +91,10 @@ class Evaluator:
             result.compute_reward()
             return result
 
+        result.advisory_findings.extend(
+            self._lint_containerfile_portability(containerfile)
+        )
+
         self._l1_5_trust(containerfile, result)
         if trusted and result.trust_violations:
             result.error_summary = "; ".join(result.trust_violations)
@@ -696,6 +700,98 @@ class Evaluator:
             var = m.group(1) or m.group(2)
             return args.get(var, m.group(0))
         return _re.sub(r"\$\{(\w+)\}|\$(\w+)", replacer, text)
+
+    def _lint_containerfile_portability(self, containerfile: str) -> list[AdvisoryFinding]:
+        """Scan Containerfile text for fragile portability patterns."""
+        findings: list[AdvisoryFinding] = []
+        lines = containerfile.splitlines()
+
+        has_gradle = False
+        has_java_tool_options = False
+
+        for line_num, line in enumerate(lines, 1):
+            stripped = line.strip()
+            upper = stripped.upper()
+
+            if upper.startswith("ENV ") and "JAVA_TOOL_OPTIONS" in stripped:
+                has_java_tool_options = True
+
+            if upper.startswith("RUN "):
+                run_block = stripped[4:]
+                j = line_num
+                while run_block.endswith("\\") and j < len(lines):
+                    run_block = run_block[:-1] + " " + lines[j].strip()
+                    j += 1
+
+                if re.search(r'\bgradle\b|\./gradlew\b', run_block, re.IGNORECASE):
+                    has_gradle = True
+
+                for curl_m in re.finditer(r'\bcurl\b', run_block):
+                    after_curl = run_block[curl_m.end():]
+                    flags_section = after_curl.split('http')[0] if 'http' in after_curl else after_curl
+                    has_s = bool(re.search(r'-\w*s', flags_section))
+                    has_f = bool(re.search(r'-\w*f', flags_section))
+                    if has_s and not has_f:
+                        findings.append(AdvisoryFinding(
+                            category="portability",
+                            severity="warning",
+                            message="curl with -s but without -f: HTTP errors will be silently ignored. Use curl -fSL instead.",
+                            location=f"Containerfile:{line_num}",
+                        ))
+                        break
+
+                if re.search(r'\|\s*tail\b', run_block):
+                    findings.append(AdvisoryFinding(
+                        category="portability",
+                        severity="warning",
+                        message="Piping through tail swallows the exit code of the preceding command. A failing build will appear to succeed.",
+                        location=f"Containerfile:{line_num}",
+                    ))
+                if re.search(r'\|\s*head\b', run_block):
+                    findings.append(AdvisoryFinding(
+                        category="portability",
+                        severity="warning",
+                        message="Piping through head swallows the exit code of the preceding command. A failing build will appear to succeed.",
+                        location=f"Containerfile:{line_num}",
+                    ))
+
+        jdk_download_lines: list[int] = []
+        java_version_lines: list[int] = []
+        for line_num, line in enumerate(lines, 1):
+            stripped = line.strip()
+            if stripped.upper().startswith("RUN "):
+                run_block = stripped[4:]
+                j = line_num
+                while run_block.endswith("\\") and j < len(lines):
+                    run_block = run_block[:-1] + " " + lines[j].strip()
+                    j += 1
+
+                if re.search(r'\b(curl|wget)\b', run_block) and re.search(
+                    r'adoptium|temurin|/java|openjdk|jdk', run_block, re.IGNORECASE
+                ):
+                    jdk_download_lines.append(line_num)
+
+                if re.search(r'java\s+-version|java\s+--version', run_block):
+                    java_version_lines.append(line_num)
+
+        for dl_line in jdk_download_lines:
+            has_verify = any(vl > dl_line for vl in java_version_lines)
+            if not has_verify:
+                findings.append(AdvisoryFinding(
+                    category="portability",
+                    severity="info",
+                    message="JDK downloaded without subsequent java -version verification. Add a verification step to fail early on corrupt downloads.",
+                    location=f"Containerfile:{dl_line}",
+                ))
+
+        if has_gradle and not has_java_tool_options:
+            findings.append(AdvisoryFinding(
+                category="portability",
+                severity="warning",
+                message="Gradle build without ENV JAVA_TOOL_OPTIONS=\"\". Environment-injected JVM flags may break toolchain probes.",
+            ))
+
+        return findings
 
     def _cleanup_image(self, tag: str) -> None:
         try:
