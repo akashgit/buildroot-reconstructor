@@ -443,6 +443,19 @@ Set these spec fields:
     # 7. Post-run: find best Containerfile in workspace
     _scan_workspace_for_best(result, workspace, coordinate, host, isolate_podman=isolate_podman)
 
+    # 7.5. Pick up eval-agent report if the orchestrator wrote one
+    eval_report_path = workspace / "eval-agent-report.json"
+    if eval_report_path.exists():
+        try:
+            eval_agent_data = json.loads(eval_report_path.read_text())
+            result.eval_result_dict = eval_agent_data
+            logger.info("Loaded eval-agent report: reward=%.4f, test_status=%s, tests_run=%s",
+                        eval_agent_data.get("reward", 0),
+                        eval_agent_data.get("test_status", "?"),
+                        eval_agent_data.get("tests_run", "?"))
+        except (json.JSONDecodeError, OSError) as e:
+            logger.warning("Failed to load eval-agent report: %s", e)
+
     # 8. Learning loop — record success
     if result.best_reward >= target_score and result.best_containerfile:
         recipe_store.save(coordinate, result.best_level, result.best_containerfile, result.best_reward)
