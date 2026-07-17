@@ -132,9 +132,10 @@ class Evaluator:
 
         result.advisory_findings.extend(_parse_checksum_failures(result.build_log))
 
-        from buildroot.eval.test_runner import run_tests
-        result.test_result = run_tests(
-            tag, containerfile, host=self._host, timeout=300,
+        from buildroot.qa.workflow import run_test_recovery
+        result.test_result = run_test_recovery(
+            tag, containerfile, coordinate,
+            host=self._host, timeout=600,
             podman_root=str(self._isolation.graphroot) if self._isolation else None,
             podman_runroot=str(self._isolation.runroot) if self._isolation else None,
             podman_tmpdir=str(self._isolation.tmpdir) if self._isolation else None,
@@ -404,7 +405,11 @@ class Evaluator:
                 result.l4_score = report.equivalence_score(trusted=trusted)
                 result.l4_signal_source = "full_comparison"
                 if report.verdict in ("IDENTICAL", "EQUIVALENT", "TRUSTED_EQUIVALENT"):
-                    result.l4_match = True
+                    tests_block = (
+                        result.test_result is not None
+                        and result.test_result.status in ("failed", "not_reached")
+                    )
+                    result.l4_match = not tests_block
                 else:
                     parts = [
                         f"verdict={report.verdict}",

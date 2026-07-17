@@ -85,10 +85,19 @@ The evaluator checks Maven Central for the reference JAR. If the download fails 
 
 | Signal | Weight | What it checks |
 |--------|--------|----------------|
-| Structural match | 0.30 | Jaccard similarity between JAR .class files and source .java files |
-| Bytecode version | 0.30 | Built .class files target the expected JDK version |
-| Manifest sanity | 0.20 | MANIFEST.MF exists, pom.properties has correct groupId/artifactId |
-| Unit test pass | 0.20 | Project's test suite passes inside the container |
+| Unit test pass | 0.30 | Project's test suite passes inside the container (binary) |
+| Bytecode version | 0.15 | Built .class files target the expected JDK version |
+| API surface match | 0.15 | Jaccard similarity of public/protected method signatures |
+| Structural match | 0.10 | Jaccard similarity between JAR .class files and source .java files |
+| Manifest sanity | 0.10 | MANIFEST.MF exists, pom.properties has correct groupId/artifactId |
+| Dependency graph | 0.10 | Package dependency overlap between JAR and source imports |
+| Resource completeness | 0.10 | Fraction of expected resources present in JAR |
+
+On the full L4 comparison path (96% of builds), the L4 score is composed as:
+- 70% JAR equivalence (bytecode + metadata + structural comparison against reference JAR)
+- 30% unit test pass (binary: 1.0 if all tests pass, 0.0 if any fail)
+
+When no test sources exist in the project, unit tests are excluded and JAR comparison gets 100%.
 
 Signals that cannot be computed (e.g., no tests exist, shaded JAR detected) return None and their weight is redistributed to the remaining signals.
 

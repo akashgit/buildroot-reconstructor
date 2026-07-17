@@ -33,6 +33,17 @@ _FAILURE_BLOCK_RE = re.compile(
     re.MULTILINE,
 )
 
+_PL_RE = re.compile(r"-pl\s+(\S+)")
+
+def extract_module_path(containerfile: str) -> str | None:
+    """Parse ``-pl <module>`` from Maven build commands in a Containerfile."""
+    for line in containerfile.splitlines():
+        if "mvn " in line.lower() or "mvnw " in line.lower():
+            m = _PL_RE.search(line)
+            if m:
+                return m.group(1)
+    return None
+
 
 def detect_test_framework(containerfile: str) -> str | None:
     """Detect the build/test framework from a Containerfile's content.
