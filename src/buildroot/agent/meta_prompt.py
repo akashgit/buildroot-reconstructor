@@ -240,25 +240,30 @@ buildroot agent org.apache.commons:commons-lang3:3.14.0 --v3-only
 
     sections.append("""\
 ## buildroot qa <containerfile-path> <coordinate> [--host HOST]
-Run QA verification agents against a built container. Spawns two agents:
-1. **Test recovery agent** — probes for test sources, recovers stripped tests,
-   runs `mvn test` with correct `-pl` module targeting
-2. **Verification agent** — runs programmatic JAR checks
+Run the L4-eval agent — the AUTHORITATIVE evaluator for your Containerfile.
+This spawns a separate Claude agent that independently:
+1. Builds and evaluates the Containerfile (L1-L4 JAR comparison)
+2. Recovers and runs unit tests (probes for test sources, handles -pl targeting)
+3. Computes the final score: 70% JAR comparison + 30% unit tests
+4. Returns failure reasons and suggestions if score < 0.98
 
-Returns JSON with test_result (status, tests_run, tests_passed, tests_failed)
-and verification results.
-
-**MANDATORY**: After your build reaches L4 (JAR comparison passes), you MUST run
-`buildroot qa` before claiming success. Unit tests are 30% of the L4 score —
-without passing QA, your reward caps at 0.85 even with a perfect JAR match.
+**MANDATORY**: Use `buildroot qa` instead of `buildroot eval` for ALL evaluations.
+The L4-eval agent is the sole authority on scoring. You MUST NOT:
+- Run tests yourself (the L4-eval agent handles test recovery)
+- Create synthetic/fake tests to pass the evaluator
+- Read or modify the evaluation code (test_runner.py, evaluator.py, scorer.py)
 
 Usage:
 ```bash
 buildroot qa /path/to/Containerfile org.example:artifact:1.0.0
 ```
 
-If QA reports test failures, fix the Containerfile to ensure tests pass, then
-re-run `buildroot eval` and `buildroot qa` until both pass.
+If reward < 0.98, read the `failure_reason` and `suggestion` fields, fix
+the Containerfile accordingly, and re-run `buildroot qa`.
+
+## buildroot eval <containerfile-path> <coordinate> [--host HOST]
+Low-level evaluator (JAR comparison only, no test recovery). Prefer `buildroot qa`
+which wraps this with test recovery and proper scoring.
 
 ## buildroot kb search <query>
 Search the knowledge base for templates, tips, and tricks.
@@ -291,24 +296,26 @@ def _strategy_section() -> str:
    - v3 hits template limitations (multi-stage, OSGI, complex builds)
    - v3 is stuck at L2 (build failure the template can't fix)
    - v3 is stuck at L3 (JAR produced but comparison fails repeatedly)
-   - v3 is stuck at 0.85 reward (JAR matches but tests don't pass)
 4. **When taking over**:
    - Read the v3 workspace artifacts (best Containerfile, build logs, comparison reports)
    - Query the KB for relevant tips/tricks
    - Write a Containerfile directly (not through templates)
-   - Evaluate with `buildroot eval`, iterate on failures
-5. **Run QA after JAR matches** (MANDATORY):
-   - Once `buildroot eval` shows comparison_verdict=EQUIVALENT/IDENTICAL, run `buildroot qa`
-   - QA agents handle test recovery — they probe for test sources, fix `-pl` targeting, etc.
-   - If QA fails, your reward stays at 0.85 (30% L4 test credit withheld)
-   - Fix test issues in the Containerfile and re-run QA until tests pass
-6. **Debug systematically**:
-   - L2 failure → read build log, fix the build command or dependencies
-   - L3 failure → check JAR location, verify build produced the right artifact
-   - L4 structural → compare file lists, find missing/extra entries
-   - L4 metadata → compare MANIFEST.MF, fix OSGI headers or build metadata
-   - L4 bytecode → match JDK version exactly, check compiler flags
-   - L4 tests (reward=0.85) → run `buildroot qa`, fix test execution
+   - **Always use `buildroot qa` for evaluation** (not `buildroot eval`)
+   - Read the failure_reason and suggestion from the L4-eval agent output
+   - Iterate on the Containerfile based on the agent's feedback
+5. **You are the BUILDER, not the tester**:
+   - Write and fix Containerfiles — that is your job
+   - Do NOT run tests yourself, create test files, or modify test infrastructure
+   - Do NOT read evaluator source code (test_runner.py, evaluator.py, scorer.py)
+   - The L4-eval agent handles all testing independently — trust its results
+6. **Debug based on L4-eval feedback**:
+   - L2 failure → fix the build command or dependencies
+   - L3 failure → fix JAR location, verify build produces the right artifact
+   - L4 structural → fix file lists based on agent's missing/extra report
+   - L4 metadata → fix MANIFEST.MF based on agent's metadata diff
+   - L4 bytecode → match JDK version exactly based on agent's bytecode report
+   - L4 tests → read the agent's test failure details, fix Containerfile so tests can run
+     (e.g., don't strip test sources, keep test deps, use correct -pl targeting)
 
 ## Termination Conditions
 - **Success**: reward >= 0.98 (double-confirmed)
