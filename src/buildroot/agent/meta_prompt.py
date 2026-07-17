@@ -261,10 +261,6 @@ buildroot qa /path/to/Containerfile org.example:artifact:1.0.0
 If reward < 0.98, read the `failure_reason` and `suggestion` fields, fix
 the Containerfile accordingly, and re-run `buildroot qa`.
 
-## buildroot eval <containerfile-path> <coordinate> [--host HOST]
-Low-level evaluator (JAR comparison only, no test recovery). Prefer `buildroot qa`
-which wraps this with test recovery and proper scoring.
-
 ## buildroot kb search <query>
 Search the knowledge base for templates, tips, and tricks.
 
