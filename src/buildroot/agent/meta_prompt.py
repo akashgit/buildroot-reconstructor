@@ -216,23 +216,34 @@ def _tool_docs_section(v3_available: bool) -> str:
     sections = ["""\
 # Available Tools
 
-## buildroot eval-agent <containerfile-path> <coordinate> [--host HOST]
-Run the L4-eval agent to evaluate a Containerfile. This is the ONLY evaluation
-command you should use. It spawns an independent agent that:
-1. Builds and evaluates the Containerfile (L1-L4 JAR comparison)
-2. Recovers and runs unit tests (probes for test sources, handles -pl)
-3. Computes final score: 70% JAR comparison + 30% unit tests
-4. Returns failure reasons and suggestions if score < 0.98
+## Two-stage evaluation
 
-Returns JSON with: reward, l4_score, comparison_verdict, test_status,
-tests_run, tests_passed, failure_reason, suggestion.
+### Stage 1: `buildroot eval` (quick, cheap — use for L1-L3 iteration)
+```bash
+buildroot eval /path/to/Containerfile org.example:artifact:1.0.0
+```
+Fast evaluation — checks L1 parse, L2 build, L3 JAR exists, L4 JAR comparison.
+Does NOT run unit tests. Use this while iterating on build failures (L1/L2/L3).
+Reward from this command caps at 0.85 (missing 30% test credit).
 
-Do NOT use `buildroot eval` directly — it lacks test recovery and proper scoring.
-
-Usage:
+### Stage 2: `buildroot eval-agent` (full L4 — use ONLY after L3 passes)
 ```bash
 buildroot eval-agent /path/to/Containerfile org.example:artifact:1.0.0
-```"""]
+```
+Spawns an independent evaluation agent that runs JAR comparison + test recovery.
+This is expensive (spawns a Claude session) — only call it when `buildroot eval`
+shows L3 passing (JAR exists in container). Returns the authoritative L4 score
+including unit tests (70% JAR + 30% tests).
+
+### Workflow
+1. Iterate with `buildroot eval` until L3 passes (build succeeds, JAR produced)
+2. Then call `buildroot eval-agent` ONCE for the full L4 score with tests
+3. If eval-agent reports test failures, fix Containerfile and re-run eval-agent
+
+You MUST NOT:
+- Run tests yourself (the eval-agent handles test recovery)
+- Create synthetic/fake tests to pass the evaluator
+- Read or modify the evaluation code (test_runner.py, evaluator.py, scorer.py)"""]
 
     if v3_available:
         sections.append("""\
@@ -247,28 +258,6 @@ buildroot agent org.apache.commons:commons-lang3:3.14.0 --v3-only
 ```""")
 
     sections.append("""\
-## buildroot eval-agent <containerfile-path> <coordinate> [--host HOST]
-Run the L4-eval agent — the AUTHORITATIVE evaluator for your Containerfile.
-This spawns a separate Claude agent that independently:
-1. Builds and evaluates the Containerfile (L1-L4 JAR comparison)
-2. Recovers and runs unit tests (probes for test sources, handles -pl targeting)
-3. Computes the final score: 70% JAR comparison + 30% unit tests
-4. Returns failure reasons and suggestions if score < 0.98
-
-**MANDATORY**: Use `buildroot eval-agent` instead of `buildroot eval` for ALL evaluations.
-The L4-eval agent is the sole authority on scoring. You MUST NOT:
-- Run tests yourself (the L4-eval agent handles test recovery)
-- Create synthetic/fake tests to pass the evaluator
-- Read or modify the evaluation code (test_runner.py, evaluator.py, scorer.py)
-
-Usage:
-```bash
-buildroot eval-agent /path/to/Containerfile org.example:artifact:1.0.0
-```
-
-If reward < 0.98, read the `failure_reason` and `suggestion` fields, fix
-the Containerfile accordingly, and re-run `buildroot eval-agent`.
-
 ## buildroot kb search <query>
 Search the knowledge base for templates, tips, and tricks.
 
@@ -304,8 +293,9 @@ def _strategy_section() -> str:
    - Read the v3 workspace artifacts (best Containerfile, build logs, comparison reports)
    - Query the KB for relevant tips/tricks
    - Write a Containerfile directly (not through templates)
-   - **Always use `buildroot eval-agent` for evaluation** (not `buildroot eval`)
-   - Read the failure_reason and suggestion from the L4-eval agent output
+   - Use `buildroot eval` to iterate on L1-L3 failures (cheap, fast)
+   - Once L3 passes, use `buildroot eval-agent` for full L4 + tests (expensive, authoritative)
+   - Read the failure_reason and suggestion from the eval-agent output
    - Iterate on the Containerfile based on the agent's feedback
 5. **You are the BUILDER, not the tester**:
    - Write and fix Containerfiles — that is your job
