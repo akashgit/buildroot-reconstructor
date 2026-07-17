@@ -139,6 +139,19 @@ Return structured JSON:
 }
 ```
 
+## Save Report
+
+After computing your result, save the full evaluation report as a JSON file
+in the SAME directory as the Containerfile:
+
+```bash
+# If Containerfile is at /tmp/workspace/Containerfile, save to:
+echo '<your JSON result>' > /tmp/workspace/eval-agent-report.json
+```
+
+This report is the authoritative L4 artifact. It will be saved to the build
+database alongside the Containerfile.
+
 ## Constraints
 
 - You MUST actually run tests — reading code and speculating is NOT testing

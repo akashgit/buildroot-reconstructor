@@ -188,8 +188,41 @@ def launch_interactive_orchestrator(
     ]
 
     try:
-        result = subprocess.run(cmd, env=env)
-        return result.returncode
+        proc = subprocess.run(cmd, env=env)
+
+        # Post-run: scan workspace for best Containerfile and save to DB
+        best_cf_path = workspace / "Containerfile.best"
+        if best_cf_path.exists():
+            cf_text = best_cf_path.read_text().strip()
+            if cf_text:
+                logger.info("Interactive session produced Containerfile.best — scanning and saving")
+                result = OrchestratorResult(coordinate=coordinate)
+                result.best_containerfile = cf_text
+                result.best_containerfile_path = str(best_cf_path)
+                _scan_workspace_for_best(result, workspace, coordinate, host, isolate_podman=isolate_podman)
+
+                eval_report_path = workspace / "eval-agent-report.json"
+                if eval_report_path.exists():
+                    try:
+                        result.eval_result_dict = json.loads(eval_report_path.read_text())
+                    except (json.JSONDecodeError, OSError):
+                        pass
+
+                if result.best_reward >= 0.9:
+                    try:
+                        from buildroot.agent.build_store import save_build
+                        save_build(
+                            coordinate, result.best_containerfile, result.best_reward,
+                            result.best_level, "interactive", 0, 0,
+                            eval_result=result.eval_result_dict,
+                            rebuilt_jar=result.rebuilt_jar_bytes,
+                        )
+                        logger.info("Saved interactive build to DB: %s (reward=%.4f, L%d)",
+                                    coordinate, result.best_reward, result.best_level)
+                    except Exception as e:
+                        logger.debug("DB save skipped: %s", e)
+
+        return proc.returncode
     finally:
         prompt_file.unlink(missing_ok=True)
         if isolation:
