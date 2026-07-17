@@ -621,14 +621,14 @@ Target score: {target_score}
 2. **While v3 runs**, you may prepare in parallel:
    - Analyze the original JAR (manifest, POM, structure)
    - Write your own Containerfile at {workspace}/Containerfile
-   - Use `buildroot eval{no_isolate_flag}` for quick L1-L3 iteration (cheap, no agent spawn)
-   - Once L3 passes (JAR exists), run `buildroot eval-agent{no_isolate_flag}` for full L4 + tests
+   - Use `podman build` to iterate until the container builds successfully
+   - Once build succeeds, run `buildroot eval-agent` for full L4 + tests
    - But keep v3 running — when it finishes, compare its result against yours and use whichever scored higher
 
 3. **If v3 finishes below {target_score}**, take over:
    - Read the v3 JSON for `best_containerfile` — use it as your starting point
-   - Use `buildroot eval{no_isolate_flag}` to iterate until L3 passes
-   - Then run `buildroot eval-agent{no_isolate_flag}` for the full L4 score with tests
+   - Use `podman build` to iterate on build failures
+   - Once build succeeds, run `buildroot eval-agent` for the full L4 score with tests
 
 4. **Save your best Containerfile** to {workspace}/Containerfile.best
 

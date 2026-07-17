@@ -216,34 +216,38 @@ def _tool_docs_section(v3_available: bool) -> str:
     sections = ["""\
 # Available Tools
 
-## Two-stage evaluation
+## Two-stage workflow
 
-### Stage 1: `buildroot eval` (quick, cheap — use for L1-L3 iteration)
+### Stage 1: Build iteration with `podman build` (cheap, fast)
 ```bash
-buildroot eval /path/to/Containerfile org.example:artifact:1.0.0
+podman build --pull=missing -t buildroot-test -f /path/to/Containerfile .
 ```
-Fast evaluation — checks L1 parse, L2 build, L3 JAR exists, L4 JAR comparison.
-Does NOT run unit tests. Use this while iterating on build failures (L1/L2/L3).
-Reward from this command caps at 0.85 (missing 30% test credit).
+Use `podman build` directly to iterate on Containerfile build failures.
+This is the fastest way to verify your Containerfile builds correctly.
+Keep iterating until the build succeeds (exit code 0).
 
-### Stage 2: `buildroot eval-agent` (full L4 — use ONLY after L3 passes)
+### Stage 2: Full evaluation with `buildroot eval-agent` (after build succeeds)
 ```bash
 buildroot eval-agent /path/to/Containerfile org.example:artifact:1.0.0
 ```
-Spawns an independent evaluation agent that runs JAR comparison + test recovery.
-This is expensive (spawns a Claude session) — only call it when `buildroot eval`
-shows L3 passing (JAR exists in container). Returns the authoritative L4 score
-including unit tests (70% JAR + 30% tests).
+Once `podman build` succeeds, run `buildroot eval-agent` for the authoritative
+L1-L4 score. This spawns an independent evaluation agent that:
+1. Runs JAR comparison against Maven Central (L1-L4)
+2. Recovers and runs unit tests (probes for test sources, handles -pl)
+3. Computes final score: 70% JAR comparison + 30% unit tests
+4. Returns failure reasons and suggestions if score < 0.98
 
 ### Workflow
-1. Iterate with `buildroot eval` until L3 passes (build succeeds, JAR produced)
-2. Then call `buildroot eval-agent` ONCE for the full L4 score with tests
-3. If eval-agent reports test failures, fix Containerfile and re-run eval-agent
+1. Write Containerfile
+2. `podman build` — iterate until build succeeds
+3. `buildroot eval-agent` — get the full L4 score with tests
+4. If score < 0.98, read failure_reason + suggestion, fix Containerfile, go to 2
 
 You MUST NOT:
 - Run tests yourself (the eval-agent handles test recovery)
 - Create synthetic/fake tests to pass the evaluator
-- Read or modify the evaluation code (test_runner.py, evaluator.py, scorer.py)"""]
+- Read or modify the evaluation code (test_runner.py, evaluator.py, scorer.py)
+- Use `buildroot eval` directly (use eval-agent instead for proper scoring)"""]
 
     if v3_available:
         sections.append("""\
@@ -293,8 +297,8 @@ def _strategy_section() -> str:
    - Read the v3 workspace artifacts (best Containerfile, build logs, comparison reports)
    - Query the KB for relevant tips/tricks
    - Write a Containerfile directly (not through templates)
-   - Use `buildroot eval` to iterate on L1-L3 failures (cheap, fast)
-   - Once L3 passes, use `buildroot eval-agent` for full L4 + tests (expensive, authoritative)
+   - Use `podman build` to iterate on build failures (cheap, fast)
+   - Once build succeeds, use `buildroot eval-agent` for full L4 + tests (authoritative)
    - Read the failure_reason and suggestion from the eval-agent output
    - Iterate on the Containerfile based on the agent's feedback
 5. **You are the BUILDER, not the tester**:
