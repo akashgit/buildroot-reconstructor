@@ -120,3 +120,80 @@ Return your findings as structured JSON."""
         passed=False,
         status="error",
     )
+
+
+def run_verification(
+    tag: str,
+    containerfile: str,
+    coordinate: str,
+    *,
+    host: str | None = None,
+    timeout: int = 300,
+    podman_root: str | None = None,
+    podman_runroot: str | None = None,
+    podman_tmpdir: str | None = None,
+) -> dict:
+    """Run the verification agent for programmatic JAR checks.
+
+    Returns a dict with structural, bytecode, metadata match results.
+    """
+    podman_info = []
+    if host:
+        podman_info.append(f"SSH host: {host}")
+    if podman_root:
+        podman_info.append(f"podman --root {podman_root}")
+    if podman_runroot:
+        podman_info.append(f"podman --runroot {podman_runroot}")
+    if podman_tmpdir:
+        podman_info.append(f"podman --tmpdir {podman_tmpdir}")
+    podman_str = "\n".join(podman_info) if podman_info else "Local podman (no SSH)"
+
+    task = f"""Verify the reconstructed build for: {coordinate}
+
+Container image tag: {tag}
+
+Containerfile:
+```dockerfile
+{containerfile}
+```
+
+Podman connection:
+{podman_str}
+
+Run `buildroot eval` against this Containerfile and coordinate, then report the
+L1-L4 results. Check structural match, bytecode version, metadata, and manifest.
+Return your findings as structured JSON."""
+
+    schema = {
+        "type": "object",
+        "properties": {
+            "l1_parse": {"type": "boolean"},
+            "l2_build": {"type": "boolean"},
+            "l3_command": {"type": "boolean"},
+            "l4_score": {"type": "number"},
+            "l4_match": {"type": "boolean"},
+            "comparison_verdict": {"type": "string"},
+            "reward": {"type": "number"},
+            "structural_match": {"type": "boolean"},
+            "bytecode_match": {"type": "boolean"},
+            "metadata_match": {"type": "boolean"},
+        },
+        "required": ["l1_parse", "l2_build", "l3_command", "reward"],
+    }
+
+    prompt = _load_prompt("verification_agent")
+
+    result = spawn_claude_agent(
+        task=task,
+        system_prompt=prompt,
+        json_schema=schema,
+        max_turns=10,
+        max_budget_usd=0.30,
+        timeout=timeout,
+    )
+
+    if result.structured_output:
+        return result.structured_output
+
+    logger.warning("Verification agent failed: %s", result.error_message or "no structured output")
+    return {"error": result.error_message or "no structured output"}

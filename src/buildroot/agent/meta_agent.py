@@ -520,7 +520,7 @@ def _run_qa_workflow(
     Updates result.eval_result_dict with QA findings. If tests exist
     but fail, downgrades the reward (unit tests = 30% of L4).
     """
-    from buildroot.qa.workflow import run_test_recovery
+    from buildroot.qa.workflow import run_test_recovery, run_verification
 
     logger.info("Starting QA workflow for %s", coordinate)
 
@@ -559,9 +559,20 @@ def _run_qa_workflow(
             podman_tmpdir=str(isolation.tmpdir) if isolation else None,
         )
 
+        # Agent 2: Verification agent — programmatic JAR checks
+        verification = run_verification(
+            tag, containerfile, coordinate,
+            host=host,
+            podman_root=str(isolation.graphroot) if isolation else None,
+            podman_runroot=str(isolation.runroot) if isolation else None,
+            podman_tmpdir=str(isolation.tmpdir) if isolation else None,
+        )
+        logger.info("QA verification: %s", verification)
+
         if result.eval_result_dict is None:
             result.eval_result_dict = {}
         result.eval_result_dict["test_result"] = test_result.to_dict()
+        result.eval_result_dict["qa_verification"] = verification
 
         if test_result.status in ("failed", "not_reached"):
             jar_score = result.best_reward
