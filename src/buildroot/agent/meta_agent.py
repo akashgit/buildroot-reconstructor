@@ -188,8 +188,34 @@ def launch_interactive_orchestrator(
     ]
 
     try:
-        result = subprocess.run(cmd, env=env)
-        return result.returncode
+        proc = subprocess.run(cmd, env=env)
+
+        # Post-run: scan workspace for best Containerfile and save to DB
+        best_cf_path = workspace / "Containerfile.best"
+        if best_cf_path.exists():
+            cf_text = best_cf_path.read_text().strip()
+            if cf_text:
+                logger.info("Interactive session produced Containerfile.best — scanning and saving")
+                result = OrchestratorResult(coordinate=coordinate)
+                result.best_containerfile = cf_text
+                result.best_containerfile_path = str(best_cf_path)
+                _scan_workspace_for_best(result, workspace, coordinate, host, isolate_podman=isolate_podman)
+
+                if result.best_reward >= 0.9:
+                    try:
+                        from buildroot.agent.build_store import save_build
+                        save_build(
+                            coordinate, result.best_containerfile, result.best_reward,
+                            result.best_level, "interactive", 0, 0,
+                            eval_result=result.eval_result_dict,
+                            rebuilt_jar=result.rebuilt_jar_bytes,
+                        )
+                        logger.info("Saved interactive build to DB: %s (reward=%.4f, L%d)",
+                                    coordinate, result.best_reward, result.best_level)
+                    except Exception as e:
+                        logger.debug("DB save skipped: %s", e)
+
+        return proc.returncode
     finally:
         prompt_file.unlink(missing_ok=True)
         if isolation:
@@ -621,12 +647,14 @@ Target score: {target_score}
 2. **While v3 runs**, you may prepare in parallel:
    - Analyze the original JAR (manifest, POM, structure)
    - Write your own Containerfile at {workspace}/Containerfile
-   - Run `buildroot eval{no_isolate_flag}` on your Containerfile
+   - Use `podman build` to iterate until the container builds successfully
+   - Once build succeeds, run `buildroot eval-agent` for full L4 + tests
    - But keep v3 running — when it finishes, compare its result against yours and use whichever scored higher
 
 3. **If v3 finishes below {target_score}**, take over:
    - Read the v3 JSON for `best_containerfile` — use it as your starting point
-   - Iterate on it with `buildroot eval{no_isolate_flag}`
+   - Use `podman build` to iterate on build failures
+   - Once build succeeds, run `buildroot eval-agent` for the full L4 score with tests
 
 4. **Save your best Containerfile** to {workspace}/Containerfile.best
 
@@ -735,6 +763,24 @@ def _scan_workspace_for_best(
         logger.warning("Post-scan evaluation failed: %s", e)
         result.best_reward = 0.0
         result.best_level = 0
+
+    # Override with eval-agent report if present (authoritative L4 source)
+    eval_report_path = workspace / "eval-agent-report.json"
+    if eval_report_path.exists():
+        try:
+            eval_agent_data = json.loads(eval_report_path.read_text())
+            result.eval_result_dict = eval_agent_data
+            agent_reward = eval_agent_data.get("reward", 0)
+            agent_level = eval_agent_data.get("level_reached", 0)
+            if agent_reward > 0:
+                result.best_reward = agent_reward
+                result.best_level = agent_level
+            logger.info("Eval-agent report: reward=%.4f, level=L%d, test_status=%s, tests=%s",
+                        agent_reward, agent_level,
+                        eval_agent_data.get("test_status", "?"),
+                        eval_agent_data.get("tests_run", "?"))
+        except (json.JSONDecodeError, OSError) as e:
+            logger.warning("Failed to load eval-agent report: %s", e)
 
 
 def _record_learnings(

@@ -16,6 +16,7 @@ from buildroot.cli.commands.pnc_cmd import pnc_lookup_cmd, pnc_submit
 from buildroot.cli.commands.reconstruct import reconstruct
 from buildroot.cli.commands.regression_cmd import regression_cmd
 from buildroot.cli.commands.migrate_pinned import migrate_pinned_cmd
+from buildroot.cli.commands.eval_agent_cmd import eval_agent_cmd
 from buildroot.cli.commands.validate import validate
 from buildroot.cli.commands.verify import verify
 
@@ -39,3 +40,4 @@ cli.add_command(validate)
 cli.add_command(pnc_lookup_cmd, name="pnc-lookup")
 cli.add_command(pnc_submit, name="pnc-submit")
 cli.add_command(verify)
+cli.add_command(eval_agent_cmd, name="eval-agent")

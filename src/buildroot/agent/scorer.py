@@ -125,8 +125,8 @@ def compute_fallback_score(
     """Compute fallback score with dynamic weight renormalization.
 
     Base weights (all 7 signals active):
-      structural=0.15, bytecode=0.15, manifest=0.10, tests=0.10,
-      api_surface=0.25, dependency_graph=0.15, resource=0.10
+      unit_tests=0.30, bytecode=0.15, api_surface=0.15,
+      structural=0.10, manifest=0.10, dependency_graph=0.10, resource=0.10
 
     When signals are None, their weight is excluded and the remaining
     weights renormalize. With only bytecode+manifest active this gives
@@ -136,17 +136,17 @@ def compute_fallback_score(
     signals: list[tuple[float, float]] = []
 
     if structural_match is not None:
-        signals.append((structural_match, 0.15))
+        signals.append((structural_match, 0.10))
     if bytecode_version_match is not None:
         signals.append((float(bytecode_version_match), 0.15))
     if manifest_sanity is not None:
         signals.append((float(manifest_sanity), 0.10))
     if unit_tests_pass is not None:
-        signals.append((float(unit_tests_pass), 0.10))
+        signals.append((float(unit_tests_pass), 0.30))
     if api_surface_match is not None:
-        signals.append((api_surface_match, 0.25))
+        signals.append((api_surface_match, 0.15))
     if dependency_graph_match is not None:
-        signals.append((dependency_graph_match, 0.15))
+        signals.append((dependency_graph_match, 0.10))
     if resource_completeness is not None:
         signals.append((resource_completeness, 0.10))
 

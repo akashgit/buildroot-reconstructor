@@ -123,9 +123,11 @@ class TestComputeFallbackScore:
         score = compute_fallback_score(True, True, True, 1.0)
         assert score == pytest.approx(1.0)
         score = compute_fallback_score(True, True, False, 0.0)
-        # structural=0.15×0.0, bytecode=0.15×1.0, manifest=0.10×1.0, tests=0.10×0.0
-        # = 0.25 / 0.50 = 0.50
-        assert score == pytest.approx(0.50)
+        # structural=0.10×0.0, bytecode=0.15×1.0, manifest=0.10×1.0, tests=0.30×0.0
+        # = 0.25 / 0.65 ≈ 0.3846
+        total_weight = 0.10 + 0.15 + 0.10 + 0.30  # = 0.65
+        expected = (0.10 * 0.0 + 0.15 * 1.0 + 0.10 * 1.0 + 0.30 * 0.0) / total_weight
+        assert score == pytest.approx(expected)
 
     def test_backward_compat_3_args(self):
         score = compute_fallback_score(True, True, True)
@@ -418,19 +420,19 @@ class TestAllSevenSignals:
         score = compute_fallback_score(
             True,   # bytecode 0.15
             True,   # manifest 0.10
-            True,   # tests 0.10
-            1.0,    # structural 0.15
-            api_surface_match=0.9,     # 0.25
-            dependency_graph_match=0.85,  # 0.15
+            True,   # tests 0.30
+            1.0,    # structural 0.10
+            api_surface_match=0.9,     # 0.15
+            dependency_graph_match=0.85,  # 0.10
             resource_completeness=1.0,    # 0.10
         )
         expected = (
-            0.15 * 1.0   # structural
+            0.10 * 1.0   # structural
             + 0.15 * 1.0  # bytecode
             + 0.10 * 1.0  # manifest
-            + 0.10 * 1.0  # tests
-            + 0.25 * 0.9  # api
-            + 0.15 * 0.85  # deps
+            + 0.30 * 1.0  # tests
+            + 0.15 * 0.9  # api
+            + 0.10 * 0.85  # deps
             + 0.10 * 1.0  # resource
         )
         assert score == pytest.approx(expected)
@@ -441,21 +443,21 @@ class TestRenormalizationFourSignals:
         score = compute_fallback_score(
             True,   # bytecode: 0.15
             True,   # manifest: 0.10
-            True,   # tests: 0.10
-            0.8,    # structural: 0.15
+            True,   # tests: 0.30
+            0.8,    # structural: 0.10
         )
-        total_weight = 0.15 + 0.15 + 0.10 + 0.10  # = 0.50
-        expected = (0.15 * 0.8 + 0.15 * 1.0 + 0.10 * 1.0 + 0.10 * 1.0) / total_weight
+        total_weight = 0.10 + 0.15 + 0.10 + 0.30  # = 0.65
+        expected = (0.10 * 0.8 + 0.15 * 1.0 + 0.10 * 1.0 + 0.30 * 1.0) / total_weight
         assert score == pytest.approx(expected)
 
         bytecode_eff = 0.15 / total_weight
         manifest_eff = 0.10 / total_weight
-        structural_eff = 0.15 / total_weight
-        tests_eff = 0.10 / total_weight
-        assert bytecode_eff == pytest.approx(0.30)
-        assert manifest_eff == pytest.approx(0.20)
-        assert structural_eff == pytest.approx(0.30)
-        assert tests_eff == pytest.approx(0.20)
+        structural_eff = 0.10 / total_weight
+        tests_eff = 0.30 / total_weight
+        assert bytecode_eff == pytest.approx(0.15 / 0.65)
+        assert manifest_eff == pytest.approx(0.10 / 0.65)
+        assert structural_eff == pytest.approx(0.10 / 0.65)
+        assert tests_eff == pytest.approx(0.30 / 0.65)
 
 
 class TestApiSurfaceMatch:

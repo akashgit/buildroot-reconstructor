@@ -149,18 +149,20 @@ def _eval_infrastructure_section() -> str:
 - **L3 Command (0.35)**: Built image contains a JAR file in expected paths
 - **L4 Match (0.50)**: Rebuilt JAR matches original from Maven Central
 
-## L4 Comparison
-The JAR comparator checks three dimensions:
-- **Structural**: Same file entries (classes, resources) — missing/extra files
-- **Metadata**: MANIFEST.MF headers match — Build-Jdk, OSGI headers, custom attributes
-- **Bytecode**: Class files produce identical bytecode — checked via SHA comparison
+## L4 Composition
+L4 has two components:
+- **JAR comparison (70%)**: structural + metadata + bytecode match against Maven Central
+- **Unit tests (30%)**: project's test suite passes inside the container (binary: pass=1.0, fail=0.0)
+
+When no test sources exist in the project, unit tests are excluded and
+JAR comparison gets 100%. Max reward without tests = 0.85.
 
 ## Scoring Formula
 ```
 reward = 0.05 * L1 + 0.10 * L2 + 0.35 * L3 + 0.50 * L4_score
+L4_score = 0.70 * jar_equivalence + 0.30 * unit_test_pass
 ```
-L4_score is the equivalence_score() from the comparison report (0.0 to 1.0).
-A reward >= 0.98 means near-perfect reproduction.
+A reward >= 0.98 means near-perfect reproduction with passing tests.
 
 ## Comparison Report
 When L3 passes, read the comparison report carefully:
@@ -214,17 +216,38 @@ def _tool_docs_section(v3_available: bool) -> str:
     sections = ["""\
 # Available Tools
 
-## buildroot eval <containerfile-path> <coordinate> [--host HOST]
-Evaluate a Containerfile against a Maven Central artifact. Returns JSON with:
-- l1_parse, l2_build, l3_command, l4_match (booleans)
-- l4_score, reward (floats)
-- comparison_verdict, comparison_report (when L3+)
-- error_summary (when something fails)
+## Two-stage workflow
 
-Usage:
+### Stage 1: Build iteration with `podman build` (cheap, fast)
 ```bash
-buildroot eval /path/to/Containerfile org.example:artifact:1.0.0
-```"""]
+podman build --pull=missing -t buildroot-test -f /path/to/Containerfile .
+```
+Use `podman build` directly to iterate on Containerfile build failures.
+This is the fastest way to verify your Containerfile builds correctly.
+Keep iterating until the build succeeds (exit code 0).
+
+### Stage 2: Full evaluation with `buildroot eval-agent` (after build succeeds)
+```bash
+buildroot eval-agent /path/to/Containerfile org.example:artifact:1.0.0
+```
+Once `podman build` succeeds, run `buildroot eval-agent` for the authoritative
+L1-L4 score. This spawns an independent evaluation agent that:
+1. Runs JAR comparison against Maven Central (L1-L4)
+2. Recovers and runs unit tests (probes for test sources, handles -pl)
+3. Computes final score: 70% JAR comparison + 30% unit tests
+4. Returns failure reasons and suggestions if score < 0.98
+
+### Workflow
+1. Write Containerfile
+2. `podman build` — iterate until build succeeds
+3. `buildroot eval-agent` — get the full L4 score with tests
+4. If score < 0.98, read failure_reason + suggestion, fix Containerfile, go to 2
+
+You MUST NOT:
+- Run tests yourself (the eval-agent handles test recovery)
+- Create synthetic/fake tests to pass the evaluator
+- Read or modify the evaluation code (test_runner.py, evaluator.py, scorer.py)
+- Use `buildroot eval` directly (use eval-agent instead for proper scoring)"""]
 
     if v3_available:
         sections.append("""\
@@ -274,13 +297,23 @@ def _strategy_section() -> str:
    - Read the v3 workspace artifacts (best Containerfile, build logs, comparison reports)
    - Query the KB for relevant tips/tricks
    - Write a Containerfile directly (not through templates)
-   - Evaluate with `buildroot eval`, iterate on failures
-5. **Debug systematically**:
-   - L2 failure → read build log, fix the build command or dependencies
-   - L3 failure → check JAR location, verify build produced the right artifact
-   - L4 structural → compare file lists, find missing/extra entries
-   - L4 metadata → compare MANIFEST.MF, fix OSGI headers or build metadata
-   - L4 bytecode → match JDK version exactly, check compiler flags
+   - Use `podman build` to iterate on build failures (cheap, fast)
+   - Once build succeeds, use `buildroot eval-agent` for full L4 + tests (authoritative)
+   - Read the failure_reason and suggestion from the eval-agent output
+   - Iterate on the Containerfile based on the agent's feedback
+5. **You are the BUILDER, not the tester**:
+   - Write and fix Containerfiles — that is your job
+   - Do NOT run tests yourself, create test files, or modify test infrastructure
+   - Do NOT read evaluator source code (test_runner.py, evaluator.py, scorer.py)
+   - The L4-eval agent handles all testing independently — trust its results
+6. **Debug based on L4-eval feedback**:
+   - L2 failure → fix the build command or dependencies
+   - L3 failure → fix JAR location, verify build produces the right artifact
+   - L4 structural → fix file lists based on agent's missing/extra report
+   - L4 metadata → fix MANIFEST.MF based on agent's metadata diff
+   - L4 bytecode → match JDK version exactly based on agent's bytecode report
+   - L4 tests → read the agent's test failure details, fix Containerfile so tests can run
+     (e.g., don't strip test sources, keep test deps, use correct -pl targeting)
 
 ## Termination Conditions
 - **Success**: reward >= 0.98 (double-confirmed)

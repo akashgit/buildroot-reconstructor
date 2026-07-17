@@ -404,7 +404,11 @@ class Evaluator:
                 result.l4_score = report.equivalence_score(trusted=trusted)
                 result.l4_signal_source = "full_comparison"
                 if report.verdict in ("IDENTICAL", "EQUIVALENT", "TRUSTED_EQUIVALENT"):
-                    result.l4_match = True
+                    tests_block = (
+                        result.test_result is not None
+                        and result.test_result.status in ("failed", "not_reached")
+                    )
+                    result.l4_match = not tests_block
                 else:
                     parts = [
                         f"verdict={report.verdict}",
