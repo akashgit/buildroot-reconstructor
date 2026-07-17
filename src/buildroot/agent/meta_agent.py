@@ -443,14 +443,19 @@ Set these spec fields:
     # 7. Post-run: find best Containerfile in workspace
     _scan_workspace_for_best(result, workspace, coordinate, host, isolate_podman=isolate_podman)
 
-    # 7.5. Pick up eval-agent report if the orchestrator wrote one
+    # 7.5. Pick up eval-agent report — this is the authoritative L4 result
     eval_report_path = workspace / "eval-agent-report.json"
     if eval_report_path.exists():
         try:
             eval_agent_data = json.loads(eval_report_path.read_text())
             result.eval_result_dict = eval_agent_data
-            logger.info("Loaded eval-agent report: reward=%.4f, test_status=%s, tests_run=%s",
-                        eval_agent_data.get("reward", 0),
+            agent_reward = eval_agent_data.get("reward", 0)
+            agent_level = eval_agent_data.get("level_reached", 0)
+            if agent_reward > 0:
+                result.best_reward = agent_reward
+                result.best_level = agent_level
+            logger.info("Eval-agent report: reward=%.4f, level=L%d, test_status=%s, tests_run=%s",
+                        agent_reward, agent_level,
                         eval_agent_data.get("test_status", "?"),
                         eval_agent_data.get("tests_run", "?"))
         except (json.JSONDecodeError, OSError) as e:
