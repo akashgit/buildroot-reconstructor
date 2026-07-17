@@ -202,13 +202,13 @@ class EvalResult:
             self.l4_score = 1.0
 
         jar_score = self.l4_score
-        if self.test_result is not None:
-            if self.test_result.status == "no_tests":
-                pass  # genuinely no tests — L4 = 100% JAR
-            elif self.test_result.run > 0 and self.test_result.passed:
-                self.l4_score = 0.70 * jar_score + 0.30 * 1.0  # tests ran and passed
-            else:
-                self.l4_score = 0.70 * jar_score  # tests not run or failed — no test credit
+        if self.test_result is not None and self.test_result.status == "no_tests":
+            pass  # genuinely no tests — L4 = 100% JAR
+        elif self.test_result is not None and self.test_result.run > 0 and self.test_result.passed:
+            self.l4_score = 0.70 * jar_score + 0.30 * 1.0  # tests ran and passed
+        else:
+            # tests not run, failed, or test_result is None — no test credit
+            self.l4_score = 0.70 * jar_score
 
         self.reward = (
             0.05 * float(self.l1_parse)

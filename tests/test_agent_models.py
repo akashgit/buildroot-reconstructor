@@ -5,6 +5,7 @@ from buildroot.agent.models import (
     BuildAttempt,
     DeadEndEntry,
     EvalResult,
+    TestResult,
 )
 
 
@@ -43,12 +44,24 @@ class TestDeadEndEntry:
         assert de.is_exhausted
 
 
+def _passing_test_result():
+    """Helper: a TestResult where tests actually ran and passed."""
+    return TestResult(available=True, framework="maven", passed=True, run=10, tests_passed=10, status="passed")
+
+
 class TestEvalResult:
     def test_all_levels_pass(self):
-        er = EvalResult(l1_parse=True, l2_build=True, l3_command=True, l4_match=True)
+        er = EvalResult(l1_parse=True, l2_build=True, l3_command=True, l4_match=True,
+                        test_result=_passing_test_result())
         reward = er.compute_reward()
         assert reward == 1.0
         assert er.level_reached == 4
+
+    def test_all_levels_pass_no_test_result_caps_reward(self):
+        er = EvalResult(l1_parse=True, l2_build=True, l3_command=True, l4_match=True)
+        reward = er.compute_reward()
+        assert abs(reward - 0.85) < 1e-9
+        assert er.level_reached == 4  # l4_match is set, level is 4 despite lower reward
 
     def test_no_levels_pass(self):
         er = EvalResult()
@@ -78,6 +91,7 @@ class TestEvalResult:
         er = EvalResult(
             l1_parse=True, l2_build=True, l3_command=True,
             l4_score=1.0, l4_signal_source="fallback_signals",
+            test_result=_passing_test_result(),
         )
         er.compute_reward()
         assert er.reward == 1.0
@@ -95,6 +109,7 @@ class TestEvalResult:
         er = EvalResult(
             l1_parse=True, l2_build=True, l3_command=True,
             l4_score=0.98, l4_signal_source="fallback_signals",
+            test_result=_passing_test_result(),
         )
         er.compute_reward()
         assert er.level_reached == 4
