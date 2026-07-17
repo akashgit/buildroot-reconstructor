@@ -201,13 +201,6 @@ def launch_interactive_orchestrator(
                 result.best_containerfile_path = str(best_cf_path)
                 _scan_workspace_for_best(result, workspace, coordinate, host, isolate_podman=isolate_podman)
 
-                eval_report_path = workspace / "eval-agent-report.json"
-                if eval_report_path.exists():
-                    try:
-                        result.eval_result_dict = json.loads(eval_report_path.read_text())
-                    except (json.JSONDecodeError, OSError):
-                        pass
-
                 if result.best_reward >= 0.9:
                     try:
                         from buildroot.agent.build_store import save_build
@@ -442,24 +435,6 @@ Set these spec fields:
 
     # 7. Post-run: find best Containerfile in workspace
     _scan_workspace_for_best(result, workspace, coordinate, host, isolate_podman=isolate_podman)
-
-    # 7.5. Pick up eval-agent report — this is the authoritative L4 result
-    eval_report_path = workspace / "eval-agent-report.json"
-    if eval_report_path.exists():
-        try:
-            eval_agent_data = json.loads(eval_report_path.read_text())
-            result.eval_result_dict = eval_agent_data
-            agent_reward = eval_agent_data.get("reward", 0)
-            agent_level = eval_agent_data.get("level_reached", 0)
-            if agent_reward > 0:
-                result.best_reward = agent_reward
-                result.best_level = agent_level
-            logger.info("Eval-agent report: reward=%.4f, level=L%d, test_status=%s, tests_run=%s",
-                        agent_reward, agent_level,
-                        eval_agent_data.get("test_status", "?"),
-                        eval_agent_data.get("tests_run", "?"))
-        except (json.JSONDecodeError, OSError) as e:
-            logger.warning("Failed to load eval-agent report: %s", e)
 
     # 8. Learning loop — record success
     if result.best_reward >= target_score and result.best_containerfile:
@@ -788,6 +763,24 @@ def _scan_workspace_for_best(
         logger.warning("Post-scan evaluation failed: %s", e)
         result.best_reward = 0.0
         result.best_level = 0
+
+    # Override with eval-agent report if present (authoritative L4 source)
+    eval_report_path = workspace / "eval-agent-report.json"
+    if eval_report_path.exists():
+        try:
+            eval_agent_data = json.loads(eval_report_path.read_text())
+            result.eval_result_dict = eval_agent_data
+            agent_reward = eval_agent_data.get("reward", 0)
+            agent_level = eval_agent_data.get("level_reached", 0)
+            if agent_reward > 0:
+                result.best_reward = agent_reward
+                result.best_level = agent_level
+            logger.info("Eval-agent report: reward=%.4f, level=L%d, test_status=%s, tests=%s",
+                        agent_reward, agent_level,
+                        eval_agent_data.get("test_status", "?"),
+                        eval_agent_data.get("tests_run", "?"))
+        except (json.JSONDecodeError, OSError) as e:
+            logger.warning("Failed to load eval-agent report: %s", e)
 
 
 def _record_learnings(
