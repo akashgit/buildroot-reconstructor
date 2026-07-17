@@ -142,11 +142,12 @@ Return structured JSON:
 ## Save Report
 
 After computing your result, save the full evaluation report as a JSON file
-in the SAME directory as the Containerfile:
+named `eval-agent-report.json` in the same directory as the Containerfile
+you were given. Derive the directory from the Containerfile path in your task:
 
 ```bash
-# If Containerfile is at /tmp/workspace/Containerfile, save to:
-echo '<your JSON result>' > /tmp/workspace/eval-agent-report.json
+CF_DIR=$(dirname "<containerfile-path-from-task>")
+echo '<your JSON result>' > "$CF_DIR/eval-agent-report.json"
 ```
 
 This report is the authoritative L4 artifact. It will be saved to the build
