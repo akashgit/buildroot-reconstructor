@@ -216,7 +216,7 @@ def _tool_docs_section(v3_available: bool) -> str:
     sections = ["""\
 # Available Tools
 
-## buildroot qa <containerfile-path> <coordinate> [--host HOST]
+## buildroot eval-agent <containerfile-path> <coordinate> [--host HOST]
 Run the L4-eval agent to evaluate a Containerfile. This is the ONLY evaluation
 command you should use. It spawns an independent agent that:
 1. Builds and evaluates the Containerfile (L1-L4 JAR comparison)
@@ -231,7 +231,7 @@ Do NOT use `buildroot eval` directly — it lacks test recovery and proper scori
 
 Usage:
 ```bash
-buildroot qa /path/to/Containerfile org.example:artifact:1.0.0
+buildroot eval-agent /path/to/Containerfile org.example:artifact:1.0.0
 ```"""]
 
     if v3_available:
@@ -247,7 +247,7 @@ buildroot agent org.apache.commons:commons-lang3:3.14.0 --v3-only
 ```""")
 
     sections.append("""\
-## buildroot qa <containerfile-path> <coordinate> [--host HOST]
+## buildroot eval-agent <containerfile-path> <coordinate> [--host HOST]
 Run the L4-eval agent — the AUTHORITATIVE evaluator for your Containerfile.
 This spawns a separate Claude agent that independently:
 1. Builds and evaluates the Containerfile (L1-L4 JAR comparison)
@@ -255,7 +255,7 @@ This spawns a separate Claude agent that independently:
 3. Computes the final score: 70% JAR comparison + 30% unit tests
 4. Returns failure reasons and suggestions if score < 0.98
 
-**MANDATORY**: Use `buildroot qa` instead of `buildroot eval` for ALL evaluations.
+**MANDATORY**: Use `buildroot eval-agent` instead of `buildroot eval` for ALL evaluations.
 The L4-eval agent is the sole authority on scoring. You MUST NOT:
 - Run tests yourself (the L4-eval agent handles test recovery)
 - Create synthetic/fake tests to pass the evaluator
@@ -263,11 +263,11 @@ The L4-eval agent is the sole authority on scoring. You MUST NOT:
 
 Usage:
 ```bash
-buildroot qa /path/to/Containerfile org.example:artifact:1.0.0
+buildroot eval-agent /path/to/Containerfile org.example:artifact:1.0.0
 ```
 
 If reward < 0.98, read the `failure_reason` and `suggestion` fields, fix
-the Containerfile accordingly, and re-run `buildroot qa`.
+the Containerfile accordingly, and re-run `buildroot eval-agent`.
 
 ## buildroot kb search <query>
 Search the knowledge base for templates, tips, and tricks.
@@ -304,7 +304,7 @@ def _strategy_section() -> str:
    - Read the v3 workspace artifacts (best Containerfile, build logs, comparison reports)
    - Query the KB for relevant tips/tricks
    - Write a Containerfile directly (not through templates)
-   - **Always use `buildroot qa` for evaluation** (not `buildroot eval`)
+   - **Always use `buildroot eval-agent` for evaluation** (not `buildroot eval`)
    - Read the failure_reason and suggestion from the L4-eval agent output
    - Iterate on the Containerfile based on the agent's feedback
 5. **You are the BUILDER, not the tester**:
