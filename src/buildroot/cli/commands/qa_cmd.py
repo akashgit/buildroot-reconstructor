@@ -14,7 +14,8 @@ import click
 @click.option("--host", default=None, help="SSH host for remote builds")
 @click.option("--timeout", default=900, type=int, help="Agent timeout in seconds")
 @click.option("--pretty/--no-pretty", default=True, help="Pretty-print JSON output")
-def qa_cmd(containerfile, coordinate, host, timeout, pretty):
+@click.option("--no-isolate-podman", is_flag=True, default=False, help="Disable podman storage isolation")
+def qa_cmd(containerfile, coordinate, host, timeout, pretty, no_isolate_podman):
     """Run L4-eval agent — full evaluation with test recovery.
 
     Spawns a single L4-eval Claude agent that handles:

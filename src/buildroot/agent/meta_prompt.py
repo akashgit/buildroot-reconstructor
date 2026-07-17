@@ -149,18 +149,20 @@ def _eval_infrastructure_section() -> str:
 - **L3 Command (0.35)**: Built image contains a JAR file in expected paths
 - **L4 Match (0.50)**: Rebuilt JAR matches original from Maven Central
 
-## L4 Comparison
-The JAR comparator checks three dimensions:
-- **Structural**: Same file entries (classes, resources) — missing/extra files
-- **Metadata**: MANIFEST.MF headers match — Build-Jdk, OSGI headers, custom attributes
-- **Bytecode**: Class files produce identical bytecode — checked via SHA comparison
+## L4 Composition
+L4 has two components:
+- **JAR comparison (70%)**: structural + metadata + bytecode match against Maven Central
+- **Unit tests (30%)**: project's test suite passes inside the container (binary: pass=1.0, fail=0.0)
+
+When no test sources exist in the project, unit tests are excluded and
+JAR comparison gets 100%. Max reward without tests = 0.85.
 
 ## Scoring Formula
 ```
 reward = 0.05 * L1 + 0.10 * L2 + 0.35 * L3 + 0.50 * L4_score
+L4_score = 0.70 * jar_equivalence + 0.30 * unit_test_pass
 ```
-L4_score is the equivalence_score() from the comparison report (0.0 to 1.0).
-A reward >= 0.98 means near-perfect reproduction.
+A reward >= 0.98 means near-perfect reproduction with passing tests.
 
 ## Comparison Report
 When L3 passes, read the comparison report carefully:
@@ -214,16 +216,22 @@ def _tool_docs_section(v3_available: bool) -> str:
     sections = ["""\
 # Available Tools
 
-## buildroot eval <containerfile-path> <coordinate> [--host HOST]
-Evaluate a Containerfile against a Maven Central artifact. Returns JSON with:
-- l1_parse, l2_build, l3_command, l4_match (booleans)
-- l4_score, reward (floats)
-- comparison_verdict, comparison_report (when L3+)
-- error_summary (when something fails)
+## buildroot qa <containerfile-path> <coordinate> [--host HOST]
+Run the L4-eval agent to evaluate a Containerfile. This is the ONLY evaluation
+command you should use. It spawns an independent agent that:
+1. Builds and evaluates the Containerfile (L1-L4 JAR comparison)
+2. Recovers and runs unit tests (probes for test sources, handles -pl)
+3. Computes final score: 70% JAR comparison + 30% unit tests
+4. Returns failure reasons and suggestions if score < 0.98
+
+Returns JSON with: reward, l4_score, comparison_verdict, test_status,
+tests_run, tests_passed, failure_reason, suggestion.
+
+Do NOT use `buildroot eval` directly — it lacks test recovery and proper scoring.
 
 Usage:
 ```bash
-buildroot eval /path/to/Containerfile org.example:artifact:1.0.0
+buildroot qa /path/to/Containerfile org.example:artifact:1.0.0
 ```"""]
 
     if v3_available:
