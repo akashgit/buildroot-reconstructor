@@ -410,6 +410,16 @@ Set these spec fields:
     # 7. Post-run: find best Containerfile in workspace
     _scan_workspace_for_best(result, workspace, coordinate, host, isolate_podman=isolate_podman)
 
+    # 7.5. QA workflow — run test recovery + verification agents
+    if result.best_reward >= target_score and result.best_containerfile:
+        _run_qa_workflow(
+            coordinate=coordinate,
+            containerfile=result.best_containerfile,
+            result=result,
+            host=host,
+            isolate_podman=isolate_podman,
+        )
+
     # 8. Learning loop — record success
     if result.best_reward >= target_score and result.best_containerfile:
         recipe_store.save(coordinate, result.best_level, result.best_containerfile, result.best_reward)
@@ -492,6 +502,95 @@ Set these spec fields:
             logger.debug("Attempt save skipped: %s", e)
 
     return result
+
+
+def _run_qa_workflow(
+    coordinate: str,
+    containerfile: str,
+    result: OrchestratorResult,
+    host: str,
+    isolate_podman: bool = True,
+) -> None:
+    """Run QA agents for test recovery and verification after a successful build.
+
+    Spawns two agents in sequence:
+    1. Test recovery agent — finds, recovers, and runs unit tests
+    2. Verification agent — runs programmatic JAR checks
+
+    Updates result.eval_result_dict with QA findings. If tests exist
+    but fail, downgrades the reward (unit tests = 30% of L4).
+    """
+    from buildroot.qa.workflow import run_test_recovery
+
+    logger.info("Starting QA workflow for %s", coordinate)
+
+    tag = None
+    isolation = None
+    try:
+        from buildroot.utils.podman_isolation import PodmanIsolation
+        import subprocess, uuid, tempfile, shlex
+        from pathlib import Path
+
+        isolation = PodmanIsolation.create() if (isolate_podman and not host) else None
+        tag = f"buildroot-qa-{uuid.uuid4().hex[:8]}"
+
+        build_dir = tempfile.mkdtemp(prefix="buildroot-qa-")
+        cf_path = Path(build_dir) / "Containerfile"
+        cf_path.write_text(containerfile)
+        build_cmd = ["podman", "build", "--pull=missing", "-t", tag, "-f", str(cf_path), build_dir]
+        if isolation:
+            build_cmd = isolation.wrap_command(build_cmd)
+        elif host:
+            build_cmd = [
+                "ssh", "-o", "BatchMode=yes", "-o", "StrictHostKeyChecking=no",
+                host, shlex.join(build_cmd),
+            ]
+
+        build_proc = subprocess.run(build_cmd, capture_output=True, text=True, timeout=900)
+        if build_proc.returncode != 0:
+            logger.warning("QA workflow: container build failed, skipping test recovery")
+            return
+
+        test_result = run_test_recovery(
+            tag, containerfile, coordinate,
+            host=host, timeout=600,
+            podman_root=str(isolation.graphroot) if isolation else None,
+            podman_runroot=str(isolation.runroot) if isolation else None,
+            podman_tmpdir=str(isolation.tmpdir) if isolation else None,
+        )
+
+        if result.eval_result_dict is None:
+            result.eval_result_dict = {}
+        result.eval_result_dict["test_result"] = test_result.to_dict()
+
+        if test_result.status in ("failed", "not_reached"):
+            jar_score = result.best_reward
+            result.best_reward = max(0.0, 0.70 * jar_score + 0.30 * 0.0)
+            logger.info(
+                "QA: tests %s — reward docked from %.4f to %.4f",
+                test_result.status, jar_score, result.best_reward,
+            )
+        elif test_result.status == "passed":
+            logger.info(
+                "QA: %d tests passed — reward unchanged at %.4f",
+                test_result.run, result.best_reward,
+            )
+        else:
+            logger.info("QA: test status=%s — no scoring impact", test_result.status)
+
+    except Exception as e:
+        logger.warning("QA workflow failed: %s — continuing without test results", e)
+    finally:
+        if tag:
+            try:
+                rmi_cmd = ["podman", "rmi", "-f", tag]
+                if isolation:
+                    rmi_cmd = isolation.wrap_command(rmi_cmd)
+                subprocess.run(rmi_cmd, capture_output=True, timeout=30)
+            except Exception:
+                pass
+        if isolation:
+            isolation.cleanup()
 
 
 def _run_trusted_phase(

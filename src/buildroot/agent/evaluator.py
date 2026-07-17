@@ -132,10 +132,9 @@ class Evaluator:
 
         result.advisory_findings.extend(_parse_checksum_failures(result.build_log))
 
-        from buildroot.qa.workflow import run_test_recovery
-        result.test_result = run_test_recovery(
-            tag, containerfile, coordinate,
-            host=self._host, timeout=600,
+        from buildroot.eval.test_runner import run_tests
+        result.test_result = run_tests(
+            tag, containerfile, host=self._host, timeout=300,
             podman_root=str(self._isolation.graphroot) if self._isolation else None,
             podman_runroot=str(self._isolation.runroot) if self._isolation else None,
             podman_tmpdir=str(self._isolation.tmpdir) if self._isolation else None,
