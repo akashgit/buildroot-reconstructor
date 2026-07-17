@@ -239,6 +239,27 @@ buildroot agent org.apache.commons:commons-lang3:3.14.0 --v3-only
 ```""")
 
     sections.append("""\
+## buildroot qa <containerfile-path> <coordinate> [--host HOST]
+Run QA verification agents against a built container. Spawns two agents:
+1. **Test recovery agent** — probes for test sources, recovers stripped tests,
+   runs `mvn test` with correct `-pl` module targeting
+2. **Verification agent** — runs programmatic JAR checks
+
+Returns JSON with test_result (status, tests_run, tests_passed, tests_failed)
+and verification results.
+
+**MANDATORY**: After your build reaches L4 (JAR comparison passes), you MUST run
+`buildroot qa` before claiming success. Unit tests are 30% of the L4 score —
+without passing QA, your reward caps at 0.85 even with a perfect JAR match.
+
+Usage:
+```bash
+buildroot qa /path/to/Containerfile org.example:artifact:1.0.0
+```
+
+If QA reports test failures, fix the Containerfile to ensure tests pass, then
+re-run `buildroot eval` and `buildroot qa` until both pass.
+
 ## buildroot kb search <query>
 Search the knowledge base for templates, tips, and tricks.
 
@@ -270,17 +291,24 @@ def _strategy_section() -> str:
    - v3 hits template limitations (multi-stage, OSGI, complex builds)
    - v3 is stuck at L2 (build failure the template can't fix)
    - v3 is stuck at L3 (JAR produced but comparison fails repeatedly)
+   - v3 is stuck at 0.85 reward (JAR matches but tests don't pass)
 4. **When taking over**:
    - Read the v3 workspace artifacts (best Containerfile, build logs, comparison reports)
    - Query the KB for relevant tips/tricks
    - Write a Containerfile directly (not through templates)
    - Evaluate with `buildroot eval`, iterate on failures
-5. **Debug systematically**:
+5. **Run QA after JAR matches** (MANDATORY):
+   - Once `buildroot eval` shows comparison_verdict=EQUIVALENT/IDENTICAL, run `buildroot qa`
+   - QA agents handle test recovery — they probe for test sources, fix `-pl` targeting, etc.
+   - If QA fails, your reward stays at 0.85 (30% L4 test credit withheld)
+   - Fix test issues in the Containerfile and re-run QA until tests pass
+6. **Debug systematically**:
    - L2 failure → read build log, fix the build command or dependencies
    - L3 failure → check JAR location, verify build produced the right artifact
    - L4 structural → compare file lists, find missing/extra entries
    - L4 metadata → compare MANIFEST.MF, fix OSGI headers or build metadata
    - L4 bytecode → match JDK version exactly, check compiler flags
+   - L4 tests (reward=0.85) → run `buildroot qa`, fix test execution
 
 ## Termination Conditions
 - **Success**: reward >= 0.98 (double-confirmed)
