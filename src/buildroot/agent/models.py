@@ -201,14 +201,14 @@ class EvalResult:
         if self.l4_match:
             self.l4_score = 1.0
 
+        # Trust gate: if JAR doesn't match exactly AND tests fail, zero out L4
         jar_score = self.l4_score
-        if self.test_result is not None and self.test_result.status == "no_tests":
-            pass  # genuinely no tests — L4 = 100% JAR
-        elif self.test_result is not None and self.test_result.run > 0 and self.test_result.passed:
-            self.l4_score = 0.70 * jar_score + 0.30 * 1.0  # tests ran and passed
-        else:
-            # tests not run, failed, or test_result is None — no test credit
-            self.l4_score = 0.70 * jar_score
+        tests_failed = (
+            self.test_result is not None
+            and self.test_result.status in ("failed", "not_reached", "error")
+        )
+        if jar_score < 1.0 and tests_failed:
+            self.l4_score = 0.0
 
         self.reward = (
             0.05 * float(self.l1_parse)
