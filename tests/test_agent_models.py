@@ -57,11 +57,43 @@ class TestEvalResult:
         assert reward == 1.0
         assert er.level_reached == 4
 
-    def test_all_levels_pass_no_test_result_caps_reward(self):
+    def test_all_levels_pass_no_test_result_full_reward(self):
         er = EvalResult(l1_parse=True, l2_build=True, l3_command=True, l4_match=True)
         reward = er.compute_reward()
-        assert abs(reward - 0.85) < 1e-9
-        assert er.level_reached == 4  # l4_match is set, level is 4 despite lower reward
+        assert reward == 1.0  # l4_match=True, no test_result → no trust gate
+        assert er.level_reached == 4
+
+    def test_trust_gate_zeros_l4_when_jar_imperfect_and_tests_fail(self):
+        er = EvalResult(
+            l1_parse=True, l2_build=True, l3_command=True,
+            l4_score=0.95,
+            test_result=TestResult(available=True, framework="maven", passed=False,
+                                   run=10, failed=3, status="failed"),
+        )
+        er.compute_reward()
+        assert er.l4_score == 0.0
+        assert er.reward == 0.50  # L1+L2+L3 only
+
+    def test_trust_gate_keeps_score_when_jar_perfect(self):
+        er = EvalResult(
+            l1_parse=True, l2_build=True, l3_command=True, l4_match=True,
+            test_result=TestResult(available=True, framework="maven", passed=False,
+                                   run=10, failed=3, status="failed"),
+        )
+        er.compute_reward()
+        assert er.l4_score == 1.0  # l4_match=True → jar perfect, tests don't matter
+        assert er.reward == 1.0
+
+    def test_trust_gate_keeps_score_when_tests_pass(self):
+        er = EvalResult(
+            l1_parse=True, l2_build=True, l3_command=True,
+            l4_score=0.95,
+            test_result=TestResult(available=True, framework="maven", passed=True,
+                                   run=10, tests_passed=10, status="passed"),
+        )
+        er.compute_reward()
+        assert er.l4_score == 0.95  # tests pass → keep JAR score as-is
+        assert er.reward == 0.05 + 0.10 + 0.35 + 0.95 * 0.50
 
     def test_no_levels_pass(self):
         er = EvalResult()
