@@ -727,6 +727,26 @@ def _scan_workspace_for_best(
     result.best_containerfile = cf_text
     result.best_containerfile_path = str(cf_path)
 
+    # Check for eval-agent report FIRST — skip expensive re-evaluation if it exists
+    eval_report_path = workspace / "eval-agent-report.json"
+    if eval_report_path.exists():
+        try:
+            eval_agent_data = json.loads(eval_report_path.read_text())
+            result.eval_result_dict = eval_agent_data
+            agent_reward = eval_agent_data.get("reward", 0)
+            agent_level = eval_agent_data.get("level_reached", 0)
+            if agent_reward > 0:
+                result.best_reward = agent_reward
+                result.best_level = agent_level
+            logger.info("Using eval-agent report (skipping re-evaluation): reward=%.4f, level=L%d, test_status=%s, tests=%s",
+                        agent_reward, agent_level,
+                        eval_agent_data.get("test_status", "?"),
+                        eval_agent_data.get("tests_run", "?"))
+            return
+        except (json.JSONDecodeError, OSError) as e:
+            logger.warning("Failed to load eval-agent report, falling back to evaluator: %s", e)
+
+    # No eval-agent report — fall back to running evaluator.evaluate()
     try:
         jdk_version = ""
         prepass_json = workspace / "prepass_findings.json"
@@ -763,24 +783,6 @@ def _scan_workspace_for_best(
         logger.warning("Post-scan evaluation failed: %s", e)
         result.best_reward = 0.0
         result.best_level = 0
-
-    # Override with eval-agent report if present (authoritative L4 source)
-    eval_report_path = workspace / "eval-agent-report.json"
-    if eval_report_path.exists():
-        try:
-            eval_agent_data = json.loads(eval_report_path.read_text())
-            result.eval_result_dict = eval_agent_data
-            agent_reward = eval_agent_data.get("reward", 0)
-            agent_level = eval_agent_data.get("level_reached", 0)
-            if agent_reward > 0:
-                result.best_reward = agent_reward
-                result.best_level = agent_level
-            logger.info("Eval-agent report: reward=%.4f, level=L%d, test_status=%s, tests=%s",
-                        agent_reward, agent_level,
-                        eval_agent_data.get("test_status", "?"),
-                        eval_agent_data.get("tests_run", "?"))
-        except (json.JSONDecodeError, OSError) as e:
-            logger.warning("Failed to load eval-agent report: %s", e)
 
 
 def _record_learnings(
